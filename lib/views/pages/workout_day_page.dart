@@ -20,34 +20,83 @@ class WorkoutDayScreen extends StatefulWidget {
 }
 
 class _WorkoutDayScreenState extends State<WorkoutDayScreen> {
-  late List<WorkoutExercise> _exercises;
+  late List<WorkoutExercise> _exercises = [];
+
+  bool _isLoading = true;
+
+  final List<TextEditingController> _nameCtrls = [];
+  final List<List<TextEditingController>> _weightCtrls = [];
+  final List<List<TextEditingController>> _repsCtrls = [];
+
+  String get _prefsKey =>
+      'workout_${widget.date.toIso8601String().split('T').first}';
 
   @override
   void initState() {
     super.initState();
-    // Спочатку відпрацьовує конструктор, потім завантажуємо можливі збережені дані
-    _exercises = List.from(widget.exercises);
-    _loadSavedExercises();
+    _loadExercises();
   }
 
-  // Ключ у SharedPreferences для поточної дати
-  String get _prefsKey =>
-      'workout_${widget.date.toIso8601String().split('T').first}';
+  /// Якщо value ціле — повертає без .0, інакше — як є
+  String _formatDouble(double? value) {
+    if (value == null) return '';
+    return value == value.roundToDouble()
+        ? value.toInt().toString()
+        : value.toString();
+  }
 
-  Future<void> _loadSavedExercises() async {
+  // Завантажуємо збережені вправи або беремо widget.exercises
+  Future<void> _loadExercises() async {
     final prefs = await SharedPreferences.getInstance();
-    final jsonStr = prefs.getString(_prefsKey);
-    if (jsonStr != null) {
-      final List<dynamic> rawList = jsonDecode(jsonStr);
-      setState(() {
-        _exercises = rawList
-            .map((e) => WorkoutExercise.fromMap(e as Map<String, dynamic>))
-            .toList();
-      });
+    final rawJson = prefs.getString(_prefsKey);
+
+    if (rawJson != null) {
+      final List<dynamic> decoded = jsonDecode(rawJson);
+      _exercises = decoded
+          .map((m) => WorkoutExercise.fromMap(m as Map<String, dynamic>))
+          .toList();
+    } else {
+      _exercises = List.from(widget.exercises);
+    }
+
+    _initControllers();
+    setState(() {
+      _isLoading = false;
+    });
+  }
+
+  // Ініціалізуємо TextEditingController-и на основі _exercises
+  void _initControllers() {
+    _nameCtrls.clear();
+    _weightCtrls.clear();
+    _repsCtrls.clear();
+
+    for (var ex in _exercises) {
+      _nameCtrls.add(TextEditingController(text: ex.name));
+
+      final wList = <TextEditingController>[];
+      final rList = <TextEditingController>[];
+      for (var set in ex.sets) {
+        wList.add(TextEditingController(text: _formatDouble(set.weight)));
+        rList.add(TextEditingController(text: set.reps?.toString() ?? ''));
+      }
+      _weightCtrls.add(wList);
+      _repsCtrls.add(rList);
     }
   }
 
+  // Зберігаємо дані з контролерів у модель і в SharedPreferences
   Future<void> _saveExercises() async {
+    // Спочатку скидаємо модель з контролерів
+    for (var i = 0; i < _exercises.length; i++) {
+      _exercises[i].name = _nameCtrls[i].text;
+      for (var j = 0; j < _exercises[i].sets.length; j++) {
+        _exercises[i].sets[j].weight = double.tryParse(_weightCtrls[i][j].text);
+        _exercises[i].sets[j].reps = int.tryParse(_repsCtrls[i][j].text);
+      }
+    }
+
+    // Стороннє збереження
     final prefs = await SharedPreferences.getInstance();
     final encoded = jsonEncode(_exercises.map((e) => e.toMap()).toList());
     await prefs.setString(_prefsKey, encoded);
@@ -55,18 +104,51 @@ class _WorkoutDayScreenState extends State<WorkoutDayScreen> {
 
   void _addExercise() {
     setState(() {
-      _exercises.add(WorkoutExercise(name: "Нова вправа", sets: [SetData()]));
+      _exercises.add(WorkoutExercise(name: '', sets: [SetData()]));
+      // додаємо контролери для нової вправи
+      _nameCtrls.add(TextEditingController());
+      _weightCtrls.add([TextEditingController()]);
+      _repsCtrls.add([TextEditingController()]);
     });
   }
 
-  void _addSet(int exerciseIndex) {
+  void _removeSet(int exIndex, int setIndex) {
     setState(() {
-      _exercises[exerciseIndex].sets.add(SetData());
+      _exercises[exIndex].sets.removeAt(setIndex);
+      _weightCtrls[exIndex].removeAt(setIndex);
+      _repsCtrls[exIndex].removeAt(setIndex);
+    });
+  }
+
+  void _addSet(int exIndex) {
+    setState(() {
+      _exercises[exIndex].sets.add(SetData());
+      _weightCtrls[exIndex].add(TextEditingController());
+      _repsCtrls[exIndex].add(TextEditingController());
     });
   }
 
   @override
+  void dispose() {
+    // Чистимо контролери
+    for (var c in _nameCtrls) {
+      c.dispose();
+    }
+    for (var list in _weightCtrls) {
+      for (var c in list) c.dispose();
+    }
+    for (var list in _repsCtrls) {
+      for (var c in list) c.dispose();
+    }
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -97,7 +179,9 @@ class _WorkoutDayScreenState extends State<WorkoutDayScreen> {
                   // Назва вправи
                   TextField(
                     controller: TextEditingController(text: exercise.name),
-                    decoration: const InputDecoration(labelText: "Вправа"),
+                    decoration: const InputDecoration(
+                      labelText: 'Назва вправи',
+                    ),
                     onChanged: (val) => exercise.name = val,
                   ),
                   const SizedBox(height: 8),
@@ -106,6 +190,7 @@ class _WorkoutDayScreenState extends State<WorkoutDayScreen> {
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         for (int j = 0; j < exercise.sets.length; j++)
                           Container(
@@ -113,12 +198,42 @@ class _WorkoutDayScreenState extends State<WorkoutDayScreen> {
                             margin: const EdgeInsets.symmetric(horizontal: 4),
                             child: Column(
                               children: [
-                                Text(
-                                  "Підхід ${j + 1}",
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    SizedBox(width: 5),
+                                    Text(
+                                      "Підхід ${j + 1}",
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    SizedBox(width: 10),
+                                    Expanded(
+                                      child: PopupMenuButton<String>(
+                                        icon: const Icon(
+                                          Icons.more_vert,
+                                          size: 20,
+                                        ),
+                                        onSelected: (value) {
+                                          if (value == 'delete') {
+                                            _removeSet(i, j);
+                                          }
+                                        },
+                                        itemBuilder: (context) => [
+                                          PopupMenuItem(
+                                            value: 'delete',
+                                            child: Text(
+                                              'Видалити підхід ${j + 1}',
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
                                 ),
+                                const SizedBox(height: 4),
                                 Container(
                                   padding: const EdgeInsets.all(4),
                                   decoration: BoxDecoration(
@@ -130,17 +245,15 @@ class _WorkoutDayScreenState extends State<WorkoutDayScreen> {
                                     children: [
                                       // Вага
                                       SizedBox(
-                                        width: 30,
+                                        width: 35,
                                         child: TextField(
+                                          textAlign: TextAlign.center,
+                                          controller: _weightCtrls[i][j],
                                           keyboardType: TextInputType.number,
                                           decoration: const InputDecoration(
-                                            hintText: "Вага",
+                                            hintText: 'Кг',
                                             border: InputBorder.none,
                                           ),
-                                          onChanged: (val) {
-                                            exercise.sets[j].weight =
-                                                double.tryParse(val);
-                                          },
                                         ),
                                       ),
                                       const Text(
@@ -149,17 +262,15 @@ class _WorkoutDayScreenState extends State<WorkoutDayScreen> {
                                       ),
                                       // Повтори
                                       SizedBox(
-                                        width: 30,
+                                        width: 35,
                                         child: TextField(
+                                          textAlign: TextAlign.center,
+                                          controller: _repsCtrls[i][j],
                                           keyboardType: TextInputType.number,
                                           decoration: const InputDecoration(
-                                            hintText: "Повт.",
+                                            hintText: 'Повт.',
                                             border: InputBorder.none,
                                           ),
-                                          onChanged: (val) {
-                                            exercise.sets[j].reps =
-                                                int.tryParse(val);
-                                          },
                                         ),
                                       ),
                                     ],
@@ -168,12 +279,14 @@ class _WorkoutDayScreenState extends State<WorkoutDayScreen> {
                               ],
                             ),
                           ),
-                        // Додати ще підхід
-                        IconButton(
-                          icon: const Icon(Icons.add),
-                          onPressed: () => _addSet(i),
-                        ),
                       ],
+                    ),
+                  ),
+                  // Додати ще підхід
+                  Center(
+                    child: IconButton(
+                      icon: const Icon(Icons.add),
+                      onPressed: () => _addSet(i),
                     ),
                   ),
                 ],
@@ -185,6 +298,7 @@ class _WorkoutDayScreenState extends State<WorkoutDayScreen> {
       floatingActionButton: FloatingActionButton(
         onPressed: _addExercise,
         child: const Icon(Icons.add),
+        tooltip: 'Додати вправу',
       ),
     );
   }
@@ -200,7 +314,7 @@ class WorkoutExercise {
 
   factory WorkoutExercise.fromMap(Map<String, dynamic> m) {
     return WorkoutExercise(
-      name: m['name'] as String? ?? '',
+      name: m['name'] as String? ?? 'Нова вправа',
       sets: (m['sets'] as List<dynamic>? ?? [])
           .map((e) => SetData.fromMap(e as Map<String, dynamic>))
           .toList(),

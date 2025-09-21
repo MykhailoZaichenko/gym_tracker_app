@@ -3,7 +3,6 @@ import 'package:gym_tracker_app/data/constants.dart';
 import 'package:gym_tracker_app/data/notiers.dart';
 import 'package:gym_tracker_app/views/pages/home_calendar_page.dart';
 import 'package:gym_tracker_app/views/pages/profile_graf_page.dart';
-import 'package:gym_tracker_app/views/pages/settings_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'widgets/navbar_widget.dart';
 
@@ -20,38 +19,28 @@ class WidgetTree extends StatelessWidget {
         title: Text(title!),
         centerTitle: true,
         actions: [
-          IconButton(
-            onPressed: () async {
-              isDarkModeNotifier.value = !isDarkModeNotifier.value;
-              final SharedPreferences prefs =
-                  await SharedPreferences.getInstance();
-              await prefs.setBool(
-                KCOnstats.themeModeKey,
-                isDarkModeNotifier.value,
-              );
-            },
-            icon: ValueListenableBuilder(
-              valueListenable: isDarkModeNotifier,
-              builder:
-                  (BuildContext context, dynamic isDarkMode, Widget? child) {
-                    return Icon(
-                      isDarkMode ? Icons.light_mode : Icons.dark_mode,
-                    );
-                  },
+          Padding(
+            padding: const EdgeInsets.only(right: 5.0),
+            child: IconButton(
+              onPressed: () async {
+                isDarkModeNotifier.value = !isDarkModeNotifier.value;
+                final SharedPreferences prefs =
+                    await SharedPreferences.getInstance();
+                await prefs.setBool(
+                  KCOnstats.themeModeKey,
+                  isDarkModeNotifier.value,
+                );
+              },
+              icon: ValueListenableBuilder(
+                valueListenable: isDarkModeNotifier,
+                builder:
+                    (BuildContext context, dynamic isDarkMode, Widget? child) {
+                      return Icon(
+                        isDarkMode ? Icons.light_mode : Icons.dark_mode,
+                      );
+                    },
+              ),
             ),
-          ),
-          IconButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) {
-                    return SettingsPage(title: 'Settings');
-                  },
-                ),
-              );
-            },
-            icon: Icon(Icons.settings),
           ),
         ],
       ),

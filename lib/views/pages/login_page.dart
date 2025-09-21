@@ -30,6 +30,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     double widthScreen = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: AppBar(),
@@ -43,12 +44,23 @@ class _LoginPageState extends State<LoginPage> {
                   widthFactor: widthScreen < 500 ? 0.9 : 0.4,
                   child: Column(
                     children: [
-                      Lottie.asset(
-                        'assets/lotties/dumbell.json',
-                        // height: 200,
-                        // width: 200,
-                        fit: BoxFit.cover,
-                      ),
+                      isDark
+                          // У темному режимі — біла анімація
+                          ? ColorFiltered(
+                              colorFilter: const ColorFilter.mode(
+                                Colors.white,
+                                BlendMode.srcATop,
+                              ),
+                              child: Lottie.asset(
+                                'assets/lotties/dumbell.json',
+                                height: 400,
+                              ),
+                            )
+                          // В світлому режимі — без фільтра (оригінальні кольори)
+                          : Lottie.asset(
+                              'assets/lotties/dumbell.json',
+                              height: 400,
+                            ),
                       SizedBox(height: 20.0),
                       TextField(
                         controller: controllerEmail,

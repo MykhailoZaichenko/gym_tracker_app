@@ -8,6 +8,7 @@ class WelcomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       body: Center(
         child: SingleChildScrollView(
@@ -17,7 +18,20 @@ class WelcomePage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 // HeroWidget(),
-                Lottie.asset('assets/lotties/dumbell.json', height: 400.0),
+                isDark
+                    // У темному режимі — біла анімація
+                    ? ColorFiltered(
+                        colorFilter: const ColorFilter.mode(
+                          Colors.white,
+                          BlendMode.srcATop,
+                        ),
+                        child: Lottie.asset(
+                          'assets/lotties/dumbell.json',
+                          height: 400,
+                        ),
+                      )
+                    // В світлому режимі — без фільтра (оригінальні кольори)
+                    : Lottie.asset('assets/lotties/dumbell.json', height: 400),
                 FittedBox(
                   child: Text(
                     "Gym Tracker",
