@@ -1,226 +1,156 @@
-// import 'package:first_app/views/pages/expended_flexible_page.dart';
 import 'package:flutter/material.dart';
-import 'dart:developer' as developer;
+import 'package:gym_tracker_app/data/constants.dart';
+import 'package:gym_tracker_app/data/notiers.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsPage extends StatefulWidget {
-  const SettingsPage({super.key, required this.title});
-
-  final String title;
-
+  const SettingsPage({Key? key}) : super(key: key);
   @override
-  State<SettingsPage> createState() => _SettingsPageState();
+  _SettingsPageState createState() => _SettingsPageState();
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  TextEditingController controller = TextEditingController();
-  bool? isChenked = false;
-  bool isSwitched = false;
-  double sliderValue = 0.0;
-  String? menuItem = 'e1';
+  late SharedPreferences _prefs;
+  bool _darkMode = false;
+  bool _notificationsEnabled = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSettings();
+  }
+
+  Future<void> _loadSettings() async {
+    _prefs = await SharedPreferences.getInstance();
+
+    // ініціалізуємо і локальне поле, і notifier
+    final savedDark = _prefs.getBool(KCOnstats.themeModeKey) ?? false;
+    isDarkModeNotifier.value = savedDark;
+    setState(() {
+      _darkMode = savedDark;
+    });
+
+    // підтягуємо уведомлення
+    _notificationsEnabled = _prefs.getBool('notifications_enabled') ?? true;
+  }
+
+  // Оновлений toggle для темної теми
+  Future<void> _toggleDarkMode(bool value) async {
+    // 1) оновлюємо локальний стан
+    setState(() => _darkMode = value);
+
+    // 2) оновлюємо глобальний Notifier
+    isDarkModeNotifier.value = value;
+
+    // 3) зберігаємо в SharedPreferences
+    await _prefs.setBool(KCOnstats.themeModeKey, value);
+  }
+
+  Future<void> _toggleNotifications(bool value) async {
+    setState(() => _notificationsEnabled = value);
+    await _prefs.setBool('notifications_enabled', value);
+    // Запустіть ваш механізм налаштування пуш-повідомлень тут
+  }
+
+  void _confirmClearData() {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Очистити всі дані'),
+        content: const Text(
+          'Це видалить усі збережені тренування та налаштування. Продовжити?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: const Text('Ні'),
+          ),
+          TextButton(
+            onPressed: () async {
+              // Очистити всі ключі
+              await _prefs.clear();
+              // Після очищення — поновити стан
+              setState(() {
+                _darkMode = false;
+                _notificationsEnabled = true;
+              });
+              Navigator.of(ctx).pop();
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Дані успішно очищені')),
+              );
+            },
+            child: const Text('Так'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = _darkMode;
+
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-        leading: BackButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        centerTitle: true,
-        automaticallyImplyLeading: false,
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start, // Add this line
-            children: [
-              DropdownButton(
-                value: menuItem,
-                items: [
-                  DropdownMenuItem(value: 'e1', child: Text('ELement 1')),
-                  DropdownMenuItem(value: 'e2', child: Text('ELement 2')),
-                  DropdownMenuItem(value: 'e3', child: Text('ELement 3')),
-                ],
-                onChanged: (String? value) {
-                  setState(() {
-                    menuItem = value;
-                  });
-                },
+      appBar: AppBar(title: const Text('Налаштування'), centerTitle: true),
+      body: SafeArea(
+        child: ListView(
+          padding: const EdgeInsets.all(20),
+          children: [
+            SwitchListTile(
+              secondary: Icon(
+                Icons.brightness_6,
+                color: isDark ? Colors.white : theme.primaryColor,
               ),
-              TextField(
-                controller: controller,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Enter your name',
-                ),
-                onEditingComplete: () {
-                  setState(() {});
-                },
+              title: isDark ? Text('Світлий режим') : Text('Темний режим'),
+              value: _darkMode,
+              onChanged: _toggleDarkMode,
+            ),
+            const Divider(),
+
+            SwitchListTile(
+              secondary: Icon(
+                Icons.notifications,
+                color: isDark ? Colors.white : theme.primaryColor,
               ),
-              Text(controller.text),
-              Checkbox.adaptive(
-                tristate: true,
-                value: isChenked,
-                onChanged: (bool? value) {
-                  setState(() {
-                    isChenked = value;
-                  });
-                },
+              title: const Text('Сповіщення'),
+              value: _notificationsEnabled,
+              onChanged: _toggleNotifications,
+            ),
+            const Divider(),
+
+            ListTile(
+              leading: Icon(
+                Icons.delete_forever,
+                color: theme.colorScheme.error,
               ),
-              CheckboxListTile.adaptive(
-                tristate: true,
-                title: Text('Click me'),
-                value: isChenked,
-                onChanged: (bool? value) {
-                  setState(() {
-                    isChenked = value;
-                  });
-                },
+              title: Text(
+                'Очистити всі дані',
+                style: TextStyle(color: theme.colorScheme.error),
               ),
-              Switch.adaptive(
-                value: isSwitched,
-                onChanged: (value) {
-                  setState(() {
-                    isSwitched = value;
-                  });
-                },
+              onTap: _confirmClearData,
+            ),
+            const Divider(),
+
+            ListTile(
+              leading: Icon(
+                Icons.info_outline,
+                color: isDark ? Colors.white : theme.primaryColor,
               ),
-              SwitchListTile.adaptive(
-                title: Text('Switch me'),
-                value: isSwitched,
-                onChanged: (value) {
-                  setState(() {
-                    isSwitched = value;
-                  });
-                },
-              ),
-              Slider.adaptive(
-                min: 0,
-                max: 100,
-                divisions: 10,
-                value: sliderValue,
-                onChanged: (double value) {
-                  setState(() {
-                    sliderValue = value;
-                  });
-                },
-              ),
-              sliderValue == 0
-                  ? Text('Slider is at minimum')
-                  : sliderValue == 100
-                  ? Text('Slider is at maximum')
-                  : Text('Slider value: $sliderValue'),
-              Container(
-                margin: EdgeInsets.all(20),
-                child: InkWell(
-                  onTap: () {
-                    developer.log('Image tapped');
-                  },
-                  child: Container(
-                    height: 200,
-                    width: double.infinity,
-                    color: Colors.white12,
-                  ),
-                ),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      duration: Duration(seconds: 5),
-                      content: Text('Hello from snackbar'),
-                      behavior: SnackBarBehavior.floating,
-                    ),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.teal,
-                  foregroundColor: Colors.white,
-                  padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                ),
-                child: Text('Open snackbar'),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
-                child: ElevatedButton(
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (context) {
-                        return AboutDialog(
-                          applicationName: 'First app',
-                          applicationVersion: '1.0.0',
-                          applicationIcon: Icon(Icons.account_tree),
-                          children: [Text('This is a simple app')],
-                        );
-                      },
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.teal,
-                    foregroundColor: Colors.white,
-                    padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                  ),
-                  child: Text('Open AboutDialog'),
-                ),
-              ),
-              Divider(color: Colors.teal, thickness: 5.0, endIndent: 200.0),
-              Container(height: 50.0, child: VerticalDivider()),
-              ElevatedButton(
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) {
-                      return AlertDialog(
-                        title: Text('Alert Dialog'),
-                        content: Text('This is an alert dialog'),
-                        actions: [
-                          TextButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            child: Text('Cancel'),
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            child: Text('OK'),
-                          ),
-                        ],
-                      );
-                    },
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.teal,
-                  foregroundColor: Colors.white,
-                  padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                ),
-                child: Text('Open AlertDialog'),
-              ),
-              // ElevatedButton(
-              //   onPressed: () {
-              //     Navigator.push(
-              //       context,
-              //       MaterialPageRoute(
-              //         builder: (context) {
-              //           return ExtendedFlexiblePage();
-              //         },
-              //       ),
-              //     );
-              //   },
-              //   child: Text('Show Flexible and Expanded'),
-              // ),
-              FilledButton(onPressed: () {}, child: Text('Submit')),
-              TextButton(onPressed: () {}, child: Text('Submit')),
-              OutlinedButton(onPressed: () {}, child: Text('Submit')),
-              CloseButton(),
-              BackButton(),
-            ],
-          ),
+              title: const Text('Про додаток'),
+              onTap: () {
+                showAboutDialog(
+                  context: context,
+                  applicationName: 'Gym Tracker',
+                  applicationVersion: '1.0.0',
+                  applicationIcon: const Icon(Icons.fitness_center),
+                  children: const [
+                    Text('Додаток для відстеження ваших тренувань.'),
+                  ],
+                );
+              },
+            ),
+          ],
         ),
       ),
     );
