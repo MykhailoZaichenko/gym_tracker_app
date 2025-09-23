@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 // import 'package:gym_tracker_app/data/constants.dart';
 import 'package:gym_tracker_app/data/notiers.dart';
-import 'package:gym_tracker_app/views/pages/home_calendar_page.dart';
-import 'package:gym_tracker_app/views/pages/profile_graf_page.dart';
+import 'package:gym_tracker_app/views/pages/home_calendar_graf_page.dart';
+import 'package:gym_tracker_app/views/pages/profile_page.dart';
 // import 'package:shared_preferences/shared_preferences.dart';
 import 'widgets/navbar_widget.dart';
 
 String? title = 'Gym Tracker';
-List<Widget> pages = [HomeCalendarPage(), ProfileGrafPage()];
+List<Widget> pages = [HomeCalendarGrafPage(), ProfileGrafPage()];
 
 class WidgetTree extends StatelessWidget {
   const WidgetTree({super.key});

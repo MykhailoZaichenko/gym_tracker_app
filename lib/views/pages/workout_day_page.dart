@@ -128,6 +128,20 @@ class _WorkoutDayScreenState extends State<WorkoutDayScreen> {
     });
   }
 
+  void _removeExercise(int index) {
+    setState(() {
+      // видаляємо модель
+      _exercises.removeAt(index);
+
+      // чистимо контролер назви
+      _nameCtrls.removeAt(index).dispose();
+
+      // чистимо контролери ваги й повторів
+      _weightCtrls.removeAt(index).forEach((c) => c.dispose());
+      _repsCtrls.removeAt(index).forEach((c) => c.dispose());
+    });
+  }
+
   @override
   void dispose() {
     // Чистимо контролери
@@ -177,12 +191,32 @@ class _WorkoutDayScreenState extends State<WorkoutDayScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Назва вправи
-                  TextField(
-                    controller: TextEditingController(text: exercise.name),
-                    decoration: const InputDecoration(
-                      labelText: 'Назва вправи',
-                    ),
-                    onChanged: (val) => exercise.name = val,
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: _nameCtrls[i],
+                          decoration: const InputDecoration(
+                            labelText: 'Назва вправи',
+                          ),
+                          onChanged: (val) => exercise.name = val,
+                        ),
+                      ),
+                      PopupMenuButton<String>(
+                        icon: const Icon(Icons.more_vert, size: 20),
+                        onSelected: (value) {
+                          if (value == 'delete') {
+                            _removeExercise(i);
+                          }
+                        },
+                        itemBuilder: (context) => [
+                          PopupMenuItem(
+                            value: 'delete',
+                            child: Text('Видалити вправу'),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 8),
 
