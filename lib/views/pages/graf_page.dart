@@ -22,7 +22,7 @@ class GrafPage extends StatefulWidget {
 }
 
 class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
-  Map<String, List<WorkoutExercise>> _allWorkouts = {};
+  Map<String, List<WorkoutExerciseGraf>> _allWorkouts = {};
   bool _isLoading = true;
 
   List<String> _exerciseNames = [];
@@ -54,7 +54,8 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
       _allWorkouts = decoded.map((key, value) {
         final list = (value as List<dynamic>)
             .map(
-              (item) => WorkoutExercise.fromMap(item as Map<String, dynamic>),
+              (item) =>
+                  WorkoutExerciseGraf.fromMap(item as Map<String, dynamic>),
             )
             .toList();
         return MapEntry(key, list);
@@ -88,7 +89,7 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
       final date = DateTime.parse(dateStr);
       final ex = exercises.firstWhere(
         (e) => e.name == exerciseName,
-        orElse: () => WorkoutExercise(name: '', sets: []),
+        orElse: () => WorkoutExerciseGraf(name: '', sets: []),
       );
       if (ex.name.isEmpty) return;
       double sum = 0;
@@ -182,7 +183,7 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
     final exList = _allWorkouts[key] ?? [];
     final ex = exList.firstWhere(
       (e) => e.name == _selectedExerciseName,
-      orElse: () => WorkoutExercise(name: '', sets: []),
+      orElse: () => WorkoutExerciseGraf(name: '', sets: []),
     );
     if (ex.name.isEmpty) return;
 
@@ -466,14 +467,14 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
 }
 
 /// Модельні класи (як у вас раніше)
-class WorkoutExercise {
+class WorkoutExerciseGraf {
   String name;
   List<SetData> sets;
 
-  WorkoutExercise({required this.name, required this.sets});
+  WorkoutExerciseGraf({required this.name, required this.sets});
 
-  factory WorkoutExercise.fromMap(Map<String, dynamic> m) {
-    return WorkoutExercise(
+  factory WorkoutExerciseGraf.fromMap(Map<String, dynamic> m) {
+    return WorkoutExerciseGraf(
       name: m['name'] as String? ?? '',
       sets: (m['sets'] as List<dynamic>? ?? [])
           .map((e) => SetData.fromMap(e as Map<String, dynamic>))

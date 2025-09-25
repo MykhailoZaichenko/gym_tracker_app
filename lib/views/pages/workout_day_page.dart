@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:gym_tracker_app/data/exercise_catalog.dart';
+import 'package:gym_tracker_app/views/widgets/exercise_picker_widget.dart';
 
 class WorkoutDayScreen extends StatefulWidget {
   final DateTime date;
@@ -104,7 +106,9 @@ class _WorkoutDayScreenState extends State<WorkoutDayScreen> {
 
   void _addExercise() {
     setState(() {
-      _exercises.add(WorkoutExercise(name: '', sets: [SetData()]));
+      _exercises.add(
+        WorkoutExercise(name: '', exerciseId: null, sets: [SetData()]),
+      );
       // додаємо контролери для нової вправи
       _nameCtrls.add(TextEditingController());
       _weightCtrls.add([TextEditingController()]);
@@ -157,6 +161,23 @@ class _WorkoutDayScreenState extends State<WorkoutDayScreen> {
     super.dispose();
   }
 
+  Widget _buildExerciseIconWidget(String name) {
+    final found = kExerciseCatalog.firstWhere(
+      (e) => e.name == name,
+      orElse: () => kExerciseCatalog.isNotEmpty
+          ? kExerciseCatalog.first
+          : ExerciseInfo(id: 'none', name: '', icon: Icons.fitness_center),
+    );
+    final color = name.isEmpty
+        ? Colors.grey.shade300
+        : Theme.of(context).primaryColor;
+    return CircleAvatar(
+      radius: 20,
+      backgroundColor: color.withOpacity(0.12),
+      child: Icon(found.icon, color: color),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
@@ -193,13 +214,81 @@ class _WorkoutDayScreenState extends State<WorkoutDayScreen> {
                   // Назва вправи
                   Row(
                     children: [
+                      _buildExerciseIconWidget(_nameCtrls[i].text),
+                      const SizedBox(width: 8),
                       Expanded(
-                        child: TextField(
-                          controller: _nameCtrls[i],
-                          decoration: const InputDecoration(
-                            labelText: 'Назва вправи',
+                        child: InkWell(
+                          onTap: () async {
+                            final picked = await showExercisePicker(
+                              context,
+                              initialQuery: _nameCtrls[i].text,
+                            );
+                            if (picked != null) {
+                              setState(() {
+                                _nameCtrls[i].text = picked.name;
+                                exercise.name = picked.name;
+                                exercise.exerciseId = picked.id;
+                              });
+                            } else {
+                              // "Ввести власну назву" — відкриваємо діалог для введення
+                              final custom = await showDialog<String>(
+                                context: context,
+                                builder: (ctx) {
+                                  final ctrl = TextEditingController(
+                                    text: _nameCtrls[i].text,
+                                  );
+                                  return AlertDialog(
+                                    title: const Text('Введіть назву вправи'),
+                                    content: TextField(
+                                      controller: ctrl,
+                                      autofocus: true,
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () =>
+                                            Navigator.of(ctx).pop(),
+                                        child: const Text('Відміна'),
+                                      ),
+                                      TextButton(
+                                        onPressed: () => Navigator.of(
+                                          ctx,
+                                        ).pop(ctrl.text.trim()),
+                                        child: const Text('OK'),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                              if (custom != null && custom.isNotEmpty) {
+                                setState(() {
+                                  _nameCtrls[i].text = custom;
+                                  exercise.name = custom;
+                                  exercise.exerciseId = null;
+                                });
+                              }
+                            }
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    _nameCtrls[i].text.isEmpty
+                                        ? 'Оберіть вправу'
+                                        : _nameCtrls[i].text,
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: _nameCtrls[i].text.isEmpty
+                                          ? Colors.grey
+                                          : null,
+                                    ),
+                                  ),
+                                ),
+                                const Icon(Icons.arrow_drop_down),
+                              ],
+                            ),
                           ),
-                          onChanged: (val) => exercise.name = val,
                         ),
                       ),
                       PopupMenuButton<String>(
@@ -342,13 +431,15 @@ class _WorkoutDayScreenState extends State<WorkoutDayScreen> {
 
 class WorkoutExercise {
   String name;
+  String? exerciseId; // nullable id із каталогу (нове поле)
   List<SetData> sets;
 
-  WorkoutExercise({required this.name, required this.sets});
+  WorkoutExercise({required this.name, this.exerciseId, required this.sets});
 
   factory WorkoutExercise.fromMap(Map<String, dynamic> m) {
     return WorkoutExercise(
-      name: m['name'] as String? ?? 'Нова вправа',
+      name: m['name'] as String? ?? '',
+      exerciseId: m['exerciseId'] as String?,
       sets: (m['sets'] as List<dynamic>? ?? [])
           .map((e) => SetData.fromMap(e as Map<String, dynamic>))
           .toList(),
@@ -357,6 +448,7 @@ class WorkoutExercise {
 
   Map<String, dynamic> toMap() => {
     'name': name,
+    if (exerciseId != null) 'exerciseId': exerciseId,
     'sets': sets.map((s) => s.toMap()).toList(),
   };
 }
