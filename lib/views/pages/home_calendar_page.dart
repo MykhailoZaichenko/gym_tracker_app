@@ -1,17 +1,18 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:gym_tracker_app/views/pages/graf_page.dart';
 import 'package:gym_tracker_app/views/pages/workout_day_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:table_calendar/table_calendar.dart';
 
-class HomeCalendarGrafPage extends StatefulWidget {
-  const HomeCalendarGrafPage({Key? key}) : super(key: key);
+class HomeCalendarPage extends StatefulWidget {
+  const HomeCalendarPage({Key? key}) : super(key: key);
   @override
-  _HomeCalendarGrafPageState createState() => _HomeCalendarGrafPageState();
+  _HomeCalendarPageState createState() => _HomeCalendarPageState();
 }
 
-class _HomeCalendarGrafPageState extends State<HomeCalendarGrafPage> {
+class _HomeCalendarPageState extends State<HomeCalendarPage> {
   late Map<String, List<WorkoutExercise>> _allWorkouts;
   bool _isLoading = true;
 
@@ -81,6 +82,7 @@ class _HomeCalendarGrafPageState extends State<HomeCalendarGrafPage> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     if (_isLoading) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
@@ -94,9 +96,9 @@ class _HomeCalendarGrafPageState extends State<HomeCalendarGrafPage> {
             icon: const Icon(Icons.bar_chart),
             tooltip: 'Прогрес',
             onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const HomeCalendarGrafPage()),
-              );
+              Navigator.of(
+                context,
+              ).push(MaterialPageRoute(builder: (_) => GrafPage()));
             },
           ),
         ],
@@ -114,15 +116,17 @@ class _HomeCalendarGrafPageState extends State<HomeCalendarGrafPage> {
                 _allWorkouts[_keyOf(day)] ?? <WorkoutExercise>[],
             calendarStyle: CalendarStyle(
               markerDecoration: BoxDecoration(
-                color: Theme.of(context).primaryColor,
+                color: isDark
+                    ? Theme.of(context).primaryColorLight
+                    : Theme.of(context).primaryColorDark,
                 shape: BoxShape.circle,
               ),
               todayDecoration: BoxDecoration(
-                color: Colors.orangeAccent,
+                color: Colors.blue,
                 shape: BoxShape.circle,
               ),
               selectedDecoration: BoxDecoration(
-                color: Theme.of(context).primaryColorDark,
+                color: isDark ? Colors.blueGrey : Colors.blue[300],
                 shape: BoxShape.circle,
               ),
             ),
@@ -153,7 +157,7 @@ class _HomeCalendarGrafPageState extends State<HomeCalendarGrafPage> {
                   const SizedBox(height: 8),
                   if (_selectedExercises.isEmpty)
                     const Text(
-                      'Немає вправ на цей день',
+                      'Немає вправ за цей день',
                       style: TextStyle(color: Colors.grey),
                     )
                   else
