@@ -1,10 +1,10 @@
 // lib/views/pages/graf_page.dart
 //
-// Сторінка графіків прогресу за інструкціями:
+// Сторінка графіків прогресу (без тижня):
 // - Dropdown для вибору вправи
-// - Tabs: Тиждень / Місяць / Рік
+// - Tabs: Місяць / Рік
 // - Перелистування місяців у режимі Місяць
-// - X: дні тижня/дні місяця/місяці; Y: сумарна піднята вага за день (sum(weight * reps))
+// - X: дні місяця / місяці; Y: сумарна піднята вага за день (sum(weight * reps))
 // - Тап по точці відкриває діалог зі списком сетів (вага і повтори)
 
 import 'dart:convert';
@@ -12,7 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-enum RangeMode { week, month, year }
+enum RangeMode { month, year }
 
 class GrafPage extends StatefulWidget {
   const GrafPage({Key? key}) : super(key: key);
@@ -22,7 +22,7 @@ class GrafPage extends StatefulWidget {
 }
 
 class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
-  Map<String, List<WorkoutExerciseGraf>> _allWorkouts = {};
+  Map<String, List<WorkoutExercise>> _allWorkouts = {};
   bool _isLoading = true;
 
   List<String> _exerciseNames = [];
@@ -37,7 +37,7 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 2, vsync: this);
     _tabController.addListener(() {
       if (!_tabController.indexIsChanging) {
         setState(() => _range = RangeMode.values[_tabController.index]);
@@ -54,8 +54,7 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
       _allWorkouts = decoded.map((key, value) {
         final list = (value as List<dynamic>)
             .map(
-              (item) =>
-                  WorkoutExerciseGraf.fromMap(item as Map<String, dynamic>),
+              (item) => WorkoutExercise.fromMap(item as Map<String, dynamic>),
             )
             .toList();
         return MapEntry(key, list);
@@ -89,7 +88,7 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
       final date = DateTime.parse(dateStr);
       final ex = exercises.firstWhere(
         (e) => e.name == exerciseName,
-        orElse: () => WorkoutExerciseGraf(name: '', sets: []),
+        orElse: () => WorkoutExercise(name: '', sets: []),
       );
       if (ex.name.isEmpty) return;
       double sum = 0;
@@ -111,16 +110,6 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
     Iterable<MapEntry<DateTime, double>> entries = acc.entries;
 
     switch (_range) {
-      case RangeMode.week:
-        final start = DateTime(
-          now.year,
-          now.month,
-          now.day,
-        ).subtract(const Duration(days: 6));
-        entries = entries.where(
-          (e) => !e.key.isBefore(start) && !e.key.isAfter(now),
-        );
-        break;
       case RangeMode.month:
         final first = DateTime(_visibleMonth.year, _visibleMonth.month, 1);
         final last = DateTime(
@@ -150,18 +139,6 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
     if (entries.isEmpty) return spots;
 
     switch (_range) {
-      case RangeMode.week:
-        final now = DateTime.now();
-        final start = DateTime(
-          now.year,
-          now.month,
-          now.day,
-        ).subtract(const Duration(days: 6));
-        for (final e in entries) {
-          final x = e.key.difference(start).inDays.toDouble(); // 0..6
-          spots.add(FlSpot(x, e.value));
-        }
-        break;
       case RangeMode.month:
         for (final e in entries) {
           spots.add(FlSpot(e.key.day.toDouble(), e.value));
@@ -190,15 +167,6 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
   // отримати дату з координати X (для тапу по точці)
   DateTime? _xToDate(double x) {
     switch (_range) {
-      case RangeMode.week:
-        final today = DateTime.now();
-        final start = DateTime(
-          today.year,
-          today.month,
-          today.day,
-        ).subtract(const Duration(days: 6));
-        final day = start.add(Duration(days: x.round()));
-        return DateTime(day.year, day.month, day.day);
       case RangeMode.month:
         final dayNum = x.round();
         return DateTime(_visibleMonth.year, _visibleMonth.month, dayNum);
@@ -214,7 +182,7 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
     final exList = _allWorkouts[key] ?? [];
     final ex = exList.firstWhere(
       (e) => e.name == _selectedExerciseName,
-      orElse: () => WorkoutExerciseGraf(name: '', sets: []),
+      orElse: () => WorkoutExercise(name: '', sets: []),
     );
     if (ex.name.isEmpty) return;
 
@@ -271,8 +239,6 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
 
   double _bottomInterval() {
     switch (_range) {
-      case RangeMode.week:
-        return 1;
       case RangeMode.month:
         return 5;
       case RangeMode.year:
@@ -282,10 +248,6 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
 
   Widget _buildBottomTitle(double value) {
     switch (_range) {
-      case RangeMode.week:
-        final start = DateTime.now().subtract(const Duration(days: 6));
-        final day = start.add(Duration(days: value.round()));
-        return Text('${day.day}', style: const TextStyle(fontSize: 11));
       case RangeMode.month:
         return Text('${value.round()}', style: const TextStyle(fontSize: 11));
       case RangeMode.year:
@@ -329,7 +291,7 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
 
     double maxY = 1;
     for (final s in spots) if (s.y > maxY) maxY = s.y;
-    final yInterval = (maxY <= 0) ? 1 : (maxY / 4);
+    final double yInterval = (maxY <= 0) ? 1.0 : (maxY / 4).toDouble();
 
     return Scaffold(
       appBar: AppBar(title: const Text('Прогрес — графіки'), centerTitle: true),
@@ -361,7 +323,6 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
               unselectedLabelColor: Theme.of(context).colorScheme.onSurface,
               indicatorColor: Theme.of(context).colorScheme.secondary,
               tabs: const [
-                Tab(text: 'Тиждень'),
                 Tab(text: 'Місяць'),
                 Tab(text: 'Рік'),
               ],
@@ -417,7 +378,7 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
                                     leftTitles: AxisTitles(
                                       sideTitles: SideTitles(
                                         showTitles: true,
-                                        interval: yInterval.toDouble(),
+                                        interval: yInterval,
                                         getTitlesWidget: (val, meta) => Text(
                                           _formatY(val),
                                           style: const TextStyle(fontSize: 11),
@@ -505,14 +466,14 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
 }
 
 /// Модельні класи (як у вас раніше)
-class WorkoutExerciseGraf {
+class WorkoutExercise {
   String name;
   List<SetData> sets;
 
-  WorkoutExerciseGraf({required this.name, required this.sets});
+  WorkoutExercise({required this.name, required this.sets});
 
-  factory WorkoutExerciseGraf.fromMap(Map<String, dynamic> m) {
-    return WorkoutExerciseGraf(
+  factory WorkoutExercise.fromMap(Map<String, dynamic> m) {
+    return WorkoutExercise(
       name: m['name'] as String? ?? '',
       sets: (m['sets'] as List<dynamic>? ?? [])
           .map((e) => SetData.fromMap(e as Map<String, dynamic>))
