@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/views/pages/login_page.dart';
+import 'package:gym_tracker_app/views/pages/register_page.dart';
 import 'package:lottie/lottie.dart';
 
 class OnboardingPage extends StatelessWidget {
@@ -38,13 +39,12 @@ class OnboardingPage extends StatelessWidget {
                 SizedBox(height: 20.0),
                 FilledButton(
                   onPressed: () {
-                    Navigator.push(
+                    Navigator.pushAndRemoveUntil(
                       context,
                       MaterialPageRoute(
-                        builder: (context) {
-                          return const LoginPage(title: 'Register');
-                        },
+                        builder: (_) => const RegisterPage(title: 'Register'),
                       ),
+                      (route) => false,
                     );
                   },
                   style: ElevatedButton.styleFrom(

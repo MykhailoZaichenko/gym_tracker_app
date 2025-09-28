@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:gym_tracker_app/views/widget_tree.dart';
+import 'package:gym_tracker_app/views/pages/register_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:lottie/lottie.dart';
+import 'package:gym_tracker_app/views/widget_tree.dart';
+import '../../db/app_db.dart';
+import '../../models/user.dart';
+import '../../services/auth_utils.dart';
+import '../../services/auth_service.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key, required this.title});
@@ -11,21 +17,43 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  TextEditingController controllerEmail = TextEditingController(text: '123');
-  TextEditingController controllerPassword = TextEditingController(text: '456');
-  String confirmedEmail = '123';
-  String confirmedPassword = '456';
-  // @override
-  // void initState() {
-  //   print('inti state called');
-  //   super.initState();
-  // }
+  final TextEditingController controllerEmail = TextEditingController();
+  final TextEditingController controllerPassword = TextEditingController();
+
+  final AuthService _auth = AuthService();
+  bool _loading = false;
 
   @override
-  dispose() {
+  void dispose() {
     controllerEmail.dispose();
     controllerPassword.dispose();
     super.dispose();
+  }
+
+  Future<void> _persistUserId(int id) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('current_user_id', id);
+  }
+
+  Future<int?> _readPersistedUserId() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getInt('current_user_id');
+  }
+
+  Future<void> _tryAutoLogin() async {
+    final id = await _readPersistedUserId();
+    if (id != null) {
+      final user = await AppDb().getUserById(id);
+      if (user != null) {
+        _goToApp();
+      }
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _tryAutoLogin();
   }
 
   @override
@@ -45,7 +73,6 @@ class _LoginPageState extends State<LoginPage> {
                   child: Column(
                     children: [
                       isDark
-                          // У темному режимі — біла анімація
                           ? ColorFiltered(
                               colorFilter: const ColorFilter.mode(
                                 Colors.white,
@@ -53,51 +80,86 @@ class _LoginPageState extends State<LoginPage> {
                               ),
                               child: Lottie.asset(
                                 'assets/lotties/dumbell.json',
-                                height: 400,
+                                height: 300,
                               ),
                             )
-                          // В світлому режимі — без фільтра (оригінальні кольори)
                           : Lottie.asset(
                               'assets/lotties/dumbell.json',
-                              height: 400,
+                              height: 300,
                             ),
-                      SizedBox(height: 20.0),
+                      // const SizedBox(height: 8.0),
+                      Text(
+                        'Ввійти в обліковий запис',
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
+                      const SizedBox(height: 20),
                       TextField(
                         controller: controllerEmail,
                         decoration: InputDecoration(
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(15.0),
                           ),
-                          hintText: 'Enter username',
-                          labelText: 'Username',
+                          hintText: 'Enter email',
+                          labelText: 'Email',
                         ),
-                        onEditingComplete: () {
-                          setState(() {});
-                        },
+                        keyboardType: TextInputType.emailAddress,
+                        onEditingComplete: () => setState(() {}),
                       ),
-                      SizedBox(height: 10.0),
+                      const SizedBox(height: 10.0),
                       TextField(
                         controller: controllerPassword,
                         decoration: InputDecoration(
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(15.0),
                           ),
-                          hintText: 'Enter paswsword',
-                          labelText: 'Passwords',
+                          hintText: 'Enter password',
+                          labelText: 'Password',
                         ),
-                        onEditingComplete: () {
-                          setState(() {});
-                        },
+                        obscureText: true,
+                        onEditingComplete: () => setState(() {}),
                       ),
-                      SizedBox(height: 20.0),
-                      FilledButton(
-                        onPressed: () {
-                          onLoginPressed();
-                        },
-                        style: ElevatedButton.styleFrom(
-                          minimumSize: Size(double.infinity, 50.0),
+                      const SizedBox(height: 20.0),
+                      SizedBox(
+                        width: double.infinity,
+                        height: 50,
+                        child: FilledButton(
+                          onPressed: _loading ? null : _onLoginPressed,
+                          style: ElevatedButton.styleFrom(
+                            minimumSize: const Size.fromHeight(50),
+                          ),
+                          child: _loading
+                              ? const CircularProgressIndicator(
+                                  color: Colors.white,
+                                )
+                              : Text(widget.title),
                         ),
-                        child: Text(widget.title),
+                      ),
+                      const SizedBox(height: 12),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          TextButton(
+                            onPressed: _loading
+                                ? null
+                                : () {
+                                    Navigator.pushAndRemoveUntil(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) => const RegisterPage(
+                                          title: 'Register',
+                                        ),
+                                      ),
+                                      (route) => false,
+                                    );
+                                  },
+                            child: const Text('Register'),
+                          ),
+                          const SizedBox(width: 8),
+                          TextButton(
+                            onPressed: _loading ? null : _onForgotPressed,
+                            child: const Text('Forgot password'),
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -110,26 +172,114 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  void onLoginPressed() {
-    String email = controllerEmail.text;
-    String password = controllerPassword.text;
-    if (confirmedEmail == email && confirmedPassword == password) {
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(
-          builder: (context) {
-            return const WidgetTree();
-          },
-        ),
-        (route) => false,
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Invalid username or password'),
-          duration: Duration(seconds: 2),
-        ),
-      );
+  Future<void> _onLoginPressed() async {
+    final email = controllerEmail.text.trim();
+    final password = controllerPassword.text;
+    if (email.isEmpty || password.isEmpty) {
+      _showMessage('Email and password are required');
+      return;
     }
+
+    setState(() => _loading = true);
+    try {
+      final user = await _auth.login(email: email, password: password);
+      if (user == null) {
+        _showMessage('Invalid email or password');
+      } else {
+        await _persistUserId(user.id!);
+        _goToApp();
+      }
+    } catch (e) {
+      _showMessage('Login error: ${e.toString()}');
+    } finally {
+      if (mounted) setState(() => _loading = false);
+    }
+  }
+
+  Future<void> _onForgotPressed() async {
+    final emailCtrl = TextEditingController(text: controllerEmail.text.trim());
+    await showDialog<void>(
+      context: context,
+      builder: (ctx) {
+        return AlertDialog(
+          title: const Text('Reset password (local)'),
+          content: TextField(
+            controller: emailCtrl,
+            decoration: const InputDecoration(labelText: 'Email'),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () async {
+                final email = emailCtrl.text.trim();
+                if (email.isEmpty) {
+                  _showMessage('Email required');
+                  return;
+                }
+                final user = await AppDb().getUserByEmail(email);
+                if (user == null) {
+                  _showMessage('No user with that email');
+                } else {
+                  // local reset: ask for new password
+                  Navigator.of(ctx).pop();
+                  final newPwCtrl = TextEditingController();
+                  await showDialog<void>(
+                    context: context,
+                    builder: (ctx2) {
+                      return AlertDialog(
+                        title: const Text('Enter new password'),
+                        content: TextField(
+                          controller: newPwCtrl,
+                          decoration: const InputDecoration(
+                            labelText: 'New password',
+                          ),
+                          obscureText: true,
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.of(ctx2).pop(),
+                            child: const Text('Cancel'),
+                          ),
+                          TextButton(
+                            onPressed: () async {
+                              final newPw = newPwCtrl.text;
+                              if (newPw.isEmpty) {
+                                _showMessage('Password required');
+                                return;
+                              }
+                              await _auth.changePassword(user.id!, newPw);
+                              Navigator.of(ctx2).pop();
+                              _showMessage('Password updated');
+                            },
+                            child: const Text('Save'),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                }
+              },
+              child: const Text('Reset'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _goToApp() {
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => const WidgetTree()),
+      (route) => false,
+    );
+  }
+
+  void _showMessage(String text) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(text)));
   }
 }

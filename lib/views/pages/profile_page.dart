@@ -1,12 +1,47 @@
+// lib/views/pages/profile_graf_page.dart
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:gym_tracker_app/data/notiers.dart';
 import 'package:gym_tracker_app/views/pages/settings_page.dart';
 import 'package:gym_tracker_app/views/pages/welcome_page.dart';
+import '../../db/app_db.dart';
+import '../../models/user.dart';
 
-class ProfileGrafPage extends StatelessWidget {
+class ProfileGrafPage extends StatefulWidget {
   const ProfileGrafPage({Key? key}) : super(key: key);
 
-  // Утиліта для створення картки зі статистикою
+  @override
+  State<ProfileGrafPage> createState() => _ProfileGrafPageState();
+}
+
+class _ProfileGrafPageState extends State<ProfileGrafPage> {
+  User? _user;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCurrentUser();
+  }
+
+  Future<void> _loadCurrentUser() async {
+    final prefs = await SharedPreferences.getInstance();
+    final userId = prefs.getInt('current_user_id');
+    if (userId == null) {
+      setState(() {
+        _isLoading = false;
+        _user = null;
+      });
+      return;
+    }
+
+    final user = await AppDb().getUserById(userId);
+    setState(() {
+      _user = user;
+      _isLoading = false;
+    });
+  }
+
   Widget _buildStatCard(
     BuildContext context, {
     required IconData icon,
@@ -15,7 +50,6 @@ class ProfileGrafPage extends StatelessWidget {
   }) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    // Динамічний колір для іконки та значення
     final iconColor = isDark ? Colors.white : theme.primaryColor;
     final valueColor = iconColor;
     final labelColor = isDark ? Colors.white70 : Colors.grey;
@@ -58,7 +92,9 @@ class ProfileGrafPage extends StatelessWidget {
             child: const Text('Ні'),
           ),
           TextButton(
-            onPressed: () {
+            onPressed: () async {
+              final prefs = await SharedPreferences.getInstance();
+              await prefs.remove('current_user_id');
               selectedPageNotifier.value = 0;
               Navigator.of(ctx).pushReplacement(
                 MaterialPageRoute(builder: (_) => const WelcomePage()),
@@ -73,107 +109,109 @@ class ProfileGrafPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final name = _user?.name ?? 'Гість';
+    final email = _user?.email ?? 'Немає email';
     return Scaffold(
       appBar: AppBar(
         title: const Text('Профіль користувача'),
         centerTitle: true,
       ),
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            children: [
-              // ——— Аватар та ім'я ———
-              CircleAvatar(
-                radius: 50,
-                backgroundColor: Theme.of(context).primaryColor,
-                child: const Icon(Icons.person, size: 50, color: Colors.white),
-              ),
-              const SizedBox(height: 12),
-              Text(
-                'Імʼя Прізвище',
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
-              const SizedBox(height: 4),
-              Text(
-                'email@example.com',
-                style: Theme.of(
-                  context,
-                ).textTheme.titleMedium?.copyWith(color: Colors.grey),
-              ),
-
-              const SizedBox(height: 24),
-
-              // ——— Статистика ———
-              Row(
-                children: [
-                  _buildStatCard(
-                    context,
-                    icon: Icons.fitness_center,
-                    label: 'Тренувань',
-                    value: '42',
-                  ),
-                  const SizedBox(width: 8),
-                  _buildStatCard(
-                    context,
-                    icon: Icons.local_fire_department,
-                    label: 'Калорій',
-                    value: '1 234',
-                  ),
-                  const SizedBox(width: 8),
-                  _buildStatCard(
-                    context,
-                    icon: Icons.access_time,
-                    label: 'Годин',
-                    value: '12',
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 24),
-
-              // ——— Налаштування профілю ———
-              Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                elevation: 1,
+        child: _isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : SingleChildScrollView(
+                padding: const EdgeInsets.all(20),
                 child: Column(
                   children: [
-                    ListTile(
-                      leading: const Icon(Icons.edit),
-                      title: const Text('Редагувати профіль'),
-                      onTap: () {
-                        // TODO: перейти на екран редагування
-                      },
+                    // Аватар та ім'я
+                    CircleAvatar(
+                      radius: 50,
+                      backgroundColor: Theme.of(context).primaryColor,
+                      child: const Icon(
+                        Icons.person,
+                        size: 50,
+                        color: Colors.white,
+                      ),
                     ),
-                    const Divider(height: 1),
-                    ListTile(
-                      leading: const Icon(Icons.settings),
-                      title: const Text('Налаштування'),
-                      onTap: () {
-                        Navigator.push(
+                    const SizedBox(height: 12),
+                    Text(name, style: Theme.of(context).textTheme.titleLarge),
+                    const SizedBox(height: 4),
+                    Text(
+                      email,
+                      style: Theme.of(
+                        context,
+                      ).textTheme.titleMedium?.copyWith(color: Colors.grey),
+                    ),
+                    const SizedBox(height: 24),
+
+                    // Статистика (тимчасові значення — заміни на реальні з бази коли з'являться)
+                    Row(
+                      children: [
+                        _buildStatCard(
                           context,
-                          MaterialPageRoute(
-                            builder: (context) {
-                              return SettingsPage();
+                          icon: Icons.fitness_center,
+                          label: 'Тренувань',
+                          value: '0',
+                        ),
+                        const SizedBox(width: 8),
+                        _buildStatCard(
+                          context,
+                          icon: Icons.local_fire_department,
+                          label: 'Калорій',
+                          value: '0',
+                        ),
+                        const SizedBox(width: 8),
+                        _buildStatCard(
+                          context,
+                          icon: Icons.access_time,
+                          label: 'Годин',
+                          value: '0',
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 24),
+
+                    // Налаштування профілю
+                    Card(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      elevation: 1,
+                      child: Column(
+                        children: [
+                          ListTile(
+                            leading: const Icon(Icons.edit),
+                            title: const Text('Редагувати профіль'),
+                            onTap: () {
+                              // TODO: реалізувати редагування профілю (наприклад, Modal або окрема сторінка)
+                              // Можна передати _user і дозволити змінювати name/email, оновити через AppDb().updateUser(...)
                             },
                           ),
-                        );
-                      },
-                    ),
-                    const Divider(height: 1),
-                    ListTile(
-                      leading: const Icon(Icons.logout),
-                      title: const Text('Вийти'),
-                      onTap: () => _confirmLogout(context),
+                          const Divider(height: 1),
+                          ListTile(
+                            leading: const Icon(Icons.settings),
+                            title: const Text('Налаштування'),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const SettingsPage(),
+                                ),
+                              );
+                            },
+                          ),
+                          const Divider(height: 1),
+                          ListTile(
+                            leading: const Icon(Icons.logout),
+                            title: const Text('Вийти'),
+                            onTap: () => _confirmLogout(context),
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
               ),
-            ],
-          ),
-        ),
       ),
     );
   }
