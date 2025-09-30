@@ -1,16 +1,17 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:gym_tracker_app/models/workout_exercise_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:gym_tracker_app/data/exercise_catalog.dart';
 import 'package:gym_tracker_app/views/widgets/exercise_picker_widget.dart';
 
-class WorkoutDayScreen extends StatefulWidget {
+class WorkoutDayPage extends StatefulWidget {
   final DateTime date;
   final List<WorkoutExercise> exercises;
   final void Function(List<WorkoutExercise>) onSave;
 
-  const WorkoutDayScreen({
+  const WorkoutDayPage({
     Key? key,
     required this.date,
     required this.exercises,
@@ -18,10 +19,10 @@ class WorkoutDayScreen extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _WorkoutDayScreenState createState() => _WorkoutDayScreenState();
+  _WorkoutDayPageState createState() => _WorkoutDayPageState();
 }
 
-class _WorkoutDayScreenState extends State<WorkoutDayScreen> {
+class _WorkoutDayPageState extends State<WorkoutDayPage> {
   late List<WorkoutExercise> _exercises = [];
 
   bool _isLoading = true;
@@ -425,46 +426,4 @@ class _WorkoutDayScreenState extends State<WorkoutDayScreen> {
       ),
     );
   }
-}
-
-// ---- Модель ----
-
-class WorkoutExercise {
-  String name;
-  String? exerciseId; // nullable id із каталогу (нове поле)
-  List<SetData> sets;
-
-  WorkoutExercise({required this.name, this.exerciseId, required this.sets});
-
-  factory WorkoutExercise.fromMap(Map<String, dynamic> m) {
-    return WorkoutExercise(
-      name: m['name'] as String? ?? '',
-      exerciseId: m['exerciseId'] as String?,
-      sets: (m['sets'] as List<dynamic>? ?? [])
-          .map((e) => SetData.fromMap(e as Map<String, dynamic>))
-          .toList(),
-    );
-  }
-
-  Map<String, dynamic> toMap() => {
-    'name': name,
-    if (exerciseId != null) 'exerciseId': exerciseId,
-    'sets': sets.map((s) => s.toMap()).toList(),
-  };
-}
-
-class SetData {
-  double? weight;
-  int? reps;
-
-  SetData({this.weight, this.reps});
-
-  factory SetData.fromMap(Map<String, dynamic> m) {
-    return SetData(
-      weight: (m['weight'] as num?)?.toDouble(),
-      reps: m['reps'] as int?,
-    );
-  }
-
-  Map<String, dynamic> toMap() => {'weight': weight, 'reps': reps};
 }

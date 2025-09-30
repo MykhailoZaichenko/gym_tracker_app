@@ -118,12 +118,11 @@ class _RegisterPageState extends State<RegisterPage> {
                         child: Lottie.asset('assets/lotties/dumbell.json'),
                       )
                     : Lottie.asset('assets/lotties/dumbell.json'),
-                const SizedBox(height: 8),
                 Text(
                   'Створити обліковий запис',
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 20),
                 TextFormField(
                   controller: _emailCtrl,
                   decoration: InputDecoration(

@@ -1,5 +1,5 @@
 import '../db/app_db.dart';
-import '../models/user.dart';
+import '../models/user_model.dart';
 import 'auth_utils.dart';
 
 class AuthService {

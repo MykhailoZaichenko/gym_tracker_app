@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
-import '../models/user.dart';
+import '../models/user_model.dart';
 
 class AppDb {
   static final AppDb _instance = AppDb._internal();
@@ -19,7 +19,13 @@ class AppDb {
   Future<Database> _init() async {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, 'app.db');
-    return openDatabase(path, version: 1, onCreate: _onCreate);
+    // Збільшуємо версію до 2, щоб застосувати міграцію додавання колонки weightKg
+    return openDatabase(
+      path,
+      version: 2,
+      onCreate: _onCreate,
+      onUpgrade: _onUpgrade,
+    );
   }
 
   FutureOr<void> _onCreate(Database db, int version) async {
@@ -30,9 +36,23 @@ class AppDb {
         name TEXT NOT NULL,
         passwordHash TEXT NOT NULL,
         salt TEXT NOT NULL,
-        avatarUrl TEXT
+        avatarUrl TEXT,
+        weightKg REAL
       );
     ''');
+  }
+
+  FutureOr<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    if (oldVersion < 2 && newVersion >= 2) {
+      // Додаємо колонку weightKg у таблицю users
+      try {
+        await db.execute('ALTER TABLE users ADD COLUMN weightKg REAL;');
+      } catch (e) {
+        // Якщо колонка вже існує або інша помилка, ігноруємо, але логувати корисно під час розробки
+        // print('Migration to v2: $e');
+      }
+    }
+    // Майбутні міграції додавай тут
   }
 
   // DAO: create user

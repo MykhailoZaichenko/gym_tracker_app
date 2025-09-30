@@ -5,6 +5,7 @@ class User {
   final String passwordHash; // хеш пароля (sha256 + salt)
   final String salt; // унікальна сіль для кожного користувача
   final String? avatarUrl; // опціонально
+  final double? weightKg; // нове поле
 
   User({
     this.id,
@@ -13,6 +14,7 @@ class User {
     required this.passwordHash,
     required this.salt,
     this.avatarUrl,
+    this.weightKg,
   });
 
   User copyWith({
@@ -22,6 +24,7 @@ class User {
     String? passwordHash,
     String? salt,
     String? avatarUrl,
+    double? weightKg,
   }) {
     return User(
       id: id ?? this.id,
@@ -30,6 +33,7 @@ class User {
       passwordHash: passwordHash ?? this.passwordHash,
       salt: salt ?? this.salt,
       avatarUrl: avatarUrl ?? this.avatarUrl,
+      weightKg: weightKg ?? this.weightKg,
     );
   }
 
@@ -41,6 +45,7 @@ class User {
       'passwordHash': passwordHash,
       'salt': salt,
       'avatarUrl': avatarUrl,
+      'weightKg': weightKg,
     };
   }
 
@@ -52,6 +57,7 @@ class User {
       passwordHash: m['passwordHash'] as String,
       salt: m['salt'] as String,
       avatarUrl: m['avatarUrl'] as String?,
+      weightKg: (m['weightKg'] as num?)?.toDouble(),
     );
   }
 }

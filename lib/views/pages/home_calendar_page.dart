@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:gym_tracker_app/models/workout_exercise_model.dart';
 import 'package:gym_tracker_app/views/pages/graf_page.dart';
 import 'package:gym_tracker_app/views/pages/workout_day_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -66,7 +67,7 @@ class _HomeCalendarPageState extends State<HomeCalendarPage> {
     );
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (_) => WorkoutDayScreen(
+        builder: (_) => WorkoutDayPage(
           date: date,
           exercises: initialExercises,
           onSave: (newExercises) async {
