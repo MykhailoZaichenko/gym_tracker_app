@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/data/constants.dart';
 import 'package:gym_tracker_app/views/pages/edit_profile_page.dart';
-import 'package:path/path.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:gym_tracker_app/data/notiers.dart';
@@ -176,6 +175,28 @@ class _ProfileGrafPageState extends State<ProfileGrafPage> {
     );
   }
 
+  DateTime _visibleMonth = DateTime.now();
+
+  void _prevMonth() {
+    setState(
+      () => _visibleMonth = DateTime(
+        _visibleMonth.year,
+        _visibleMonth.month - 1,
+        1,
+      ),
+    );
+  }
+
+  void _nextMonth() {
+    setState(
+      () => _visibleMonth = DateTime(
+        _visibleMonth.year,
+        _visibleMonth.month + 1,
+        1,
+      ),
+    );
+  }
+
   Widget _buildStatCard(
     BuildContext context, {
     required IconData icon,
@@ -251,8 +272,6 @@ class _ProfileGrafPageState extends State<ProfileGrafPage> {
                       ).textTheme.titleMedium?.copyWith(color: Colors.grey),
                     ),
                     const SizedBox(height: 24),
-
-                    // Статистика (тимчасові значення — заміни на реальні з бази коли з'являться)
                     Column(
                       children: [
                         Card(
@@ -276,7 +295,7 @@ class _ProfileGrafPageState extends State<ProfileGrafPage> {
                                       fontWeight: FontWeight.w600,
                                       color: Theme.of(
                                         context,
-                                      ).colorScheme.onBackground,
+                                      ).colorScheme.onSurface,
                                       letterSpacing: 0.2,
                                     ),
                                 textAlign: TextAlign.center,
@@ -284,7 +303,23 @@ class _ProfileGrafPageState extends State<ProfileGrafPage> {
                             ),
                           ),
                         ),
-                        const SizedBox(height: 12),
+                        //Todo: зробити фільтр по місяцях
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            IconButton(
+                              icon: const Icon(Icons.chevron_left),
+                              onPressed: _prevMonth,
+                            ),
+                            Text(
+                              '${_visibleMonth.year} - ${_visibleMonth.month.toString().padLeft(2, '0')}',
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.chevron_right),
+                              onPressed: _nextMonth,
+                            ),
+                          ],
+                        ),
 
                         Row(
                           children: [

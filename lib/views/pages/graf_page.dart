@@ -10,6 +10,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:gym_tracker_app/views/widgets/line_chart_card.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 enum RangeMode { month, year }
@@ -162,7 +163,7 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
     if (v >= 1000000) return '${(v / 1000000).toStringAsFixed(1)}M';
     if (v >= 1000) return '${(v / 1000).toStringAsFixed(1)}k';
     if (v == v.floorToDouble()) return v.toInt().toString();
-    return v.toStringAsFixed(1);
+    return v.toStringAsFixed(0);
   }
 
   // отримати дату з координати X (для тапу по точці)
@@ -368,59 +369,18 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
                         padding: const EdgeInsets.all(12.0),
                         child: Column(
                           children: [
-                            Expanded(
-                              child: LineChart(
-                                LineChartData(
-                                  minY: 0,
-                                  maxY: (maxY <= 0) ? 1 : maxY * 1.15,
-                                  gridData: FlGridData(show: true),
-                                  borderData: FlBorderData(show: true),
-                                  titlesData: FlTitlesData(
-                                    leftTitles: AxisTitles(
-                                      sideTitles: SideTitles(
-                                        showTitles: true,
-                                        interval: yInterval,
-                                        getTitlesWidget: (val, meta) => Text(
-                                          _formatY(val),
-                                          style: const TextStyle(fontSize: 11),
-                                        ),
-                                      ),
-                                    ),
-                                    bottomTitles: AxisTitles(
-                                      sideTitles: SideTitles(
-                                        showTitles: true,
-                                        interval: _bottomInterval(),
-                                        getTitlesWidget: (val, meta) =>
-                                            _buildBottomTitle(val),
-                                      ),
-                                    ),
-                                  ),
-                                  lineBarsData: [
-                                    LineChartBarData(
-                                      spots: spots,
-                                      isCurved: true,
-                                      color: Colors.blue,
-                                      barWidth: 3,
-                                      dotData: FlDotData(show: true),
-                                    ),
-                                  ],
-                                  lineTouchData: LineTouchData(
-                                    touchCallback: (event, response) {
-                                      if (event is FlTapUpEvent &&
-                                          response != null &&
-                                          response.lineBarSpots != null &&
-                                          response.lineBarSpots!.isNotEmpty) {
-                                        final touched =
-                                            response.lineBarSpots!.first;
-                                        final x = touched.x;
-                                        final day = _xToDate(x);
-                                        if (day != null) _onPointTapped(day);
-                                      }
-                                    },
-                                    handleBuiltInTouches: true,
-                                  ),
-                                ),
-                              ),
+                            ProgressLineChart(
+                              spots: spots,
+                              maxY: maxY,
+                              yInterval: yInterval,
+                              range: _range,
+                              bottomInterval: _bottomInterval,
+                              buildBottomTitle: _buildBottomTitle,
+                              formatY: _formatY,
+                              onPointTap: (x) {
+                                final date = _xToDate(x);
+                                if (date != null) _onPointTapped(date);
+                              },
                             ),
                             const SizedBox(height: 8),
                             Row(
@@ -442,7 +402,12 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
             ),
             const SizedBox(height: 8),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              padding: const EdgeInsets.only(
+                bottom: 8.0,
+                top: 4.0,
+                left: 4.0,
+                right: 4.0,
+              ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
