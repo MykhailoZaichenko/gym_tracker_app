@@ -48,7 +48,7 @@ class _MyAppState extends State<MyApp> {
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
             colorScheme: ColorScheme.fromSeed(
-              seedColor: Colors.teal,
+              seedColor: isDarkMode ? Colors.indigo : Colors.teal,
               brightness: Brightness.light,
             ),
           ),

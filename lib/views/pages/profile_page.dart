@@ -1,7 +1,7 @@
-// lib/views/pages/profile_graf_page.dart
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/data/constants.dart';
+import 'package:gym_tracker_app/data/exersise_meta.dart';
 import 'package:gym_tracker_app/views/pages/edit_profile_page.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
@@ -69,9 +69,9 @@ class _ProfileGrafPageState extends State<ProfileGrafPage> {
     if (raw == null) {
       if (!mounted) return;
       setState(() {
-        _totalSets = _totalSets;
-        _totalWeight = _totalWeight;
-        _calMET = _calMET;
+        _totalSets = 0;
+        _totalWeight = 0.0;
+        _calMET = 0.0;
       });
       return;
     }
@@ -81,7 +81,6 @@ class _ProfileGrafPageState extends State<ProfileGrafPage> {
       final parsed = jsonDecode(raw);
       decoded = (parsed is Map<String, dynamic>) ? parsed : <String, dynamic>{};
     } catch (e) {
-      // Некоректний JSON
       if (!mounted) return;
       setState(() {
         _totalSets = 0;
@@ -91,8 +90,17 @@ class _ProfileGrafPageState extends State<ProfileGrafPage> {
       return;
     }
 
-    final now = DateTime.now();
-    final from = now.subtract(Duration(days: 30));
+    // 🔹 Обчислюємо межі поточного видимого місяця
+    final firstDayOfMonth = DateTime(
+      _visibleMonth.year,
+      _visibleMonth.month,
+      1,
+    );
+    final lastDayOfMonth = DateTime(
+      _visibleMonth.year,
+      _visibleMonth.month + 1,
+      0,
+    );
 
     int totalSets = 0;
     double totalWeight = 0.0;
@@ -106,9 +114,11 @@ class _ProfileGrafPageState extends State<ProfileGrafPage> {
       try {
         date = DateTime.parse(dateStr);
       } catch (_) {
-        return; // ігнорувати ключі, які не парсяться
+        return; // ігнорувати некоректні ключі
       }
-      if (date.isBefore(from) || date.isAfter(now)) return;
+      // 🔹 залишаємо лише тренування у вибраному місяці
+      if (date.isBefore(firstDayOfMonth) || date.isAfter(lastDayOfMonth))
+        return;
 
       final List<dynamic> exerciseList = (exercisesRaw is List<dynamic>)
           ? exercisesRaw
@@ -130,6 +140,7 @@ class _ProfileGrafPageState extends State<ProfileGrafPage> {
           final reps = (s['reps'] as num?)?.toInt() ?? 0;
           final weight = (s['weight'] as num?)?.toDouble() ?? 0.0;
           if (reps <= 0) continue;
+
           totalSets += 1;
           totalWeight += weight * reps;
 
@@ -176,25 +187,34 @@ class _ProfileGrafPageState extends State<ProfileGrafPage> {
   }
 
   DateTime _visibleMonth = DateTime.now();
+  String ukmounth = ukrainianMonths[DateTime.now().month - 1];
 
   void _prevMonth() {
-    setState(
-      () => _visibleMonth = DateTime(
-        _visibleMonth.year,
-        _visibleMonth.month - 1,
-        1,
-      ),
-    );
+    setState(() {
+      ukmounth =
+          ukrainianMonths[DateTime(
+                _visibleMonth.year,
+                _visibleMonth.month - 1,
+                1,
+              ).month -
+              1];
+      _visibleMonth = DateTime(_visibleMonth.year, _visibleMonth.month - 1, 1);
+    });
+    _computeStats();
   }
 
   void _nextMonth() {
-    setState(
-      () => _visibleMonth = DateTime(
-        _visibleMonth.year,
-        _visibleMonth.month + 1,
-        1,
-      ),
-    );
+    setState(() {
+      ukmounth =
+          ukrainianMonths[DateTime(
+                _visibleMonth.year,
+                _visibleMonth.month + 1,
+                1,
+              ).month -
+              1];
+      _visibleMonth = DateTime(_visibleMonth.year, _visibleMonth.month + 1, 1);
+    });
+    _computeStats();
   }
 
   Widget _buildStatCard(
@@ -236,8 +256,14 @@ class _ProfileGrafPageState extends State<ProfileGrafPage> {
   }
 
   @override
+  //todo make localization
+  //todo make constant for text styles and use it
+  //todo make separate widgets for profile header, stats, settings list
+  //todo fix color scheme for dark mode
+  //todo add avatar upload
+  //todo fix month navigation (swipe + buttons)
+  //todo fix stats calculation (weight*reps, METs)(use defolt kcarl calculation not met)
   Widget build(BuildContext context) {
-    final now = DateTime.now();
     final name = _user?.name ?? 'Гість';
     final email = _user?.email ?? 'Немає email';
     return Scaffold(
@@ -255,7 +281,7 @@ class _ProfileGrafPageState extends State<ProfileGrafPage> {
                     // Аватар та ім'я
                     CircleAvatar(
                       radius: 50,
-                      backgroundColor: Theme.of(context).primaryColor,
+                      backgroundColor: Theme.of(context).colorScheme.primary,
                       child: const Icon(
                         Icons.person,
                         size: 50,
@@ -267,89 +293,202 @@ class _ProfileGrafPageState extends State<ProfileGrafPage> {
                     const SizedBox(height: 4),
                     Text(
                       email,
-                      style: Theme.of(
-                        context,
-                      ).textTheme.titleMedium?.copyWith(color: Colors.grey),
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        color: isDarkModeNotifier.value
+                            ? Colors.white70
+                            : Colors.grey,
+                      ),
                     ),
                     const SizedBox(height: 24),
-                    Column(
-                      children: [
-                        Card(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          elevation: 2,
-                          child: SizedBox(
-                            width: double
-                                .infinity, // займає всю доступну ширину всередині Padding
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 16,
-                                horizontal: 16,
-                              ), // внутрішній відступ
-                              child: Text(
-                                'Ваш прогрес за ${ukrainianMonths[now.month - 1]}',
-                                style: Theme.of(context).textTheme.titleMedium
-                                    ?.copyWith(
-                                      fontSize: 20.0,
-                                      fontWeight: FontWeight.w600,
-                                      color: Theme.of(
-                                        context,
-                                      ).colorScheme.onSurface,
-                                      letterSpacing: 0.2,
-                                    ),
-                                textAlign: TextAlign.center,
+                    AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 350),
+                      transitionBuilder: (child, animation) {
+                        final offsetAnimation =
+                            Tween<Offset>(
+                              begin: const Offset(0.2, 0),
+                              end: Offset.zero,
+                            ).animate(
+                              CurvedAnimation(
+                                parent: animation,
+                                curve: Curves.easeOutCubic,
                               ),
+                            );
+
+                        final fadeAnimation = CurvedAnimation(
+                          parent: animation,
+                          curve: Curves.easeInOut,
+                        );
+
+                        return SlideTransition(
+                          position: offsetAnimation,
+                          child: FadeTransition(
+                            opacity: fadeAnimation,
+                            child: child,
+                          ),
+                        );
+                      },
+                      child: Container(
+                        key: ValueKey(
+                          '${_visibleMonth.year}-${_visibleMonth.month}',
+                        ),
+                        margin: const EdgeInsets.symmetric(
+                          vertical: 8,
+                          horizontal: 12,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).cardColor,
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.08),
+                              blurRadius: 8,
+                              offset: const Offset(0, 3),
+                            ),
+                          ],
+                          border: Border.all(
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.primary.withOpacity(0.1),
+                            width: 1.2,
+                          ),
+                        ),
+                        child: GestureDetector(
+                          behavior: HitTestBehavior.opaque,
+                          onHorizontalDragEnd: (details) {
+                            if (details.primaryVelocity != null) {
+                              if (details.primaryVelocity! < 0) {
+                                _nextMonth(); // свайп вліво
+                              } else if (details.primaryVelocity! > 0) {
+                                _prevMonth(); // свайп вправо
+                              }
+                            }
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 12,
+                              horizontal: 8,
+                            ),
+                            child: Column(
+                              children: [
+                                // Заголовок з назвою місяця
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 8.0,
+                                  ),
+                                  child: Text(
+                                    'Ваш прогрес за $ukmounth ${_visibleMonth.year}',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium
+                                        ?.copyWith(
+                                          fontSize: 20.0,
+                                          fontWeight: FontWeight.w600,
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.onSurface,
+                                          letterSpacing: 0.2,
+                                        ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+
+                                // Навігація по місяцях
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                    vertical: 6,
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Icon(
+                                        Icons.swipe_left,
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.primary.withOpacity(0.5),
+                                        size: 24,
+                                      ),
+                                      Row(
+                                        children: [
+                                          IconButton(
+                                            icon: const Icon(
+                                              Icons.chevron_left,
+                                            ),
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .primary
+                                                .withOpacity(0.7),
+                                            iconSize: 28,
+                                            onPressed: _prevMonth,
+                                          ),
+                                          Text(
+                                            '${_visibleMonth.year} - ${_visibleMonth.month.toString().padLeft(2, '0')}',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .titleMedium
+                                                ?.copyWith(
+                                                  fontSize: 18.0,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                          ),
+                                          IconButton(
+                                            icon: const Icon(
+                                              Icons.chevron_right,
+                                            ),
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .primary
+                                                .withOpacity(0.7),
+                                            iconSize: 28,
+                                            onPressed: _nextMonth,
+                                          ),
+                                        ],
+                                      ),
+                                      Icon(
+                                        Icons.swipe_right,
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.primary.withOpacity(0.5),
+                                        size: 24,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+
+                                // Статистика за місяць
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    _buildStatCard(
+                                      context,
+                                      icon: Icons.fitness_center,
+                                      label: 'Підходів',
+                                      value: '$_totalSets',
+                                    ),
+                                    const SizedBox(width: 8),
+                                    _buildStatCard(
+                                      context,
+                                      icon: Icons.square_foot,
+                                      label: 'Вага (kg·reps)',
+                                      value: _formatNumber(_totalWeight),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    _buildStatCard(
+                                      context,
+                                      icon: Icons.local_fire_department,
+                                      label: 'Калорії (MET)',
+                                      value: _formatNumber(_calMET),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 8),
+                              ],
                             ),
                           ),
                         ),
-                        //Todo: зробити фільтр по місяцях
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            IconButton(
-                              icon: const Icon(Icons.chevron_left),
-                              onPressed: _prevMonth,
-                            ),
-                            Text(
-                              '${_visibleMonth.year} - ${_visibleMonth.month.toString().padLeft(2, '0')}',
-                            ),
-                            IconButton(
-                              icon: const Icon(Icons.chevron_right),
-                              onPressed: _nextMonth,
-                            ),
-                          ],
-                        ),
-
-                        Row(
-                          children: [
-                            _buildStatCard(
-                              context,
-                              icon: Icons.fitness_center,
-                              label: 'Підходів',
-                              value: '$_totalSets',
-                            ),
-                            const SizedBox(width: 8),
-                            _buildStatCard(
-                              context,
-                              icon: Icons.square_foot,
-                              label: 'Вага (kg·reps)',
-                              value: _formatNumber(_totalWeight),
-                            ),
-                            const SizedBox(width: 8),
-                            _buildStatCard(
-                              context,
-                              icon: Icons.local_fire_department,
-                              label: 'Калорії (MET)',
-                              value: _formatNumber(_calMET),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                      ],
+                      ),
                     ),
-
-                    const SizedBox(height: 24),
 
                     // Налаштування профілю
                     Card(

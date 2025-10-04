@@ -1,6 +1,6 @@
 class WorkoutExercise {
   String name;
-  String? exerciseId; // nullable id із каталогу (нове поле)
+  String? exerciseId;
   List<SetData> sets;
 
   WorkoutExercise({required this.name, this.exerciseId, required this.sets});
