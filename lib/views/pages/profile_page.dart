@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/data/constants.dart';
 import 'package:gym_tracker_app/data/exersise_meta.dart';
@@ -27,6 +28,8 @@ class _ProfileGrafPageState extends State<ProfileGrafPage> {
   int _totalSets = 0;
   double _totalWeight = 0.0;
   double _calMET = 0.0;
+  bool _slideToLeft = true;
+  String get _visibleKey => '${_visibleMonth.year}-${_visibleMonth.month}';
 
   late final VoidCallback _workoutSavedListener;
 
@@ -274,7 +277,7 @@ class _ProfileGrafPageState extends State<ProfileGrafPage> {
       body: SafeArea(
         child: _isLoading
             ? const Center(child: CircularProgressIndicator())
-            : SingleChildScrollView(
+            : Padding(
                 padding: const EdgeInsets.all(20),
                 child: Column(
                   children: [
@@ -299,24 +302,41 @@ class _ProfileGrafPageState extends State<ProfileGrafPage> {
                             : Colors.grey,
                       ),
                     ),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 2.8),
                     AnimatedSwitcher(
                       duration: const Duration(milliseconds: 350),
                       transitionBuilder: (child, animation) {
-                        final offsetAnimation =
-                            Tween<Offset>(
-                              begin: const Offset(0.2, 0),
-                              end: Offset.zero,
-                            ).animate(
-                              CurvedAnimation(
-                                parent: animation,
-                                curve: Curves.easeOutCubic,
-                              ),
-                            );
+                        // childKey — ключ поточного child у AnimatedSwitcher
+                        final childKey = (child.key is ValueKey)
+                            ? (child.key as ValueKey).value.toString()
+                            : null;
+                        final isIncoming = childKey == _visibleKey;
 
-                        final fadeAnimation = CurvedAnimation(
-                          parent: animation,
-                          curve: Curves.easeInOut,
+                        // direction залежить від збереженого прапорця _slideToLeft
+                        // якщо _slideToLeft == true, тоді новий child має заходити справа (від +x) і старий виходити вліво (до -x)
+                        final enterOffset = _slideToLeft
+                            ? const Offset(0.2, 0)
+                            : const Offset(-0.2, 0);
+                        final exitOffset = _slideToLeft
+                            ? const Offset(-0.2, 0)
+                            : const Offset(0.2, 0);
+
+                        final offsetTween = isIncoming
+                            ? Tween<Offset>(
+                                begin: enterOffset,
+                                end: Offset.zero,
+                              )
+                            : Tween<Offset>(
+                                begin: Offset.zero,
+                                end: exitOffset,
+                              );
+
+                        final offsetAnimation = animation
+                            .drive(CurveTween(curve: Curves.easeInCubic))
+                            .drive(offsetTween);
+
+                        final fadeAnimation = animation.drive(
+                          CurveTween(curve: Curves.easeOutCubic),
                         );
 
                         return SlideTransition(
@@ -328,19 +348,14 @@ class _ProfileGrafPageState extends State<ProfileGrafPage> {
                         );
                       },
                       child: Container(
-                        key: ValueKey(
-                          '${_visibleMonth.year}-${_visibleMonth.month}',
-                        ),
-                        margin: const EdgeInsets.symmetric(
-                          vertical: 8,
-                          horizontal: 12,
-                        ),
+                        key: ValueKey(_visibleKey),
+                        margin: const EdgeInsets.symmetric(vertical: 8),
                         decoration: BoxDecoration(
                           color: Theme.of(context).cardColor,
                           borderRadius: BorderRadius.circular(16),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.08),
+                              color: Colors.black.withOpacity(0.08),
                               blurRadius: 8,
                               offset: const Offset(0, 3),
                             ),
@@ -355,12 +370,15 @@ class _ProfileGrafPageState extends State<ProfileGrafPage> {
                         child: GestureDetector(
                           behavior: HitTestBehavior.opaque,
                           onHorizontalDragEnd: (details) {
-                            if (details.primaryVelocity != null) {
-                              if (details.primaryVelocity! < 0) {
-                                _nextMonth(); // свайп вліво
-                              } else if (details.primaryVelocity! > 0) {
-                                _prevMonth(); // свайп вправо
-                              }
+                            if (details.primaryVelocity == null) return;
+                            if (details.primaryVelocity! < 0) {
+                              // свайп вліво — йдемо до наступного місяця, анімація має йти з права наліво
+                              setState(() => _slideToLeft = true);
+                              _nextMonth();
+                            } else if (details.primaryVelocity! > 0) {
+                              // свайп вправо — йдемо до попереднього, анімація має йти зліва направо
+                              setState(() => _slideToLeft = false);
+                              _prevMonth();
                             }
                           },
                           child: Padding(
@@ -420,7 +438,12 @@ class _ProfileGrafPageState extends State<ProfileGrafPage> {
                                                 .primary
                                                 .withOpacity(0.7),
                                             iconSize: 28,
-                                            onPressed: _prevMonth,
+                                            onPressed: () {
+                                              setState(
+                                                () => _slideToLeft = false,
+                                              );
+                                              _prevMonth();
+                                            },
                                           ),
                                           Text(
                                             '${_visibleMonth.year} - ${_visibleMonth.month.toString().padLeft(2, '0')}',
@@ -441,7 +464,12 @@ class _ProfileGrafPageState extends State<ProfileGrafPage> {
                                                 .primary
                                                 .withOpacity(0.7),
                                             iconSize: 28,
-                                            onPressed: _nextMonth,
+                                            onPressed: () {
+                                              setState(
+                                                () => _slideToLeft = true,
+                                              );
+                                              _nextMonth();
+                                            },
                                           ),
                                         ],
                                       ),

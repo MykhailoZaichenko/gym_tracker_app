@@ -18,12 +18,16 @@ class AuthService {
     final pwHash = hashPassword(password, salt);
 
     final user = User(
+      id: null,
       email: email,
       name: name,
       passwordHash: pwHash,
       salt: salt,
+      avatarUrl: null,
+      weightKg: null,
     );
-    return _db.createUser(user);
+    final savedUser = await _db.createUser(user);
+    return savedUser;
   }
 
   // автентифікація (повертає користувача або null)

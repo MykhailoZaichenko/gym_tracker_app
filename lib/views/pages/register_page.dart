@@ -1,10 +1,9 @@
 // lib/views/pages/register_page.dart
 import 'package:flutter/material.dart';
-import 'package:gym_tracker_app/views/pages/login_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:lottie/lottie.dart';
+import 'package:gym_tracker_app/views/pages/login_page.dart';
 import 'package:gym_tracker_app/views/widget_tree.dart';
-import '../../db/app_db.dart';
 import '../../services/auth_service.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -16,11 +15,11 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  final _formKey = GlobalKey<FormState>();
-  final _emailCtrl = TextEditingController();
-  final _nameCtrl = TextEditingController();
-  final _pwCtrl = TextEditingController();
-  final _pwConfirmCtrl = TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final TextEditingController _emailCtrl = TextEditingController();
+  final TextEditingController _nameCtrl = TextEditingController();
+  final TextEditingController _pwCtrl = TextEditingController();
+  final TextEditingController _pwConfirmCtrl = TextEditingController();
 
   final AuthService _auth = AuthService();
   bool _loading = false;
@@ -45,7 +44,12 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   Future<void> _onRegisterPressed() async {
-    if (!_formKey.currentState!.validate()) return;
+    final formState = _formKey.currentState;
+    if (formState == null) {
+      _showMessage('Форма ще не прикріплена до дерева. Спробуй ще раз.');
+      return;
+    }
+    if (!formState.validate()) return;
 
     final email = _emailCtrl.text.trim();
     final name = _nameCtrl.text.trim();
@@ -54,6 +58,14 @@ class _RegisterPageState extends State<RegisterPage> {
     setState(() => _loading = true);
     try {
       final user = await _auth.register(email: email, name: name, password: pw);
+      if (user == null) {
+        _showMessage('Реєстрація не вдалася: сервіс повернув null');
+        return;
+      }
+      if (user.id == null) {
+        _showMessage('Реєстрація пройшла, але ID користувача не отримано');
+        return;
+      }
       await _persistUserId(user.id!);
       _goToApp();
     } catch (e) {
@@ -118,98 +130,111 @@ class _RegisterPageState extends State<RegisterPage> {
                         child: Lottie.asset('assets/lotties/dumbell.json'),
                       )
                     : Lottie.asset('assets/lotties/dumbell.json'),
+                const SizedBox(height: 8),
                 Text(
                   'Створити обліковий запис',
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
                 const SizedBox(height: 20),
-                TextFormField(
-                  controller: _emailCtrl,
-                  decoration: InputDecoration(
-                    labelText: 'Email',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                  keyboardType: TextInputType.emailAddress,
-                  validator: _validateEmail,
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                ),
-                const SizedBox(height: 12),
-                TextFormField(
-                  controller: _nameCtrl,
-                  decoration: InputDecoration(
-                    labelText: 'Name',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                  validator: _validateName,
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                ),
-                const SizedBox(height: 12),
-                TextFormField(
-                  controller: _pwCtrl,
-                  decoration: InputDecoration(
-                    labelText: 'Password',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                  obscureText: true,
-                  validator: _validatePassword,
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                ),
-                const SizedBox(height: 12),
-                TextFormField(
-                  controller: _pwConfirmCtrl,
-                  decoration: InputDecoration(
-                    labelText: 'Confirm Password',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                  obscureText: true,
-                  validator: _validatePasswordConfirm,
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                ),
-                const SizedBox(height: 18),
-                SizedBox(
-                  width: double.infinity,
-                  height: 48,
-                  child: FilledButton(
-                    onPressed: _loading ? null : _onRegisterPressed,
-                    style: ElevatedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                    child: _loading
-                        ? const CircularProgressIndicator(color: Colors.white)
-                        : const Text('Register'),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text('Already have account? '),
-                    TextButton(
-                      onPressed: _loading
-                          ? null
-                          : () => Navigator.pushAndRemoveUntil(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) {
-                                  return const LoginPage(title: 'Log in');
-                                },
-                              ),
-                              (route) => false,
-                            ),
 
-                      child: const Text("Log In"),
-                    ),
-                  ],
+                // IMPORTANT: Form with key attached so currentState is not null
+                Form(
+                  key: _formKey,
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  child: Column(
+                    children: [
+                      TextFormField(
+                        controller: _emailCtrl,
+                        decoration: InputDecoration(
+                          labelText: 'Email',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        keyboardType: TextInputType.emailAddress,
+                        validator: _validateEmail,
+                      ),
+                      const SizedBox(height: 12),
+                      TextFormField(
+                        controller: _nameCtrl,
+                        decoration: InputDecoration(
+                          labelText: 'Name',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        validator: _validateName,
+                      ),
+                      const SizedBox(height: 12),
+                      TextFormField(
+                        controller: _pwCtrl,
+                        decoration: InputDecoration(
+                          labelText: 'Password',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        obscureText: true,
+                        validator: _validatePassword,
+                      ),
+                      const SizedBox(height: 12),
+                      TextFormField(
+                        controller: _pwConfirmCtrl,
+                        decoration: InputDecoration(
+                          labelText: 'Confirm Password',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        obscureText: true,
+                        validator: _validatePasswordConfirm,
+                      ),
+                      const SizedBox(height: 18),
+                      SizedBox(
+                        width: double.infinity,
+                        height: 48,
+                        child: FilledButton(
+                          onPressed: _loading ? null : _onRegisterPressed,
+                          style: ElevatedButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          child: _loading
+                              ? const SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                              : const Text('Register'),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text('Already have account? '),
+                          TextButton(
+                            onPressed: _loading
+                                ? null
+                                : () => Navigator.pushAndRemoveUntil(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) {
+                                        return const LoginPage(title: 'Log in');
+                                      },
+                                    ),
+                                    (route) => false,
+                                  ),
+                            child: const Text("Log In"),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
