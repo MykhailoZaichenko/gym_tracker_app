@@ -12,11 +12,11 @@ class WorkoutDayPage extends StatefulWidget {
   final void Function(List<WorkoutExercise>) onSave;
 
   const WorkoutDayPage({
-    Key? key,
+    super.key,
     required this.date,
     required this.exercises,
     required this.onSave,
-  }) : super(key: key);
+  });
 
   @override
   _WorkoutDayPageState createState() => _WorkoutDayPageState();
@@ -154,10 +154,14 @@ class _WorkoutDayPageState extends State<WorkoutDayPage> {
       c.dispose();
     }
     for (var list in _weightCtrls) {
-      for (var c in list) c.dispose();
+      for (var c in list) {
+        c.dispose();
+      }
     }
     for (var list in _repsCtrls) {
-      for (var c in list) c.dispose();
+      for (var c in list) {
+        c.dispose();
+      }
     }
     super.dispose();
   }
@@ -174,7 +178,7 @@ class _WorkoutDayPageState extends State<WorkoutDayPage> {
         : Theme.of(context).primaryColor;
     return CircleAvatar(
       radius: 20,
-      backgroundColor: color.withOpacity(0.12),
+      backgroundColor: color.withValues(alpha: 0.12),
       child: Icon(found.icon, color: color),
     );
   }
@@ -224,14 +228,14 @@ class _WorkoutDayPageState extends State<WorkoutDayPage> {
                               context,
                               initialQuery: _nameCtrls[i].text,
                             );
-                            if (picked != null) {
-                              setState(() {
-                                _nameCtrls[i].text = picked.name;
-                                exercise.name = picked.name;
-                                exercise.exerciseId = picked.id;
-                              });
-                            } else {
-                              // "Ввести власну назву" — відкриваємо діалог для введення
+
+                            if (picked == null) {
+                              // користувач скасував — нічого не робимо
+                              return;
+                            }
+
+                            if (picked.id == '__custom__') {
+                              // користувач вибрав явно "Ввести власну назву" — відкриваємо діалог
                               final custom = await showDialog<String>(
                                 context: context,
                                 builder: (ctx) {
@@ -260,6 +264,7 @@ class _WorkoutDayPageState extends State<WorkoutDayPage> {
                                   );
                                 },
                               );
+
                               if (custom != null && custom.isNotEmpty) {
                                 setState(() {
                                   _nameCtrls[i].text = custom;
@@ -267,7 +272,16 @@ class _WorkoutDayPageState extends State<WorkoutDayPage> {
                                   exercise.exerciseId = null;
                                 });
                               }
+
+                              return;
                             }
+
+                            // Інакше — обрана вправа з каталогу
+                            setState(() {
+                              _nameCtrls[i].text = picked.name;
+                              exercise.name = picked.name;
+                              exercise.exerciseId = picked.id;
+                            });
                           },
                           child: Container(
                             padding: const EdgeInsets.symmetric(vertical: 12),
@@ -421,8 +435,8 @@ class _WorkoutDayPageState extends State<WorkoutDayPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _addExercise,
-        child: const Icon(Icons.add),
         tooltip: 'Додати вправу',
+        child: const Icon(Icons.add),
       ),
     );
   }

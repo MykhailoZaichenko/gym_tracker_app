@@ -1,11 +1,17 @@
+// todo fix img pieker
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path/path.dart' as p;
+import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../db/app_db.dart';
 import '../../models/user_model.dart';
 
 class EditProfilePage extends StatefulWidget {
-  const EditProfilePage({Key? key, required this.user}) : super(key: key);
+  const EditProfilePage({super.key, required this.user});
 
   final User user;
 
@@ -20,6 +26,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
   late final TextEditingController _weightCtrl;
   bool _saving = false;
 
+  String? _avatarPath; // локальний шлях у app dir або null
+  final ImagePicker _picker = ImagePicker();
+
   @override
   void initState() {
     super.initState();
@@ -28,6 +37,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     _weightCtrl = TextEditingController(
       text: widget.user.weightKg?.toString() ?? '',
     );
+    _avatarPath = widget.user.avatarUrl;
   }
 
   @override
@@ -52,10 +62,99 @@ class _EditProfilePageState extends State<EditProfilePage> {
   }
 
   String? _validateWeight(String? v) {
-    if (v == null || v.trim().isEmpty) return null; // вага необовʼязкова
+    if (v == null || v.trim().isEmpty) return null;
     final parsed = double.tryParse(v.replaceAll(',', '.'));
     if (parsed == null || parsed <= 0) return 'Вага повинна бути числом > 0';
     return null;
+  }
+
+  Future<Directory> _appDir() async {
+    final dir = await getApplicationDocumentsDirectory();
+    return dir;
+  }
+
+  Future<String?> _copyFileToAppDir(String sourcePath, {int? userId}) async {
+    try {
+      final src = File(sourcePath);
+      if (!await src.exists()) return null;
+      final appDir = await _appDir();
+      final safeName =
+          '${userId ?? 'anon'}_${DateTime.now().millisecondsSinceEpoch}${p.extension(sourcePath)}';
+      final destPath = p.join(appDir.path, 'avatars');
+      final destDir = Directory(destPath);
+      if (!await destDir.exists()) await destDir.create(recursive: true);
+      final destFile = File(p.join(destPath, safeName));
+      final copied = await src.copy(destFile.path);
+      return copied.path;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  Future<void> _pickAvatar() async {
+    try {
+      final XFile? picked = await _picker.pickImage(
+        source: ImageSource.gallery,
+        maxWidth: 1024,
+        maxHeight: 1024,
+        imageQuality: 85,
+      );
+      if (picked == null) return;
+
+      final newPath = await _copyFileToAppDir(
+        picked.path,
+        userId: widget.user.id,
+      );
+      if (newPath == null) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Не вдалося зберегти фото локально')),
+        );
+        return;
+      }
+
+      // видалити старий файл, якщо він знаходився в папці avatars
+      if (_avatarPath != null && _avatarPath != newPath) {
+        try {
+          final oldFile = File(_avatarPath!);
+          if (await oldFile.exists()) {
+            await oldFile.delete();
+          }
+        } catch (_) {
+          // ігнорувати помилки видалення старого файлу
+        }
+      }
+
+      setState(() {
+        _avatarPath = newPath;
+      });
+    } catch (e, st) {
+      debugPrint('Image pick error: $e\n$st');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Не вдалося відкрити галерею')),
+      );
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Не вдалось вибрати фото: $e')));
+    }
+  }
+
+  Future<void> _removeAvatar() async {
+    if (_avatarPath != null) {
+      try {
+        final file = File(_avatarPath!);
+        if (await file.exists()) {
+          await file.delete();
+        }
+      } catch (_) {
+        // ігнорувати помилки видалення
+      }
+    }
+
+    setState(() {
+      _avatarPath = null;
+    });
   }
 
   Future<void> _onSavePressed() async {
@@ -70,15 +169,17 @@ class _EditProfilePageState extends State<EditProfilePage> {
       name: name,
       email: email,
       weightKg: weight,
+      avatarUrl: _avatarPath,
     );
 
     try {
       await AppDb().updateUser(updatedUser);
-      // Optionally persist current user id if needed (keeps login)
+
       final prefs = await SharedPreferences.getInstance();
       if (updatedUser.id != null) {
         await prefs.setInt('current_user_id', updatedUser.id!);
       }
+
       if (!mounted) return;
       Navigator.of(context).pop(updatedUser);
     } catch (e) {
@@ -88,6 +189,56 @@ class _EditProfilePageState extends State<EditProfilePage> {
         context,
       ).showSnackBar(SnackBar(content: Text('Помилка збереження: $e')));
     }
+  }
+
+  Widget _buildAvatar(double radius) {
+    final theme = Theme.of(context);
+    final avatarRadius = radius;
+
+    final localPath = _avatarPath;
+    final initialLetter = _nameCtrl.text.isNotEmpty
+        ? _nameCtrl.text[0].toUpperCase()
+        : '';
+
+    if (localPath != null && localPath.isNotEmpty) {
+      final file = File(localPath);
+      return CircleAvatar(
+        radius: avatarRadius,
+        backgroundColor: theme.colorScheme.primary,
+        backgroundImage: file.existsSync() ? FileImage(file) : null,
+        child: file.existsSync()
+            ? null
+            : Text(
+                initialLetter,
+                style: const TextStyle(color: Colors.white, fontSize: 28),
+              ),
+      );
+    }
+
+    final userPath = widget.user.avatarUrl;
+    if (userPath != null && userPath.isNotEmpty) {
+      final file = File(userPath);
+      return CircleAvatar(
+        radius: avatarRadius,
+        backgroundColor: theme.colorScheme.primary,
+        backgroundImage: file.existsSync() ? FileImage(file) : null,
+        child: file.existsSync()
+            ? null
+            : Text(
+                initialLetter,
+                style: const TextStyle(color: Colors.white, fontSize: 28),
+              ),
+      );
+    }
+
+    return CircleAvatar(
+      radius: avatarRadius,
+      backgroundColor: theme.colorScheme.primary,
+      child: Text(
+        initialLetter,
+        style: const TextStyle(color: Colors.white, fontSize: 28),
+      ),
+    );
   }
 
   @override
@@ -130,14 +281,36 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 key: _formKey,
                 child: Column(
                   children: [
-                    CircleAvatar(
-                      radius: 40,
-                      backgroundColor: Theme.of(context).primaryColor,
-                      child: const Icon(
-                        Icons.person,
-                        color: Colors.white,
-                        size: 40,
-                      ),
+                    Stack(
+                      alignment: Alignment.bottomRight,
+                      children: [
+                        _buildAvatar(40),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Material(
+                              color: Colors.transparent,
+                              child: IconButton(
+                                tooltip: 'Змінити фото',
+                                onPressed: _pickAvatar,
+                                icon: const Icon(Icons.edit, size: 20),
+                              ),
+                            ),
+                            if ((_avatarPath != null &&
+                                    _avatarPath!.isNotEmpty) ||
+                                (widget.user.avatarUrl != null &&
+                                    widget.user.avatarUrl!.isNotEmpty))
+                              Material(
+                                color: Colors.transparent,
+                                child: IconButton(
+                                  tooltip: 'Видалити фото',
+                                  onPressed: _removeAvatar,
+                                  icon: const Icon(Icons.delete, size: 20),
+                                ),
+                              ),
+                          ],
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 12),
                     TextFormField(
@@ -177,6 +350,19 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
+                        style: ButtonStyle(
+                          shadowColor: MaterialStatePropertyAll(
+                            isDark
+                                ? const Color.fromRGBO(
+                                    151,
+                                    136,
+                                    184,
+                                    1,
+                                  ).withOpacity(0.7)
+                                : Colors.black.withOpacity(0.5),
+                          ),
+                          elevation: const MaterialStatePropertyAll(5.0),
+                        ),
                         onPressed: _saving ? null : _onSavePressed,
                         child: _saving
                             ? const CircularProgressIndicator(

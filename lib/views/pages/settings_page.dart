@@ -4,7 +4,7 @@ import 'package:gym_tracker_app/data/notiers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsPage extends StatefulWidget {
-  const SettingsPage({Key? key}) : super(key: key);
+  const SettingsPage({super.key});
   @override
   _SettingsPageState createState() => _SettingsPageState();
 }

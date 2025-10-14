@@ -8,7 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class HomeCalendarPage extends StatefulWidget {
-  const HomeCalendarPage({Key? key}) : super(key: key);
+  const HomeCalendarPage({super.key});
   @override
   _HomeCalendarPageState createState() => _HomeCalendarPageState();
 }

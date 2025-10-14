@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:gym_tracker_app/views/pages/login_page.dart';
 import 'package:gym_tracker_app/views/pages/register_page.dart';
 import 'package:lottie/lottie.dart';
 

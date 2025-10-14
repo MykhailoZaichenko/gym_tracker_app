@@ -26,6 +26,7 @@ class HeroWidget extends StatelessWidget {
         children: [
           Hero(
             tag: 'hero1',
+            transitionOnUserGestures: true,
             child: AspectRatio(
               aspectRatio: 1520 / 1080,
               child: ClipRRect(
@@ -37,7 +38,6 @@ class HeroWidget extends StatelessWidget {
                 ),
               ),
             ),
-            transitionOnUserGestures: true,
           ),
           FittedBox(
             child: Text(

@@ -16,7 +16,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 enum RangeMode { month, year }
 
 class GrafPage extends StatefulWidget {
-  const GrafPage({Key? key}) : super(key: key);
+  const GrafPage({super.key});
 
   @override
   _GrafPageState createState() => _GrafPageState();
@@ -153,7 +153,9 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
         }
         final months = monthMap.entries.toList()
           ..sort((a, b) => a.key.compareTo(b.key));
-        for (final m in months) spots.add(FlSpot(m.key.toDouble(), m.value));
+        for (final m in months) {
+          spots.add(FlSpot(m.key.toDouble(), m.value));
+        }
         break;
     }
     return spots;
@@ -278,7 +280,9 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
 
   double _totalForEntries(List<MapEntry<DateTime, double>> entries) {
     double s = 0;
-    for (final e in entries) s += e.value;
+    for (final e in entries) {
+      s += e.value;
+    }
     return s;
   }
 
@@ -292,7 +296,9 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
     final spots = _buildSpots(entries);
 
     double maxY = 1;
-    for (final s in spots) if (s.y > maxY) maxY = s.y;
+    for (final s in spots) {
+      if (s.y > maxY) maxY = s.y;
+    }
     final double yInterval = (maxY <= 0) ? 1.0 : (maxY / 4).toDouble();
 
     return Scaffold(

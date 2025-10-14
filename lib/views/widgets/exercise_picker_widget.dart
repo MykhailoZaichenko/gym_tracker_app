@@ -18,19 +18,40 @@ Future<ExerciseInfo?> showExercisePicker(
 
 class _ExercisePickerSheet extends StatefulWidget {
   final String? initialQuery;
-  const _ExercisePickerSheet({this.initialQuery, Key? key}) : super(key: key);
+  const _ExercisePickerSheet({this.initialQuery, super.key});
 
   @override
   State<_ExercisePickerSheet> createState() => _ExercisePickerSheetState();
 }
 
 class _ExercisePickerSheetState extends State<_ExercisePickerSheet> {
+  late final TextEditingController _controller;
+  late final FocusNode _focusNode;
   String _query = '';
 
   @override
   void initState() {
     super.initState();
     _query = widget.initialQuery ?? '';
+    _controller = TextEditingController(text: _query);
+    _focusNode = FocusNode();
+    _controller.addListener(() {
+      final v = _controller.text;
+      if (v != _query) {
+        setState(() => _query = v);
+      }
+    });
+    // Request focus after first frame to ensure keyboard opens reliably
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _focusNode.requestFocus();
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    _focusNode.dispose();
+    super.dispose();
   }
 
   @override
@@ -55,13 +76,14 @@ class _ExercisePickerSheetState extends State<_ExercisePickerSheet> {
                 children: [
                   Expanded(
                     child: TextField(
-                      autofocus: true,
+                      controller: _controller,
+                      focusNode: _focusNode,
+                      autofocus: false,
                       decoration: const InputDecoration(
                         prefixIcon: Icon(Icons.search),
                         hintText: 'Пошук вправи',
                       ),
-                      onChanged: (v) => setState(() => _query = v),
-                      controller: TextEditingController(text: _query),
+                      textInputAction: TextInputAction.search,
                     ),
                   ),
                   IconButton(
@@ -72,29 +94,34 @@ class _ExercisePickerSheetState extends State<_ExercisePickerSheet> {
               ),
             ),
             const Divider(height: 1),
-            SizedBox(
-              height: 360,
-              child: ListView.separated(
-                itemCount: filtered.length + 1,
-                separatorBuilder: (_, __) => const Divider(height: 1),
-                itemBuilder: (ctx, idx) {
-                  if (idx == 0) {
+            Flexible(
+              // Flexible дає ListView займати доступний простір, скрол працює природно
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxHeight: 360),
+                child: ListView.separated(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  itemCount: filtered.length + 1,
+                  separatorBuilder: (_, __) => const Divider(height: 1),
+                  itemBuilder: (ctx, idx) {
+                    if (idx == 0) {
+                      return ListTile(
+                        leading: const Icon(Icons.edit),
+                        title: const Text('Ввести власну назву'),
+                        onTap: () =>
+                            Navigator.of(context).pop(ExerciseInfo.enterCustom),
+                      );
+                    }
+                    final it = filtered[idx - 1];
                     return ListTile(
-                      leading: const Icon(Icons.edit),
-                      title: const Text('Ввести власну назву'),
-                      onTap: () => Navigator.of(context).pop(null),
+                      leading: CircleAvatar(
+                        backgroundColor: Colors.transparent,
+                        child: Icon(it.icon),
+                      ),
+                      title: Text(it.name),
+                      onTap: () => Navigator.of(context).pop(it),
                     );
-                  }
-                  final it = filtered[idx - 1];
-                  return ListTile(
-                    leading: CircleAvatar(
-                      backgroundColor: Colors.transparent,
-                      child: Icon(it.icon),
-                    ),
-                    title: Text(it.name),
-                    onTap: () => Navigator.of(context).pop(it),
-                  );
-                },
+                  },
+                ),
               ),
             ),
           ],

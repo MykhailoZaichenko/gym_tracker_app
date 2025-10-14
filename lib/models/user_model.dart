@@ -1,16 +1,17 @@
+// lib/models/user_model.dart
 class User {
   final int? id;
-  final String email;
   final String name;
-  final String passwordHash; // хеш пароля (sha256 + salt)
-  final String salt; // унікальна сіль для кожного користувача
-  final String? avatarUrl; // опціонально
-  final double? weightKg; // нове поле
+  final String email;
+  final String passwordHash;
+  final String salt;
+  final String? avatarUrl; // шлях в файловій системі або null
+  final double? weightKg;
 
   User({
-    this.id,
-    required this.email,
+    required this.id,
     required this.name,
+    required this.email,
     required this.passwordHash,
     required this.salt,
     this.avatarUrl,
@@ -19,8 +20,8 @@ class User {
 
   User copyWith({
     int? id,
-    String? email,
     String? name,
+    String? email,
     String? passwordHash,
     String? salt,
     String? avatarUrl,
@@ -28,8 +29,8 @@ class User {
   }) {
     return User(
       id: id ?? this.id,
-      email: email ?? this.email,
       name: name ?? this.name,
+      email: email ?? this.email,
       passwordHash: passwordHash ?? this.passwordHash,
       salt: salt ?? this.salt,
       avatarUrl: avatarUrl ?? this.avatarUrl,
@@ -40,8 +41,8 @@ class User {
   Map<String, dynamic> toMap() {
     return {
       'id': id,
-      'email': email,
       'name': name,
+      'email': email,
       'passwordHash': passwordHash,
       'salt': salt,
       'avatarUrl': avatarUrl,
@@ -52,10 +53,10 @@ class User {
   factory User.fromMap(Map<String, dynamic> m) {
     return User(
       id: m['id'] as int?,
-      email: m['email'] as String,
-      name: m['name'] as String,
-      passwordHash: m['passwordHash'] as String,
-      salt: m['salt'] as String,
+      name: m['name'] as String? ?? '',
+      email: m['email'] as String? ?? '',
+      passwordHash: m['passwordHash'] as String? ?? '',
+      salt: m['salt'] as String? ?? '',
       avatarUrl: m['avatarUrl'] as String?,
       weightKg: (m['weightKg'] as num?)?.toDouble(),
     );

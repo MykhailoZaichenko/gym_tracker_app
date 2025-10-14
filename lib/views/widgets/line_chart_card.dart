@@ -18,7 +18,7 @@ class ProgressLineChart extends StatelessWidget {
   final void Function(double x)? onPointTap;
 
   const ProgressLineChart({
-    Key? key,
+    super.key,
     required this.spots,
     required this.maxY,
     required this.yInterval,
@@ -27,7 +27,7 @@ class ProgressLineChart extends StatelessWidget {
     required this.buildBottomTitle,
     required this.formatY,
     this.onPointTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

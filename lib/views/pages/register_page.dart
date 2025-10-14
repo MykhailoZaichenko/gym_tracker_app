@@ -58,10 +58,6 @@ class _RegisterPageState extends State<RegisterPage> {
     setState(() => _loading = true);
     try {
       final user = await _auth.register(email: email, name: name, password: pw);
-      if (user == null) {
-        _showMessage('Реєстрація не вдалася: сервіс повернув null');
-        return;
-      }
       if (user.id == null) {
         _showMessage('Реєстрація пройшла, але ID користувача не отримано');
         return;

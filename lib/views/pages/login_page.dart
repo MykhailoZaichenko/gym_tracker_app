@@ -4,8 +4,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:lottie/lottie.dart';
 import 'package:gym_tracker_app/views/widget_tree.dart';
 import '../../db/app_db.dart';
-import '../../models/user_model.dart';
-import '../../services/auth_utils.dart';
 import '../../services/auth_service.dart';
 
 class LoginPage extends StatefulWidget {

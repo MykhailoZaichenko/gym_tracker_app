@@ -11,12 +11,27 @@ class ExerciseInfo {
     required this.name,
     required this.icon,
   });
+
+  static const ExerciseInfo enterCustom = ExerciseInfo(
+    id: '__custom__',
+    name: 'Ввести власну назву',
+    icon: Icons.edit,
+  );
 }
 
 // Простий вбудований каталог — можна замінити на assets JSON
-const List<ExerciseInfo> kExerciseCatalog = [
+final List<ExerciseInfo> kExerciseCatalog = [
   ExerciseInfo(id: 'squat', name: 'Присідання', icon: Icons.fitness_center),
-  ExerciseInfo(id: 'lunge', name: 'Випади', icon: Icons.directions_run),
+
+  // ExerciseInfo(
+  //   id: 'lunge',
+  //   name: 'Випади',
+  //   imgIcon: ImageIcon(
+  //     AssetImage('assets/images/icon.png'),
+  //     color: Colors.blue,
+  //   ),
+  // ),
+  ExerciseInfo(id: 'lunge', name: 'Випади', icon: Icons.directions_walk),
   ExerciseInfo(id: 'leg_press', name: 'Жим ногами', icon: Icons.square_foot),
   ExerciseInfo(
     id: 'wall_sit',

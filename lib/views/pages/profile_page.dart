@@ -14,7 +14,7 @@ import '../../db/app_db.dart';
 import '../../models/user_model.dart';
 
 class ProfileGrafPage extends StatefulWidget {
-  const ProfileGrafPage({Key? key}) : super(key: key);
+  const ProfileGrafPage({super.key});
 
   @override
   State<ProfileGrafPage> createState() => _ProfileGrafPageState();
@@ -120,8 +120,9 @@ class _ProfileGrafPageState extends State<ProfileGrafPage> {
         return; // ігнорувати некоректні ключі
       }
       // 🔹 залишаємо лише тренування у вибраному місяці
-      if (date.isBefore(firstDayOfMonth) || date.isAfter(lastDayOfMonth))
+      if (date.isBefore(firstDayOfMonth) || date.isAfter(lastDayOfMonth)) {
         return;
+      }
 
       final List<dynamic> exerciseList = (exercisesRaw is List<dynamic>)
           ? exercisesRaw
