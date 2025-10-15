@@ -17,7 +17,6 @@ class WelcomePage extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // HeroWidget(),
                 isDark
                     // У темному режимі — біла анімація
                     ? ColorFiltered(
