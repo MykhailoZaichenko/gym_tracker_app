@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:gym_tracker_app/ui/text_styles.dart';
 import 'package:gym_tracker_app/data/constants.dart';
 import 'package:gym_tracker_app/data/exersise_meta.dart';
 import 'package:gym_tracker_app/views/pages/edit_profile_page.dart';
@@ -244,14 +245,17 @@ class _ProfileGrafPageState extends State<ProfileGrafPage> {
               const SizedBox(height: 8),
               Text(
                 value,
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: valueColor,
-                ),
+                style: AppTextStyles.statValue(
+                  context,
+                ).copyWith(color: valueColor),
               ),
               const SizedBox(height: 4),
-              Text(label, style: TextStyle(color: labelColor)),
+              Text(
+                label,
+                style: AppTextStyles.subtitle(
+                  context,
+                ).copyWith(color: labelColor, fontSize: 13),
+              ),
             ],
           ),
         ),
@@ -261,7 +265,6 @@ class _ProfileGrafPageState extends State<ProfileGrafPage> {
 
   @override
   //todo make localization
-  //todo make constant for text styles and use it
   //todo make separate widgets for profile header, stats, settings list
   //todo fix color scheme for dark mode
   //todo add avatar upload
@@ -293,17 +296,18 @@ class _ProfileGrafPageState extends State<ProfileGrafPage> {
                       ),
                     ),
                     const SizedBox(height: 12),
-                    Text(name, style: Theme.of(context).textTheme.titleLarge),
+                    Text(name, style: AppTextStyles.titleLarge(context)),
                     const SizedBox(height: 4),
                     Text(
                       email,
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: isDarkModeNotifier.value
-                            ? Colors.white70
-                            : Colors.grey,
-                      ),
+                      // style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      //   color: isDarkModeNotifier.value
+                      //       ? Colors.white70
+                      //       : Colors.grey,
+                      // ),
+                      style: AppTextStyles.titleMedium(context),
                     ),
-                    const SizedBox(height: 2.8),
+                    // const SizedBox(height: 2.8),
                     AnimatedSwitcher(
                       duration: const Duration(milliseconds: 350),
                       transitionBuilder: (child, animation) {

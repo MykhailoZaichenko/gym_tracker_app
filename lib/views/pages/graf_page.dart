@@ -327,7 +327,7 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
             const SizedBox(height: 8),
             TabBar(
               controller: _tabController,
-              labelColor: Theme.of(context).colorScheme.onPrimary,
+              labelColor: Theme.of(context).colorScheme.secondary,
               unselectedLabelColor: Theme.of(context).colorScheme.onSurface,
               indicatorColor: Theme.of(context).colorScheme.secondary,
               tabs: const [
