@@ -10,7 +10,7 @@ class AppTextStyles {
   static TextStyle body(BuildContext context) => _base(context).copyWith(
     fontSize: 16,
     fontWeight: FontWeight.w400,
-    color: Theme.of(context).colorScheme.onBackground,
+    color: Theme.of(context).colorScheme.onSurface,
     height: 1.35,
   );
 
@@ -18,7 +18,7 @@ class AppTextStyles {
   static TextStyle subtitle(BuildContext context) => _base(context).copyWith(
     fontSize: 14,
     fontWeight: FontWeight.w500,
-    color: Theme.of(context).colorScheme.onBackground.withOpacity(0.9),
+    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.9),
   );
 
   // Заголовок сторінки / великий заголовок

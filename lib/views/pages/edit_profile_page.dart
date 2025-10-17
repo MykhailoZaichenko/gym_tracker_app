@@ -7,8 +7,8 @@ import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../db/app_db.dart';
-import '../../models/user_model.dart';
+import '../../data/db/app_db.dart';
+import '../../features/profile/models/user_model.dart';
 
 class EditProfilePage extends StatefulWidget {
   const EditProfilePage({super.key, required this.user});
@@ -351,17 +351,17 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       width: double.infinity,
                       child: ElevatedButton(
                         style: ButtonStyle(
-                          shadowColor: MaterialStatePropertyAll(
+                          shadowColor: WidgetStatePropertyAll(
                             isDark
                                 ? const Color.fromRGBO(
                                     151,
                                     136,
                                     184,
                                     1,
-                                  ).withOpacity(0.7)
-                                : Colors.black.withOpacity(0.5),
+                                  ).withValues(alpha: 0.7)
+                                : Colors.black.withValues(alpha: 0.5),
                           ),
-                          elevation: const MaterialStatePropertyAll(5.0),
+                          elevation: const WidgetStatePropertyAll(5.0),
                         ),
                         onPressed: _saving ? null : _onSavePressed,
                         child: _saving

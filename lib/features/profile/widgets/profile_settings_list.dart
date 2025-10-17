@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:gym_tracker_app/models/user_model.dart';
+import 'package:gym_tracker_app/features/profile/models/user_model.dart';
 import 'package:gym_tracker_app/views/pages/edit_profile_page.dart';
 import 'package:gym_tracker_app/views/pages/settings_page.dart';
 import 'package:gym_tracker_app/views/pages/welcome_page.dart';
 
 class ProfileSettingsList extends StatelessWidget {
   const ProfileSettingsList({
-    Key? key,
+    super.key,
     required this.user,
     required this.onProfileUpdated,
-  }) : super(key: key);
+  });
 
   final User? user;
   final void Function(User updated) onProfileUpdated;

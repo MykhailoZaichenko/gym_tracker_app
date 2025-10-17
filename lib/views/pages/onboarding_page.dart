@@ -32,7 +32,7 @@ class OnboardingPage extends StatelessWidget {
                     : Lottie.asset('assets/lotties/dumbell.json', height: 400),
                 SizedBox(height: 20.0),
                 Text(
-                  'Welcome to the Onboarding Page',
+                  'Welcome to the your personal Gym Tracker App!',
                   style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
                 ),
                 SizedBox(height: 20.0),

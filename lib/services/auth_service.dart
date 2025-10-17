@@ -1,5 +1,5 @@
-import '../db/app_db.dart';
-import '../models/user_model.dart';
+import '../data/db/app_db.dart';
+import '../features/profile/models/user_model.dart';
 import 'auth_utils.dart';
 
 class AuthService {

@@ -12,14 +12,13 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:gym_tracker_app/views/widgets/line_chart_card.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-enum RangeMode { month, year }
+import 'package:gym_tracker_app/data/constants.dart';
 
 class GrafPage extends StatefulWidget {
   const GrafPage({super.key});
 
   @override
-  _GrafPageState createState() => _GrafPageState();
+  State<GrafPage> createState() => _GrafPageState();
 }
 
 class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {

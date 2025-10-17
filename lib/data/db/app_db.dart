@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
-import '../models/user_model.dart';
+import '../../features/profile/models/user_model.dart';
 
 class AppDb {
   static final AppDb _instance = AppDb._internal();

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/data/constants.dart';
 import 'package:gym_tracker_app/data/notiers.dart';
-import 'package:gym_tracker_app/db/app_db.dart';
+import 'package:gym_tracker_app/data/db/app_db.dart';
 
 import 'package:gym_tracker_app/views/pages/welcome_page.dart';
 import 'package:gym_tracker_app/views/widget_tree.dart';

@@ -18,7 +18,7 @@ Future<ExerciseInfo?> showExercisePicker(
 
 class _ExercisePickerSheet extends StatefulWidget {
   final String? initialQuery;
-  const _ExercisePickerSheet({this.initialQuery, super.key});
+  const _ExercisePickerSheet({this.initialQuery});
 
   @override
   State<_ExercisePickerSheet> createState() => _ExercisePickerSheetState();

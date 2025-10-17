@@ -28,3 +28,23 @@ List<String> ukrainianMonths = [
   'листопад',
   'грудень',
 ];
+
+List<String> englishMonths = [
+  '',
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'May',
+  'Jun',
+  'Jul',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec',
+];
+
+enum RangeMode { month, year }
+
+enum ExitChoice { cancel, discard, save }

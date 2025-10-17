@@ -1,16 +1,16 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:gym_tracker_app/models/workout_exercise_model.dart';
+import 'package:gym_tracker_app/features/workout/models/workout_exercise_model.dart';
 import 'package:gym_tracker_app/views/pages/graf_page.dart';
-import 'package:gym_tracker_app/views/pages/workout_day_page.dart';
+import 'package:gym_tracker_app/features/workout/pages/workout_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class HomeCalendarPage extends StatefulWidget {
   const HomeCalendarPage({super.key});
   @override
-  _HomeCalendarPageState createState() => _HomeCalendarPageState();
+  State<HomeCalendarPage> createState() => _HomeCalendarPageState();
 }
 
 class _HomeCalendarPageState extends State<HomeCalendarPage> {
@@ -67,7 +67,7 @@ class _HomeCalendarPageState extends State<HomeCalendarPage> {
     );
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (_) => WorkoutDayPage(
+        builder: (_) => WorkoutPage(
           date: date,
           exercises: initialExercises,
           onSave: (newExercises) async {
@@ -175,7 +175,9 @@ class _HomeCalendarPageState extends State<HomeCalendarPage> {
                             child: ListTile(
                               // Якщо у вас декілька рядків — вмикаємо isThreeLine
                               isThreeLine: ex.sets.length > 1,
-                              title: Text(ex.name),
+                              title: ex.name == ''
+                                  ? Text('Вправа${i}')
+                                  : Text(ex.name),
                               subtitle: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -214,5 +216,3 @@ class _HomeCalendarPageState extends State<HomeCalendarPage> {
     );
   }
 }
-
-// ---- Моделі імпортуються з workout_day_page.dart ----

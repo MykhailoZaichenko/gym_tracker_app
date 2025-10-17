@@ -4,14 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/data/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:gym_tracker_app/db/app_db.dart';
+import 'package:gym_tracker_app/data/db/app_db.dart';
 import 'package:gym_tracker_app/data/exersise_meta.dart';
-import 'package:gym_tracker_app/models/user_model.dart';
+import 'package:gym_tracker_app/features/profile/models/user_model.dart';
 import 'package:gym_tracker_app/features/profile/profile_exports.dart';
 import 'package:gym_tracker_app/views/pages/edit_profile_page.dart';
 
 class ProfileGrafPage extends StatefulWidget {
-  const ProfileGrafPage({Key? key}) : super(key: key);
+  const ProfileGrafPage({super.key});
 
   @override
   State<ProfileGrafPage> createState() => _ProfileGrafPageState();
@@ -27,6 +27,7 @@ class _ProfileGrafPageState extends State<ProfileGrafPage> {
   int _totalSets = 0;
   double _totalWeight = 0.0;
   double _calories = 0.0;
+  // ignore: unused_field
   bool _slideToLeft = true;
 
   @override
@@ -142,7 +143,7 @@ class _ProfileGrafPageState extends State<ProfileGrafPage> {
           if (canComputeCalories) {
             final secondsThisSet = reps * secondsPerRep;
             final minutesThisSet = secondsThisSet / 60.0;
-            final kcalPerMin = met * userWeight! / 60.0;
+            final kcalPerMin = met * userWeight / 60.0;
             totalCalories += kcalPerMin * minutesThisSet;
           }
         }

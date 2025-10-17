@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class ProfileStatsCard extends StatelessWidget {
   const ProfileStatsCard({
-    Key? key,
+    super.key,
     required this.visibleMonth,
     required this.ukMonthLabel,
     required this.totalSets,
@@ -10,7 +10,7 @@ class ProfileStatsCard extends StatelessWidget {
     required this.totalCalories,
     required this.onPrevMonth,
     required this.onNextMonth,
-  }) : super(key: key);
+  });
 
   final DateTime visibleMonth;
   final String ukMonthLabel;
@@ -38,13 +38,13 @@ class ProfileStatsCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
+            color: Colors.black.withValues(alpha: 0.08),
             blurRadius: 8,
             offset: const Offset(0, 3),
           ),
         ],
         border: Border.all(
-          color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
           width: 1.2,
         ),
       ),
@@ -70,7 +70,7 @@ class ProfileStatsCard extends StatelessWidget {
                     Icons.swipe_left,
                     color: Theme.of(
                       context,
-                    ).colorScheme.primary.withOpacity(0.5),
+                    ).colorScheme.primary.withValues(alpha: 0.5),
                     size: 24,
                   ),
                   Row(
@@ -93,7 +93,7 @@ class ProfileStatsCard extends StatelessWidget {
                     Icons.swipe_right,
                     color: Theme.of(
                       context,
-                    ).colorScheme.primary.withOpacity(0.5),
+                    ).colorScheme.primary.withValues(alpha: 0.5),
                     size: 24,
                   ),
                 ],
