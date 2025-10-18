@@ -88,131 +88,133 @@ class _HomeCalendarPageState extends State<HomeCalendarPage> {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Календар тренувань'),
-        centerTitle: true,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.bar_chart),
-            tooltip: 'Прогрес',
-            onPressed: () {
-              Navigator.of(
-                context,
-              ).push(MaterialPageRoute(builder: (_) => GrafPage()));
-            },
-          ),
-        ],
-      ),
-      body: Column(
-        children: [
-          // 📆 Таблиця місяця з маркерами днів із тренуваннями
-          TableCalendar(
-            availableCalendarFormats: const {CalendarFormat.month: 'Month'},
-            firstDay: DateTime.utc(2000, 1, 1),
-            lastDay: DateTime.utc(2100, 12, 31),
-            focusedDay: _focusedDay,
-            selectedDayPredicate: (day) => isSameDay(day, _selectedDay),
-            eventLoader: (day) =>
-                _allWorkouts[_keyOf(day)] ?? <WorkoutExercise>[],
-            calendarStyle: CalendarStyle(
-              markerDecoration: BoxDecoration(
-                color: isDark
-                    ? Theme.of(context).primaryColorLight
-                    : Theme.of(context).primaryColorDark,
-                shape: BoxShape.circle,
-              ),
-              todayDecoration: BoxDecoration(
-                color: Colors.blue,
-                shape: BoxShape.circle,
-              ),
-              selectedDecoration: BoxDecoration(
-                color: isDark ? Colors.blueGrey : Colors.blue[300],
-                shape: BoxShape.circle,
-              ),
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Календар тренувань'),
+          centerTitle: true,
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.bar_chart),
+              tooltip: 'Прогрес',
+              onPressed: () {
+                Navigator.of(
+                  context,
+                ).push(MaterialPageRoute(builder: (_) => GrafPage()));
+              },
             ),
-            onDaySelected: (selected, focused) {
-              setState(() {
-                _selectedDay = selected;
-                _focusedDay = focused;
-              });
-            },
-          ),
+          ],
+        ),
+        body: Column(
+          children: [
+            // 📆 Таблиця місяця з маркерами днів із тренуваннями
+            TableCalendar(
+              availableCalendarFormats: const {CalendarFormat.month: 'Month'},
+              firstDay: DateTime.utc(2000, 1, 1),
+              lastDay: DateTime.utc(2100, 12, 31),
+              focusedDay: _focusedDay,
+              selectedDayPredicate: (day) => isSameDay(day, _selectedDay),
+              eventLoader: (day) =>
+                  _allWorkouts[_keyOf(day)] ?? <WorkoutExercise>[],
+              calendarStyle: CalendarStyle(
+                markerDecoration: BoxDecoration(
+                  color: isDark
+                      ? Theme.of(context).primaryColorLight
+                      : Theme.of(context).primaryColorDark,
+                  shape: BoxShape.circle,
+                ),
+                todayDecoration: BoxDecoration(
+                  color: Colors.blue,
+                  shape: BoxShape.circle,
+                ),
+                selectedDecoration: BoxDecoration(
+                  color: isDark ? Colors.blueGrey : Colors.blue[300],
+                  shape: BoxShape.circle,
+                ),
+              ),
+              onDaySelected: (selected, focused) {
+                setState(() {
+                  _selectedDay = selected;
+                  _focusedDay = focused;
+                });
+              },
+            ),
 
-          const SizedBox(height: 12),
+            const SizedBox(height: 12),
 
-          // 📝 Список вправ обраного дня
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Вправи за ${_keyOf(_selectedDay!)}:',
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  if (_selectedExercises.isEmpty)
-                    const Text(
-                      'Немає вправ за цей день',
-                      style: TextStyle(color: Colors.grey),
-                    )
-                  else
-                    Expanded(
-                      child: ListView.builder(
-                        itemCount: _selectedExercises.length,
-                        itemBuilder: (ctx, i) {
-                          final ex = _selectedExercises[i];
-                          return Card(
-                            margin: const EdgeInsets.symmetric(
-                              vertical: 4,
-                              horizontal: 8,
-                            ),
-                            child: ListTile(
-                              // Якщо у вас декілька рядків — вмикаємо isThreeLine
-                              isThreeLine: ex.sets.length > 1,
-                              title: ex.name == ''
-                                  ? Text('Вправа${i}')
-                                  : Text(ex.name),
-                              subtitle: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  // Показуємо кількість підходів
-                                  Text('${ex.sets.length} підходів'),
-                                  const SizedBox(height: 4),
-                                  // Для кожного підходу — вага та повторення
-                                  for (var j = 0; j < ex.sets.length; j++)
-                                    Text(
-                                      // Форматуємо вагу з однією цифрою після коми, якщо є
-                                      'Підхід ${j + 1}: '
-                                      '${ex.sets[j].weight?.toStringAsFixed(1) ?? '-'} кг  '
-                                      'x ${ex.sets[j].reps ?? '-'} повт.',
-                                      style: const TextStyle(fontSize: 13),
-                                    ),
-                                ],
-                              ),
-                            ),
-                          );
-                        },
+            // 📝 Список вправ обраного дня
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Вправи за ${_keyOf(_selectedDay!)}:',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                ],
+                    const SizedBox(height: 8),
+                    if (_selectedExercises.isEmpty)
+                      const Text(
+                        'Немає вправ за цей день',
+                        style: TextStyle(color: Colors.grey),
+                      )
+                    else
+                      Expanded(
+                        child: ListView.builder(
+                          itemCount: _selectedExercises.length,
+                          itemBuilder: (ctx, i) {
+                            final ex = _selectedExercises[i];
+                            return Card(
+                              margin: const EdgeInsets.symmetric(
+                                vertical: 4,
+                                horizontal: 8,
+                              ),
+                              child: ListTile(
+                                // Якщо у вас декілька рядків — вмикаємо isThreeLine
+                                isThreeLine: ex.sets.length > 1,
+                                title: ex.name == ''
+                                    ? Text('Вправа${i}')
+                                    : Text(ex.name),
+                                subtitle: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    // Показуємо кількість підходів
+                                    Text('${ex.sets.length} підходів'),
+                                    const SizedBox(height: 4),
+                                    // Для кожного підходу — вага та повторення
+                                    for (var j = 0; j < ex.sets.length; j++)
+                                      Text(
+                                        // Форматуємо вагу з однією цифрою після коми, якщо є
+                                        'Підхід ${j + 1}: '
+                                        '${ex.sets[j].weight?.toStringAsFixed(1) ?? '-'} кг  '
+                                        'x ${ex.sets[j].reps ?? '-'} повт.',
+                                        style: const TextStyle(fontSize: 13),
+                                      ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
+        floatingActionButton: _selectedDay == null
+            ? null
+            : FloatingActionButton(
+                tooltip: 'Редагувати вправи',
+                child: const Icon(Icons.edit),
+                onPressed: () => _openWorkoutDay(_selectedDay!),
+              ),
       ),
-      floatingActionButton: _selectedDay == null
-          ? null
-          : FloatingActionButton(
-              tooltip: 'Редагувати вправи',
-              child: const Icon(Icons.edit),
-              onPressed: () => _openWorkoutDay(_selectedDay!),
-            ),
     );
   }
 }

@@ -1,10 +1,10 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+// import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:gym_tracker_app/features/profile/models/user_model.dart';
-import 'package:gym_tracker_app/views/pages/welcome_page.dart';
+// import 'package:gym_tracker_app/views/pages/welcome_page.dart';
 
 typedef OnMonthChanged = void Function(DateTime newMonth);
 
@@ -54,48 +54,48 @@ class ProfileHeader extends StatelessWidget {
             color: Theme.of(context).textTheme.bodySmall?.color,
           ),
         ),
-        const SizedBox(height: 8),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ElevatedButton.icon(
-              onPressed: () => onEditPressed(context),
-              icon: const Icon(Icons.edit, size: 18),
-              label: const Text('Редагувати'),
-            ),
-            const SizedBox(width: 12),
-            OutlinedButton.icon(
-              onPressed: () async {
-                final confirmed = await showDialog<bool>(
-                  context: context,
-                  builder: (ctx) => AlertDialog(
-                    title: const Text('Вихід із профілю'),
-                    content: const Text('Ви дійсно хочете вийти?'),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Navigator.of(ctx).pop(false),
-                        child: const Text('Ні'),
-                      ),
-                      TextButton(
-                        onPressed: () => Navigator.of(ctx).pop(true),
-                        child: const Text('Так'),
-                      ),
-                    ],
-                  ),
-                );
-                if (confirmed == true) {
-                  final prefs = await SharedPreferences.getInstance();
-                  await prefs.remove('current_user_id');
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (_) => const WelcomePage()),
-                  );
-                }
-              },
-              icon: const Icon(Icons.logout, size: 18),
-              label: const Text('Вийти'),
-            ),
-          ],
-        ),
+        // const SizedBox(height: 8),
+        // Row(
+        //   mainAxisAlignment: MainAxisAlignment.center,
+        //   children: [
+        //     ElevatedButton.icon(
+        //       onPressed: () => onEditPressed(context),
+        //       icon: const Icon(Icons.edit, size: 18),
+        //       label: const Text('Редагувати'),
+        //     ),
+        //     const SizedBox(width: 12),
+        //     OutlinedButton.icon(
+        //       onPressed: () async {
+        //         final confirmed = await showDialog<bool>(
+        //           context: context,
+        //           builder: (ctx) => AlertDialog(
+        //             title: const Text('Вихід із профілю'),
+        //             content: const Text('Ви дійсно хочете вийти?'),
+        //             actions: [
+        //               TextButton(
+        //                 onPressed: () => Navigator.of(ctx).pop(false),
+        //                 child: const Text('Ні'),
+        //               ),
+        //               TextButton(
+        //                 onPressed: () => Navigator.of(ctx).pop(true),
+        //                 child: const Text('Так'),
+        //               ),
+        //             ],
+        //           ),
+        //         );
+        //         if (confirmed == true) {
+        //           final prefs = await SharedPreferences.getInstance();
+        //           await prefs.remove('current_user_id');
+        //           Navigator.of(context).pushReplacement(
+        //             MaterialPageRoute(builder: (_) => const WelcomePage()),
+        //           );
+        //         }
+        //       },
+        //       icon: const Icon(Icons.logout, size: 18),
+        //       label: const Text('Вийти'),
+        //     ),
+        //   ],
+        // ),
       ],
     );
   }

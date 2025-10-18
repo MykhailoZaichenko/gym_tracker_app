@@ -1,12 +1,3 @@
-// lib/views/pages/graf_page.dart
-//
-// Сторінка графіків прогресу (без тижня):
-// - Dropdown для вибору вправи
-// - Tabs: Місяць / Рік
-// - Перелистування місяців у режимі Місяць
-// - X: дні місяця / місяці; Y: сумарна піднята вага за день (sum(weight * reps))
-// - Тап по точці відкриває діалог зі списком сетів (вага і повтори)
-
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -254,21 +245,7 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
       case RangeMode.month:
         return Text('${value.round()}', style: const TextStyle(fontSize: 11));
       case RangeMode.year:
-        const months = [
-          '',
-          'Jan',
-          'Feb',
-          'Mar',
-          'Apr',
-          'May',
-          'Jun',
-          'Jul',
-          'Aug',
-          'Sep',
-          'Oct',
-          'Nov',
-          'Dec',
-        ];
+        final months = englishMonths;
         final m = value.round();
         return Text(
           (m >= 1 && m <= 12) ? months[m] : m.toString(),

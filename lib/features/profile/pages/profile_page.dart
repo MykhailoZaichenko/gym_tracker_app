@@ -203,36 +203,42 @@ class _ProfileGrafPageState extends State<ProfileGrafPage> {
         title: const Text('Профіль користувача'),
         centerTitle: true,
       ),
-      //todo organize better to avoid using SingleChildScrollView and overflow issues
-      body: SingleChildScrollView(
-        child: SafeArea(
-          child: _isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: Column(
-                    children: [
-                      ProfileHeader(user: _user, onEditPressed: _onEditProfile),
-                      const SizedBox(height: 12),
-                      ProfileStatsCard(
-                        visibleMonth: _visibleMonth,
-                        ukMonthLabel: ukmounth,
-                        totalSets: _totalSets,
-                        totalWeight: _totalWeight,
-                        totalCalories: _calories,
-                        onPrevMonth: _prevMonth,
-                        onNextMonth: _nextMonth,
-                      ),
-                      const SizedBox(height: 12),
-                      ProfileSettingsList(
-                        user: _user,
-                        onProfileUpdated: _onProfileUpdated,
-                      ),
-                    ],
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                children: [
+                  ProfileHeader(user: _user, onEditPressed: _onEditProfile),
+                  const SizedBox(height: 12),
+                  ProfileStatsCard(
+                    visibleMonth: _visibleMonth,
+                    ukMonthLabel: ukmounth,
+                    totalSets: _totalSets,
+                    totalWeight: _totalWeight,
+                    totalCalories: _calories,
+                    onPrevMonth: _prevMonth,
+                    onNextMonth: _nextMonth,
+                    onPickMonth: (newMonth) {
+                      setState(() {
+                        _visibleMonth = newMonth;
+                        ukmounth = ukrainianMonths[newMonth.month - 1];
+                      });
+                      _computeStats();
+                    },
                   ),
-                ),
-        ),
-      ),
+                  const SizedBox(height: 12),
+                  ProfileSettingsList(
+                    user: _user,
+                    onProfileUpdated: _onProfileUpdated,
+                  ),
+                  // Image(
+                  //   image: const AssetImage('assets/images/stetxem.png'),
+                  //   width: 280,
+                  // ),
+                ],
+              ),
+            ),
     );
   }
 }
