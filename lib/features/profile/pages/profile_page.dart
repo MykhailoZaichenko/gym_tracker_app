@@ -8,7 +8,7 @@ import 'package:gym_tracker_app/data/db/app_db.dart';
 import 'package:gym_tracker_app/data/exersise_meta.dart';
 import 'package:gym_tracker_app/features/profile/models/user_model.dart';
 import 'package:gym_tracker_app/features/profile/profile_exports.dart';
-import 'package:gym_tracker_app/views/pages/edit_profile_page.dart';
+import 'package:gym_tracker_app/features/profile/pages/edit_profile_page.dart';
 
 class ProfileGrafPage extends StatefulWidget {
   const ProfileGrafPage({super.key});

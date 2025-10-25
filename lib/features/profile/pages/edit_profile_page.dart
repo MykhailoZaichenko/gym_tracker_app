@@ -7,8 +7,8 @@ import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../data/db/app_db.dart';
-import '../../features/profile/models/user_model.dart';
+import '../../../data/db/app_db.dart';
+import '../models/user_model.dart';
 
 class EditProfilePage extends StatefulWidget {
   const EditProfilePage({super.key, required this.user});
