@@ -1,4 +1,4 @@
-import '../data/db/app_db.dart';
+import '../data/sources/local/app_db.dart';
 import '../features/profile/models/user_model.dart';
 import 'auth_utils.dart';
 

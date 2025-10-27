@@ -1,11 +1,11 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:gym_tracker_app/data/exercise_catalog.dart';
+import 'package:gym_tracker_app/data/seed/exercise_catalog.dart';
 import 'package:gym_tracker_app/features/workout/models/workout_exercise_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:gym_tracker_app/features/workout/workout_exports.dart';
-import 'package:gym_tracker_app/data/constants.dart';
+import 'package:gym_tracker_app/core/constants/constants.dart';
 
 class WorkoutPage extends StatefulWidget {
   final DateTime date;

@@ -1,6 +1,6 @@
 // lib/widgets/exercise_picker.dart
 import 'package:flutter/material.dart';
-import 'package:gym_tracker_app/data/exercise_catalog.dart';
+import 'package:gym_tracker_app/data/seed/exercise_catalog.dart';
 
 Future<ExerciseInfo?> showExercisePicker(
   BuildContext context, {

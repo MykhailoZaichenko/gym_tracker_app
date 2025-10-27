@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gym_tracker_app/data/exercise_catalog.dart';
+import 'package:gym_tracker_app/data/seed/exercise_catalog.dart';
 import 'package:gym_tracker_app/features/workout/models/workout_exercise_model.dart';
 
 typedef ExercisePickerFn =

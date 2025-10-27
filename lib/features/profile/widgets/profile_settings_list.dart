@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:gym_tracker_app/features/profile/models/user_model.dart';
-import 'package:gym_tracker_app/features/profile/pages/edit_profile_page.dart';
-import 'package:gym_tracker_app/views/pages/settings_page.dart';
-import 'package:gym_tracker_app/views/pages/welcome_page.dart';
+import 'package:gym_tracker_app/features/profile/pages/profile_edit_page.dart';
+import 'package:gym_tracker_app/features/profile/pages/settings_page.dart';
+import 'package:gym_tracker_app/features/welcome/pages/welcome_page.dart';
 
 class ProfileSettingsList extends StatelessWidget {
   const ProfileSettingsList({

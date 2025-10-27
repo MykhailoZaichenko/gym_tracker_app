@@ -21,7 +21,6 @@ class ProfileHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final name = user?.name ?? 'Гість';
-    final email = user?.email ?? 'Немає email';
     final avatarPath = user?.avatarUrl;
 
     Widget avatarWidget() {
@@ -48,12 +47,6 @@ class ProfileHeader extends StatelessWidget {
         const SizedBox(height: 12),
         Text(name, style: Theme.of(context).textTheme.titleLarge),
         const SizedBox(height: 4),
-        Text(
-          email,
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            color: Theme.of(context).textTheme.bodySmall?.color,
-          ),
-        ),
         // const SizedBox(height: 8),
         // Row(
         //   mainAxisAlignment: MainAxisAlignment.center,
