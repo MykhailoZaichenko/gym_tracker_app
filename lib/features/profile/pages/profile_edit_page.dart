@@ -38,6 +38,19 @@ class _EditProfilePageState extends State<EditProfilePage> {
       text: widget.user.weightKg?.toString() ?? '',
     );
     _avatarPath = widget.user.avatarUrl;
+
+    _loadWeightFromPrefs();
+  }
+
+  Future<void> _loadWeightFromPrefs() async {
+    final prefs = await SharedPreferences.getInstance();
+    final localWeight = prefs.getDouble('user_weight');
+    final fallbackWeight = widget.user.weightKg;
+
+    final value = localWeight ?? fallbackWeight;
+    if (value != null) {
+      _weightCtrl.text = value.toStringAsFixed(1);
+    }
   }
 
   @override
@@ -179,6 +192,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
       if (updatedUser.id != null) {
         await prefs.setInt('current_user_id', updatedUser.id!);
       }
+      if (weight != null && weight > 0) {
+        await prefs.setDouble('user_weight', weight);
+      }
 
       if (!mounted) return;
       Navigator.of(context).pop(updatedUser);
@@ -260,9 +276,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   )
                 : Text(
                     'Зберегти',
-                    style: Theme.of(
-                      context,
-                    ).textTheme.labelLarge?.copyWith(color: Colors.white),
+                    style: TextStyle(
+                      color: isDark ? Colors.white : Colors.black,
+                    ),
                   ),
           ),
         ],
@@ -282,32 +298,73 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 key: _formKey,
                 child: Column(
                   children: [
-                    Stack(
-                      alignment: Alignment.bottomRight,
+                    Column(
                       children: [
-                        _buildAvatar(40),
+                        _buildAvatar(80),
+                        const SizedBox(height: 12),
                         Row(
-                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Material(
-                              color: Colors.transparent,
-                              child: IconButton(
-                                tooltip: 'Змінити фото',
-                                onPressed: _pickAvatar,
-                                icon: const Icon(Icons.edit, size: 20),
+                            ElevatedButton.icon(
+                              style: ElevatedButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 10,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
                               ),
+                              onPressed: _pickAvatar,
+                              icon: const Icon(Icons.edit, size: 18),
+                              label: const Text('Редагувати'),
                             ),
+                            const SizedBox(width: 12),
                             if ((_avatarPath != null &&
                                     _avatarPath!.isNotEmpty) ||
                                 (widget.user.avatarUrl != null &&
                                     widget.user.avatarUrl!.isNotEmpty))
-                              Material(
-                                color: Colors.transparent,
-                                child: IconButton(
-                                  tooltip: 'Видалити фото',
-                                  onPressed: _removeAvatar,
-                                  icon: const Icon(Icons.delete, size: 20),
+                              OutlinedButton.icon(
+                                style: OutlinedButton.styleFrom(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 10,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
                                 ),
+                                onPressed: () async {
+                                  final confirmed = await showDialog<bool>(
+                                    context: context,
+                                    builder: (ctx) => AlertDialog(
+                                      title: const Text('Видалити фото'),
+                                      content: const Text(
+                                        'Ви дійсно хочете видалити фото?',
+                                      ),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () =>
+                                              Navigator.of(ctx).pop(false),
+                                          child: const Text('Ні'),
+                                        ),
+                                        TextButton(
+                                          onPressed: () =>
+                                              Navigator.of(ctx).pop(true),
+                                          child: const Text('Так'),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                  if (confirmed == true) {
+                                    await _removeAvatar();
+                                  }
+                                },
+                                icon: const Icon(
+                                  Icons.delete_outline,
+                                  size: 18,
+                                ),
+                                label: const Text('Видалити'),
                               ),
                           ],
                         ),
@@ -347,7 +404,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       ),
                       textInputAction: TextInputAction.done,
                     ),
-                    const SizedBox(height: 18),
+                    const SizedBox(height: 25),
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(

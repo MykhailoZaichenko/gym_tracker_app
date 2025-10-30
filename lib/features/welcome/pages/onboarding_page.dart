@@ -1,23 +1,55 @@
 import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/features/auth/pages/register_page.dart';
 import 'package:lottie/lottie.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class OnboardingPage extends StatelessWidget {
+class OnboardingPage extends StatefulWidget {
   const OnboardingPage({super.key});
+
+  @override
+  State<OnboardingPage> createState() => _OnboardingPageState();
+}
+
+class _OnboardingPageState extends State<OnboardingPage> {
+  final _formKey = GlobalKey<FormState>();
+  final _weightCtrl = TextEditingController();
+
+  @override
+  void dispose() {
+    _weightCtrl.dispose();
+    super.dispose();
+  }
+
+  Future<void> _goToRegister() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    final weight = double.tryParse(_weightCtrl.text.replaceAll(',', '.'));
+    if (weight == null || weight <= 0) return;
+
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setDouble('user_weight', weight);
+
+    if (!mounted) return;
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => const RegisterPage(title: 'Register')),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
       appBar: AppBar(),
       body: Center(
         child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(10.0),
+          padding: const EdgeInsets.all(16),
+          child: Form(
+            key: _formKey,
             child: Column(
               children: [
                 isDark
-                    // У темному режимі — біла анімація
                     ? ColorFiltered(
                         colorFilter: const ColorFilter.mode(
                           Colors.white,
@@ -25,31 +57,44 @@ class OnboardingPage extends StatelessWidget {
                         ),
                         child: Lottie.asset(
                           'assets/lotties/dumbell.json',
-                          height: 400,
+                          height: 300,
                         ),
                       )
-                    // В світлому режимі — без фільтра (оригінальні кольори)
-                    : Lottie.asset('assets/lotties/dumbell.json', height: 400),
-                SizedBox(height: 20.0),
+                    : Lottie.asset('assets/lotties/dumbell.json', height: 300),
+                const SizedBox(height: 20),
                 Text(
-                  'Welcome to the your personal Gym Tracker App!',
-                  style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
+                  'Вкажіть вашу вагу для персоналізації',
+                  style: Theme.of(context).textTheme.titleLarge,
+                  textAlign: TextAlign.center,
                 ),
-                SizedBox(height: 20.0),
-                FilledButton(
-                  onPressed: () {
-                    Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => const RegisterPage(title: 'Register'),
-                      ),
-                      (route) => false,
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    minimumSize: Size(double.infinity, 50.0),
+                const SizedBox(height: 20),
+                TextFormField(
+                  controller: _weightCtrl,
+                  keyboardType: const TextInputType.numberWithOptions(
+                    decimal: true,
                   ),
-                  child: Text('Next'),
+                  decoration: const InputDecoration(
+                    labelText: 'Вага (кг)',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    final parsed = double.tryParse(value!.replaceAll(',', '.'));
+                    if (parsed == null || parsed <= 0) {
+                      return 'Введіть коректну вагу';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 24),
+                SizedBox(
+                  width: double.infinity,
+                  child: FilledButton(
+                    onPressed: _goToRegister,
+                    style: FilledButton.styleFrom(
+                      minimumSize: const Size(double.infinity, 50),
+                    ),
+                    child: const Text('Продовжити'),
+                  ),
                 ),
               ],
             ),

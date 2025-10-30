@@ -47,48 +47,6 @@ class ProfileHeader extends StatelessWidget {
         const SizedBox(height: 12),
         Text(name, style: Theme.of(context).textTheme.titleLarge),
         const SizedBox(height: 4),
-        // const SizedBox(height: 8),
-        // Row(
-        //   mainAxisAlignment: MainAxisAlignment.center,
-        //   children: [
-        //     ElevatedButton.icon(
-        //       onPressed: () => onEditPressed(context),
-        //       icon: const Icon(Icons.edit, size: 18),
-        //       label: const Text('Редагувати'),
-        //     ),
-        //     const SizedBox(width: 12),
-        //     OutlinedButton.icon(
-        //       onPressed: () async {
-        //         final confirmed = await showDialog<bool>(
-        //           context: context,
-        //           builder: (ctx) => AlertDialog(
-        //             title: const Text('Вихід із профілю'),
-        //             content: const Text('Ви дійсно хочете вийти?'),
-        //             actions: [
-        //               TextButton(
-        //                 onPressed: () => Navigator.of(ctx).pop(false),
-        //                 child: const Text('Ні'),
-        //               ),
-        //               TextButton(
-        //                 onPressed: () => Navigator.of(ctx).pop(true),
-        //                 child: const Text('Так'),
-        //               ),
-        //             ],
-        //           ),
-        //         );
-        //         if (confirmed == true) {
-        //           final prefs = await SharedPreferences.getInstance();
-        //           await prefs.remove('current_user_id');
-        //           Navigator.of(context).pushReplacement(
-        //             MaterialPageRoute(builder: (_) => const WelcomePage()),
-        //           );
-        //         }
-        //       },
-        //       icon: const Icon(Icons.logout, size: 18),
-        //       label: const Text('Вийти'),
-        //     ),
-        //   ],
-        // ),
       ],
     );
   }
