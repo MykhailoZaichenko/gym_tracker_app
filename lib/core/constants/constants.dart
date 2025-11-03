@@ -45,6 +45,27 @@ List<String> englishMonths = [
   'Dec',
 ];
 
+String weekdayLabel(int weekday) {
+  switch (weekday) {
+    case DateTime.monday:
+      return 'Понеділок';
+    case DateTime.tuesday:
+      return 'Вівторок';
+    case DateTime.wednesday:
+      return 'Середа';
+    case DateTime.thursday:
+      return 'Четвер';
+    case DateTime.friday:
+      return 'Пʼятниця';
+    case DateTime.saturday:
+      return 'Субота';
+    case DateTime.sunday:
+      return 'Неділя';
+    default:
+      return 'Понеділок';
+  }
+}
+
 enum RangeMode { month, year }
 
 enum ExitChoice { cancel, discard, save }

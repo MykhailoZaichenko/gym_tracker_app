@@ -6,6 +6,7 @@ import 'package:gym_tracker_app/features/workout/models/workout_exercise_model.d
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:gym_tracker_app/features/workout/workout_exports.dart';
 import 'package:gym_tracker_app/core/constants/constants.dart';
+import 'package:gym_tracker_app/widget/common/will_pop_save_wideget.dart';
 
 class WorkoutPage extends StatefulWidget {
   final DateTime date;
@@ -60,8 +61,24 @@ class _WorkoutPageState extends State<WorkoutPage> {
       _exercises = decoded
           .map((m) => WorkoutExercise.fromMap(m as Map<String, dynamic>))
           .toList();
-    } else {
+    } else if (widget.exercises.isNotEmpty) {
       _exercises = List.from(widget.exercises);
+    } else {
+      final weekday = weekdayLabel(widget.date.weekday);
+      final planned = prefs.getStringList('plan_$weekday') ?? [];
+      if (planned.isNotEmpty) {
+        _exercises = planned
+            .map(
+              (name) => WorkoutExercise(
+                name: name,
+                exerciseId: null,
+                sets: [SetData()],
+              ),
+            )
+            .toList();
+      } else {
+        _exercises = [];
+      }
     }
 
     _initControllers();
@@ -138,63 +155,19 @@ class _WorkoutPageState extends State<WorkoutPage> {
     return _initialEncoded != current;
   }
 
-  // Метод для WillPopScope
-  Future<bool> _onWillPop() async {
-    // If we never initialized the initial value, allow pop (no dialog)
-    if (_initialEncoded == null) return true;
-
-    // If nothing changed, allow pop without dialog
-    if (!_hasUnsavedChanges()) return true;
-
-    // Show the dialog (context is used here synchronously)
-    final result = await showDialog<ExitChoice>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Зберегти зміни?'),
-        content: const Text(
-          'Є незбережені зміни. Бажаєте зберегти перед виходом?',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(ExitChoice.cancel),
-            child: const Text('Скасувати'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(ExitChoice.discard),
-            child: const Text('Не зберігати'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(ExitChoice.save),
-            child: const Text('Зберегти'),
-          ),
-        ],
-      ),
-    );
-
-    if (result == null) return false;
-    if (result == ExitChoice.cancel) return false;
-    if (result == ExitChoice.discard) return true;
-
-    // save chosen
-    await _saveExercises();
-    // guard against the State being disposed while we awaited
-    if (!mounted) return false;
-    widget.onSave(_exercises);
-    return true;
-  }
-
+  // Додаємо нову вправу
   void _addExercise() {
     setState(() {
       _exercises.add(
         WorkoutExercise(name: '', exerciseId: null, sets: [SetData()]),
       );
-      // додаємо контролери для нової вправи
       _nameCtrls.add(TextEditingController());
       _weightCtrls.add([TextEditingController()]);
       _repsCtrls.add([TextEditingController()]);
     });
   }
 
+  // Видаляємо сет з вправи
   void _removeSet(int exIndex, int setIndex) {
     setState(() {
       _exercises[exIndex].sets.removeAt(setIndex);
@@ -213,13 +186,10 @@ class _WorkoutPageState extends State<WorkoutPage> {
 
   void _removeExercise(int index) {
     setState(() {
-      // видаляємо модель
       _exercises.removeAt(index);
 
-      // чистимо контролер назви
       _nameCtrls.removeAt(index).dispose();
 
-      // чистимо контролери ваги й повторів
       _weightCtrls.removeAt(index).forEach((c) => c.dispose());
       _repsCtrls.removeAt(index).forEach((c) => c.dispose());
     });
@@ -227,7 +197,6 @@ class _WorkoutPageState extends State<WorkoutPage> {
 
   @override
   void dispose() {
-    // Чистимо контролери
     for (var c in _nameCtrls) {
       c.dispose();
     }
@@ -251,7 +220,13 @@ class _WorkoutPageState extends State<WorkoutPage> {
     }
 
     return WillPopScope(
-      onWillPop: _onWillPop,
+      onWillPop: () => WillPopSavePrompt(
+        hasUnsavedChanges: () async => _hasUnsavedChanges(),
+        onSave: () async {
+          await _saveExercises();
+          widget.onSave(_exercises);
+        },
+      ).handlePop(context),
       child: Scaffold(
         appBar: AppBar(
           title: Text(

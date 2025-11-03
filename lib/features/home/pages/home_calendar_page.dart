@@ -5,6 +5,7 @@ import 'package:gym_tracker_app/core/constants/constants.dart';
 import 'package:gym_tracker_app/features/workout/models/workout_exercise_model.dart';
 import 'package:gym_tracker_app/features/analytics/pages/graf_page.dart';
 import 'package:gym_tracker_app/features/workout/pages/workout_page.dart';
+import 'package:gym_tracker_app/features/workout/pages/workout_plan_editor_page.dart';
 import 'package:gym_tracker_app/widget/common/month_picker_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -105,6 +106,18 @@ class _HomeCalendarPageState extends State<HomeCalendarPage> {
                 ).push(MaterialPageRoute(builder: (_) => GrafPage()));
               },
             ),
+            ElevatedButton.icon(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const WorkoutPlanEditorPage(),
+                  ),
+                );
+              },
+              icon: const Icon(Icons.calendar_today),
+              label: const Text('Мій план тренувань'),
+            ),
           ],
         ),
         body: Column(
@@ -116,7 +129,7 @@ class _HomeCalendarPageState extends State<HomeCalendarPage> {
                   final monthName = ukrainianMonths[day.month - 1];
                   final capitalized =
                       monthName[0].toUpperCase() + monthName.substring(1);
-                  return GestureDetector(
+                  return InkWell(
                     onTap: () async {
                       final picked = await showMonthPicker(
                         context: context,
@@ -129,18 +142,22 @@ class _HomeCalendarPageState extends State<HomeCalendarPage> {
                         });
                       }
                     },
+                    borderRadius: BorderRadius.circular(8),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(vertical: 12),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            '$capitalized ${day.year}',
-                            style: Theme.of(context).textTheme.titleMedium,
-                          ),
-                          const SizedBox(width: 4),
-                          const Icon(Icons.arrow_drop_down),
-                        ],
+                      child: Semantics(
+                        button: true,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              '$capitalized ${day.year}',
+                              style: Theme.of(context).textTheme.titleMedium,
+                            ),
+                            const SizedBox(width: 4),
+                            const Icon(Icons.arrow_drop_down),
+                          ],
+                        ),
                       ),
                     ),
                   );

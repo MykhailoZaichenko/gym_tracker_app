@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:gym_tracker_app/core/theme/theme_service.dart';
+import 'package:gym_tracker_app/core/utils.dart';
 import 'package:gym_tracker_app/features/analytics/widgets/line_chart_card.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:gym_tracker_app/core/constants/constants.dart';
@@ -151,13 +153,6 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
     return spots;
   }
 
-  String _formatY(double v) {
-    if (v >= 1000000) return '${(v / 1000000).toStringAsFixed(1)}M';
-    if (v >= 1000) return '${(v / 1000).toStringAsFixed(1)}k';
-    if (v == v.floorToDouble()) return v.toInt().toString();
-    return v.toStringAsFixed(0);
-  }
-
   // отримати дату з координати X (для тапу по точці)
   DateTime? _xToDate(double x) {
     switch (_range) {
@@ -183,7 +178,12 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title: Text('${ex.name} — $key'),
+        title: Text(
+          '${ex.name} — $key',
+          style: ThemeService.isDarkModeNotifier.value
+              ? const TextStyle(color: Colors.white)
+              : const TextStyle(color: Colors.black),
+        ),
         content: SizedBox(
           width: double.maxFinite,
           child: ListView.separated(
@@ -358,7 +358,7 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
                               range: _range,
                               bottomInterval: _bottomInterval,
                               buildBottomTitle: _buildBottomTitle,
-                              formatY: _formatY,
+                              formatY: formatNumberCompact,
                               onPointTap: (x) {
                                 final date = _xToDate(x);
                                 if (date != null) _onPointTapped(date);
@@ -394,7 +394,7 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Всього піднято: ${_formatY(_totalForEntries(entries))}',
+                    'Всього піднято: ${formatNumberCompact(_totalForEntries(entries))}',
                   ),
                   Text('Точек: ${entries.length}'),
                 ],

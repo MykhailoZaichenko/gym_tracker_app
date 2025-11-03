@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gym_tracker_app/features/workout/widgets/exercise_set_tile.dart';
+import 'package:gym_tracker_app/features/workout/widgets/workout_set_tile.dart';
 import 'package:gym_tracker_app/features/workout/models/workout_exercise_model.dart';
 
 class ExerciseSetsList extends StatelessWidget {
