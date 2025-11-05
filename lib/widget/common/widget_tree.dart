@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/widget/layout/navigation_state.dart';
-import 'package:gym_tracker_app/features/home/pages/home_calendar_page.dart';
+import 'package:gym_tracker_app/features/home/pages/home_page.dart';
 import 'package:gym_tracker_app/features/profile/pages/profile_page.dart';
 import '../layout/navbar_widget.dart';
 
@@ -13,7 +13,8 @@ class WidgetTree extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(title!), centerTitle: true),
+      //Todo didide to keep or remove appbar
+      // appBar: AppBar(title: Text(title!), centerTitle: true),
       body: ValueListenableBuilder(
         valueListenable: selectedPageNotifier,
         builder: (BuildContext context, dynamic selectedPage, Widget? child) {

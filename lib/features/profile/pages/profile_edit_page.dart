@@ -1,7 +1,7 @@
-// todo fix img pieker
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:gym_tracker_app/widget/common/avatar_widget.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
@@ -25,6 +25,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   late final TextEditingController _emailCtrl;
   late final TextEditingController _weightCtrl;
   bool _saving = false;
+  bool _isPickingAvatar = false;
 
   String? _avatarPath; // локальний шлях у app dir або null
   final ImagePicker _picker = ImagePicker();
@@ -105,6 +106,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
   }
 
   Future<void> _pickAvatar() async {
+    if (_isPickingAvatar) return;
+    _isPickingAvatar = true;
     try {
       final XFile? picked = await _picker.pickImage(
         source: ImageSource.gallery,
@@ -133,9 +136,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
           if (await oldFile.exists()) {
             await oldFile.delete();
           }
-        } catch (_) {
-          // ігнорувати помилки видалення старого файлу
-        }
+        } catch (_) {}
       }
 
       setState(() {
@@ -150,6 +151,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text('Не вдалось вибрати фото: $e')));
+    } finally {
+      _isPickingAvatar = false;
     }
   }
 
@@ -207,56 +210,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
     }
   }
 
-  Widget _buildAvatar(double radius) {
-    final theme = Theme.of(context);
-    final avatarRadius = radius;
-
-    final localPath = _avatarPath;
-    final initialLetter = _nameCtrl.text.isNotEmpty
-        ? _nameCtrl.text[0].toUpperCase()
-        : '';
-
-    if (localPath != null && localPath.isNotEmpty) {
-      final file = File(localPath);
-      return CircleAvatar(
-        radius: avatarRadius,
-        backgroundColor: theme.colorScheme.primary,
-        backgroundImage: file.existsSync() ? FileImage(file) : null,
-        child: file.existsSync()
-            ? null
-            : Text(
-                initialLetter,
-                style: const TextStyle(color: Colors.white, fontSize: 28),
-              ),
-      );
-    }
-
-    final userPath = widget.user.avatarUrl;
-    if (userPath != null && userPath.isNotEmpty) {
-      final file = File(userPath);
-      return CircleAvatar(
-        radius: avatarRadius,
-        backgroundColor: theme.colorScheme.primary,
-        backgroundImage: file.existsSync() ? FileImage(file) : null,
-        child: file.existsSync()
-            ? null
-            : Text(
-                initialLetter,
-                style: const TextStyle(color: Colors.white, fontSize: 28),
-              ),
-      );
-    }
-
-    return CircleAvatar(
-      radius: avatarRadius,
-      backgroundColor: theme.colorScheme.primary,
-      child: Text(
-        initialLetter,
-        style: const TextStyle(color: Colors.white, fontSize: 28),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -300,7 +253,36 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   children: [
                     Column(
                       children: [
-                        _buildAvatar(80),
+                        AvatarWidget(
+                          name: _nameCtrl.text,
+                          avatarPath: _avatarPath ?? widget.user.avatarUrl,
+                          radius: 80,
+                          onEditPressed: _pickAvatar,
+                          onDeletePressed: () async {
+                            final confirmed = await showDialog<bool>(
+                              context: context,
+                              builder: (ctx) => AlertDialog(
+                                title: const Text('Видалити фото'),
+                                content: const Text(
+                                  'Ви дійсно хочете видалити фото?',
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () =>
+                                        Navigator.of(ctx).pop(false),
+                                    child: const Text('Ні'),
+                                  ),
+                                  TextButton(
+                                    onPressed: () =>
+                                        Navigator.of(ctx).pop(true),
+                                    child: const Text('Так'),
+                                  ),
+                                ],
+                              ),
+                            );
+                            if (confirmed == true) await _removeAvatar();
+                          },
+                        ),
                         const SizedBox(height: 12),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -315,8 +297,12 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                               ),
-                              onPressed: _pickAvatar,
-                              icon: const Icon(Icons.edit, size: 18),
+                              onPressed: _isPickingAvatar ? null : _pickAvatar,
+                              icon: _isPickingAvatar
+                                  ? const CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                    )
+                                  : const Icon(Icons.edit, size: 18),
                               label: const Text('Редагувати'),
                             ),
                             const SizedBox(width: 12),

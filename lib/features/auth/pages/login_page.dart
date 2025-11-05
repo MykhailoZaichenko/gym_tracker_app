@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/features/auth/pages/register_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -15,16 +17,49 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final GlobalKey<FormFieldState<String>> _emailFieldKey =
+      GlobalKey<FormFieldState<String>>();
+  final GlobalKey<FormFieldState<String>> _passwordFieldKey =
+      GlobalKey<FormFieldState<String>>();
+
   final TextEditingController controllerEmail = TextEditingController();
   final TextEditingController controllerPassword = TextEditingController();
 
   final AuthService _auth = AuthService();
   bool _loading = false;
 
+  late final FocusNode emailFocus;
+  late final FocusNode paswFocus;
+
+  Timer? _emailDebounce;
+  Timer? _passwordDebounce;
+
+  @override
+  void initState() {
+    super.initState();
+    emailFocus = FocusNode();
+    paswFocus = FocusNode();
+    emailFocus.addListener(() {
+      if (!emailFocus.hasFocus) {
+        _emailFieldKey.currentState?.validate();
+      }
+    });
+    paswFocus.addListener(() {
+      if (!paswFocus.hasFocus) {
+        _passwordFieldKey.currentState?.validate();
+      }
+    });
+  }
+
   @override
   void dispose() {
     controllerEmail.dispose();
     controllerPassword.dispose();
+    emailFocus.dispose();
+    paswFocus.dispose();
+    _emailDebounce?.cancel();
+    _passwordDebounce?.cancel();
     super.dispose();
   }
 
@@ -48,10 +83,143 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  @override
-  void initState() {
-    super.initState();
-    _tryAutoLogin();
+  Future<void> _onLoginPressed() async {
+    FocusScope.of(context).unfocus();
+
+    final formState = _formKey.currentState;
+    if (formState == null) {
+      _showMessage('Форма ще не прикріплена до дерева. Спробуй ще раз.');
+      return;
+    }
+
+    if (!formState.validate()) {
+      if (_emailFieldKey.currentState?.validate() == false) {
+        FocusScope.of(context).requestFocus(emailFocus);
+      } else {
+        FocusScope.of(context).requestFocus(paswFocus);
+      }
+      return;
+    }
+
+    final email = controllerEmail.text.trim();
+    final password = controllerPassword.text;
+
+    setState(() => _loading = true);
+    try {
+      final user = await _auth.login(email: email, password: password);
+      if (user == null) {
+        _showMessage('Invalid email or password');
+      } else {
+        await _persistUserId(user.id!);
+        if (!mounted) return;
+        _goToApp();
+      }
+    } catch (e) {
+      _showMessage('Login error: ${e.toString()}');
+    } finally {
+      if (mounted) setState(() => _loading = false);
+    }
+  }
+
+  Future<void> _onForgotPressed() async {
+    final emailCtrl = TextEditingController(text: controllerEmail.text.trim());
+    await showDialog<void>(
+      context: context,
+      builder: (ctx) {
+        return AlertDialog(
+          title: const Text('Reset password (local)'),
+          content: TextField(
+            controller: emailCtrl,
+            decoration: const InputDecoration(labelText: 'Email'),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () async {
+                final email = emailCtrl.text.trim();
+                if (email.isEmpty) {
+                  _showMessage('Email required');
+                  return;
+                }
+                final user = await AppDb().getUserByEmail(email);
+                if (user == null) {
+                  _showMessage('No user with that email');
+                } else {
+                  // local reset: ask for new password
+                  Navigator.of(ctx).pop();
+                  final newpasswordCtrl = TextEditingController();
+                  await showDialog<void>(
+                    context: context,
+                    builder: (ctx2) {
+                      return AlertDialog(
+                        title: const Text('Enter new password'),
+                        content: TextField(
+                          controller: newpasswordCtrl,
+                          decoration: const InputDecoration(
+                            labelText: 'New password',
+                          ),
+                          obscureText: true,
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.of(ctx2).pop(),
+                            child: const Text('Cancel'),
+                          ),
+                          TextButton(
+                            onPressed: () async {
+                              final newpassword = newpasswordCtrl.text;
+                              if (newpassword.isEmpty) {
+                                _showMessage('Password required');
+                                return;
+                              }
+                              await _auth.changePassword(user.id!, newpassword);
+                              Navigator.of(ctx2).pop();
+                              _showMessage('Password updated');
+                            },
+                            child: const Text('Save'),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                }
+              },
+              child: const Text('Reset'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  String? _validateEmail(String? v) {
+    if (v == null || v.trim().isEmpty) return 'Email required';
+    final email = v.trim();
+    final emailRe = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
+    if (!emailRe.hasMatch(email)) return 'Invalid email';
+    return null;
+  }
+
+  String? _validatePassword(String? v) {
+    if (v == null || v.isEmpty) return 'Password required';
+    if (v.length < 6) return 'Password must be at least 6 chars';
+    return null;
+  }
+
+  void _goToApp() {
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => const WidgetTree()),
+      (route) => false,
+    );
+  }
+
+  void _showMessage(String text) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(text)));
   }
 
   @override
@@ -91,30 +259,66 @@ class _LoginPageState extends State<LoginPage> {
                         style: Theme.of(context).textTheme.titleLarge,
                       ),
                       const SizedBox(height: 20),
-                      TextField(
-                        controller: controllerEmail,
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(15.0),
-                          ),
-                          hintText: 'Enter email',
-                          labelText: 'Email',
+                      Form(
+                        key: _formKey,
+                        autovalidateMode: AutovalidateMode.disabled,
+                        child: Column(
+                          children: [
+                            TextFormField(
+                              key: _emailFieldKey,
+                              focusNode: emailFocus,
+                              controller: controllerEmail,
+                              decoration: InputDecoration(
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(15.0),
+                                ),
+                                hintText: 'Enter email',
+                                labelText: 'Email',
+                              ),
+                              keyboardType: TextInputType.emailAddress,
+                              textInputAction: TextInputAction.next,
+                              validator: _validateEmail,
+                              onFieldSubmitted: (_) => FocusScope.of(
+                                context,
+                              ).requestFocus(paswFocus),
+                              onChanged: (value) {
+                                _emailDebounce?.cancel();
+                                _emailDebounce = Timer(
+                                  const Duration(milliseconds: 700),
+                                  () {
+                                    _emailFieldKey.currentState?.validate();
+                                  },
+                                );
+                              },
+                            ),
+                            const SizedBox(height: 10.0),
+                            TextFormField(
+                              key: _passwordFieldKey,
+                              focusNode: paswFocus,
+                              controller: controllerPassword,
+                              decoration: InputDecoration(
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(15.0),
+                                ),
+                                hintText: 'Enter password',
+                                labelText: 'Password',
+                              ),
+                              obscureText: true,
+                              textInputAction: TextInputAction.done,
+                              validator: _validatePassword,
+                              onFieldSubmitted: (_) => _onLoginPressed(),
+                              onChanged: (value) {
+                                _passwordDebounce?.cancel();
+                                _passwordDebounce = Timer(
+                                  const Duration(milliseconds: 700),
+                                  () {
+                                    _passwordFieldKey.currentState?.validate();
+                                  },
+                                );
+                              },
+                            ),
+                          ],
                         ),
-                        keyboardType: TextInputType.emailAddress,
-                        onEditingComplete: () => setState(() {}),
-                      ),
-                      const SizedBox(height: 10.0),
-                      TextField(
-                        controller: controllerPassword,
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(15.0),
-                          ),
-                          hintText: 'Enter password',
-                          labelText: 'Password',
-                        ),
-                        obscureText: true,
-                        onEditingComplete: () => setState(() {}),
                       ),
                       const SizedBox(height: 20.0),
                       SizedBox(
@@ -168,116 +372,5 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
     );
-  }
-
-  Future<void> _onLoginPressed() async {
-    final email = controllerEmail.text.trim();
-    final password = controllerPassword.text;
-    if (email.isEmpty || password.isEmpty) {
-      _showMessage('Email and password are required');
-      return;
-    }
-
-    setState(() => _loading = true);
-    try {
-      final user = await _auth.login(email: email, password: password);
-      if (user == null) {
-        _showMessage('Invalid email or password');
-      } else {
-        await _persistUserId(user.id!);
-        _goToApp();
-      }
-    } catch (e) {
-      _showMessage('Login error: ${e.toString()}');
-    } finally {
-      if (mounted) setState(() => _loading = false);
-    }
-  }
-
-  Future<void> _onForgotPressed() async {
-    final emailCtrl = TextEditingController(text: controllerEmail.text.trim());
-    await showDialog<void>(
-      context: context,
-      builder: (ctx) {
-        return AlertDialog(
-          title: const Text('Reset password (local)'),
-          content: TextField(
-            controller: emailCtrl,
-            decoration: const InputDecoration(labelText: 'Email'),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(ctx).pop(),
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () async {
-                final email = emailCtrl.text.trim();
-                if (email.isEmpty) {
-                  _showMessage('Email required');
-                  return;
-                }
-                final user = await AppDb().getUserByEmail(email);
-                if (user == null) {
-                  _showMessage('No user with that email');
-                } else {
-                  // local reset: ask for new password
-                  Navigator.of(ctx).pop();
-                  final newPwCtrl = TextEditingController();
-                  await showDialog<void>(
-                    context: context,
-                    builder: (ctx2) {
-                      return AlertDialog(
-                        title: const Text('Enter new password'),
-                        content: TextField(
-                          controller: newPwCtrl,
-                          decoration: const InputDecoration(
-                            labelText: 'New password',
-                          ),
-                          obscureText: true,
-                        ),
-                        actions: [
-                          TextButton(
-                            onPressed: () => Navigator.of(ctx2).pop(),
-                            child: const Text('Cancel'),
-                          ),
-                          TextButton(
-                            onPressed: () async {
-                              final newPw = newPwCtrl.text;
-                              if (newPw.isEmpty) {
-                                _showMessage('Password required');
-                                return;
-                              }
-                              await _auth.changePassword(user.id!, newPw);
-                              Navigator.of(ctx2).pop();
-                              _showMessage('Password updated');
-                            },
-                            child: const Text('Save'),
-                          ),
-                        ],
-                      );
-                    },
-                  );
-                }
-              },
-              child: const Text('Reset'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  void _goToApp() {
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(builder: (context) => const WidgetTree()),
-      (route) => false,
-    );
-  }
-
-  void _showMessage(String text) {
-    if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(text)));
   }
 }

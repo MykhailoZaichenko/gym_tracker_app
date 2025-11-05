@@ -19,9 +19,6 @@ class ExerciseSetTile extends StatelessWidget {
     final weightFocus = FocusNode();
     final repsFocus = FocusNode();
 
-    // Ми не створюємо контролери тут, але створюємо фокуси локально
-    // і використовуємо їх у полях TextField.
-
     return Container(
       width: 120,
       margin: const EdgeInsets.symmetric(horizontal: 4),
@@ -80,8 +77,6 @@ class ExerciseSetTile extends StatelessWidget {
                       border: InputBorder.none,
                     ),
                     onSubmitted: (_) {
-                      // при натисканні "next" або галочки на клавіатурі
-                      // переміщаємо фокус на поле репів замість закриття клавіатури
                       FocusScope.of(context).requestFocus(repsFocus);
                     },
                   ),
@@ -101,7 +96,6 @@ class ExerciseSetTile extends StatelessWidget {
                       border: InputBorder.none,
                     ),
                     onSubmitted: (_) {
-                      // при натисканні "done" знімаємо фокус і ховаємо клавіатуру
                       repsFocus.unfocus();
                     },
                   ),

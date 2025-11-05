@@ -69,3 +69,5 @@ String weekdayLabel(int weekday) {
 enum RangeMode { month, year }
 
 enum ExitChoice { cancel, discard, save }
+
+enum Weekday { monday, tuesday, wednesday, thursday, friday, saturday, sunday }
