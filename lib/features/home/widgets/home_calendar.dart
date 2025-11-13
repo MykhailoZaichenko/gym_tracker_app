@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gym_tracker_app/core/theme/theme_service.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:gym_tracker_app/widget/common/month_picker_dialog.dart';
 import 'package:gym_tracker_app/core/constants/constants.dart';
@@ -24,8 +25,6 @@ class HomeCalendar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
     return TableCalendar(
       locale: "uk_UA",
       calendarBuilders: CalendarBuilders(
@@ -67,7 +66,7 @@ class HomeCalendar extends StatelessWidget {
       eventLoader: (day) => allWorkouts[_keyOf(day)] ?? <WorkoutExercise>[],
       calendarStyle: CalendarStyle(
         markerDecoration: BoxDecoration(
-          color: isDark
+          color: ThemeService.isDarkModeNotifier.value
               ? Theme.of(context).primaryColorLight
               : Theme.of(context).primaryColorDark,
           shape: BoxShape.circle,
@@ -77,7 +76,9 @@ class HomeCalendar extends StatelessWidget {
           shape: BoxShape.circle,
         ),
         selectedDecoration: BoxDecoration(
-          color: isDark ? Colors.blueGrey : Colors.blue[300],
+          color: ThemeService.isDarkModeNotifier.value
+              ? Colors.blueGrey
+              : Colors.blue[300],
           shape: BoxShape.circle,
         ),
       ),

@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/data/seed/exercise_catalog.dart';
-import 'package:gym_tracker_app/widget/common/will_pop_save_wideget.dart';
+import 'package:gym_tracker_app/widget/common/pop_save_wideget.dart';
 import 'package:gym_tracker_app/features/workout/widgets/workout_picker_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -109,11 +109,21 @@ class _WorkoutPlanEditorPageState extends State<WorkoutPlanEditorPage> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () => WillPopSavePrompt(
-        hasUnsavedChanges: () async => _hasUnsavedChanges(),
-        onSave: _savePlan,
-      ).handlePop(context),
+    return PopScope(
+      canPop: false, // block automatic pop, handle manually
+      onPopInvokedWithResult: (didPop, result) async {
+        if (!didPop) {
+          // run your save‑prompt logic
+          final allow = await WillPopSavePrompt(
+            hasUnsavedChanges: () async => _hasUnsavedChanges(),
+            onSave: _savePlan,
+          ).handlePop(context);
+
+          if (allow && context.mounted) {
+            Navigator.pop(context, result);
+          }
+        }
+      },
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Редагування плану'),

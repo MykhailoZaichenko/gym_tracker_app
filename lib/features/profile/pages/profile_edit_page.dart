@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:gym_tracker_app/core/theme/theme_service.dart';
 import 'package:gym_tracker_app/widget/common/avatar_widget.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as p;
@@ -143,6 +144,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
         _avatarPath = newPath;
       });
     } catch (e, st) {
+      if (!mounted) return;
       debugPrint('Image pick error: $e\n$st');
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Не вдалося відкрити галерею')),
@@ -212,8 +214,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    // final email = user?.email ?? 'Немає email';
+    // final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Редагувати профіль'),
@@ -230,7 +231,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 : Text(
                     'Зберегти',
                     style: TextStyle(
-                      color: isDark ? Colors.white : Colors.black,
+                      color: ThemeService.isDarkModeNotifier.value
+                          ? Colors.white
+                          : Colors.black,
                     ),
                   ),
           ),
@@ -396,7 +399,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       child: ElevatedButton(
                         style: ButtonStyle(
                           shadowColor: WidgetStatePropertyAll(
-                            isDark
+                            ThemeService.isDarkModeNotifier.value
                                 ? const Color.fromRGBO(
                                     151,
                                     136,

@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/features/auth/pages/login_page.dart';
 import 'package:gym_tracker_app/features/welcome/pages/onboarding_page.dart';
-import 'package:lottie/lottie.dart';
+import 'package:gym_tracker_app/widget/common/hero_widget.dart';
 
 class WelcomePage extends StatelessWidget {
   const WelcomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       body: Center(
         child: Padding(
@@ -16,18 +15,7 @@ class WelcomePage extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              isDark
-                  ? ColorFiltered(
-                      colorFilter: const ColorFilter.mode(
-                        Colors.white,
-                        BlendMode.srcATop,
-                      ),
-                      child: Lottie.asset(
-                        'assets/lotties/dumbell.json',
-                        height: 400,
-                      ),
-                    )
-                  : Lottie.asset('assets/lotties/dumbell.json', height: 400),
+              HeroWidget(tag: 'welcome_lottie'),
               FittedBox(
                 child: Text(
                   "Gym Tracker",

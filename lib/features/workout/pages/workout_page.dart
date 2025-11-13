@@ -6,7 +6,7 @@ import 'package:gym_tracker_app/features/workout/models/workout_exercise_model.d
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:gym_tracker_app/features/workout/workout_exports.dart';
 import 'package:gym_tracker_app/core/constants/constants.dart';
-import 'package:gym_tracker_app/widget/common/will_pop_save_wideget.dart';
+import 'package:gym_tracker_app/widget/common/pop_save_wideget.dart';
 
 class WorkoutPage extends StatefulWidget {
   final DateTime date;
@@ -219,14 +219,23 @@ class _WorkoutPageState extends State<WorkoutPage> {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
-    return WillPopScope(
-      onWillPop: () => WillPopSavePrompt(
-        hasUnsavedChanges: () async => _hasUnsavedChanges(),
-        onSave: () async {
-          await _saveExercises();
-          widget.onSave(_exercises);
-        },
-      ).handlePop(context),
+    return PopScope(
+      canPop: false, // block automatic pop, handle manually
+      onPopInvokedWithResult: (didPop, result) async {
+        if (!didPop) {
+          final allow = await WillPopSavePrompt(
+            hasUnsavedChanges: () async => _hasUnsavedChanges(),
+            onSave: () async {
+              await _saveExercises();
+              widget.onSave(_exercises);
+            },
+          ).handlePop(context);
+
+          if (allow && context.mounted) {
+            Navigator.pop(context, result);
+          }
+        }
+      },
       child: Scaffold(
         appBar: AppBar(
           title: Text(
@@ -235,19 +244,20 @@ class _WorkoutPageState extends State<WorkoutPage> {
           actions: [
             IconButton(
               icon: const Icon(Icons.save),
+              tooltip: 'Зберегти',
               onPressed: () async {
                 await _saveExercises();
                 widget.onSave(_exercises);
-                Navigator.pop(context);
+                if (context.mounted) Navigator.pop(context);
               },
             ),
           ],
         ),
         body: ListView.builder(
+          padding: const EdgeInsets.all(8),
           itemCount: _exercises.length,
           itemBuilder: (context, i) {
             final exercise = _exercises[i];
-
             return Card(
               margin: const EdgeInsets.all(8),
               child: Padding(
@@ -255,7 +265,6 @@ class _WorkoutPageState extends State<WorkoutPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Header
                     ExerciseHeader(
                       exercise: exercise,
                       nameController: _nameCtrls[i],
@@ -283,10 +292,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
                         );
                       },
                     ),
-
                     const SizedBox(height: 8),
-
-                    // Sets list
                     ExerciseSetsList(
                       exercise: exercise,
                       weightControllers: _weightCtrls[i],
@@ -300,7 +306,6 @@ class _WorkoutPageState extends State<WorkoutPage> {
                             : v.toString();
                       },
                     ),
-
                     const SizedBox(height: 8),
                   ],
                 ),
@@ -308,7 +313,6 @@ class _WorkoutPageState extends State<WorkoutPage> {
             );
           },
         ),
-
         floatingActionButton: FloatingActionButton(
           onPressed: _addExercise,
           tooltip: 'Додати вправу',

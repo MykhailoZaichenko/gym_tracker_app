@@ -53,7 +53,7 @@ class _MonthPickerDialogState extends State<MonthPickerDialog>
     _yearController = TextEditingController(text: _year.toString());
     _animController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 300),
+      duration: const Duration(milliseconds: 350),
     )..forward();
   }
 

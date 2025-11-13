@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:gym_tracker_app/widget/common/hero_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:lottie/lottie.dart';
 import 'package:gym_tracker_app/features/auth/pages/login_page.dart';
 import 'package:gym_tracker_app/widget/common/widget_tree.dart';
 import '../../../services/auth_service.dart';
@@ -175,7 +175,6 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     final widthScreen = MediaQuery.of(context).size.width;
 
     return Scaffold(
@@ -194,21 +193,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                   child: Column(
                     children: [
-                      isDark
-                          ? ColorFiltered(
-                              colorFilter: const ColorFilter.mode(
-                                Colors.white,
-                                BlendMode.srcATop,
-                              ),
-                              child: Lottie.asset(
-                                'assets/lotties/dumbell.json',
-                                height: 300,
-                              ),
-                            )
-                          : Lottie.asset(
-                              'assets/lotties/dumbell.json',
-                              height: 300,
-                            ),
+                      HeroWidget(tag: 'register_lottie'),
                       const SizedBox(height: 8),
                       Text(
                         'Створити обліковий запис',

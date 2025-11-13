@@ -1,12 +1,12 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:gym_tracker_app/data/sources/local/app_db.dart';
 import 'package:gym_tracker_app/features/auth/pages/register_page.dart';
+import 'package:gym_tracker_app/services/auth_service.dart';
+import 'package:gym_tracker_app/widget/common/hero_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:lottie/lottie.dart';
 import 'package:gym_tracker_app/widget/common/widget_tree.dart';
-import '../../../data/sources/local/app_db.dart';
-import '../../../services/auth_service.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key, required this.title});
@@ -50,6 +50,7 @@ class _LoginPageState extends State<LoginPage> {
         _passwordFieldKey.currentState?.validate();
       }
     });
+    // _tryAutoLogin();
   }
 
   @override
@@ -67,21 +68,34 @@ class _LoginPageState extends State<LoginPage> {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt('current_user_id', id);
   }
+  //TODO: fix auto-login
+  // Future<int?> _readPersistedUserId() async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //   return prefs.getInt('current_user_id');
+  // }
 
-  Future<int?> _readPersistedUserId() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getInt('current_user_id');
-  }
+  // Future<void> _tryAutoLogin() async {
+  //   setState(() => _loading = true);
 
-  Future<void> _tryAutoLogin() async {
-    final id = await _readPersistedUserId();
-    if (id != null) {
-      final user = await AppDb().getUserById(id);
-      if (user != null) {
-        _goToApp();
-      }
-    }
-  }
+  //   try {
+  //     final userId = await _readPersistedUserId();
+  //     if (userId == null) {
+  //       setState(() => _loading = false);
+  //       return;
+  //     }
+
+  //     final user = await AppDb().getUserById(userId);
+  //     if (user != null && mounted) {
+  //       _showMessage('Welcome back, ${user.email}');
+  //       _goToApp();
+  //     } else {
+  //       setState(() => _loading = false);
+  //     }
+  //   } catch (e) {
+  //     setState(() => _loading = false);
+  //     _showMessage('Auto-login failed: $e');
+  //   }
+  // }
 
   Future<void> _onLoginPressed() async {
     FocusScope.of(context).unfocus();
@@ -145,47 +159,55 @@ class _LoginPageState extends State<LoginPage> {
                   return;
                 }
                 final user = await AppDb().getUserByEmail(email);
+                if (!mounted) return;
                 if (user == null) {
                   _showMessage('No user with that email');
-                } else {
-                  // local reset: ask for new password
-                  Navigator.of(ctx).pop();
-                  final newpasswordCtrl = TextEditingController();
-                  await showDialog<void>(
-                    context: context,
-                    builder: (ctx2) {
-                      return AlertDialog(
-                        title: const Text('Enter new password'),
-                        content: TextField(
-                          controller: newpasswordCtrl,
-                          decoration: const InputDecoration(
-                            labelText: 'New password',
-                          ),
-                          obscureText: true,
-                        ),
-                        actions: [
-                          TextButton(
-                            onPressed: () => Navigator.of(ctx2).pop(),
-                            child: const Text('Cancel'),
-                          ),
-                          TextButton(
-                            onPressed: () async {
-                              final newpassword = newpasswordCtrl.text;
-                              if (newpassword.isEmpty) {
-                                _showMessage('Password required');
-                                return;
-                              }
-                              await _auth.changePassword(user.id!, newpassword);
-                              Navigator.of(ctx2).pop();
-                              _showMessage('Password updated');
-                            },
-                            child: const Text('Save'),
-                          ),
-                        ],
-                      );
-                    },
-                  );
+                  return;
                 }
+
+                Navigator.of(context).pop();
+
+                final newpasswordCtrl = TextEditingController();
+                final newPassword = await showDialog<String>(
+                  context: context,
+                  builder: (ctx2) {
+                    return AlertDialog(
+                      title: const Text('Enter new password'),
+                      content: TextField(
+                        controller: newpasswordCtrl,
+                        decoration: const InputDecoration(
+                          labelText: 'New password',
+                        ),
+                        obscureText: true,
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.of(ctx2).pop(),
+                          child: const Text('Cancel'),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            final newpassword = newpasswordCtrl.text;
+                            if (newpassword.isEmpty) {
+                              if (mounted) _showMessage('Password required');
+                              return;
+                            }
+                            Navigator.of(ctx2).pop(newpassword); // return value
+                          },
+                          child: const Text('Save'),
+                        ),
+                      ],
+                    );
+                  },
+                );
+
+                // after await — check mounted before using context
+                if (!mounted || newPassword == null || newPassword.isEmpty) {
+                  return;
+                }
+
+                await _auth.changePassword(user.id!, newPassword);
+                if (mounted) _showMessage('Password updated');
               },
               child: const Text('Reset'),
             ),
@@ -224,7 +246,6 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     double widthScreen = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: AppBar(),
@@ -238,21 +259,7 @@ class _LoginPageState extends State<LoginPage> {
                   widthFactor: widthScreen < 500 ? 0.9 : 0.4,
                   child: Column(
                     children: [
-                      isDark
-                          ? ColorFiltered(
-                              colorFilter: const ColorFilter.mode(
-                                Colors.white,
-                                BlendMode.srcATop,
-                              ),
-                              child: Lottie.asset(
-                                'assets/lotties/dumbell.json',
-                                height: 300,
-                              ),
-                            )
-                          : Lottie.asset(
-                              'assets/lotties/dumbell.json',
-                              height: 300,
-                            ),
+                      HeroWidget(tag: 'login_lottie'),
                       // const SizedBox(height: 8.0),
                       Text(
                         'Ввійти в обліковий запис',

@@ -13,8 +13,6 @@ class WidgetTree extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      //Todo didide to keep or remove appbar
-      // appBar: AppBar(title: Text(title!), centerTitle: true),
       body: ValueListenableBuilder(
         valueListenable: selectedPageNotifier,
         builder: (BuildContext context, dynamic selectedPage, Widget? child) {

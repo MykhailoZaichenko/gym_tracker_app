@@ -70,6 +70,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 ThemeService.isDarkModeNotifier.value = false;
                 _notificationsEnabled = true;
               });
+              if (!mounted) return;
               Navigator.of(ctx).pop();
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Дані успішно очищені')),

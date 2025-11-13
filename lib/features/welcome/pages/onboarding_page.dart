@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/features/auth/pages/register_page.dart';
-import 'package:lottie/lottie.dart';
+import 'package:gym_tracker_app/widget/common/hero_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class OnboardingPage extends StatefulWidget {
@@ -38,8 +38,6 @@ class _OnboardingPageState extends State<OnboardingPage> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
     return Scaffold(
       appBar: AppBar(),
       body: Center(
@@ -49,18 +47,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
             key: _formKey,
             child: Column(
               children: [
-                isDark
-                    ? ColorFiltered(
-                        colorFilter: const ColorFilter.mode(
-                          Colors.white,
-                          BlendMode.srcATop,
-                        ),
-                        child: Lottie.asset(
-                          'assets/lotties/dumbell.json',
-                          height: 300,
-                        ),
-                      )
-                    : Lottie.asset('assets/lotties/dumbell.json', height: 300),
+                HeroWidget(tag: 'onboarding_lottie'),
                 const SizedBox(height: 20),
                 Text(
                   'Вкажіть вашу вагу для персоналізації',

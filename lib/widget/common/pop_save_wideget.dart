@@ -45,8 +45,17 @@ class WillPopSavePrompt extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () => handlePop(context),
+    return PopScope(
+      canPop: false, // prevent automatic pop unless you allow it manually
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop) {
+          // your custom logic when back is pressed but route not yet popped
+          handlePop(context);
+        } else {
+          // optional: you can inspect `result` if needed
+          debugPrint('Route popped with result: $result');
+        }
+      },
       child: const SizedBox.shrink(), // Placeholder, не рендерить нічого
     );
   }
