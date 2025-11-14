@@ -1,3 +1,5 @@
+// lib/widget/common/auth_page_widget.dart
+
 import 'dart:async';
 
 import 'package:flutter/material.dart';

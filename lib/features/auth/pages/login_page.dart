@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/data/sources/local/app_db.dart';
 import 'package:gym_tracker_app/features/auth/widgets/auth_form_widget.dart';
+
 import 'package:gym_tracker_app/features/welcome/pages/onboarding_page.dart';
 import 'package:gym_tracker_app/services/auth_service.dart';
 import 'package:gym_tracker_app/widget/common/hero_widget.dart';
