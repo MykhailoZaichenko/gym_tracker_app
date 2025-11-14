@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:gym_tracker_app/features/auth/widgets/auth_form_widget.dart';
 import 'package:gym_tracker_app/widget/common/hero_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:gym_tracker_app/features/auth/pages/login_page.dart';
@@ -105,7 +106,6 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   Future<void> _onRegisterPressed() async {
-    // Hide keyboard and unfocus before validation
     FocusScope.of(context).unfocus();
 
     final formState = _formKey.currentState;
@@ -202,169 +202,36 @@ class _RegisterPageState extends State<RegisterPage> {
                       const SizedBox(height: 18),
                       Form(
                         key: _formKey,
-                        autovalidateMode: AutovalidateMode.disabled,
-                        child: Column(
-                          children: [
-                            TextFormField(
-                              key: _emailFieldKey,
-                              focusNode: emailFocus,
-                              controller: _emailCtrl,
-                              decoration: InputDecoration(
-                                hintText: 'Enter email',
-                                labelText: 'Email',
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(15),
-                                ),
-                              ),
-                              keyboardType: TextInputType.emailAddress,
-                              textInputAction: TextInputAction.next,
-                              validator: _validateEmail,
-                              onFieldSubmitted: (_) {
-                                FocusScope.of(context).requestFocus(nameFocus);
-                              },
-                              onChanged: (value) {
-                                _emailDebounce?.cancel();
-                                _emailDebounce = Timer(
-                                  const Duration(milliseconds: 700),
-                                  () {
-                                    _emailFieldKey.currentState?.validate();
-                                  },
-                                );
-                              },
-                            ),
-                            const SizedBox(height: 12),
-                            TextFormField(
-                              focusNode: nameFocus,
-                              controller: _nameCtrl,
-                              decoration: InputDecoration(
-                                hintText: 'Enter name',
-                                labelText: 'Name',
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(15),
-                                ),
-                              ),
-                              textInputAction: TextInputAction.next,
-                              validator: _validateName,
-                              onFieldSubmitted: (_) {
-                                FocusScope.of(
-                                  context,
-                                ).requestFocus(passwordFocus);
-                              },
-                              onChanged: (value) {
-                                _nameDebounce?.cancel();
-                                _nameDebounce = Timer(
-                                  const Duration(milliseconds: 700),
-                                  () {
-                                    _nameFieldKey.currentState?.validate();
-                                  },
-                                );
-                              },
-                            ),
-                            const SizedBox(height: 12),
-                            TextFormField(
-                              focusNode: passwordFocus,
-                              controller: _passwordCtrl,
-                              decoration: InputDecoration(
-                                hintText: 'Enter password',
-                                labelText: 'Password',
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(15),
-                                ),
-                              ),
-                              obscureText: true,
-                              textInputAction: TextInputAction.next,
-                              validator: _validatePassword,
-                              onFieldSubmitted: (_) {
-                                FocusScope.of(
-                                  context,
-                                ).requestFocus(passwordConfirmFocus);
-                              },
-                              onChanged: (value) {
-                                _passwordDebounce?.cancel();
-                                _passwordDebounce = Timer(
-                                  const Duration(milliseconds: 700),
-                                  () {
-                                    _passwordFieldKey.currentState?.validate();
-                                  },
-                                );
-                              },
-                            ),
-                            const SizedBox(height: 12),
-                            TextFormField(
-                              focusNode: passwordConfirmFocus,
-                              controller: _passwordConfirmCtrl,
-                              decoration: InputDecoration(
-                                hintText: 'Enter password again',
-                                labelText: 'Confirm Password',
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(15),
-                                ),
-                              ),
-                              obscureText: true,
-                              textInputAction: TextInputAction.done,
-                              validator: _validatePasswordConfirm,
-                              onFieldSubmitted: (_) {
-                                _onRegisterPressed();
-                              },
-                              onChanged: (value) {
-                                _passwordConfirmDebounce?.cancel();
-                                _passwordConfirmDebounce = Timer(
-                                  const Duration(milliseconds: 700),
-                                  () {
-                                    _passwordConfirmFieldKey.currentState
-                                        ?.validate();
-                                  },
-                                );
-                              },
-                            ),
-                            const SizedBox(height: 18),
-                            SizedBox(
-                              width: double.infinity,
-                              height: 50,
-                              child: FilledButton(
-                                onPressed: _loading ? null : _onRegisterPressed,
-                                style: ElevatedButton.styleFrom(
-                                  minimumSize: const Size.fromHeight(50),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                ),
-                                child: _loading
-                                    ? const SizedBox(
-                                        width: 20,
-                                        height: 20,
-                                        child: CircularProgressIndicator(
-                                          color: Colors.white,
-                                          strokeWidth: 2,
-                                        ),
-                                      )
-                                    : Text(widget.title),
-                              ),
-                            ),
-                            const SizedBox(height: 12),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const Text('Already have account? '),
-                                TextButton(
-                                  onPressed: _loading
-                                      ? null
-                                      : () => Navigator.pushAndRemoveUntil(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) {
-                                              return const LoginPage(
-                                                title: 'Log in',
-                                              );
-                                            },
-                                          ),
-                                          (route) => false,
-                                        ),
-                                  child: const Text("Log In"),
-                                ),
-                              ],
-                            ),
-                          ],
+                        child: AuthFormWidget(
+                          mode: AuthFormMode.register,
+                          formKey: _formKey,
+
+                          emailCtrl: _emailCtrl,
+                          nameCtrl: _nameCtrl,
+                          passwordCtrl: _passwordCtrl,
+                          passwordConfirmCtrl: _passwordConfirmCtrl,
+
+                          emailFocus: emailFocus,
+                          nameFocus: nameFocus,
+                          passwordFocus: passwordFocus,
+                          passwordConfirmFocus: passwordConfirmFocus,
+
+                          emailFieldKey: _emailFieldKey,
+                          nameFieldKey: _nameFieldKey,
+                          passwordFieldKey: _passwordFieldKey,
+                          passwordConfirmFieldKey: _passwordConfirmFieldKey,
+
+                          validateEmail: _validateEmail,
+                          validateName: _validateName,
+                          validatePassword: _validatePassword,
+                          validatePasswordConfirm: _validatePasswordConfirm,
+
+                          onSubmit: _onRegisterPressed,
+
+                          emailDebounce: _emailDebounce,
+                          nameDebounce: _nameDebounce,
+                          passwordDebounce: _passwordDebounce,
+                          passwordConfirmDebounce: _passwordConfirmDebounce,
                         ),
                       ),
                     ],

@@ -2,7 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/data/sources/local/app_db.dart';
-import 'package:gym_tracker_app/features/auth/pages/register_page.dart';
+import 'package:gym_tracker_app/features/auth/widgets/auth_form_widget.dart';
+import 'package:gym_tracker_app/features/welcome/pages/onboarding_page.dart';
 import 'package:gym_tracker_app/services/auth_service.dart';
 import 'package:gym_tracker_app/widget/common/hero_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -268,65 +269,29 @@ class _LoginPageState extends State<LoginPage> {
                       const SizedBox(height: 20),
                       Form(
                         key: _formKey,
-                        autovalidateMode: AutovalidateMode.disabled,
-                        child: Column(
-                          children: [
-                            TextFormField(
-                              key: _emailFieldKey,
-                              focusNode: emailFocus,
-                              controller: controllerEmail,
-                              decoration: InputDecoration(
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(15.0),
-                                ),
-                                hintText: 'Enter email',
-                                labelText: 'Email',
-                              ),
-                              keyboardType: TextInputType.emailAddress,
-                              textInputAction: TextInputAction.next,
-                              validator: _validateEmail,
-                              onFieldSubmitted: (_) => FocusScope.of(
-                                context,
-                              ).requestFocus(paswFocus),
-                              onChanged: (value) {
-                                _emailDebounce?.cancel();
-                                _emailDebounce = Timer(
-                                  const Duration(milliseconds: 700),
-                                  () {
-                                    _emailFieldKey.currentState?.validate();
-                                  },
-                                );
-                              },
-                            ),
-                            const SizedBox(height: 10.0),
-                            TextFormField(
-                              key: _passwordFieldKey,
-                              focusNode: paswFocus,
-                              controller: controllerPassword,
-                              decoration: InputDecoration(
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(15.0),
-                                ),
-                                hintText: 'Enter password',
-                                labelText: 'Password',
-                              ),
-                              obscureText: true,
-                              textInputAction: TextInputAction.done,
-                              validator: _validatePassword,
-                              onFieldSubmitted: (_) => _onLoginPressed(),
-                              onChanged: (value) {
-                                _passwordDebounce?.cancel();
-                                _passwordDebounce = Timer(
-                                  const Duration(milliseconds: 700),
-                                  () {
-                                    _passwordFieldKey.currentState?.validate();
-                                  },
-                                );
-                              },
-                            ),
-                          ],
+                        child: AuthFormWidget(
+                          mode: AuthFormMode.login,
+                          formKey: _formKey,
+
+                          emailCtrl: controllerEmail,
+                          passwordCtrl: controllerPassword,
+
+                          emailFocus: emailFocus,
+                          passwordFocus: paswFocus,
+
+                          emailFieldKey: _emailFieldKey,
+                          passwordFieldKey: _passwordFieldKey,
+
+                          validateEmail: _validateEmail,
+                          validatePassword: _validatePassword,
+
+                          onSubmit: _onLoginPressed,
+
+                          emailDebounce: _emailDebounce,
+                          passwordDebounce: _passwordDebounce,
                         ),
                       ),
+
                       const SizedBox(height: 20.0),
                       SizedBox(
                         width: double.infinity,
@@ -354,9 +319,7 @@ class _LoginPageState extends State<LoginPage> {
                                     Navigator.pushAndRemoveUntil(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (_) => const RegisterPage(
-                                          title: 'Register',
-                                        ),
+                                        builder: (_) => const OnboardingPage(),
                                       ),
                                       (route) => false,
                                     );

@@ -17,9 +17,9 @@ class HeroWidget extends StatelessWidget {
                 Colors.white,
                 BlendMode.srcATop,
               ),
-              child: Lottie.asset('assets/lotties/dumbell.json', height: 400),
+              child: Lottie.asset('assets/lotties/dumbell.json', height: 300),
             )
-          : Lottie.asset('assets/lotties/dumbell.json', height: 400),
+          : Lottie.asset('assets/lotties/dumbell.json', height: 300),
     );
   }
 }
