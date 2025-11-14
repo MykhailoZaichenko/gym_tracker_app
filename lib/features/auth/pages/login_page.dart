@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/data/sources/local/app_db.dart';
-import 'package:gym_tracker_app/features/auth/pages/register_page.dart';
+import 'package:gym_tracker_app/features/welcome/pages/onboarding_page.dart';
 import 'package:gym_tracker_app/services/auth_service.dart';
 import 'package:gym_tracker_app/widget/common/hero_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -354,9 +354,7 @@ class _LoginPageState extends State<LoginPage> {
                                     Navigator.pushAndRemoveUntil(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (_) => const RegisterPage(
-                                          title: 'Register',
-                                        ),
+                                        builder: (_) => const OnboardingPage(),
                                       ),
                                       (route) => false,
                                     );

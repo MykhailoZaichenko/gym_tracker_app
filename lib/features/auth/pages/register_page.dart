@@ -105,7 +105,6 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   Future<void> _onRegisterPressed() async {
-    // Hide keyboard and unfocus before validation
     FocusScope.of(context).unfocus();
 
     final formState = _formKey.currentState;
