@@ -1,103 +1,129 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 
-enum AuthFormMode { login, register }
+// Визначаємо перелік, щоб розрізняти тип сторінки (Login чи Register)
+enum AuthFormType { login, register }
 
-class AuthFormWidget extends StatelessWidget {
-  final AuthFormMode mode;
+class AuthPageWidget extends StatelessWidget {
+  const AuthPageWidget({
+    super.key,
+    required this.formKey,
+    required this.authFormType,
+    // Email
+    required this.emailFieldKey,
+    required this.controllerEmail,
+    required this.emailFocus,
+    required this.validateEmail,
+    required this.onEmailChanged,
+    required this.onEmailSubmitted,
+    // Name (тільки для Register)
+    this.nameFieldKey,
+    this.controllerName,
+    this.nameFocus,
+    this.validateName,
+    this.onNameChanged,
+    this.onNameSubmitted,
+    // Password
+    required this.passwordFieldKey,
+    required this.controllerPassword,
+    required this.paswFocus,
+    required this.validatePassword,
+    required this.onPasswordChanged,
+    required this.onPasswordSubmitted,
+    // Confirm Password (тільки для Register)
+    this.passwordConfirmFieldKey,
+    this.controllerPasswordConfirm,
+    this.passwordConfirmFocus,
+    this.validatePasswordConfirm,
+    this.onPasswordConfirmChanged,
+    this.onPasswordConfirmSubmitted,
+  });
 
+  final AuthFormType authFormType;
   final GlobalKey<FormState> formKey;
 
-  final TextEditingController emailCtrl;
-  final TextEditingController? nameCtrl;
-  final TextEditingController passwordCtrl;
-  final TextEditingController? passwordConfirmCtrl;
-
+  // Email
+  final GlobalKey<FormFieldState<String>> emailFieldKey;
+  final TextEditingController controllerEmail;
   final FocusNode emailFocus;
-  final FocusNode? nameFocus;
-  final FocusNode passwordFocus;
-  final FocusNode? passwordConfirmFocus;
-
   final String? Function(String?) validateEmail;
+  final void Function(String) onEmailChanged;
+  final void Function(String) onEmailSubmitted;
+
+  // Name (опціонально для Register)
+  final GlobalKey<FormFieldState<String>>? nameFieldKey;
+  final TextEditingController? controllerName;
+  final FocusNode? nameFocus;
   final String? Function(String?)? validateName;
+  final void Function(String)? onNameChanged;
+  final void Function(String)? onNameSubmitted;
+
+  // Password
+  final GlobalKey<FormFieldState<String>> passwordFieldKey;
+  final TextEditingController controllerPassword;
+  final FocusNode paswFocus;
   final String? Function(String?) validatePassword;
+  final void Function(String) onPasswordChanged;
+  final void Function(String) onPasswordSubmitted;
+
+  // Confirm Password (опціонально для Register)
+  final GlobalKey<FormFieldState<String>>? passwordConfirmFieldKey;
+  final TextEditingController? controllerPasswordConfirm;
+  final FocusNode? passwordConfirmFocus;
   final String? Function(String?)? validatePasswordConfirm;
-
-  final VoidCallback onSubmit;
-
-  final Timer? emailDebounce;
-  final Timer? nameDebounce;
-  final Timer? passwordDebounce;
-  final Timer? passwordConfirmDebounce;
-
-  const AuthFormWidget({
-    super.key,
-    required this.mode,
-    required this.formKey,
-    required this.emailCtrl,
-    required this.passwordCtrl,
-    required this.emailFocus,
-    required this.passwordFocus,
-    required this.emailFieldKey,
-    required this.passwordFieldKey,
-    required this.validateEmail,
-    required this.validatePassword,
-    required this.onSubmit,
-
-    // Optional only for register
-    this.nameCtrl,
-    this.passwordConfirmCtrl,
-    this.nameFocus,
-    this.passwordConfirmFocus,
-    this.nameFieldKey,
-    this.passwordConfirmFieldKey,
-    this.validateName,
-    this.validatePasswordConfirm,
-
-    this.emailDebounce,
-    this.nameDebounce,
-    this.passwordDebounce,
-    this.passwordConfirmDebounce,
-  });
+  final void Function(String)? onPasswordConfirmChanged;
+  final void Function(String)? onPasswordConfirmSubmitted;
 
   @override
   Widget build(BuildContext context) {
+    // У Register-формі поле "Name" є обов'язковим,
+    // тому перевіряємо, чи всі опціональні поля для Register присутні
+    final isRegister = authFormType == AuthFormType.register;
+    if (isRegister) {
+      assert(nameFieldKey != null);
+      assert(controllerName != null);
+      assert(nameFocus != null);
+      assert(validateName != null);
+      assert(onNameChanged != null);
+      assert(nameFieldKey != null);
+      assert(controllerPasswordConfirm != null);
+      assert(passwordConfirmFocus != null);
+      assert(validatePasswordConfirm != null);
+      assert(onPasswordConfirmChanged != null);
+    }
+
     return Form(
       key: formKey,
       autovalidateMode: AutovalidateMode.disabled,
       child: Column(
         children: [
+          // --- Email Field ---
           TextFormField(
+            key: emailFieldKey,
             focusNode: emailFocus,
-            controller: emailCtrl,
+            controller: controllerEmail,
             decoration: InputDecoration(
-              hintText: "Enter email",
-              labelText: "Email",
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(15),
+                borderRadius: BorderRadius.circular(15.0),
               ),
+              hintText: 'Enter email',
+              labelText: 'Email',
             ),
             keyboardType: TextInputType.emailAddress,
-            textInputAction: (mode == AuthFormMode.login)
-                ? TextInputAction.next
-                : TextInputAction.next,
+            textInputAction: TextInputAction.next,
             validator: validateEmail,
-            onFieldSubmitted: (_) {
-              if (mode == AuthFormMode.register) {
-                FocusScope.of(context).requestFocus(nameFocus);
-              } else {
-                FocusScope.of(context).requestFocus(passwordFocus);
-              }
-            },
+            onFieldSubmitted: onEmailSubmitted,
+            onChanged: onEmailChanged,
           ),
           const SizedBox(height: 12),
 
-          // NAME (only for register)
-          if (mode == AuthFormMode.register)
+          // --- Name Field (тільки для Register) ---
+          if (isRegister) ...[
             TextFormField(
               key: nameFieldKey,
               focusNode: nameFocus,
-              controller: nameCtrl,
+              controller: controllerName,
               decoration: InputDecoration(
                 hintText: 'Enter name',
                 labelText: 'Name',
@@ -107,45 +133,40 @@ class AuthFormWidget extends StatelessWidget {
               ),
               textInputAction: TextInputAction.next,
               validator: validateName,
-              onFieldSubmitted: (_) {
-                FocusScope.of(context).requestFocus(passwordFocus);
-              },
+              onFieldSubmitted: onNameSubmitted,
+              onChanged: onNameChanged,
             ),
-          if (mode == AuthFormMode.register) const SizedBox(height: 12),
+            const SizedBox(height: 12),
+          ],
 
-          // PASSWORD
+          // --- Password Field ---
           TextFormField(
             key: passwordFieldKey,
-            focusNode: passwordFocus,
-            controller: passwordCtrl,
+            focusNode: paswFocus,
+            controller: controllerPassword,
             decoration: InputDecoration(
-              hintText: "Enter password",
-              labelText: "Password",
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(15),
+                borderRadius: BorderRadius.circular(15.0),
               ),
+              hintText: 'Enter password',
+              labelText: 'Password',
             ),
             obscureText: true,
-            textInputAction: (mode == AuthFormMode.register)
+            textInputAction: isRegister
                 ? TextInputAction.next
                 : TextInputAction.done,
             validator: validatePassword,
-            onFieldSubmitted: (_) {
-              if (mode == AuthFormMode.register) {
-                FocusScope.of(context).requestFocus(passwordConfirmFocus);
-              } else {
-                onSubmit();
-              }
-            },
+            onFieldSubmitted: onPasswordSubmitted,
+            onChanged: onPasswordChanged,
           ),
-          const SizedBox(height: 12),
 
-          // PASSWORD CONFIRM (only register)
-          if (mode == AuthFormMode.register)
+          // --- Confirm Password Field (тільки для Register) ---
+          if (isRegister) ...[
+            const SizedBox(height: 12),
             TextFormField(
               key: passwordConfirmFieldKey,
               focusNode: passwordConfirmFocus,
-              controller: passwordConfirmCtrl,
+              controller: controllerPasswordConfirm,
               decoration: InputDecoration(
                 hintText: 'Enter password again',
                 labelText: 'Confirm Password',
@@ -156,8 +177,10 @@ class AuthFormWidget extends StatelessWidget {
               obscureText: true,
               textInputAction: TextInputAction.done,
               validator: validatePasswordConfirm,
-              onFieldSubmitted: (_) => onSubmit(),
+              onFieldSubmitted: onPasswordConfirmSubmitted,
+              onChanged: onPasswordConfirmChanged,
             ),
+          ],
         ],
       ),
     );

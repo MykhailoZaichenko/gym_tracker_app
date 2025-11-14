@@ -245,6 +245,25 @@ class _LoginPageState extends State<LoginPage> {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(text)));
   }
 
+  // Функції debounce для передачі в AuthPageWidget
+  void _onEmailChanged(String value) {
+    _emailDebounce?.cancel();
+    _emailDebounce = Timer(const Duration(milliseconds: 700), () {
+      _emailFieldKey.currentState?.validate();
+    });
+  }
+
+  void _onPasswordChanged(String value) {
+    _passwordDebounce?.cancel();
+    _passwordDebounce = Timer(const Duration(milliseconds: 700), () {
+      _passwordFieldKey.currentState?.validate();
+    });
+  }
+
+  // Обробники submit для полів
+  void _onEmailSubmitted(_) => FocusScope.of(context).requestFocus(paswFocus);
+  void _onPasswordSubmitted(_) => _onLoginPressed();
+
   @override
   Widget build(BuildContext context) {
     double widthScreen = MediaQuery.of(context).size.width;
@@ -267,31 +286,23 @@ class _LoginPageState extends State<LoginPage> {
                         style: Theme.of(context).textTheme.titleLarge,
                       ),
                       const SizedBox(height: 20),
-                      Form(
-                        key: _formKey,
-                        child: AuthFormWidget(
-                          mode: AuthFormMode.login,
-                          formKey: _formKey,
-
-                          emailCtrl: controllerEmail,
-                          passwordCtrl: controllerPassword,
-
-                          emailFocus: emailFocus,
-                          passwordFocus: paswFocus,
-
-                          emailFieldKey: _emailFieldKey,
-                          passwordFieldKey: _passwordFieldKey,
-
-                          validateEmail: _validateEmail,
-                          validatePassword: _validatePassword,
-
-                          onSubmit: _onLoginPressed,
-
-                          emailDebounce: _emailDebounce,
-                          passwordDebounce: _passwordDebounce,
-                        ),
+                      AuthPageWidget(
+                        formKey: _formKey,
+                        authFormType: AuthFormType.login,
+                        emailFieldKey: _emailFieldKey,
+                        controllerEmail: controllerEmail,
+                        emailFocus: emailFocus,
+                        validateEmail: _validateEmail,
+                        onEmailChanged: _onEmailChanged,
+                        onEmailSubmitted: _onEmailSubmitted,
+                        // Password Fields
+                        passwordFieldKey: _passwordFieldKey,
+                        controllerPassword: controllerPassword,
+                        paswFocus: paswFocus,
+                        validatePassword: _validatePassword,
+                        onPasswordChanged: _onPasswordChanged,
+                        onPasswordSubmitted: _onPasswordSubmitted,
                       ),
-
                       const SizedBox(height: 20.0),
                       SizedBox(
                         width: double.infinity,

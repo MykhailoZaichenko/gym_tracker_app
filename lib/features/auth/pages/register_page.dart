@@ -173,6 +173,43 @@ class _RegisterPageState extends State<RegisterPage> {
     return null;
   }
 
+  // Функції debounce для передачі в AuthPageWidget
+  void _onEmailChanged(String value) {
+    _emailDebounce?.cancel();
+    _emailDebounce = Timer(const Duration(milliseconds: 700), () {
+      _emailFieldKey.currentState?.validate();
+    });
+  }
+
+  void _onNameChanged(String value) {
+    _nameDebounce?.cancel();
+    _nameDebounce = Timer(const Duration(milliseconds: 700), () {
+      _nameFieldKey.currentState?.validate();
+    });
+  }
+
+  void _onPasswordChanged(String value) {
+    _passwordDebounce?.cancel();
+    _passwordDebounce = Timer(const Duration(milliseconds: 700), () {
+      _passwordFieldKey.currentState?.validate();
+    });
+  }
+
+  void _onPasswordConfirmChanged(String value) {
+    _passwordConfirmDebounce?.cancel();
+    _passwordConfirmDebounce = Timer(const Duration(milliseconds: 700), () {
+      _passwordConfirmFieldKey.currentState?.validate();
+    });
+  }
+
+  // Обробники submit для полів
+  void _onEmailSubmitted(_) => FocusScope.of(context).requestFocus(nameFocus);
+  void _onNameSubmitted(_) =>
+      FocusScope.of(context).requestFocus(passwordFocus);
+  void _onPasswordSubmitted(_) =>
+      FocusScope.of(context).requestFocus(passwordConfirmFocus);
+  void _onPasswordConfirmSubmitted(_) => _onRegisterPressed();
+
   @override
   Widget build(BuildContext context) {
     final widthScreen = MediaQuery.of(context).size.width;
@@ -200,39 +237,82 @@ class _RegisterPageState extends State<RegisterPage> {
                         style: Theme.of(context).textTheme.titleLarge,
                       ),
                       const SizedBox(height: 18),
-                      Form(
-                        key: _formKey,
-                        child: AuthFormWidget(
-                          mode: AuthFormMode.register,
-                          formKey: _formKey,
-
-                          emailCtrl: _emailCtrl,
-                          nameCtrl: _nameCtrl,
-                          passwordCtrl: _passwordCtrl,
-                          passwordConfirmCtrl: _passwordConfirmCtrl,
-
-                          emailFocus: emailFocus,
-                          nameFocus: nameFocus,
-                          passwordFocus: passwordFocus,
-                          passwordConfirmFocus: passwordConfirmFocus,
-
-                          emailFieldKey: _emailFieldKey,
-                          nameFieldKey: _nameFieldKey,
-                          passwordFieldKey: _passwordFieldKey,
-                          passwordConfirmFieldKey: _passwordConfirmFieldKey,
-
-                          validateEmail: _validateEmail,
-                          validateName: _validateName,
-                          validatePassword: _validatePassword,
-                          validatePasswordConfirm: _validatePasswordConfirm,
-
-                          onSubmit: _onRegisterPressed,
-
-                          emailDebounce: _emailDebounce,
-                          nameDebounce: _nameDebounce,
-                          passwordDebounce: _passwordDebounce,
-                          passwordConfirmDebounce: _passwordConfirmDebounce,
+                      AuthPageWidget(
+                        formKey: _formKey,
+                        authFormType: AuthFormType.register,
+                        // Email Fields
+                        emailFieldKey: _emailFieldKey,
+                        controllerEmail: _emailCtrl,
+                        emailFocus: emailFocus,
+                        validateEmail: _validateEmail,
+                        onEmailChanged: _onEmailChanged,
+                        onEmailSubmitted: _onEmailSubmitted,
+                        // Name Fields (обов'язкові для Register)
+                        nameFieldKey: _nameFieldKey,
+                        controllerName: _nameCtrl,
+                        nameFocus: nameFocus,
+                        validateName: _validateName,
+                        onNameChanged: _onNameChanged,
+                        onNameSubmitted: _onNameSubmitted,
+                        // Password Fields
+                        passwordFieldKey: _passwordFieldKey,
+                        controllerPassword: _passwordCtrl,
+                        paswFocus: passwordFocus,
+                        validatePassword: _validatePassword,
+                        onPasswordChanged: _onPasswordChanged,
+                        onPasswordSubmitted: _onPasswordSubmitted,
+                        // Confirm Password Fields (обов'язкові для Register)
+                        passwordConfirmFieldKey: _passwordConfirmFieldKey,
+                        controllerPasswordConfirm: _passwordConfirmCtrl,
+                        passwordConfirmFocus: passwordConfirmFocus,
+                        validatePasswordConfirm: _validatePasswordConfirm,
+                        onPasswordConfirmChanged: _onPasswordConfirmChanged,
+                        onPasswordConfirmSubmitted: _onPasswordConfirmSubmitted,
+                      ),
+                      const SizedBox(height: 18),
+                      SizedBox(
+                        width: double.infinity,
+                        height: 50,
+                        child: FilledButton(
+                          onPressed: _loading ? null : _onRegisterPressed,
+                          style: ElevatedButton.styleFrom(
+                            minimumSize: const Size.fromHeight(50),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          child: _loading
+                              ? const SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                              : Text(widget.title),
                         ),
+                      ),
+                      const SizedBox(height: 12),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text('Already have account? '),
+                          TextButton(
+                            onPressed: _loading
+                                ? null
+                                : () => Navigator.pushAndRemoveUntil(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) {
+                                        return const LoginPage(title: 'Log in');
+                                      },
+                                    ),
+                                    (route) => false,
+                                  ),
+                            child: const Text("Log In"),
+                          ),
+                        ],
                       ),
                     ],
                   ),
