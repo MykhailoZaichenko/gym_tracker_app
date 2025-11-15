@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/features/auth/pages/register_page.dart';
 import 'package:gym_tracker_app/widget/common/hero_widget.dart';
+import 'package:gym_tracker_app/widget/common/page_title.dart';
+import 'package:gym_tracker_app/widget/common/primary_filled_button.dart';
+import 'package:gym_tracker_app/widget/common/style_text_field.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class OnboardingPage extends StatefulWidget {
@@ -49,21 +52,19 @@ class _OnboardingPageState extends State<OnboardingPage> {
               children: [
                 HeroWidget(tag: 'onboarding_lottie'),
                 const SizedBox(height: 20),
-                Text(
-                  'Вкажіть вашу вагу для персоналізації',
-                  style: Theme.of(context).textTheme.titleLarge,
-                  textAlign: TextAlign.center,
+                const AppPageTitle(
+                  title: 'Вкажіть вашу вагу для персоналізації',
                 ),
                 const SizedBox(height: 20),
-                TextFormField(
+                StyledTextField(
+                  autofocus: true,
                   controller: _weightCtrl,
+                  labelText: 'Вага (кг)', // Переносимо labelText
+                  // Налаштування клавіатури для десяткових чисел
                   keyboardType: const TextInputType.numberWithOptions(
                     decimal: true,
                   ),
-                  decoration: const InputDecoration(
-                    labelText: 'Вага (кг)',
-                    border: OutlineInputBorder(),
-                  ),
+                  // Валідатор переноситься без змін
                   validator: (value) {
                     final parsed = double.tryParse(value!.replaceAll(',', '.'));
                     if (parsed == null || parsed <= 0) {
@@ -71,17 +72,12 @@ class _OnboardingPageState extends State<OnboardingPage> {
                     }
                     return null;
                   },
+                  onFieldSubmitted: (_) => _goToRegister(),
                 ),
                 const SizedBox(height: 24),
-                SizedBox(
-                  width: double.infinity,
-                  child: FilledButton(
-                    onPressed: _goToRegister,
-                    style: FilledButton.styleFrom(
-                      minimumSize: const Size(double.infinity, 50),
-                    ),
-                    child: const Text('Продовжити'),
-                  ),
+                PrimaryFilledButton(
+                  text: 'Продовжити',
+                  onPressed: _goToRegister,
                 ),
               ],
             ),

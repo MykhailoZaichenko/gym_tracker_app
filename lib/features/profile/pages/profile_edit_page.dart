@@ -3,6 +3,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/core/theme/theme_service.dart';
 import 'package:gym_tracker_app/widget/common/avatar_widget.dart';
+import 'package:gym_tracker_app/widget/common/confirm_dialog.dart';
+import 'package:gym_tracker_app/widget/common/primary_filled_button.dart';
+import 'package:gym_tracker_app/widget/common/secondary_icon_text_button.dart';
+import 'package:gym_tracker_app/widget/common/style_text_field.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
@@ -290,103 +294,58 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            ElevatedButton.icon(
-                              style: ElevatedButton.styleFrom(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 10,
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                              ),
-                              onPressed: _isPickingAvatar ? null : _pickAvatar,
-                              icon: _isPickingAvatar
-                                  ? const CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                    )
-                                  : const Icon(Icons.edit, size: 18),
-                              label: const Text('Редагувати'),
+                            SecondaryIconTextButton(
+                              label: 'Редагувати',
+                              icon: Icons.edit,
+                              variant: ButtonVariant.outlined,
+                              isLoading: _isPickingAvatar,
+                              onPressed: _pickAvatar,
                             ),
                             const SizedBox(width: 12),
                             if ((_avatarPath != null &&
                                     _avatarPath!.isNotEmpty) ||
                                 (widget.user.avatarUrl != null &&
                                     widget.user.avatarUrl!.isNotEmpty))
-                              OutlinedButton.icon(
-                                style: OutlinedButton.styleFrom(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                    vertical: 10,
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                ),
+                              SecondaryIconTextButton(
+                                label: 'Видалити',
+                                icon: Icons.delete_outline,
+                                variant: ButtonVariant.destructive,
                                 onPressed: () async {
-                                  final confirmed = await showDialog<bool>(
-                                    context: context,
-                                    builder: (ctx) => AlertDialog(
-                                      title: const Text('Видалити фото'),
-                                      content: const Text(
-                                        'Ви дійсно хочете видалити фото?',
-                                      ),
-                                      actions: [
-                                        TextButton(
-                                          onPressed: () =>
-                                              Navigator.of(ctx).pop(false),
-                                          child: const Text('Ні'),
-                                        ),
-                                        TextButton(
-                                          onPressed: () =>
-                                              Navigator.of(ctx).pop(true),
-                                          child: const Text('Так'),
-                                        ),
-                                      ],
-                                    ),
-                                  );
+                                  final confirmed =
+                                      await showConfirmationDialog(
+                                        context: context,
+                                        title: 'Видалити фото',
+                                        content:
+                                            'Ви дійсно хочете видалити фото?',
+                                      );
                                   if (confirmed == true) {
                                     await _removeAvatar();
                                   }
                                 },
-                                icon: const Icon(
-                                  Icons.delete_outline,
-                                  size: 18,
-                                ),
-                                label: const Text('Видалити'),
                               ),
                           ],
                         ),
                       ],
                     ),
-                    const SizedBox(height: 12),
-                    TextFormField(
+                    const SizedBox(height: 24),
+                    StyledTextField(
                       controller: _nameCtrl,
-                      decoration: const InputDecoration(
-                        labelText: 'Імʼя',
-                        border: OutlineInputBorder(),
-                      ),
+                      labelText: 'Імʼя',
                       validator: _validateName,
                       textInputAction: TextInputAction.next,
                     ),
                     const SizedBox(height: 12),
-                    TextFormField(
+                    StyledTextField(
                       controller: _emailCtrl,
-                      decoration: const InputDecoration(
-                        labelText: 'Email',
-                        border: OutlineInputBorder(),
-                      ),
+                      labelText: 'Email',
                       validator: _validateEmail,
                       keyboardType: TextInputType.emailAddress,
                       textInputAction: TextInputAction.next,
                     ),
                     const SizedBox(height: 12),
-                    TextFormField(
+                    StyledTextField(
                       controller: _weightCtrl,
-                      decoration: const InputDecoration(
-                        labelText: 'Вага (kg)',
-                        border: OutlineInputBorder(),
-                      ),
+                      labelText: 'Вага (kg)',
                       validator: _validateWeight,
                       keyboardType: const TextInputType.numberWithOptions(
                         decimal: true,
@@ -394,29 +353,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       textInputAction: TextInputAction.done,
                     ),
                     const SizedBox(height: 25),
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        style: ButtonStyle(
-                          shadowColor: WidgetStatePropertyAll(
-                            ThemeService.isDarkModeNotifier.value
-                                ? const Color.fromRGBO(
-                                    151,
-                                    136,
-                                    184,
-                                    1,
-                                  ).withValues(alpha: 0.7)
-                                : Colors.black.withValues(alpha: 0.5),
-                          ),
-                          elevation: const WidgetStatePropertyAll(5.0),
-                        ),
-                        onPressed: _saving ? null : _onSavePressed,
-                        child: _saving
-                            ? const CircularProgressIndicator(
-                                color: Colors.white,
-                              )
-                            : const Text('Зберегти'),
-                      ),
+                    PrimaryFilledButton(
+                      text: 'Зберегти',
+                      isLoading: _saving,
+                      onPressed: _onSavePressed,
                     ),
                   ],
                 ),

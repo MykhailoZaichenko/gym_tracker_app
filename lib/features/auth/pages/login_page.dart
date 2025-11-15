@@ -7,6 +7,9 @@ import 'package:gym_tracker_app/features/auth/widgets/auth_form_widget.dart';
 import 'package:gym_tracker_app/features/welcome/pages/onboarding_page.dart';
 import 'package:gym_tracker_app/services/auth_service.dart';
 import 'package:gym_tracker_app/widget/common/hero_widget.dart';
+import 'package:gym_tracker_app/widget/common/page_title.dart';
+import 'package:gym_tracker_app/widget/common/primary_filled_button.dart';
+import 'package:gym_tracker_app/widget/common/primary_text_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:gym_tracker_app/widget/common/widget_tree.dart';
 
@@ -282,10 +285,7 @@ class _LoginPageState extends State<LoginPage> {
                     children: [
                       HeroWidget(tag: 'login_lottie'),
                       // const SizedBox(height: 8.0),
-                      Text(
-                        'Ввійти в обліковий запис',
-                        style: Theme.of(context).textTheme.titleLarge,
-                      ),
+                      const AppPageTitle(title: 'Ввійти в обліковий запис'),
                       const SizedBox(height: 20),
                       AuthPageWidget(
                         formKey: _formKey,
@@ -305,28 +305,18 @@ class _LoginPageState extends State<LoginPage> {
                         onPasswordSubmitted: _onPasswordSubmitted,
                       ),
                       const SizedBox(height: 20.0),
-                      SizedBox(
-                        width: double.infinity,
-                        height: 50,
-                        child: FilledButton(
-                          onPressed: _loading ? null : _onLoginPressed,
-                          style: ElevatedButton.styleFrom(
-                            minimumSize: const Size.fromHeight(50),
-                          ),
-                          child: _loading
-                              ? const CircularProgressIndicator(
-                                  color: Colors.white,
-                                )
-                              : Text(widget.title),
-                        ),
+                      PrimaryFilledButton(
+                        onPressed: _onLoginPressed,
+                        text: widget.title,
                       ),
                       const SizedBox(height: 12),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          TextButton(
+                          PrimaryTextButton(
+                            text: 'Register',
                             onPressed: _loading
-                                ? null
+                                ? null // Вимикаємо, якщо завантаження
                                 : () {
                                     Navigator.pushAndRemoveUntil(
                                       context,
@@ -336,12 +326,11 @@ class _LoginPageState extends State<LoginPage> {
                                       (route) => false,
                                     );
                                   },
-                            child: const Text('Register'),
                           ),
                           const SizedBox(width: 8),
-                          TextButton(
+                          PrimaryTextButton(
+                            text: 'Forgot password',
                             onPressed: _loading ? null : _onForgotPressed,
-                            child: const Text('Forgot password'),
                           ),
                         ],
                       ),

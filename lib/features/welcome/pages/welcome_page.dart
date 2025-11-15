@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/features/auth/pages/login_page.dart';
 import 'package:gym_tracker_app/features/welcome/pages/onboarding_page.dart';
 import 'package:gym_tracker_app/widget/common/hero_widget.dart';
+import 'package:gym_tracker_app/widget/common/primary_filled_button.dart';
 
 class WelcomePage extends StatelessWidget {
   const WelcomePage({super.key});
@@ -27,22 +28,17 @@ class WelcomePage extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 20.0),
-              FilledButton(
+              PrimaryFilledButton(
+                text: "Get Started",
                 onPressed: () {
                   Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(
-                      builder: (context) {
-                        return const OnboardingPage();
-                      },
+                      builder: (context) => const OnboardingPage(),
                     ),
                     (route) => false,
                   );
                 },
-                style: FilledButton.styleFrom(
-                  minimumSize: Size(double.infinity, 50.0),
-                ),
-                child: const Text("Get Started"),
               ),
               TextButton(
                 onPressed: () {

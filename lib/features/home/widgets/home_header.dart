@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gym_tracker_app/core/theme/theme_service.dart';
 
 class HomeHeader extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback onOpenAnalytics;
@@ -27,7 +28,9 @@ class HomeHeader extends StatelessWidget implements PreferredSizeWidget {
             style: OutlinedButton.styleFrom(
               foregroundColor: Colors.white,
               side: const BorderSide(color: Colors.white70),
-              backgroundColor: Colors.deepPurple.withValues(alpha: 0.15),
+              backgroundColor: ThemeService.isDarkModeNotifier.value
+                  ? Colors.deepPurple.withValues(alpha: 0.15)
+                  : Theme.of(context).primaryColorDark,
               visualDensity: VisualDensity.compact,
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
             ),

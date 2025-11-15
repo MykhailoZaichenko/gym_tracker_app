@@ -1,8 +1,6 @@
 // lib/widget/common/auth_page_widget.dart
-
-import 'dart:async';
-
 import 'package:flutter/material.dart';
+import 'package:gym_tracker_app/widget/common/style_text_field.dart';
 
 // Визначаємо перелік, щоб розрізняти тип сторінки (Login чи Register)
 enum AuthFormType { login, register }
@@ -101,17 +99,13 @@ class AuthPageWidget extends StatelessWidget {
       child: Column(
         children: [
           // --- Email Field ---
-          TextFormField(
-            key: emailFieldKey,
+          StyledTextField(
+            autofocus: true,
+            fieldKey: emailFieldKey,
             focusNode: emailFocus,
             controller: controllerEmail,
-            decoration: InputDecoration(
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(15.0),
-              ),
-              hintText: 'Enter email',
-              labelText: 'Email',
-            ),
+            hintText: 'Enter email',
+            labelText: 'Email',
             keyboardType: TextInputType.emailAddress,
             textInputAction: TextInputAction.next,
             validator: validateEmail,
@@ -122,17 +116,12 @@ class AuthPageWidget extends StatelessWidget {
 
           // --- Name Field (тільки для Register) ---
           if (isRegister) ...[
-            TextFormField(
-              key: nameFieldKey,
+            StyledTextField(
+              fieldKey: nameFieldKey,
               focusNode: nameFocus,
               controller: controllerName,
-              decoration: InputDecoration(
-                hintText: 'Enter name',
-                labelText: 'Name',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(15),
-                ),
-              ),
+              hintText: 'Enter name',
+              labelText: 'Name',
               textInputAction: TextInputAction.next,
               validator: validateName,
               onFieldSubmitted: onNameSubmitted,
@@ -142,17 +131,12 @@ class AuthPageWidget extends StatelessWidget {
           ],
 
           // --- Password Field ---
-          TextFormField(
-            key: passwordFieldKey,
+          StyledTextField(
+            fieldKey: passwordFieldKey,
             focusNode: paswFocus,
             controller: controllerPassword,
-            decoration: InputDecoration(
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(15.0),
-              ),
-              hintText: 'Enter password',
-              labelText: 'Password',
-            ),
+            hintText: 'Enter password',
+            labelText: 'Password',
             obscureText: true,
             textInputAction: isRegister
                 ? TextInputAction.next
@@ -165,17 +149,12 @@ class AuthPageWidget extends StatelessWidget {
           // --- Confirm Password Field (тільки для Register) ---
           if (isRegister) ...[
             const SizedBox(height: 12),
-            TextFormField(
+            StyledTextField(
               key: passwordConfirmFieldKey,
               focusNode: passwordConfirmFocus,
               controller: controllerPasswordConfirm,
-              decoration: InputDecoration(
-                hintText: 'Enter password again',
-                labelText: 'Confirm Password',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(15),
-                ),
-              ),
+              hintText: 'Enter password again',
+              labelText: 'Confirm Password',
               obscureText: true,
               textInputAction: TextInputAction.done,
               validator: validatePasswordConfirm,

@@ -199,17 +199,15 @@ class _ProfileGrafPageState extends State<ProfileGrafPage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        // appBar: AppBar(
-        //   title: const Text('Профіль користувача'),
-        //   centerTitle: true,
-        // ),
         body: _isLoading
             ? const Center(child: CircularProgressIndicator())
-            : Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+            : Padding(
+                padding: const EdgeInsets.all(20),
+                child: Center(
+                  //Todo think how to del this scrollable element listView
+                  child: ListView(
+                    shrinkWrap: true,
+                    // mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       ProfileHeader(user: _user, onEditPressed: _onEditProfile),
                       const SizedBox(height: 12),

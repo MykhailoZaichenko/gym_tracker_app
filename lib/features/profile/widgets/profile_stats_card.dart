@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/core/utils.dart';
 import 'package:gym_tracker_app/widget/common/month_picker_dialog.dart';
+import 'package:gym_tracker_app/widget/common/stat_tile_widget.dart';
 
 class ProfileStatsCard extends StatefulWidget {
   const ProfileStatsCard({
@@ -172,94 +173,23 @@ class _ProfileStatsCardState extends State<ProfileStatsCard> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Expanded(
-                      child: Card(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        elevation: 2,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          child: Column(
-                            children: [
-                              Icon(
-                                Icons.fitness_center,
-                                size: 28,
-                                color: theme.colorScheme.primary,
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                widget.totalSets.toString(),
-                                style: theme.textTheme.titleLarge,
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                'Підходів',
-                                style: theme.textTheme.bodySmall,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+                    StatTile(
+                      icon: Icons.fitness_center,
+                      value: widget.totalSets.toString(),
+                      label: 'Підходів',
                     ),
                     const SizedBox(width: 8),
-                    Expanded(
-                      child: Card(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        elevation: 2,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          child: Column(
-                            children: [
-                              Icon(
-                                Icons.square_foot,
-                                size: 28,
-                                color: theme.colorScheme.primary,
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                formatNumberCompact(widget.totalWeight),
-                                style: theme.textTheme.titleLarge,
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                'Вага (kg·reps)',
-                                style: theme.textTheme.bodySmall,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+                    StatTile(
+                      icon: Icons.square_foot,
+                      value: formatNumberCompact(widget.totalWeight),
+                      label: 'Вага (kg·reps)',
                     ),
                     const SizedBox(width: 8),
-                    Expanded(
-                      child: Card(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        elevation: 2,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          child: Column(
-                            children: [
-                              Icon(
-                                Icons.local_fire_department,
-                                size: 28,
-                                color: theme.colorScheme.primary,
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                '${formatNumberCompact(widget.totalCalories)} ккал',
-                                style: theme.textTheme.titleLarge,
-                              ),
-                              const SizedBox(height: 4),
-                              Text('Калорії', style: theme.textTheme.bodySmall),
-                            ],
-                          ),
-                        ),
-                      ),
+                    StatTile(
+                      icon: Icons.local_fire_department,
+                      value:
+                          '${formatNumberCompact(widget.totalCalories)} ккал',
+                      label: 'Калорії',
                     ),
                   ],
                 ),

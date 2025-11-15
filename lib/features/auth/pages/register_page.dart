@@ -3,6 +3,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/features/auth/widgets/auth_form_widget.dart';
 import 'package:gym_tracker_app/widget/common/hero_widget.dart';
+import 'package:gym_tracker_app/widget/common/page_title.dart';
+import 'package:gym_tracker_app/widget/common/primary_filled_button.dart';
+import 'package:gym_tracker_app/widget/common/primary_text_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:gym_tracker_app/features/auth/pages/login_page.dart';
 import 'package:gym_tracker_app/widget/common/widget_tree.dart';
@@ -232,10 +235,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     children: [
                       HeroWidget(tag: 'register_lottie'),
                       const SizedBox(height: 8),
-                      Text(
-                        'Створити обліковий запис',
-                        style: Theme.of(context).textTheme.titleLarge,
-                      ),
+                      const AppPageTitle(title: 'Створити обліковий запис'),
                       const SizedBox(height: 18),
                       AuthPageWidget(
                         formKey: _formKey,
@@ -270,35 +270,17 @@ class _RegisterPageState extends State<RegisterPage> {
                         onPasswordConfirmSubmitted: _onPasswordConfirmSubmitted,
                       ),
                       const SizedBox(height: 18),
-                      SizedBox(
-                        width: double.infinity,
-                        height: 50,
-                        child: FilledButton(
-                          onPressed: _loading ? null : _onRegisterPressed,
-                          style: ElevatedButton.styleFrom(
-                            minimumSize: const Size.fromHeight(50),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                          child: _loading
-                              ? const SizedBox(
-                                  width: 20,
-                                  height: 20,
-                                  child: CircularProgressIndicator(
-                                    color: Colors.white,
-                                    strokeWidth: 2,
-                                  ),
-                                )
-                              : Text(widget.title),
-                        ),
+                      PrimaryFilledButton(
+                        onPressed: _onRegisterPressed,
+                        text: widget.title,
                       ),
                       const SizedBox(height: 12),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           const Text('Already have account? '),
-                          TextButton(
+                          PrimaryTextButton(
+                            text: 'Log In',
                             onPressed: _loading
                                 ? null
                                 : () => Navigator.pushAndRemoveUntil(
@@ -310,7 +292,6 @@ class _RegisterPageState extends State<RegisterPage> {
                                     ),
                                     (route) => false,
                                   ),
-                            child: const Text("Log In"),
                           ),
                         ],
                       ),
