@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/core/constants/constants.dart';
+import 'package:gym_tracker_app/core/locale/locale_serviece.dart';
+import 'package:gym_tracker_app/l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:gym_tracker_app/core/theme/theme_service.dart';
@@ -48,18 +50,68 @@ class _SettingsPageState extends State<SettingsPage> {
     // Запустіть ваш механізм налаштування пуш-повідомлень тут
   }
 
+  void _showLanguageSelector() {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        final loc = AppLocalizations.of(context)!;
+
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const SizedBox(height: 16),
+              Text(
+                loc.appLanguage,
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+              const SizedBox(height: 16),
+              ListTile(
+                leading: const Text('🇺🇦', style: TextStyle(fontSize: 24)),
+                title: const Text('Українська'),
+                trailing:
+                    LocaleService.localeNotifier.value.languageCode == 'uk'
+                    ? const Icon(Icons.check, color: Colors.green)
+                    : null,
+                onTap: () {
+                  LocaleService.changeLocale('uk');
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                leading: const Text('🇺🇸', style: TextStyle(fontSize: 24)),
+                title: const Text('English'),
+                trailing:
+                    LocaleService.localeNotifier.value.languageCode == 'en'
+                    ? const Icon(Icons.check, color: Colors.green)
+                    : null,
+                onTap: () {
+                  LocaleService.changeLocale('en');
+                  Navigator.pop(context);
+                },
+              ),
+              const SizedBox(height: 16),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   void _confirmClearData() {
+    final loc = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Очистити всі дані'),
-        content: const Text(
-          'Це видалить усі збережені тренування та налаштування. Продовжити?',
-        ),
+        title: Text(loc.clearDataConfirmTitle),
+        content: Text(loc.clearDataConfirmContent),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text('Ні'),
+            child: Text(loc.no),
           ),
           TextButton(
             onPressed: () async {
@@ -72,11 +124,11 @@ class _SettingsPageState extends State<SettingsPage> {
               });
               if (!mounted) return;
               Navigator.of(ctx).pop();
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Дані успішно очищені')),
-              );
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text(loc.dataClearedSuccess)));
             },
-            child: const Text('Так'),
+            child: Text(loc.yes),
           ),
         ],
       ),
@@ -87,9 +139,10 @@ class _SettingsPageState extends State<SettingsPage> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = ThemeService.isDarkModeNotifier.value;
+    final loc = AppLocalizations.of(context)!;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Налаштування'), centerTitle: true),
+      appBar: AppBar(title: Text(loc.settingsTitle), centerTitle: true),
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.all(20),
@@ -99,9 +152,28 @@ class _SettingsPageState extends State<SettingsPage> {
                 Icons.brightness_6,
                 color: isDark ? Colors.white : theme.primaryColor,
               ),
-              title: isDark ? Text('Темний режим') : Text('Світлий режим'),
+              title: isDark ? Text(loc.darkMode) : Text(loc.lightMode),
               value: isDark,
               onChanged: _toggleDarkMode,
+            ),
+            const Divider(),
+
+            ValueListenableBuilder<Locale>(
+              valueListenable: LocaleService.localeNotifier,
+              builder: (context, locale, child) {
+                return ListTile(
+                  leading: Icon(
+                    Icons.language,
+                    color: isDark ? Colors.white : theme.primaryColor,
+                  ),
+                  title: Text(loc.appLanguage),
+                  // Показуємо поточну вибрану мову
+                  subtitle: Text(
+                    locale.languageCode == 'uk' ? 'Українська' : 'English',
+                  ),
+                  onTap: _showLanguageSelector,
+                );
+              },
             ),
             const Divider(),
 
@@ -110,7 +182,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 Icons.notifications,
                 color: isDark ? Colors.white : theme.primaryColor,
               ),
-              title: const Text('Сповіщення'),
+              title: Text(loc.notifications),
               value: _notificationsEnabled,
               onChanged: _toggleNotifications,
             ),
@@ -122,7 +194,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 color: theme.colorScheme.error,
               ),
               title: Text(
-                'Очистити всі дані',
+                loc.clearData,
                 style: TextStyle(color: theme.colorScheme.error),
               ),
               onTap: _confirmClearData,
@@ -134,16 +206,14 @@ class _SettingsPageState extends State<SettingsPage> {
                 Icons.info_outline,
                 color: isDark ? Colors.white : theme.primaryColor,
               ),
-              title: const Text('Про додаток'),
+              title: Text(loc.aboutApp),
               onTap: () {
                 showAboutDialog(
                   context: context,
-                  applicationName: 'Gym Tracker',
+                  applicationName: loc.appName,
                   applicationVersion: '1.0.0',
                   applicationIcon: const Icon(Icons.fitness_center),
-                  children: const [
-                    Text('Додаток для відстеження ваших тренувань.'),
-                  ],
+                  children: [Text(loc.appDescription)],
                 );
               },
             ),

@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/core/theme/theme_service.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:gym_tracker_app/widget/common/month_picker_dialog.dart';
-import 'package:gym_tracker_app/core/constants/constants.dart';
 import 'package:gym_tracker_app/features/workout/models/workout_exercise_model.dart';
+import 'package:intl/intl.dart';
+import 'package:gym_tracker_app/l10n/app_localizations.dart';
 
 class HomeCalendar extends StatelessWidget {
   final DateTime? selectedDay;
@@ -25,13 +26,16 @@ class HomeCalendar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final locale = AppLocalizations.of(context)!.localeName;
+
     return TableCalendar(
-      locale: "uk_UA",
+      locale: locale,
       calendarBuilders: CalendarBuilders(
         headerTitleBuilder: (context, day) {
-          final monthName = ukrainianMonths[day.month - 1];
-          final capitalized =
-              monthName[0].toUpperCase() + monthName.substring(1);
+          final monthName = DateFormat.MMMM(locale).format(day);
+
+          // Робимо першу літеру великою (для української це важливо)
+          final capitalized = toBeginningOfSentenceCase(monthName);
           return InkWell(
             onTap: () async {
               final picked = await showMonthPicker(

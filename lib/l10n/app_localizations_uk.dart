@@ -1,0 +1,366 @@
+// ignore: unused_import
+import 'package:intl/intl.dart' as intl;
+import 'app_localizations.dart';
+
+// ignore_for_file: type=lint
+
+/// The translations for Ukrainian (`uk`).
+class AppLocalizationsUk extends AppLocalizations {
+  AppLocalizationsUk([String locale = 'uk']) : super(locale);
+
+  @override
+  String get appName => 'Gym Tracker App';
+
+  @override
+  String get getStarted => 'Почати';
+
+  @override
+  String get continueAction => 'Продовжити';
+
+  @override
+  String get onboardingTitle => 'Вкажіть вашу вагу для персоналізації';
+
+  @override
+  String get yourProgressFor => 'Ваш прогрес за';
+
+  @override
+  String get setsLabel => 'Підходів';
+
+  @override
+  String get weightRepsLabel => 'Вага (kg·reps)';
+
+  @override
+  String get calories => 'Калорії';
+
+  @override
+  String get planSavedSuccess => 'План збережено успішно';
+
+  @override
+  String get editPlanTitle => 'Редагування плану';
+
+  @override
+  String get savePlanTooltip => 'Зберегти план';
+
+  @override
+  String get guest => 'Гість';
+
+  @override
+  String get cancel => 'Скасувати';
+
+  @override
+  String get save => 'Зберегти';
+
+  @override
+  String get close => 'Закрити';
+
+  @override
+  String get discard => 'Не зберігати';
+
+  @override
+  String get edit => 'Редагувати';
+
+  @override
+  String get delete => 'Видалити';
+
+  @override
+  String get yes => 'Так';
+
+  @override
+  String get no => 'Ні';
+
+  @override
+  String get ok => 'ОК';
+
+  @override
+  String get loginTitle => 'Ввійти в обліковий запис';
+
+  @override
+  String get registerTitle => 'Створити обліковий запис';
+
+  @override
+  String get registerAction => 'Зареєструватися';
+
+  @override
+  String get loginAction => 'Ввійти';
+
+  @override
+  String get forgotPassword => 'Забули пароль';
+
+  @override
+  String get alreadyHaveAccount => 'Вже є акаунт?';
+
+  @override
+  String get enterCustomExerciseName => 'Введіть назву вправи';
+
+  @override
+  String get exerciseNameHint => 'Назва вправи';
+
+  @override
+  String get addExercise => 'Додати вправу';
+
+  @override
+  String get addExercisesHint =>
+      'Додайте вправи у календарі, щоб бачити графік';
+
+  @override
+  String get selectExercise => 'Оберіть вправу';
+
+  @override
+  String get deleteExercise => 'Видалити вправу';
+
+  @override
+  String get searchExercise => 'Пошук вправи';
+
+  @override
+  String get enterCustomName => 'Ввести власну назву';
+
+  @override
+  String get emailLabel => 'Email';
+
+  @override
+  String get emailHint => 'Введіть email';
+
+  @override
+  String get passwordLabel => 'Пароль';
+
+  @override
+  String get passwordHint => 'Введіть пароль';
+
+  @override
+  String get confirmPasswordLabel => 'Підтвердження паролю';
+
+  @override
+  String get confirmPasswordHint => 'Введіть пароль ще раз';
+
+  @override
+  String get nameLabel => 'Імʼя';
+
+  @override
+  String get nameHint => 'Введіть імʼя';
+
+  @override
+  String get errEmailRequired => 'Email обовʼязковий';
+
+  @override
+  String get errInvalidEmail => 'Невірний email';
+
+  @override
+  String get errPasswordRequired => 'Пароль обовʼязковий';
+
+  @override
+  String get errPasswordShort => 'Пароль має бути мінімум 6 символів';
+
+  @override
+  String get errPasswordsDoNotMatch => 'Паролі не співпадають';
+
+  @override
+  String get errNameRequired => 'Імʼя обовʼязкове';
+
+  @override
+  String get errNameShort => 'Занадто коротке імʼя';
+
+  @override
+  String get errWeightRequired => 'Введіть коректну вагу';
+
+  @override
+  String get calendarTitle => 'Календар тренувань';
+
+  @override
+  String get progressTooltip => 'Прогрес';
+
+  @override
+  String get myPlan => 'Мій план';
+
+  @override
+  String get editExercisesTooltip => 'Редагувати вправи';
+
+  @override
+  String get addExerciseTooltip => 'Додати вправу';
+
+  @override
+  String get selectDay => 'Оберіть день';
+
+  @override
+  String get selectMonth => 'Оберіть місяць';
+
+  @override
+  String get exercisesFor => 'Вправи за';
+
+  @override
+  String get noExercisesToday => 'Немає вправ за цей день';
+
+  @override
+  String get exerciseDefaultName => 'Вправа';
+
+  @override
+  String get setLabelCompact => 'Підх';
+
+  @override
+  String get weightUnit => 'кг';
+
+  @override
+  String get weightUnitHint => 'Кг';
+
+  @override
+  String get repsUnit => 'повт';
+
+  @override
+  String get repsUnitHint => 'Повт';
+
+  @override
+  String setsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count підходів',
+      many: '$count підходів',
+      few: '$count підходи',
+      one: '1 підхід',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String deleteSet(int number) {
+    return 'Видалити підхід $number';
+  }
+
+  @override
+  String setNumber(int number) {
+    return 'Підхід $number';
+  }
+
+  @override
+  String caloriesCount(String count) {
+    return '$count ккал';
+  }
+
+  @override
+  String get chartsTitle => 'Прогрес — графіки';
+
+  @override
+  String get exerciseLabel => 'Вправа:';
+
+  @override
+  String get chooseExercise => 'Оберіть вправу';
+
+  @override
+  String get tabMonth => 'Місяць';
+
+  @override
+  String get tabYear => 'Рік';
+
+  @override
+  String get noDataRange => 'Немає даних для вибраної вправи у цьому діапазоні';
+
+  @override
+  String get liftedWeight => 'Піднята вага';
+
+  @override
+  String get totalLifted => 'Всього піднято:';
+
+  @override
+  String get pointsCount => 'Точок:';
+
+  @override
+  String get settingsTitle => 'Налаштування';
+
+  @override
+  String get darkMode => 'Темний режим';
+
+  @override
+  String get lightMode => 'Світлий режим';
+
+  @override
+  String get notifications => 'Сповіщення';
+
+  @override
+  String get clearData => 'Очистити всі дані';
+
+  @override
+  String get clearDataConfirmTitle => 'Очистити всі дані';
+
+  @override
+  String get clearDataConfirmContent =>
+      'Це видалить усі збережені тренування та налаштування. Продовжити?';
+
+  @override
+  String get dataClearedSuccess => 'Дані успішно очищені';
+
+  @override
+  String get aboutApp => 'Про додаток';
+
+  @override
+  String get appDescription => 'Додаток для відстеження ваших тренувань.';
+
+  @override
+  String get appLanguage => 'Мова додатку';
+
+  @override
+  String get languageUk => 'Українська';
+
+  @override
+  String get languageEn => 'English';
+
+  @override
+  String get selectLanguage => 'Виберіть мову';
+
+  @override
+  String get logoutAction => 'Вийти';
+
+  @override
+  String get logoutTitle => 'Вихід із профілю';
+
+  @override
+  String get logoutConfirm => 'Ви дійсно хочете вийти?';
+
+  @override
+  String get editProfileTitle => 'Редагувати профіль';
+
+  @override
+  String get weightLabel => 'Вага';
+
+  @override
+  String get errWeightInvalid => 'Вага повинна бути числом > 0';
+
+  @override
+  String get deletePhotoTitle => 'Видалити фото';
+
+  @override
+  String get deletePhotoConfirm => 'Ви дійсно хочете видалити фото?';
+
+  @override
+  String saveError(String error) {
+    return 'Помилка збереження: $error';
+  }
+
+  @override
+  String onDay(String day) {
+    return 'на $day';
+  }
+
+  @override
+  String get workoutTitle => 'Тренування';
+
+  @override
+  String get pickMonthYear => 'Виберіть місяць і рік';
+
+  @override
+  String get prevYear => 'Попередній рік';
+
+  @override
+  String get nextYear => 'Наступний рік';
+
+  @override
+  String get saveChangesTitle => 'Зберегти зміни?';
+
+  @override
+  String get unsavedChangesMsg =>
+      'Є незбережені зміни. Зберегти перед виходом?';
+
+  @override
+  String get navHome => 'Головна';
+
+  @override
+  String get navProfile => 'Профіль';
+}

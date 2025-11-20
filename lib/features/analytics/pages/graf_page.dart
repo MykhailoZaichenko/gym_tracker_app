@@ -4,8 +4,10 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:gym_tracker_app/core/theme/theme_service.dart';
 import 'package:gym_tracker_app/core/utils.dart';
 import 'package:gym_tracker_app/features/analytics/widgets/line_chart_card.dart';
+import 'package:gym_tracker_app/l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:gym_tracker_app/core/constants/constants.dart';
+import 'package:intl/intl.dart';
 
 class GrafPage extends StatefulWidget {
   const GrafPage({super.key});
@@ -24,7 +26,6 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
   RangeMode _range = RangeMode.month;
   late TabController _tabController;
 
-  // only used for month view navigation
   DateTime _visibleMonth = DateTime.now();
 
   @override
@@ -75,7 +76,6 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
     }
   }
 
-  /// Для заданої вправи повертає мапу: DateTime (date at midnight) -> сумарна поднята вага за день
   Map<DateTime, double> _accumulatePerDay(String exerciseName) {
     final Map<DateTime, double> result = {};
     _allWorkouts.forEach((dateStr, exercises) {
@@ -166,6 +166,7 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
   }
 
   void _onPointTapped(DateTime day) {
+    final loc = AppLocalizations.of(context)!;
     final key =
         '${day.year.toString().padLeft(4, '0')}-${day.month.toString().padLeft(2, '0')}-${day.day.toString().padLeft(2, '0')}';
     final exList = _allWorkouts[key] ?? [];
@@ -193,9 +194,9 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
             itemBuilder: (_, i) {
               final s = ex.sets[i];
               return ListTile(
-                title: Text('Підхід ${i + 1}'),
+                title: Text('${loc.setLabelCompact} ${i + 1}'),
                 subtitle: Text(
-                  'Вага: ${s.weight ?? '-'} кг  •  Повт.: ${s.reps ?? '-'}',
+                  '${loc.weightLabel}: ${s.weight ?? '-'}  •  ${loc.repsUnit}: ${s.reps ?? '-'}',
                 ),
               );
             },
@@ -204,7 +205,7 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Закрити'),
+            child: Text(loc.close),
           ),
         ],
       ),
@@ -241,16 +242,22 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
   }
 
   Widget _buildBottomTitle(double value) {
+    final locale = AppLocalizations.of(context)!.localeName;
+
     switch (_range) {
       case RangeMode.month:
         return Text('${value.round()}', style: const TextStyle(fontSize: 11));
       case RangeMode.year:
-        final months = englishMonths;
-        final m = value.round();
-        return Text(
-          (m >= 1 && m <= 12) ? months[m] : m.toString(),
-          style: const TextStyle(fontSize: 11),
-        );
+        final month = value.round();
+        if (month < 1 || month > 12) return const SizedBox();
+
+        // Динамічно форматуємо скорочену назву місяця (Jan, Feb / Січ, Лют)
+        final date = DateTime(DateTime.now().year, month);
+        final monthShort = DateFormat.MMM(locale).format(date);
+
+        final capitalizedMonth = toBeginningOfSentenceCase(monthShort);
+
+        return Text(capitalizedMonth, style: const TextStyle(fontSize: 11));
     }
   }
 
@@ -267,7 +274,7 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
     if (_isLoading) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
-
+    final loc = AppLocalizations.of(context)!;
     final entries = _filteredEntriesForRange();
     final spots = _buildSpots(entries);
 
@@ -278,20 +285,20 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
     final double yInterval = (maxY <= 0) ? 1.0 : (maxY / 4).toDouble();
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Прогрес — графіки'), centerTitle: true),
+      appBar: AppBar(title: Text(loc.chartsTitle), centerTitle: true),
       body: Padding(
         padding: const EdgeInsets.all(12),
         child: Column(
           children: [
             Row(
               children: [
-                const Text('Вправа:'),
+                Text(loc.exerciseLabel),
                 const SizedBox(width: 8),
                 Expanded(
                   child: DropdownButton<String>(
                     isExpanded: true,
                     value: _selectedExerciseName,
-                    hint: const Text('Оберіть вправу'),
+                    hint: Text(loc.chooseExercise),
                     items: _exerciseNames
                         .map((n) => DropdownMenuItem(value: n, child: Text(n)))
                         .toList(),
@@ -306,9 +313,9 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
               labelColor: Theme.of(context).colorScheme.secondary,
               unselectedLabelColor: Theme.of(context).colorScheme.onSurface,
               indicatorColor: Theme.of(context).colorScheme.secondary,
-              tabs: const [
-                Tab(text: 'Місяць'),
-                Tab(text: 'Рік'),
+              tabs: [
+                Tab(text: loc.tabMonth),
+                Tab(text: loc.tabYear),
               ],
             ),
             const SizedBox(height: 8),
@@ -334,14 +341,14 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
               child: _selectedExerciseName == null
                   ? Center(
                       child: Text(
-                        'Додайте вправи у календарі, щоб бачити графік',
+                        loc.addExercisesHint,
                         style: TextStyle(color: Colors.grey[700]),
                       ),
                     )
                   : spots.isEmpty
                   ? Center(
                       child: Text(
-                        'Немає даних для вибраної вправи у цьому діапазоні',
+                        loc.noDataRange,
                         style: TextStyle(color: Colors.grey[700]),
                       ),
                     )
@@ -374,7 +381,7 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
                                   color: Colors.blue,
                                 ),
                                 const SizedBox(width: 6),
-                                const Text('Піднята вага'),
+                                Text(loc.liftedWeight),
                               ],
                             ),
                           ],
@@ -394,9 +401,9 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Всього піднято: ${formatNumberCompact(_totalForEntries(entries))}',
+                    '${loc.totalLifted} ${formatNumberCompact(_totalForEntries(entries))}',
                   ),
-                  Text('Точек: ${entries.length}'),
+                  Text('${loc.pointsCount} ${entries.length}'),
                 ],
               ),
             ),

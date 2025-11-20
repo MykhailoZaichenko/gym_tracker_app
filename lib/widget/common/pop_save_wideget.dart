@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/core/constants/constants.dart';
+import 'package:gym_tracker_app/l10n/app_localizations.dart';
 
 class WillPopSavePrompt extends StatelessWidget {
   final Future<bool> Function() hasUnsavedChanges;
@@ -13,24 +14,25 @@ class WillPopSavePrompt extends StatelessWidget {
 
   Future<bool> handlePop(BuildContext context) async {
     if (!await hasUnsavedChanges()) return true;
+    final loc = AppLocalizations.of(context)!;
 
     final result = await showDialog<ExitChoice>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Зберегти зміни?'),
-        content: const Text('Є незбережені зміни. Зберегти перед виходом?'),
+        title: Text(loc.saveChangesTitle),
+        content: Text(loc.unsavedChangesMsg),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(ExitChoice.cancel),
-            child: const Text('Скасувати'),
+            child: Text(loc.cancel),
           ),
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(ExitChoice.discard),
-            child: const Text('Не зберігати'),
+            child: Text(loc.discard),
           ),
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(ExitChoice.save),
-            child: const Text('Зберегти'),
+            child: Text(loc.save),
           ),
         ],
       ),

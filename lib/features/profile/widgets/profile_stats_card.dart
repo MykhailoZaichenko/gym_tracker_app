@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/core/utils.dart';
+import 'package:gym_tracker_app/l10n/app_localizations.dart';
 import 'package:gym_tracker_app/widget/common/month_picker_dialog.dart';
 import 'package:gym_tracker_app/widget/common/stat_tile_widget.dart';
 
@@ -50,6 +51,7 @@ class _ProfileStatsCardState extends State<ProfileStatsCard> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final loc = AppLocalizations.of(context)!;
     final monthLabel =
         '${widget.visibleMonth.year} - ${widget.visibleMonth.month.toString().padLeft(2, '0')}';
 
@@ -122,12 +124,12 @@ class _ProfileStatsCardState extends State<ProfileStatsCard> {
                         ),
                         child: Semantics(
                           button: true,
-                          label: 'Вибрати місяць',
+                          label: loc.selectMonth,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
-                                'Ваш прогрес за ${widget.ukMonthLabel} ${widget.visibleMonth.year}',
+                                '${loc.yourProgressFor} ${widget.ukMonthLabel} ${widget.visibleMonth.year}',
                                 style: theme.textTheme.titleMedium,
                               ),
                               const SizedBox(width: 4),
@@ -176,20 +178,22 @@ class _ProfileStatsCardState extends State<ProfileStatsCard> {
                     StatTile(
                       icon: Icons.fitness_center,
                       value: widget.totalSets.toString(),
-                      label: 'Підходів',
+                      label: loc.setsCount(widget.totalSets),
                     ),
                     const SizedBox(width: 8),
                     StatTile(
                       icon: Icons.square_foot,
                       value: formatNumberCompact(widget.totalWeight),
-                      label: 'Вага (kg·reps)',
+                      label:
+                          '${loc.weightLabel} (${loc.weightUnit}·${loc.repsUnit})',
                     ),
                     const SizedBox(width: 8),
                     StatTile(
                       icon: Icons.local_fire_department,
-                      value:
-                          '${formatNumberCompact(widget.totalCalories)} ккал',
-                      label: 'Калорії',
+                      value: loc.caloriesCount(
+                        formatNumberCompact(widget.totalCalories),
+                      ),
+                      label: loc.calories,
                     ),
                   ],
                 ),

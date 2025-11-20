@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/features/auth/pages/register_page.dart';
+import 'package:gym_tracker_app/l10n/app_localizations.dart';
 import 'package:gym_tracker_app/widget/common/hero_widget.dart';
 import 'package:gym_tracker_app/widget/common/page_title.dart';
 import 'package:gym_tracker_app/widget/common/primary_filled_button.dart';
@@ -35,12 +36,13 @@ class _OnboardingPageState extends State<OnboardingPage> {
     if (!mounted) return;
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (_) => const RegisterPage(title: 'Register')),
+      MaterialPageRoute(builder: (_) => RegisterPage()),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(),
       body: Center(
@@ -52,14 +54,12 @@ class _OnboardingPageState extends State<OnboardingPage> {
               children: [
                 HeroWidget(tag: 'onboarding_lottie'),
                 const SizedBox(height: 20),
-                const AppPageTitle(
-                  title: 'Вкажіть вашу вагу для персоналізації',
-                ),
+                AppPageTitle(title: loc.onboardingTitle),
                 const SizedBox(height: 20),
                 StyledTextField(
                   autofocus: true,
                   controller: _weightCtrl,
-                  labelText: 'Вага (кг)', // Переносимо labelText
+                  labelText: loc.weightLabel,
                   // Налаштування клавіатури для десяткових чисел
                   keyboardType: const TextInputType.numberWithOptions(
                     decimal: true,
@@ -68,7 +68,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                   validator: (value) {
                     final parsed = double.tryParse(value!.replaceAll(',', '.'));
                     if (parsed == null || parsed <= 0) {
-                      return 'Введіть коректну вагу';
+                      return loc.errWeightRequired;
                     }
                     return null;
                   },
@@ -76,7 +76,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                 ),
                 const SizedBox(height: 24),
                 PrimaryFilledButton(
-                  text: 'Продовжити',
+                  text: loc.continueAction,
                   onPressed: _goToRegister,
                 ),
               ],

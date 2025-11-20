@@ -1,6 +1,7 @@
 // lib/widgets/exercise_picker.dart
 import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/data/seed/exercise_catalog.dart';
+import 'package:gym_tracker_app/l10n/app_localizations.dart';
 
 Future<ExerciseInfo?> showExercisePicker(
   BuildContext context, {
@@ -56,6 +57,7 @@ class _ExercisePickerSheetState extends State<_ExercisePickerSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     final filtered = _query.isEmpty
         ? kExerciseCatalog
         : kExerciseCatalog
@@ -79,9 +81,9 @@ class _ExercisePickerSheetState extends State<_ExercisePickerSheet> {
                       controller: _controller,
                       focusNode: _focusNode,
                       autofocus: false,
-                      decoration: const InputDecoration(
-                        prefixIcon: Icon(Icons.search),
-                        hintText: 'Пошук вправи',
+                      decoration: InputDecoration(
+                        prefixIcon: const Icon(Icons.search),
+                        hintText: loc.searchExercise,
                       ),
                       textInputAction: TextInputAction.search,
                     ),
@@ -106,7 +108,7 @@ class _ExercisePickerSheetState extends State<_ExercisePickerSheet> {
                     if (idx == 0) {
                       return ListTile(
                         leading: const Icon(Icons.edit),
-                        title: const Text('Ввести власну назву'),
+                        title: Text(loc.enterCustomName),
                         onTap: () =>
                             Navigator.of(context).pop(ExerciseInfo.enterCustom),
                       );

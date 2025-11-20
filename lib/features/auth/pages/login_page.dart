@@ -5,6 +5,7 @@ import 'package:gym_tracker_app/data/sources/local/app_db.dart';
 import 'package:gym_tracker_app/features/auth/widgets/auth_form_widget.dart';
 
 import 'package:gym_tracker_app/features/welcome/pages/onboarding_page.dart';
+import 'package:gym_tracker_app/l10n/app_localizations.dart';
 import 'package:gym_tracker_app/services/auth_service.dart';
 import 'package:gym_tracker_app/widget/common/hero_widget.dart';
 import 'package:gym_tracker_app/widget/common/page_title.dart';
@@ -14,9 +15,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:gym_tracker_app/widget/common/widget_tree.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({super.key, required this.title});
+  const LoginPage({super.key});
 
-  final String title;
   @override
   State<LoginPage> createState() => _LoginPageState();
 }
@@ -73,43 +73,28 @@ class _LoginPageState extends State<LoginPage> {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt('current_user_id', id);
   }
-  //TODO: fix auto-login
-  // Future<int?> _readPersistedUserId() async {
-  //   final prefs = await SharedPreferences.getInstance();
-  //   return prefs.getInt('current_user_id');
-  // }
 
-  // Future<void> _tryAutoLogin() async {
-  //   setState(() => _loading = true);
+  String? _validateEmail(String? v) {
+    final loc = AppLocalizations.of(context)!;
+    if (v == null || v.trim().isEmpty) return loc.errEmailRequired;
+    final email = v.trim();
+    final emailRe = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
+    if (!emailRe.hasMatch(email)) return loc.errInvalidEmail;
+    return null;
+  }
 
-  //   try {
-  //     final userId = await _readPersistedUserId();
-  //     if (userId == null) {
-  //       setState(() => _loading = false);
-  //       return;
-  //     }
-
-  //     final user = await AppDb().getUserById(userId);
-  //     if (user != null && mounted) {
-  //       _showMessage('Welcome back, ${user.email}');
-  //       _goToApp();
-  //     } else {
-  //       setState(() => _loading = false);
-  //     }
-  //   } catch (e) {
-  //     setState(() => _loading = false);
-  //     _showMessage('Auto-login failed: $e');
-  //   }
-  // }
+  String? _validatePassword(String? v) {
+    final loc = AppLocalizations.of(context)!;
+    if (v == null || v.isEmpty) return loc.errPasswordRequired;
+    if (v.length < 6) return loc.errPasswordShort;
+    return null;
+  }
 
   Future<void> _onLoginPressed() async {
     FocusScope.of(context).unfocus();
 
     final formState = _formKey.currentState;
-    if (formState == null) {
-      _showMessage('Форма ще не прикріплена до дерева. Спробуй ще раз.');
-      return;
-    }
+    if (formState == null) return;
 
     if (!formState.validate()) {
       if (_emailFieldKey.currentState?.validate() == false) {
@@ -142,6 +127,7 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<void> _onForgotPressed() async {
     final emailCtrl = TextEditingController(text: controllerEmail.text.trim());
+    final loc = AppLocalizations.of(context)!;
     await showDialog<void>(
       context: context,
       builder: (ctx) {
@@ -149,18 +135,18 @@ class _LoginPageState extends State<LoginPage> {
           title: const Text('Reset password (local)'),
           content: TextField(
             controller: emailCtrl,
-            decoration: const InputDecoration(labelText: 'Email'),
+            decoration: InputDecoration(labelText: loc.emailLabel),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(ctx).pop(),
-              child: const Text('Cancel'),
+              child: Text(loc.cancel),
             ),
             TextButton(
               onPressed: () async {
                 final email = emailCtrl.text.trim();
                 if (email.isEmpty) {
-                  _showMessage('Email required');
+                  _showMessage(loc.errEmailRequired);
                   return;
                 }
                 final user = await AppDb().getUserByEmail(email);
@@ -199,7 +185,7 @@ class _LoginPageState extends State<LoginPage> {
                             }
                             Navigator.of(ctx2).pop(newpassword); // return value
                           },
-                          child: const Text('Save'),
+                          child: Text(loc.save),
                         ),
                       ],
                     );
@@ -220,20 +206,6 @@ class _LoginPageState extends State<LoginPage> {
         );
       },
     );
-  }
-
-  String? _validateEmail(String? v) {
-    if (v == null || v.trim().isEmpty) return 'Email required';
-    final email = v.trim();
-    final emailRe = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
-    if (!emailRe.hasMatch(email)) return 'Invalid email';
-    return null;
-  }
-
-  String? _validatePassword(String? v) {
-    if (v == null || v.isEmpty) return 'Password required';
-    if (v.length < 6) return 'Password must be at least 6 chars';
-    return null;
   }
 
   void _goToApp() {
@@ -271,6 +243,8 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     double widthScreen = MediaQuery.of(context).size.width;
+    final loc = AppLocalizations.of(context)!;
+
     return Scaffold(
       appBar: AppBar(),
       body: Center(
@@ -284,8 +258,7 @@ class _LoginPageState extends State<LoginPage> {
                   child: Column(
                     children: [
                       HeroWidget(tag: 'login_lottie'),
-                      // const SizedBox(height: 8.0),
-                      const AppPageTitle(title: 'Ввійти в обліковий запис'),
+                      AppPageTitle(title: loc.loginTitle),
                       const SizedBox(height: 20),
                       AuthPageWidget(
                         formKey: _formKey,
@@ -307,16 +280,16 @@ class _LoginPageState extends State<LoginPage> {
                       const SizedBox(height: 20.0),
                       PrimaryFilledButton(
                         onPressed: _onLoginPressed,
-                        text: widget.title,
+                        text: loc.loginAction,
                       ),
                       const SizedBox(height: 12),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           PrimaryTextButton(
-                            text: 'Register',
+                            text: loc.registerAction,
                             onPressed: _loading
-                                ? null // Вимикаємо, якщо завантаження
+                                ? null
                                 : () {
                                     Navigator.pushAndRemoveUntil(
                                       context,
@@ -329,7 +302,7 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                           const SizedBox(width: 8),
                           PrimaryTextButton(
-                            text: 'Forgot password',
+                            text: loc.forgotPassword,
                             onPressed: _loading ? null : _onForgotPressed,
                           ),
                         ],

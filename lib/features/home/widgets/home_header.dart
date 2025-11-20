@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/core/theme/theme_service.dart';
+import 'package:gym_tracker_app/l10n/app_localizations.dart';
 
 class HomeHeader extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback onOpenAnalytics;
@@ -13,13 +14,14 @@ class HomeHeader extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return AppBar(
-      title: const Text('Календар тренувань'),
+      title: Text(loc.calendarTitle),
       centerTitle: true,
       actions: [
         IconButton(
           icon: const Icon(Icons.bar_chart_outlined),
-          tooltip: 'Прогрес',
+          tooltip: loc.progressTooltip,
           onPressed: onOpenAnalytics,
         ),
         Padding(
@@ -36,7 +38,7 @@ class HomeHeader extends StatelessWidget implements PreferredSizeWidget {
             ),
             onPressed: onOpenPlanEditor,
             icon: const Icon(Icons.calendar_month, size: 18),
-            label: const Text('Мій план', style: TextStyle(fontSize: 13)),
+            label: Text(loc.myPlan, style: const TextStyle(fontSize: 13)),
           ),
         ),
       ],

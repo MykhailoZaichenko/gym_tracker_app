@@ -1,7 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:gym_tracker_app/core/constants/constants.dart';
+import 'package:gym_tracker_app/l10n/app_localizations.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:gym_tracker_app/data/sources/local/app_db.dart';
@@ -22,7 +23,7 @@ class _ProfileGrafPageState extends State<ProfileGrafPage> {
 
   // stats and UI
   DateTime _visibleMonth = DateTime.now();
-  String ukmounth = ukrainianMonths[DateTime.now().month - 1];
+
   int _totalSets = 0;
   double _totalWeight = 0.0;
   double _calories = 0.0;
@@ -161,7 +162,6 @@ class _ProfileGrafPageState extends State<ProfileGrafPage> {
     setState(() {
       _slideToLeft = false;
       _visibleMonth = DateTime(_visibleMonth.year, _visibleMonth.month - 1, 1);
-      ukmounth = ukrainianMonths[_visibleMonth.month - 1];
     });
     _computeStats();
   }
@@ -170,7 +170,6 @@ class _ProfileGrafPageState extends State<ProfileGrafPage> {
     setState(() {
       _slideToLeft = true;
       _visibleMonth = DateTime(_visibleMonth.year, _visibleMonth.month + 1, 1);
-      ukmounth = ukrainianMonths[_visibleMonth.month - 1];
     });
     _computeStats();
   }
@@ -197,6 +196,11 @@ class _ProfileGrafPageState extends State<ProfileGrafPage> {
 
   @override
   Widget build(BuildContext context) {
+    final locale = AppLocalizations.of(context)!.localeName;
+
+    final monthName = DateFormat.MMMM(locale).format(_visibleMonth);
+    final capitalizedMonth = toBeginningOfSentenceCase(monthName);
+
     return SafeArea(
       child: Scaffold(
         body: _isLoading
@@ -207,13 +211,12 @@ class _ProfileGrafPageState extends State<ProfileGrafPage> {
                   //Todo think how to del this scrollable element listView
                   child: ListView(
                     shrinkWrap: true,
-                    // mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       ProfileHeader(user: _user, onEditPressed: _onEditProfile),
                       const SizedBox(height: 12),
                       ProfileStatsCard(
                         visibleMonth: _visibleMonth,
-                        ukMonthLabel: ukmounth,
+                        ukMonthLabel: capitalizedMonth,
                         totalSets: _totalSets,
                         totalWeight: _totalWeight,
                         totalCalories: _calories,
@@ -222,7 +225,6 @@ class _ProfileGrafPageState extends State<ProfileGrafPage> {
                         onPickMonth: (newMonth) {
                           setState(() {
                             _visibleMonth = newMonth;
-                            ukmounth = ukrainianMonths[newMonth.month - 1];
                           });
                           _computeStats();
                         },

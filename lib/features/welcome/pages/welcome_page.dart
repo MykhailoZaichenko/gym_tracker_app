@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/features/auth/pages/login_page.dart';
 import 'package:gym_tracker_app/features/welcome/pages/onboarding_page.dart';
+import 'package:gym_tracker_app/l10n/app_localizations.dart';
 import 'package:gym_tracker_app/widget/common/hero_widget.dart';
 import 'package:gym_tracker_app/widget/common/primary_filled_button.dart';
 
@@ -9,6 +10,8 @@ class WelcomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+
     return Scaffold(
       body: Center(
         child: Padding(
@@ -19,7 +22,7 @@ class WelcomePage extends StatelessWidget {
               HeroWidget(tag: 'welcome_lottie'),
               FittedBox(
                 child: Text(
-                  "Gym Tracker",
+                  loc.appName,
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 500.0,
@@ -29,7 +32,7 @@ class WelcomePage extends StatelessWidget {
               ),
               SizedBox(height: 20.0),
               PrimaryFilledButton(
-                text: "Get Started",
+                text: loc.getStarted,
                 onPressed: () {
                   Navigator.pushAndRemoveUntil(
                     context,
@@ -46,13 +49,13 @@ class WelcomePage extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                       builder: (context) {
-                        return const LoginPage(title: "Log in");
+                        return const LoginPage();
                       },
                     ),
                     (route) => false,
                   );
                 },
-                child: const Text("Log In"),
+                child: Text(loc.loginAction),
               ),
             ],
           ),

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/features/auth/widgets/auth_form_widget.dart';
+import 'package:gym_tracker_app/l10n/app_localizations.dart';
 import 'package:gym_tracker_app/widget/common/hero_widget.dart';
 import 'package:gym_tracker_app/widget/common/page_title.dart';
 import 'package:gym_tracker_app/widget/common/primary_filled_button.dart';
@@ -12,8 +13,7 @@ import 'package:gym_tracker_app/widget/common/widget_tree.dart';
 import '../../../services/auth_service.dart';
 
 class RegisterPage extends StatefulWidget {
-  const RegisterPage({super.key, required this.title});
-  final String title;
+  const RegisterPage({super.key});
 
   @override
   State<RegisterPage> createState() => _RegisterPageState();
@@ -112,10 +112,7 @@ class _RegisterPageState extends State<RegisterPage> {
     FocusScope.of(context).unfocus();
 
     final formState = _formKey.currentState;
-    if (formState == null) {
-      _showMessage('Форма ще не прикріплена до дерева. Спробуй ще раз.');
-      return;
-    }
+    if (formState == null) return;
     if (!formState.validate()) return;
 
     final email = _emailCtrl.text.trim();
@@ -151,28 +148,32 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   String? _validateEmail(String? v) {
-    if (v == null || v.trim().isEmpty) return 'Email required';
+    final loc = AppLocalizations.of(context)!;
+    if (v == null || v.trim().isEmpty) return loc.errEmailRequired;
     final email = v.trim();
     final emailRe = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
-    if (!emailRe.hasMatch(email)) return 'Invalid email';
+    if (!emailRe.hasMatch(email)) return loc.errInvalidEmail;
     return null;
   }
 
   String? _validateName(String? v) {
-    if (v == null || v.trim().isEmpty) return 'Name required';
-    if (v.trim().length < 2) return 'Name too short';
+    final loc = AppLocalizations.of(context)!;
+    if (v == null || v.trim().isEmpty) return loc.errNameRequired;
+    if (v.trim().length < 2) return loc.errNameShort;
     return null;
   }
 
   String? _validatePassword(String? v) {
-    if (v == null || v.isEmpty) return 'Password required';
-    if (v.length < 6) return 'Password must be at least 6 chars';
+    final loc = AppLocalizations.of(context)!;
+    if (v == null || v.isEmpty) return loc.errPasswordRequired;
+    if (v.length < 6) return loc.errPasswordShort;
     return null;
   }
 
   String? _validatePasswordConfirm(String? v) {
-    if (v == null || v.isEmpty) return 'Confirm password';
-    if (v != _passwordCtrl.text) return 'Passwords do not match';
+    final loc = AppLocalizations.of(context)!;
+    if (v == null || v.isEmpty) return loc.confirmPasswordHint;
+    if (v != _passwordCtrl.text) return loc.errPasswordsDoNotMatch;
     return null;
   }
 
@@ -216,6 +217,7 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     final widthScreen = MediaQuery.of(context).size.width;
+    final loc = AppLocalizations.of(context)!;
 
     return Scaffold(
       appBar: AppBar(),
@@ -235,7 +237,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     children: [
                       HeroWidget(tag: 'register_lottie'),
                       const SizedBox(height: 8),
-                      const AppPageTitle(title: 'Створити обліковий запис'),
+                      AppPageTitle(title: loc.registerTitle),
                       const SizedBox(height: 18),
                       AuthPageWidget(
                         formKey: _formKey,
@@ -247,7 +249,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         validateEmail: _validateEmail,
                         onEmailChanged: _onEmailChanged,
                         onEmailSubmitted: _onEmailSubmitted,
-                        // Name Fields (обов'язкові для Register)
+                        // Name Fields
                         nameFieldKey: _nameFieldKey,
                         controllerName: _nameCtrl,
                         nameFocus: nameFocus,
@@ -261,7 +263,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         validatePassword: _validatePassword,
                         onPasswordChanged: _onPasswordChanged,
                         onPasswordSubmitted: _onPasswordSubmitted,
-                        // Confirm Password Fields (обов'язкові для Register)
+                        // Confirm Password Fields
                         passwordConfirmFieldKey: _passwordConfirmFieldKey,
                         controllerPasswordConfirm: _passwordConfirmCtrl,
                         passwordConfirmFocus: passwordConfirmFocus,
@@ -272,22 +274,22 @@ class _RegisterPageState extends State<RegisterPage> {
                       const SizedBox(height: 18),
                       PrimaryFilledButton(
                         onPressed: _onRegisterPressed,
-                        text: widget.title,
+                        text: loc.registerAction,
                       ),
                       const SizedBox(height: 12),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Text('Already have account? '),
+                          Text('${loc.alreadyHaveAccount} '),
                           PrimaryTextButton(
-                            text: 'Log In',
+                            text: loc.loginAction,
                             onPressed: _loading
                                 ? null
                                 : () => Navigator.pushAndRemoveUntil(
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) {
-                                        return const LoginPage(title: 'Log in');
+                                        return const LoginPage();
                                       },
                                     ),
                                     (route) => false,

@@ -3,10 +3,11 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/data/seed/exercise_catalog.dart';
 import 'package:gym_tracker_app/features/workout/models/workout_exercise_model.dart';
+import 'package:gym_tracker_app/l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:gym_tracker_app/features/workout/workout_exports.dart';
-import 'package:gym_tracker_app/core/constants/constants.dart';
 import 'package:gym_tracker_app/widget/common/pop_save_wideget.dart';
+import 'package:intl/intl.dart';
 
 class WorkoutPage extends StatefulWidget {
   final DateTime date;
@@ -64,8 +65,9 @@ class _WorkoutPageState extends State<WorkoutPage> {
     } else if (widget.exercises.isNotEmpty) {
       _exercises = List.from(widget.exercises);
     } else {
-      final weekday = weekdayLabel(widget.date.weekday);
-      final planned = prefs.getStringList('plan_$weekday') ?? [];
+      final weekdayKey = DateFormat.E('en').format(widget.date);
+      final planned = prefs.getStringList('plan_$weekdayKey') ?? [];
+
       if (planned.isNotEmpty) {
         _exercises = planned
             .map(
@@ -218,6 +220,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
     if (_isLoading) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
+    final loc = AppLocalizations.of(context)!;
 
     return PopScope(
       canPop: false, // block automatic pop, handle manually
@@ -239,12 +242,12 @@ class _WorkoutPageState extends State<WorkoutPage> {
       child: Scaffold(
         appBar: AppBar(
           title: Text(
-            "Тренування ${widget.date.toLocal().toIso8601String().split('T').first}",
+            "${loc.workoutTitle} ${widget.date.toLocal().toIso8601String().split('T').first}",
           ),
           actions: [
             IconButton(
               icon: const Icon(Icons.save),
-              tooltip: 'Зберегти',
+              tooltip: loc.save,
               onPressed: () async {
                 await _saveExercises();
                 widget.onSave(_exercises);
@@ -315,7 +318,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: _addExercise,
-          tooltip: 'Додати вправу',
+          tooltip: loc.addExerciseTooltip,
           child: const Icon(Icons.add),
         ),
       ),

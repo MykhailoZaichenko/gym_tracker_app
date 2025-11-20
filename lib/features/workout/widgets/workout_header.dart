@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/data/seed/exercise_catalog.dart';
 import 'package:gym_tracker_app/features/workout/models/workout_exercise_model.dart';
+import 'package:gym_tracker_app/l10n/app_localizations.dart';
 
 typedef ExercisePickerFn =
     Future<ExerciseInfo?> Function(
@@ -26,6 +27,8 @@ class ExerciseHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -57,17 +60,17 @@ class ExerciseHeader extends StatelessWidget {
                       text: nameController.text,
                     );
                     return AlertDialog(
-                      title: const Text('Введіть назву вправи'),
+                      title: Text(loc.enterCustomExerciseName),
                       content: TextField(controller: ctrl, autofocus: true),
                       actions: [
                         TextButton(
                           onPressed: () => Navigator.of(ctx).pop(),
-                          child: const Text('Відміна'),
+                          child: Text(loc.cancel),
                         ),
                         TextButton(
                           onPressed: () =>
                               Navigator.of(ctx).pop(ctrl.text.trim()),
-                          child: const Text('OK'),
+                          child: Text(loc.ok),
                         ),
                       ],
                     );
@@ -96,7 +99,7 @@ class ExerciseHeader extends StatelessWidget {
                     children: [
                       Expanded(
                         child: Text(
-                          text.isEmpty ? 'Оберіть вправу' : text,
+                          text.isEmpty ? loc.selectExercise : text,
                           style: TextStyle(
                             fontSize: 16,
                             color: text.isEmpty ? Colors.grey : null,
@@ -117,10 +120,7 @@ class ExerciseHeader extends StatelessWidget {
             if (value == 'delete') onRemoveExercise();
           },
           itemBuilder: (context) => [
-            const PopupMenuItem(
-              value: 'delete',
-              child: Text('Видалити вправу'),
-            ),
+            PopupMenuItem(value: 'delete', child: Text(loc.deleteExercise)),
           ],
         ),
       ],

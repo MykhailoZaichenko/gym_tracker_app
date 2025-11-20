@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/features/profile/models/user_model.dart';
+import 'package:gym_tracker_app/l10n/app_localizations.dart';
 import 'package:gym_tracker_app/widget/common/avatar_widget.dart';
 
 typedef OnMonthChanged = void Function(DateTime newMonth);
@@ -16,7 +17,8 @@ class ProfileHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final name = user?.name ?? 'Гість';
+    final loc = AppLocalizations.of(context)!;
+    final name = user?.name ?? loc.guest;
     final avatarPath = user?.avatarUrl;
 
     return Column(

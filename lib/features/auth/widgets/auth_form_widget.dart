@@ -1,8 +1,7 @@
-// lib/widget/common/auth_page_widget.dart
 import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/widget/common/style_text_field.dart';
+import 'package:gym_tracker_app/l10n/app_localizations.dart';
 
-// Визначаємо перелік, щоб розрізняти тип сторінки (Login чи Register)
 enum AuthFormType { login, register }
 
 class AuthPageWidget extends StatelessWidget {
@@ -77,8 +76,7 @@ class AuthPageWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // У Register-формі поле "Name" є обов'язковим,
-    // тому перевіряємо, чи всі опціональні поля для Register присутні
+    final loc = AppLocalizations.of(context)!;
     final isRegister = authFormType == AuthFormType.register;
     if (isRegister) {
       assert(nameFieldKey != null);
@@ -104,8 +102,8 @@ class AuthPageWidget extends StatelessWidget {
             fieldKey: emailFieldKey,
             focusNode: emailFocus,
             controller: controllerEmail,
-            hintText: 'Enter email',
-            labelText: 'Email',
+            hintText: loc.emailHint,
+            labelText: loc.emailLabel,
             keyboardType: TextInputType.emailAddress,
             textInputAction: TextInputAction.next,
             validator: validateEmail,
@@ -120,8 +118,8 @@ class AuthPageWidget extends StatelessWidget {
               fieldKey: nameFieldKey,
               focusNode: nameFocus,
               controller: controllerName,
-              hintText: 'Enter name',
-              labelText: 'Name',
+              hintText: loc.nameHint,
+              labelText: loc.nameLabel,
               textInputAction: TextInputAction.next,
               validator: validateName,
               onFieldSubmitted: onNameSubmitted,
@@ -135,8 +133,8 @@ class AuthPageWidget extends StatelessWidget {
             fieldKey: passwordFieldKey,
             focusNode: paswFocus,
             controller: controllerPassword,
-            hintText: 'Enter password',
-            labelText: 'Password',
+            hintText: loc.passwordHint,
+            labelText: loc.passwordLabel,
             obscureText: true,
             textInputAction: isRegister
                 ? TextInputAction.next
@@ -153,8 +151,8 @@ class AuthPageWidget extends StatelessWidget {
               key: passwordConfirmFieldKey,
               focusNode: passwordConfirmFocus,
               controller: controllerPasswordConfirm,
-              hintText: 'Enter password again',
-              labelText: 'Confirm Password',
+              hintText: loc.confirmPasswordHint,
+              labelText: loc.confirmPasswordLabel,
               obscureText: true,
               textInputAction: TextInputAction.done,
               validator: validatePasswordConfirm,

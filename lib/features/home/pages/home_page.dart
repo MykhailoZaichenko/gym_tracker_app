@@ -6,6 +6,7 @@ import 'package:gym_tracker_app/features/analytics/pages/graf_page.dart';
 import 'package:gym_tracker_app/features/workout/pages/workout_page.dart';
 import 'package:gym_tracker_app/features/workout/pages/workout_plan_editor_page.dart';
 import 'package:gym_tracker_app/features/home/home_exports.dart';
+import 'package:gym_tracker_app/l10n/app_localizations.dart';
 
 class HomeCalendarPage extends StatefulWidget {
   const HomeCalendarPage({super.key});
@@ -87,6 +88,8 @@ class _HomeCalendarPageState extends State<HomeCalendarPage> {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
+    final loc = AppLocalizations.of(context)!;
+
     return SafeArea(
       child: Scaffold(
         appBar: HomeHeader(
@@ -136,7 +139,7 @@ class _HomeCalendarPageState extends State<HomeCalendarPage> {
         floatingActionButton: _selectedDay == null
             ? null
             : FloatingActionButton(
-                tooltip: 'Редагувати вправи',
+                tooltip: loc.editExercisesTooltip,
                 child: const Icon(Icons.edit),
                 onPressed: () => _openWorkoutDay(_selectedDay!),
               ),

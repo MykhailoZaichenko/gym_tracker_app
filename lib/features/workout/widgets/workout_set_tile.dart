@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gym_tracker_app/l10n/app_localizations.dart';
 
 class ExerciseSetTile extends StatelessWidget {
   const ExerciseSetTile({
@@ -18,6 +19,7 @@ class ExerciseSetTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final weightFocus = FocusNode();
     final repsFocus = FocusNode();
+    final loc = AppLocalizations.of(context)!;
 
     return Container(
       width: 120,
@@ -29,7 +31,7 @@ class ExerciseSetTile extends StatelessWidget {
             children: [
               const SizedBox(width: 5),
               Text(
-                "Підхід ${index + 1}",
+                loc.setNumber(index + 1),
                 style: const TextStyle(fontWeight: FontWeight.bold),
               ),
               const SizedBox(width: 35),
@@ -44,7 +46,7 @@ class ExerciseSetTile extends StatelessWidget {
                   itemBuilder: (context) => [
                     PopupMenuItem(
                       value: 'delete',
-                      child: Text('Видалити підхід ${index + 1}'),
+                      child: Text(loc.deleteSet(index + 1)),
                     ),
                   ],
                 ),
@@ -72,8 +74,8 @@ class ExerciseSetTile extends StatelessWidget {
                       decimal: true,
                     ),
                     textInputAction: TextInputAction.next,
-                    decoration: const InputDecoration(
-                      hintText: 'Кг',
+                    decoration: InputDecoration(
+                      hintText: loc.weightUnitHint,
                       border: InputBorder.none,
                     ),
                     onSubmitted: (_) {
@@ -91,8 +93,8 @@ class ExerciseSetTile extends StatelessWidget {
                     controller: repsController,
                     keyboardType: TextInputType.number,
                     textInputAction: TextInputAction.done,
-                    decoration: const InputDecoration(
-                      hintText: 'Повт',
+                    decoration: InputDecoration(
+                      hintText: loc.repsUnitHint,
                       border: InputBorder.none,
                     ),
                     onSubmitted: (_) {

@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:gym_tracker_app/core/constants/constants.dart';
+import 'package:gym_tracker_app/l10n/app_localizations.dart';
+import 'package:intl/intl.dart';
 
 class MonthPickerDialog extends StatefulWidget {
   const MonthPickerDialog({
     required this.initialDate,
     super.key,
     this.title,
-    this.cancelLabel = 'Скасувати',
-    this.okLabel = 'ОК',
+    this.cancelLabel,
+    this.okLabel,
   });
 
   final DateTime initialDate;
   final String? title;
-  final String cancelLabel;
-  final String okLabel;
+  final String? cancelLabel;
+  final String? okLabel;
 
   @override
   State<MonthPickerDialog> createState() => _MonthPickerDialogState();
@@ -22,18 +23,20 @@ class MonthPickerDialog extends StatefulWidget {
 Future<DateTime?> showMonthPicker({
   required BuildContext context,
   required DateTime initialDate,
+
   String? title,
-  String cancelLabel = 'Скасувати',
-  String okLabel = 'ОК',
+  String? cancelLabel,
+  String? okLabel,
 }) {
+  final loc = AppLocalizations.of(context)!;
   return showDialog<DateTime>(
     context: context,
     barrierDismissible: true,
     builder: (_) => MonthPickerDialog(
       initialDate: initialDate,
       title: title,
-      cancelLabel: cancelLabel,
-      okLabel: okLabel,
+      cancelLabel: cancelLabel = loc.cancel,
+      okLabel: okLabel = loc.ok,
     ),
   );
 }
@@ -82,6 +85,7 @@ class _MonthPickerDialogState extends State<MonthPickerDialog>
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final primary = theme.colorScheme.primary;
+    final loc = AppLocalizations.of(context)!;
 
     return ScaleTransition(
       scale: CurvedAnimation(
@@ -91,7 +95,7 @@ class _MonthPickerDialogState extends State<MonthPickerDialog>
       child: AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Text(
-          widget.title ?? 'Виберіть місяць і рік',
+          widget.title ?? loc.pickMonthYear,
           textAlign: TextAlign.center,
           style: theme.textTheme.titleLarge?.copyWith(
             fontWeight: FontWeight.w600,
@@ -112,7 +116,7 @@ class _MonthPickerDialogState extends State<MonthPickerDialog>
                 IconButton(
                   icon: const Icon(Icons.chevron_left_rounded),
                   onPressed: () => _changeYear(-1),
-                  tooltip: 'Попередній рік',
+                  tooltip: loc.prevYear,
                 ),
                 SizedBox(
                   width: 80,
@@ -146,7 +150,7 @@ class _MonthPickerDialogState extends State<MonthPickerDialog>
                 IconButton(
                   icon: const Icon(Icons.chevron_right_rounded),
                   onPressed: () => _changeYear(1),
-                  tooltip: 'Наступний рік',
+                  tooltip: loc.nextYear,
                 ),
               ],
             ),
@@ -160,6 +164,10 @@ class _MonthPickerDialogState extends State<MonthPickerDialog>
               children: List.generate(12, (i) {
                 final month = i + 1;
                 final selected = month == _selectedMonth;
+                final monthName = DateFormat.MMMM(
+                  loc.localeName,
+                ).format(DateTime(2024, month));
+                final label = toBeginningOfSentenceCase(monthName);
 
                 return IntrinsicWidth(
                   child: ChoiceChip(
@@ -177,7 +185,7 @@ class _MonthPickerDialogState extends State<MonthPickerDialog>
                       borderRadius: BorderRadius.circular(12),
                     ),
                     label: Text(
-                      ukrainianMonths[i],
+                      label,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         fontWeight: FontWeight
@@ -205,7 +213,7 @@ class _MonthPickerDialogState extends State<MonthPickerDialog>
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
             child: Text(
-              widget.cancelLabel,
+              widget.cancelLabel ?? loc.cancel,
               style: TextStyle(color: theme.colorScheme.onSurfaceVariant),
             ),
           ),
@@ -217,7 +225,7 @@ class _MonthPickerDialogState extends State<MonthPickerDialog>
                 borderRadius: BorderRadius.circular(10),
               ),
             ),
-            child: Text(widget.okLabel),
+            child: Text(widget.okLabel ?? loc.ok),
           ),
         ],
       ),

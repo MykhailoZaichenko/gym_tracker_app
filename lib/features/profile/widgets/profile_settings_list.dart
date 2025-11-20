@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gym_tracker_app/l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:gym_tracker_app/features/profile/models/user_model.dart';
@@ -18,6 +19,7 @@ class ProfileSettingsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       elevation: 1,
@@ -25,7 +27,7 @@ class ProfileSettingsList extends StatelessWidget {
         children: [
           ListTile(
             leading: const Icon(Icons.edit),
-            title: const Text('Редагувати профіль'),
+            title: Text(loc.editProfileTitle),
             onTap: () async {
               if (user == null) return;
               final updated = await Navigator.push<User?>(
@@ -40,7 +42,7 @@ class ProfileSettingsList extends StatelessWidget {
           const Divider(height: 1),
           ListTile(
             leading: const Icon(Icons.settings),
-            title: const Text('Налаштування'),
+            title: Text(loc.settingsTitle),
             onTap: () {
               Navigator.push(
                 context,
@@ -51,21 +53,21 @@ class ProfileSettingsList extends StatelessWidget {
           const Divider(height: 1),
           ListTile(
             leading: const Icon(Icons.logout),
-            title: const Text('Вийти'),
+            title: Text(loc.logoutAction),
             onTap: () async {
               final confirmed = await showDialog<bool>(
                 context: context,
                 builder: (ctx) => AlertDialog(
-                  title: const Text('Вихід із профілю'),
-                  content: const Text('Ви дійсно хочете вийти?'),
+                  title: Text(loc.logoutTitle),
+                  content: Text(loc.logoutConfirm),
                   actions: [
                     TextButton(
                       onPressed: () => Navigator.of(ctx).pop(false),
-                      child: const Text('Ні'),
+                      child: Text(loc.no),
                     ),
                     TextButton(
                       onPressed: () => Navigator.of(ctx).pop(true),
-                      child: const Text('Так'),
+                      child: Text(loc.yes),
                     ),
                   ],
                 ),

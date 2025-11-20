@@ -2,8 +2,10 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/data/seed/exercise_catalog.dart';
+import 'package:gym_tracker_app/l10n/app_localizations.dart';
 import 'package:gym_tracker_app/widget/common/pop_save_wideget.dart';
 import 'package:gym_tracker_app/features/workout/widgets/workout_picker_widget.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class WorkoutPlanEditorPage extends StatefulWidget {
@@ -15,36 +17,52 @@ class WorkoutPlanEditorPage extends StatefulWidget {
 
 class _WorkoutPlanEditorPageState extends State<WorkoutPlanEditorPage> {
   String? _initialEncoded;
-  final Map<String, List<String>> _plan = {
-    'Понеділок': [],
-    'Вівторок': [],
-    'Середа': [],
-    'Четвер': [],
-    'Пʼятниця': [],
-    'Субота': [],
-    'Неділя': [],
-  };
+  final List<String> _weekDaysKeys = [
+    'Mon',
+    'Tue',
+    'Wed',
+    'Thu',
+    'Fri',
+    'Sat',
+    'Sun',
+  ];
+  final Map<String, List<String>> _plan = {};
 
   @override
   void initState() {
     super.initState();
+    for (var day in _weekDaysKeys) {
+      _plan[day] = [];
+    }
+
     _loadPlan();
-    _initialEncoded = jsonEncode(_plan);
+  }
+
+  String _getLocalizedDayName(String key, String locale) {
+    final index = _weekDaysKeys.indexOf(key) + 1;
+    final date = DateTime(2024, 1, 1).add(Duration(days: index - 1));
+
+    final fullDayName = DateFormat.EEEE(locale).format(date);
+    return toBeginningOfSentenceCase(fullDayName) ?? fullDayName;
   }
 
   Future<void> _loadPlan() async {
     final prefs = await SharedPreferences.getInstance();
-    for (final day in _plan.keys) {
-      final list = prefs.getStringList('plan_$day');
+    for (final dayKey in _weekDaysKeys) {
+      final list = prefs.getStringList('plan_$dayKey');
       if (list != null) {
-        setState(() {
-          _plan[day] = list;
-        });
+        _plan[dayKey] = list;
       }
+    }
+    if (mounted) {
+      setState(() {
+        _initialEncoded = jsonEncode(_plan);
+      });
     }
   }
 
   Future<void> _savePlan() async {
+    final loc = AppLocalizations.of(context)!;
     final prefs = await SharedPreferences.getInstance();
     for (final day in _plan.keys) {
       await prefs.setStringList('plan_$day', _plan[day]!);
@@ -52,63 +70,75 @@ class _WorkoutPlanEditorPageState extends State<WorkoutPlanEditorPage> {
     if (!mounted) return;
     ScaffoldMessenger.of(
       context,
-    ).showSnackBar(const SnackBar(content: Text('План збережено')));
-    _initialEncoded = jsonEncode(_plan);
+    ).showSnackBar(SnackBar(content: Text(loc.planSavedSuccess)));
+    setState(() {
+      _initialEncoded = jsonEncode(_plan);
+    });
   }
 
-  Future<void> _addExercise(String day) async {
+  Future<void> _addExercise(String dayKey) async {
     final selected = await showExercisePicker(context);
 
     if (selected == null) return;
 
     final name = selected == ExerciseInfo.enterCustom
-        ? await _askCustomExerciseName(day)
+        ? await _askCustomExerciseName(dayKey)
         : selected.name;
 
     if (name != null && name.isNotEmpty) {
       setState(() {
-        _plan[day]!.add(name);
+        _plan[dayKey]!.add(name);
       });
     }
   }
 
-  Future<String?> _askCustomExerciseName(String day) async {
+  Future<String?> _askCustomExerciseName(String dayKey) async {
+    final loc = AppLocalizations.of(context)!;
+    final locale = loc.localeName;
+    final localizedDay = _getLocalizedDayName(dayKey, locale);
+
     final controller = TextEditingController();
     return showDialog<String>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text('Введіть назву вправи на $day'),
+        title: Text(
+          '${loc.enterCustomExerciseName} ${loc.onDay(localizedDay)}',
+        ),
         content: TextField(
           controller: controller,
-          decoration: const InputDecoration(hintText: 'Назва вправи'),
+          decoration: InputDecoration(hintText: loc.exerciseNameHint),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Скасувати'),
+            child: Text(loc.cancel),
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, controller.text.trim()),
-            child: const Text('Додати'),
+            child: Text(loc.addExercise),
           ),
         ],
       ),
     );
   }
 
-  void _removeExercise(String day, int index) {
+  void _removeExercise(String dayKey, int index) {
     setState(() {
-      _plan[day]!.removeAt(index);
+      _plan[dayKey]!.removeAt(index);
     });
   }
 
   bool _hasUnsavedChanges() {
+    if (_initialEncoded == null) return false;
     final current = jsonEncode(_plan);
     return _initialEncoded != current;
   }
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+    final locale = loc.localeName;
+
     return PopScope(
       canPop: false, // block automatic pop, handle manually
       onPopInvokedWithResult: (didPop, result) async {
@@ -126,21 +156,26 @@ class _WorkoutPlanEditorPageState extends State<WorkoutPlanEditorPage> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Редагування плану'),
+          title: Text(loc.editPlanTitle),
           actions: [
             IconButton(
               onPressed: _savePlan,
               icon: const Icon(Icons.save),
-              tooltip: 'Зберегти план',
+              tooltip: loc.savePlanTooltip,
             ),
           ],
         ),
-        body: ListView(
+        body: ListView.builder(
           padding: const EdgeInsets.all(12),
-          children: _plan.keys.map((day) {
-            final exercises = _plan[day]!;
+          // Використовуємо фіксований список ключів, щоб порядок днів завжди був правильним
+          itemCount: _weekDaysKeys.length,
+          itemBuilder: (context, index) {
+            final dayKey = _weekDaysKeys[index]; // 'Mon', 'Tue'...
+            final exercises = _plan[dayKey]!;
+            final localizedDayName = _getLocalizedDayName(dayKey, locale);
+
             return ExpansionTile(
-              title: Text(day),
+              title: Text(localizedDayName), // 'Понеділок' / 'Monday'
               children: [
                 ...exercises.asMap().entries.map((entry) {
                   final i = entry.key;
@@ -149,7 +184,8 @@ class _WorkoutPlanEditorPageState extends State<WorkoutPlanEditorPage> {
                     title: Text(ex),
                     trailing: IconButton(
                       icon: const Icon(Icons.delete_outline),
-                      onPressed: () => _removeExercise(day, i),
+                      onPressed: () => _removeExercise(dayKey, i),
+                      tooltip: loc.delete,
                     ),
                   );
                 }),
@@ -159,14 +195,14 @@ class _WorkoutPlanEditorPageState extends State<WorkoutPlanEditorPage> {
                     vertical: 8,
                   ),
                   child: ElevatedButton.icon(
-                    onPressed: () => _addExercise(day),
+                    onPressed: () => _addExercise(dayKey),
                     icon: const Icon(Icons.add),
-                    label: const Text('Додати вправу'),
+                    label: Text(loc.addExercise),
                   ),
                 ),
               ],
             );
-          }).toList(),
+          },
         ),
       ),
     );
