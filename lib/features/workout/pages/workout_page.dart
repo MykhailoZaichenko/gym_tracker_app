@@ -71,9 +71,9 @@ class _WorkoutPageState extends State<WorkoutPage> {
       if (planned.isNotEmpty) {
         _exercises = planned
             .map(
-              (name) => WorkoutExercise(
-                name: name,
-                exerciseId: null,
+              (idOrName) => WorkoutExercise(
+                name: idOrName,
+                exerciseId: idOrName,
                 sets: [SetData()],
               ),
             )
@@ -108,6 +108,26 @@ class _WorkoutPageState extends State<WorkoutPage> {
       _weightCtrls.add(wList);
       _repsCtrls.add(rList);
     }
+  }
+
+  String _getLocalizedName(WorkoutExercise exercise, AppLocalizations loc) {
+    final catalog = getExerciseCatalog(loc);
+
+    if (exercise.exerciseId != null && exercise.exerciseId!.isNotEmpty) {
+      final foundById = catalog.firstWhere(
+        (e) => e.id == exercise.exerciseId,
+        orElse: () => ExerciseInfo(id: '', name: '', icon: Icons.error),
+      );
+      if (foundById.name.isNotEmpty) return foundById.name;
+    }
+
+    final foundByName = catalog.firstWhere(
+      (e) => e.id == exercise.name, // Перевіряємо, чи name є ID
+      orElse: () => ExerciseInfo(id: '', name: '', icon: Icons.error),
+    );
+    if (foundByName.name.isNotEmpty) return foundByName.name;
+
+    return exercise.name;
   }
 
   // Зберігаємо дані з контролерів у модель і в SharedPreferences
@@ -221,9 +241,29 @@ class _WorkoutPageState extends State<WorkoutPage> {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
     final loc = AppLocalizations.of(context)!;
+    for (int i = 0; i < _exercises.length; i++) {
+      final exercise = _exercises[i];
+      final localizedName = _getLocalizedName(exercise, loc);
 
+      if (exercise.exerciseId != null &&
+          exercise.exerciseId!.isNotEmpty &&
+          _nameCtrls[i].text != localizedName) {
+        final selection = _nameCtrls[i].selection;
+        _nameCtrls[i].text = localizedName;
+        if (selection.start >= 0 && selection.end <= localizedName.length) {
+          _nameCtrls[i].selection = selection;
+        }
+      } else if (exercise.exerciseId == null &&
+          _nameCtrls[i].text == exercise.name) {
+        final catalog = getExerciseCatalog(loc);
+        final isStandard = catalog.any((e) => e.id == exercise.name);
+        if (isStandard) {
+          _nameCtrls[i].text = localizedName;
+        }
+      }
+    }
     return PopScope(
-      canPop: false, // block automatic pop, handle manually
+      canPop: false,
       onPopInvokedWithResult: (didPop, result) async {
         if (!didPop) {
           final allow = await WillPopSavePrompt(
@@ -261,6 +301,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
           itemCount: _exercises.length,
           itemBuilder: (context, i) {
             final exercise = _exercises[i];
+            final localizedName = _getLocalizedName(exercise, loc);
             return Card(
               margin: const EdgeInsets.all(8),
               child: Padding(
@@ -275,16 +316,30 @@ class _WorkoutPageState extends State<WorkoutPage> {
                           showExercisePicker(ctx, initialQuery: initialQuery),
                       onRemoveExercise: () => _removeExercise(i),
                       buildIconForName: (nameOrId) {
-                        final found = kExerciseCatalog.firstWhere(
-                          (e) => e.id == nameOrId || e.name == nameOrId,
-                          orElse: () => kExerciseCatalog.isNotEmpty
-                              ? kExerciseCatalog.first
-                              : ExerciseInfo(
-                                  id: 'none',
-                                  name: '',
-                                  icon: Icons.fitness_center,
-                                ),
+                        final loc = AppLocalizations.of(context)!;
+                        final catalog = getExerciseCatalog(loc);
+
+                        var found = catalog.firstWhere(
+                          (e) => e.id == nameOrId,
+                          orElse: () => ExerciseInfo(
+                            id: '',
+                            name: '',
+                            icon: Icons.code,
+                          ), // тимчасова пуста
                         );
+                        if (found.id.isEmpty) {
+                          found = catalog.firstWhere(
+                            (e) =>
+                                e.name ==
+                                nameOrId, // Шукаємо за локалізованою назвою
+                            orElse: () => ExerciseInfo(
+                              id: 'none',
+                              name: localizedName,
+                              icon: Icons.fitness_center,
+                            ),
+                          );
+                        }
+
                         final color = (nameOrId.isEmpty)
                             ? Colors.grey.shade300
                             : Theme.of(context).colorScheme.primary;

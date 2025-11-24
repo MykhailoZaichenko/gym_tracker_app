@@ -763,6 +763,216 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Profile'**
   String get navProfile;
+
+  /// Exercise name
+  ///
+  /// In en, this message translates to:
+  /// **'Squat'**
+  String get exSquat;
+
+  /// Exercise name
+  ///
+  /// In en, this message translates to:
+  /// **'Lunge'**
+  String get exLunge;
+
+  /// Exercise name
+  ///
+  /// In en, this message translates to:
+  /// **'Leg Press'**
+  String get exLegPress;
+
+  /// Exercise name
+  ///
+  /// In en, this message translates to:
+  /// **'Wall Sit'**
+  String get exWallSit;
+
+  /// Exercise name
+  ///
+  /// In en, this message translates to:
+  /// **'Leg Extension'**
+  String get exLegExtension;
+
+  /// Exercise name
+  ///
+  /// In en, this message translates to:
+  /// **'Leg Curl'**
+  String get exLegCurl;
+
+  /// Exercise name
+  ///
+  /// In en, this message translates to:
+  /// **'Deadlift'**
+  String get exDeadlift;
+
+  /// Exercise name
+  ///
+  /// In en, this message translates to:
+  /// **'Good Morning'**
+  String get exGoodMorning;
+
+  /// Exercise name
+  ///
+  /// In en, this message translates to:
+  /// **'Standing Calf Raise'**
+  String get exStandingCalfRaise;
+
+  /// Exercise name
+  ///
+  /// In en, this message translates to:
+  /// **'Seated Calf Raise'**
+  String get exSeatedCalfRaise;
+
+  /// Exercise name
+  ///
+  /// In en, this message translates to:
+  /// **'Push-up'**
+  String get exPushUp;
+
+  /// Exercise name
+  ///
+  /// In en, this message translates to:
+  /// **'Pull-up'**
+  String get exPullUp;
+
+  /// Exercise name
+  ///
+  /// In en, this message translates to:
+  /// **'Dip'**
+  String get exDip;
+
+  /// Exercise name
+  ///
+  /// In en, this message translates to:
+  /// **'Bench Press'**
+  String get exBenchPress;
+
+  /// Exercise name
+  ///
+  /// In en, this message translates to:
+  /// **'Machine Fly'**
+  String get exMachineFly;
+
+  /// Exercise name
+  ///
+  /// In en, this message translates to:
+  /// **'Lateral Raise'**
+  String get exLateralRaise;
+
+  /// Exercise name
+  ///
+  /// In en, this message translates to:
+  /// **'Bent Over Row'**
+  String get exBentOverRow;
+
+  /// Exercise name
+  ///
+  /// In en, this message translates to:
+  /// **'Lat Pull-down'**
+  String get exLatPullDown;
+
+  /// Exercise name
+  ///
+  /// In en, this message translates to:
+  /// **'Shoulder Shrug'**
+  String get exShoulderShrug;
+
+  /// Exercise name
+  ///
+  /// In en, this message translates to:
+  /// **'Overhead Press'**
+  String get exOverheadPress;
+
+  /// Exercise name
+  ///
+  /// In en, this message translates to:
+  /// **'Front Raise'**
+  String get exFrontRaise;
+
+  /// Exercise name
+  ///
+  /// In en, this message translates to:
+  /// **'Rear Delt Raise'**
+  String get exRearDeltRaise;
+
+  /// Exercise name
+  ///
+  /// In en, this message translates to:
+  /// **'Upright Row'**
+  String get exUprightRow;
+
+  /// Exercise name
+  ///
+  /// In en, this message translates to:
+  /// **'Face Pull'**
+  String get exFacePull;
+
+  /// Exercise name
+  ///
+  /// In en, this message translates to:
+  /// **'Biceps Curl'**
+  String get exBicepsCurl;
+
+  /// Exercise name
+  ///
+  /// In en, this message translates to:
+  /// **'Triceps Extension'**
+  String get exTricepsExtension;
+
+  /// Exercise name
+  ///
+  /// In en, this message translates to:
+  /// **'Crunch'**
+  String get exCrunch;
+
+  /// Exercise name
+  ///
+  /// In en, this message translates to:
+  /// **'Sit-up'**
+  String get exSitUp;
+
+  /// Exercise name
+  ///
+  /// In en, this message translates to:
+  /// **'Plank'**
+  String get exPlank;
+
+  /// Exercise name
+  ///
+  /// In en, this message translates to:
+  /// **'Leg Raise'**
+  String get exLegRaise;
+
+  /// Exercise name
+  ///
+  /// In en, this message translates to:
+  /// **'Hyperextension'**
+  String get exHyperextension;
+
+  /// Exercise name
+  ///
+  /// In en, this message translates to:
+  /// **'Hammer Curl'**
+  String get exHammerCurl;
+
+  /// Exercise name
+  ///
+  /// In en, this message translates to:
+  /// **'Zottman Curl'**
+  String get exZottmanCurl;
+
+  /// Exercise name
+  ///
+  /// In en, this message translates to:
+  /// **'Machine Row'**
+  String get exMachineRow;
+
+  /// Exercise name
+  ///
+  /// In en, this message translates to:
+  /// **'Hanging Leg Raise'**
+  String get exLegRaiseHang;
 }
 
 class _AppLocalizationsDelegate

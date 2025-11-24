@@ -58,9 +58,10 @@ class _ExercisePickerSheetState extends State<_ExercisePickerSheet> {
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
+    final catalog = getExerciseCatalog(loc);
     final filtered = _query.isEmpty
-        ? kExerciseCatalog
-        : kExerciseCatalog
+        ? catalog
+        : catalog
               .where((e) => e.name.toLowerCase().contains(_query.toLowerCase()))
               .toList();
 
@@ -109,8 +110,9 @@ class _ExercisePickerSheetState extends State<_ExercisePickerSheet> {
                       return ListTile(
                         leading: const Icon(Icons.edit),
                         title: Text(loc.enterCustomName),
-                        onTap: () =>
-                            Navigator.of(context).pop(ExerciseInfo.enterCustom),
+                        onTap: () => Navigator.of(
+                          context,
+                        ).pop(ExerciseInfo.getEnterCustom(loc)),
                       );
                     }
                     final it = filtered[idx - 1];

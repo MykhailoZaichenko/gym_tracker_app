@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/features/workout/models/workout_exercise_model.dart';
 import 'package:gym_tracker_app/l10n/app_localizations.dart';
+import 'package:gym_tracker_app/data/seed/exercise_catalog.dart';
 
 class HomeExerciseList extends StatelessWidget {
   final DateTime? selectedDay;
@@ -13,6 +14,23 @@ class HomeExerciseList extends StatelessWidget {
     required this.selectedExercises,
     required this.keyOf,
   });
+
+  String _getLocalizedName(WorkoutExercise exercise, AppLocalizations loc) {
+    final catalog = getExerciseCatalog(loc);
+    if (exercise.exerciseId != null && exercise.exerciseId!.isNotEmpty) {
+      final found = catalog.firstWhere(
+        (e) => e.id == exercise.exerciseId,
+        orElse: () => ExerciseInfo(id: '', name: '', icon: Icons.error),
+      );
+      if (found.name.isNotEmpty) return found.name;
+    }
+    final foundByName = catalog.firstWhere(
+      (e) => e.id == exercise.name,
+      orElse: () => ExerciseInfo(id: '', name: '', icon: Icons.error),
+    );
+    if (foundByName.name.isNotEmpty) return foundByName.name;
+    return exercise.name;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,10 +61,10 @@ class HomeExerciseList extends StatelessWidget {
                 itemCount: selectedExercises.length,
                 itemBuilder: (ctx, i) {
                   final ex = selectedExercises[i];
-                  // Формуємо рядок для назви вправи (якщо пуста - дефолт)
-                  final titleText = ex.name.isEmpty
-                      ? '${loc.exerciseDefaultName} $i'
-                      : ex.name;
+                  final localizedName = _getLocalizedName(ex, loc);
+                  final titleText = localizedName.isEmpty
+                      ? '${loc.exerciseDefaultName} ${i + 1}'
+                      : localizedName;
 
                   return Card(
                     margin: const EdgeInsets.symmetric(
@@ -59,13 +77,12 @@ class HomeExerciseList extends StatelessWidget {
                       subtitle: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // Використовуємо plural message для кількості підходів
                           Text(loc.setsCount(ex.sets.length)),
                           const SizedBox(height: 4),
                           for (var j = 0; j < ex.sets.length; j++)
                             Text(
                               '${loc.setLabelCompact} ${j + 1}: '
-                              '${ex.sets[j].weight?.toStringAsFixed(1) ?? '-'} ${loc.weightLabel.replaceAll(RegExp(r'.*\(|\)'), '')} ' // extracting kg or just hardcode unit if needed
+                              '${ex.sets[j].weight?.toStringAsFixed(1) ?? '-'} ${loc.weightUnit} '
                               'x ${ex.sets[j].reps ?? '-'} ${loc.repsUnit}',
                               style: const TextStyle(fontSize: 13),
                             ),

@@ -1,13 +1,14 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:gym_tracker_app/core/constants/constants.dart';
 import 'package:gym_tracker_app/core/theme/theme_service.dart';
 import 'package:gym_tracker_app/core/utils.dart';
 import 'package:gym_tracker_app/features/analytics/widgets/line_chart_card.dart';
 import 'package:gym_tracker_app/l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:gym_tracker_app/core/constants/constants.dart';
 import 'package:intl/intl.dart';
+import 'package:gym_tracker_app/data/seed/exercise_catalog.dart';
 
 class GrafPage extends StatefulWidget {
   const GrafPage({super.key});
@@ -20,8 +21,9 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
   Map<String, List<WorkoutExerciseGraf>> _allWorkouts = {};
   bool _isLoading = true;
 
-  List<String> _exerciseNames = [];
-  String? _selectedExerciseName;
+  // Список унікальних назв (вже локалізованих) для відображення
+  List<String> _displayExerciseNames = [];
+  String? _selectedExerciseDisplay;
 
   RangeMode _range = RangeMode.month;
   late TabController _tabController;
@@ -57,52 +59,138 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
     } else {
       _allWorkouts = {};
     }
-
-    _collectExerciseNames();
     setState(() => _isLoading = false);
   }
 
-  void _collectExerciseNames() {
-    final names = <String>{};
-    for (final list in _allWorkouts.values) {
-      for (final e in list) {
-        final n = e.name.trim();
-        if (n.isNotEmpty) names.add(n);
-      }
+  // ---- ЛОГІКА НОРМАЛІЗАЦІЇ ----
+
+  /// Намагається знайти ID вправи (наприклад 'lunge') на основі збережених даних.
+  /// Це об'єднує "Lunge", "Випади" та "lunge" в один ідентифікатор.
+  String _getCanonicalId(WorkoutExerciseGraf ex, List<ExerciseInfo> catalog) {
+    // 1. Якщо ID вже збережено коректно - використовуємо його
+    if (ex.exerciseId != null && ex.exerciseId!.isNotEmpty) {
+      return ex.exerciseId!;
     }
-    _exerciseNames = names.toList()..sort();
-    if (_exerciseNames.isNotEmpty && _selectedExerciseName == null) {
-      _selectedExerciseName = _exerciseNames.first;
+
+    final rawName = ex.name.trim();
+    // Якщо назва пуста, повертаємо 'unknown', щоб потім відфільтрувати
+    if (rawName.isEmpty) return 'unknown';
+
+    // 2. Шукаємо точний збіг назви з ID або локалізованою назвою в каталозі
+    try {
+      final found = catalog.firstWhere(
+        (c) => c.id == rawName || c.name.toLowerCase() == rawName.toLowerCase(),
+      );
+      return found.id;
+    } catch (_) {}
+
+    // 3. ЕВРИСТИКА ДЛЯ СТАРИХ ДАНИХ (English -> ID)
+    final potentialId = rawName.toLowerCase().replaceAll(' ', '_');
+    try {
+      final foundById = catalog.firstWhere((c) => c.id == potentialId);
+      return foundById.id;
+    } catch (_) {}
+
+    // 4. Якщо нічого не знайшли, вважаємо це кастомною вправою.
+    return rawName;
+  }
+
+  /// Отримує локалізовану назву для відображення в UI за канонічним ID
+  String _getLocalizedNameById(String canonicalId, List<ExerciseInfo> catalog) {
+    try {
+      final found = catalog.firstWhere((c) => c.id == canonicalId);
+      return found.name;
+    } catch (_) {
+      return canonicalId;
     }
   }
 
-  Map<DateTime, double> _accumulatePerDay(String exerciseName) {
+  void _prepareExerciseList(AppLocalizations loc) {
+    final catalog = getExerciseCatalog(loc);
+    final uniqueCanonicalIds = <String>{};
+
+    // Збираємо всі унікальні ID зі всіх тренувань
+    for (final list in _allWorkouts.values) {
+      for (final ex in list) {
+        final id = _getCanonicalId(ex, catalog);
+
+        // --- ФІКС ТУТ: Фільтруємо 'unknown' (вправи без назви) ---
+        if (id != 'unknown') {
+          uniqueCanonicalIds.add(id);
+        }
+      }
+    }
+
+    // Перетворюємо ID на красиві локалізовані назви для списку
+    final names = uniqueCanonicalIds
+        .map((id) => _getLocalizedNameById(id, catalog))
+        .toSet()
+        .toList();
+
+    names.sort();
+    _displayExerciseNames = names;
+
+    // Логіка збереження вибору при оновленні списку
+    if (_displayExerciseNames.isNotEmpty) {
+      if (_selectedExerciseDisplay == null ||
+          !_displayExerciseNames.contains(_selectedExerciseDisplay)) {
+        _selectedExerciseDisplay = _displayExerciseNames.first;
+      }
+    } else {
+      _selectedExerciseDisplay = null;
+    }
+  }
+
+  // ---- АГРЕГАЦІЯ ----
+
+  Map<DateTime, double> _accumulatePerDay(
+    String selectedDisplayName,
+    AppLocalizations loc,
+  ) {
     final Map<DateTime, double> result = {};
+    final catalog = getExerciseCatalog(loc);
+
+    // Знаходимо ID для обраної назви
+    String targetCanonicalId = selectedDisplayName;
+    try {
+      final found = catalog.firstWhere((c) => c.name == selectedDisplayName);
+      targetCanonicalId = found.id;
+    } catch (_) {}
+
     _allWorkouts.forEach((dateStr, exercises) {
       final date = DateTime.parse(dateStr);
-      final ex = exercises.firstWhere(
-        (e) => e.name == exerciseName,
-        orElse: () => WorkoutExerciseGraf(name: '', sets: []),
-      );
-      if (ex.name.isEmpty) return;
+
+      final matching = exercises.where((ex) {
+        final exId = _getCanonicalId(ex, catalog);
+        return exId == targetCanonicalId;
+      });
+
       double sum = 0;
-      for (final s in ex.sets) {
-        final w = s.weight ?? 0;
-        final r = s.reps ?? 0;
-        sum += w * r;
+      for (final ex in matching) {
+        for (final s in ex.sets) {
+          final w = s.weight ?? 0;
+          final r = s.reps ?? 0;
+          sum += w * r;
+        }
       }
-      final dayKey = DateTime(date.year, date.month, date.day);
-      result[dayKey] = (result[dayKey] ?? 0) + sum;
+
+      if (sum > 0) {
+        final dayKey = DateTime(date.year, date.month, date.day);
+        result[dayKey] = (result[dayKey] ?? 0) + sum;
+      }
     });
+
     return result;
   }
 
-  List<MapEntry<DateTime, double>> _filteredEntriesForRange() {
-    if (_selectedExerciseName == null) return [];
-    final acc = _accumulatePerDay(_selectedExerciseName!);
-    final now = DateTime.now();
-    Iterable<MapEntry<DateTime, double>> entries = acc.entries;
+  List<MapEntry<DateTime, double>> _filteredEntriesForRange(
+    AppLocalizations loc,
+  ) {
+    if (_selectedExerciseDisplay == null) return [];
 
+    final acc = _accumulatePerDay(_selectedExerciseDisplay!, loc);
+
+    Iterable<MapEntry<DateTime, double>> entries = acc.entries;
     switch (_range) {
       case RangeMode.month:
         final first = DateTime(_visibleMonth.year, _visibleMonth.month, 1);
@@ -116,8 +204,8 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
         );
         break;
       case RangeMode.year:
-        final yearStart = DateTime(now.year, 1, 1);
-        final yearEnd = DateTime(now.year, 12, 31);
+        final yearStart = DateTime(DateTime.now().year, 1, 1);
+        final yearEnd = DateTime(DateTime.now().year, 12, 31);
         entries = entries.where(
           (e) => !e.key.isBefore(yearStart) && !e.key.isAfter(yearEnd),
         );
@@ -127,6 +215,8 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
     final sorted = entries.toList()..sort((a, b) => a.key.compareTo(b.key));
     return sorted;
   }
+
+  // ... UI методи без змін ...
 
   List<FlSpot> _buildSpots(List<MapEntry<DateTime, double>> entries) {
     final spots = <FlSpot>[];
@@ -153,7 +243,6 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
     return spots;
   }
 
-  // отримати дату з координати X (для тапу по точці)
   DateTime? _xToDate(double x) {
     switch (_range) {
       case RangeMode.month:
@@ -170,17 +259,27 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
     final key =
         '${day.year.toString().padLeft(4, '0')}-${day.month.toString().padLeft(2, '0')}-${day.day.toString().padLeft(2, '0')}';
     final exList = _allWorkouts[key] ?? [];
+
+    final catalog = getExerciseCatalog(loc);
+    String targetId = _selectedExerciseDisplay ?? '';
+    try {
+      targetId = catalog
+          .firstWhere((c) => c.name == _selectedExerciseDisplay)
+          .id;
+    } catch (_) {}
+
     final ex = exList.firstWhere(
-      (e) => e.name == _selectedExerciseName,
+      (e) => _getCanonicalId(e, catalog) == targetId,
       orElse: () => WorkoutExerciseGraf(name: '', sets: []),
     );
+
     if (ex.name.isEmpty) return;
 
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
         title: Text(
-          '${ex.name} — $key',
+          '$_selectedExerciseDisplay — $key',
           style: ThemeService.isDarkModeNotifier.value
               ? const TextStyle(color: Colors.white)
               : const TextStyle(color: Colors.black),
@@ -243,21 +342,18 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
 
   Widget _buildBottomTitle(double value) {
     final locale = AppLocalizations.of(context)!.localeName;
-
     switch (_range) {
       case RangeMode.month:
         return Text('${value.round()}', style: const TextStyle(fontSize: 11));
       case RangeMode.year:
         final month = value.round();
         if (month < 1 || month > 12) return const SizedBox();
-
-        // Динамічно форматуємо скорочену назву місяця (Jan, Feb / Січ, Лют)
         final date = DateTime(DateTime.now().year, month);
         final monthShort = DateFormat.MMM(locale).format(date);
-
-        final capitalizedMonth = toBeginningOfSentenceCase(monthShort);
-
-        return Text(capitalizedMonth, style: const TextStyle(fontSize: 11));
+        return Text(
+          toBeginningOfSentenceCase(monthShort) ?? '',
+          style: const TextStyle(fontSize: 11),
+        );
     }
   }
 
@@ -274,8 +370,13 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
     if (_isLoading) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
+
     final loc = AppLocalizations.of(context)!;
-    final entries = _filteredEntriesForRange();
+
+    // Оновлюємо список вправ при кожному build
+    _prepareExerciseList(loc);
+
+    final entries = _filteredEntriesForRange(loc);
     final spots = _buildSpots(entries);
 
     double maxY = 1;
@@ -297,12 +398,13 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
                 Expanded(
                   child: DropdownButton<String>(
                     isExpanded: true,
-                    value: _selectedExerciseName,
+                    value: _selectedExerciseDisplay,
                     hint: Text(loc.chooseExercise),
-                    items: _exerciseNames
+                    items: _displayExerciseNames
                         .map((n) => DropdownMenuItem(value: n, child: Text(n)))
                         .toList(),
-                    onChanged: (v) => setState(() => _selectedExerciseName = v),
+                    onChanged: (v) =>
+                        setState(() => _selectedExerciseDisplay = v),
                   ),
                 ),
               ],
@@ -338,7 +440,7 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
               ),
             const SizedBox(height: 8),
             Expanded(
-              child: _selectedExerciseName == null
+              child: _selectedExerciseDisplay == null
                   ? Center(
                       child: Text(
                         loc.addExercisesHint,
@@ -420,16 +522,21 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
   }
 }
 
-/// Модельні класи (як у вас раніше)
 class WorkoutExerciseGraf {
   String name;
+  String? exerciseId;
   List<SetData> sets;
 
-  WorkoutExerciseGraf({required this.name, required this.sets});
+  WorkoutExerciseGraf({
+    required this.name,
+    this.exerciseId,
+    required this.sets,
+  });
 
   factory WorkoutExerciseGraf.fromMap(Map<String, dynamic> m) {
     return WorkoutExerciseGraf(
       name: m['name'] as String? ?? '',
+      exerciseId: m['exerciseId'] as String?,
       sets: (m['sets'] as List<dynamic>? ?? [])
           .map((e) => SetData.fromMap(e as Map<String, dynamic>))
           .toList(),
@@ -438,6 +545,7 @@ class WorkoutExerciseGraf {
 
   Map<String, dynamic> toMap() => {
     'name': name,
+    'exerciseId': exerciseId,
     'sets': sets.map((s) => s.toMap()).toList(),
   };
 }

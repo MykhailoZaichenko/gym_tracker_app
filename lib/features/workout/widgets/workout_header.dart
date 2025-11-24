@@ -35,10 +35,7 @@ class ExerciseHeader extends StatelessWidget {
         ValueListenableBuilder<TextEditingValue>(
           valueListenable: nameController,
           builder: (context, value, _) {
-            final key =
-                (exercise.exerciseId != null && exercise.exerciseId!.isNotEmpty)
-                ? exercise.exerciseId!
-                : value.text;
+            final key = exercise.exerciseId ?? value.text;
             return buildIconForName(key);
           },
         ),

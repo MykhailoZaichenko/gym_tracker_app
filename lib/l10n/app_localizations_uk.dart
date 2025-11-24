@@ -363,4 +363,109 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get navProfile => 'Профіль';
+
+  @override
+  String get exSquat => 'Присідання';
+
+  @override
+  String get exLunge => 'Випади';
+
+  @override
+  String get exLegPress => 'Жим ногами';
+
+  @override
+  String get exWallSit => 'Вправа біля стіни';
+
+  @override
+  String get exLegExtension => 'Розгинання ніг';
+
+  @override
+  String get exLegCurl => 'Згинання ніг';
+
+  @override
+  String get exDeadlift => 'Станова тяга';
+
+  @override
+  String get exGoodMorning => 'Нахили зі штангою \\ \"Добрий ранок\"';
+
+  @override
+  String get exStandingCalfRaise => 'Підйоми на носки стоячи';
+
+  @override
+  String get exSeatedCalfRaise => 'Підйоми на носки сидячи';
+
+  @override
+  String get exPushUp => 'Відтискання ';
+
+  @override
+  String get exPullUp => 'Підтягування';
+
+  @override
+  String get exDip => 'Віджимання на брусах';
+
+  @override
+  String get exBenchPress => 'Жим лежачи';
+
+  @override
+  String get exMachineFly => 'Машинні розведення';
+
+  @override
+  String get exLateralRaise => 'Розведення рук у сторони';
+
+  @override
+  String get exBentOverRow => 'Тяга в нахилі';
+
+  @override
+  String get exLatPullDown => 'Тяга верхнього блока';
+
+  @override
+  String get exShoulderShrug => 'Шраги';
+
+  @override
+  String get exOverheadPress => 'Жим над головою';
+
+  @override
+  String get exFrontRaise => 'Передні підйоми рук';
+
+  @override
+  String get exRearDeltRaise => 'Задні розведення дельт';
+
+  @override
+  String get exUprightRow => 'Upright row';
+
+  @override
+  String get exFacePull => 'Face pull';
+
+  @override
+  String get exBicepsCurl => 'Підйоми на біцепс';
+
+  @override
+  String get exTricepsExtension => 'Французький жим';
+
+  @override
+  String get exCrunch => 'Скручування';
+
+  @override
+  String get exSitUp => 'Підйом тулуба';
+
+  @override
+  String get exPlank => 'Планка';
+
+  @override
+  String get exLegRaise => 'Підйоми ніг';
+
+  @override
+  String get exHyperextension => 'Гіперекстензія';
+
+  @override
+  String get exHammerCurl => 'Молотковий підйом';
+
+  @override
+  String get exZottmanCurl => 'Сгибания Зоттмана';
+
+  @override
+  String get exMachineRow => 'Тяга в блоці';
+
+  @override
+  String get exLegRaiseHang => 'Підйоми ніг у висі';
 }

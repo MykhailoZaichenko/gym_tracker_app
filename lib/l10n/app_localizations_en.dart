@@ -359,4 +359,109 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get navProfile => 'Profile';
+
+  @override
+  String get exSquat => 'Squat';
+
+  @override
+  String get exLunge => 'Lunge';
+
+  @override
+  String get exLegPress => 'Leg Press';
+
+  @override
+  String get exWallSit => 'Wall Sit';
+
+  @override
+  String get exLegExtension => 'Leg Extension';
+
+  @override
+  String get exLegCurl => 'Leg Curl';
+
+  @override
+  String get exDeadlift => 'Deadlift';
+
+  @override
+  String get exGoodMorning => 'Good Morning';
+
+  @override
+  String get exStandingCalfRaise => 'Standing Calf Raise';
+
+  @override
+  String get exSeatedCalfRaise => 'Seated Calf Raise';
+
+  @override
+  String get exPushUp => 'Push-up';
+
+  @override
+  String get exPullUp => 'Pull-up';
+
+  @override
+  String get exDip => 'Dip';
+
+  @override
+  String get exBenchPress => 'Bench Press';
+
+  @override
+  String get exMachineFly => 'Machine Fly';
+
+  @override
+  String get exLateralRaise => 'Lateral Raise';
+
+  @override
+  String get exBentOverRow => 'Bent Over Row';
+
+  @override
+  String get exLatPullDown => 'Lat Pull-down';
+
+  @override
+  String get exShoulderShrug => 'Shoulder Shrug';
+
+  @override
+  String get exOverheadPress => 'Overhead Press';
+
+  @override
+  String get exFrontRaise => 'Front Raise';
+
+  @override
+  String get exRearDeltRaise => 'Rear Delt Raise';
+
+  @override
+  String get exUprightRow => 'Upright Row';
+
+  @override
+  String get exFacePull => 'Face Pull';
+
+  @override
+  String get exBicepsCurl => 'Biceps Curl';
+
+  @override
+  String get exTricepsExtension => 'Triceps Extension';
+
+  @override
+  String get exCrunch => 'Crunch';
+
+  @override
+  String get exSitUp => 'Sit-up';
+
+  @override
+  String get exPlank => 'Plank';
+
+  @override
+  String get exLegRaise => 'Leg Raise';
+
+  @override
+  String get exHyperextension => 'Hyperextension';
+
+  @override
+  String get exHammerCurl => 'Hammer Curl';
+
+  @override
+  String get exZottmanCurl => 'Zottman Curl';
+
+  @override
+  String get exMachineRow => 'Machine Row';
+
+  @override
+  String get exLegRaiseHang => 'Hanging Leg Raise';
 }

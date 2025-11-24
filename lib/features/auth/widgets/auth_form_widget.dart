@@ -98,7 +98,8 @@ class AuthPageWidget extends StatelessWidget {
         children: [
           // --- Email Field ---
           StyledTextField(
-            autofocus: true,
+            //Todo think about adding autofocus
+            // autofocus: true,
             fieldKey: emailFieldKey,
             focusNode: emailFocus,
             controller: controllerEmail,

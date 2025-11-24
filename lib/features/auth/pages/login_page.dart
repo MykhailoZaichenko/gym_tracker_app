@@ -55,7 +55,6 @@ class _LoginPageState extends State<LoginPage> {
         _passwordFieldKey.currentState?.validate();
       }
     });
-    // _tryAutoLogin();
   }
 
   @override

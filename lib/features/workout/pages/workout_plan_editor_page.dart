@@ -77,17 +77,18 @@ class _WorkoutPlanEditorPageState extends State<WorkoutPlanEditorPage> {
   }
 
   Future<void> _addExercise(String dayKey) async {
+    final loc = AppLocalizations.of(context)!;
     final selected = await showExercisePicker(context);
 
     if (selected == null) return;
 
-    final name = selected == ExerciseInfo.enterCustom
+    final nameOrId = selected == ExerciseInfo.getEnterCustom(loc)
         ? await _askCustomExerciseName(dayKey)
-        : selected.name;
+        : selected.id;
 
-    if (name != null && name.isNotEmpty) {
+    if (nameOrId != null && nameOrId.isNotEmpty) {
       setState(() {
-        _plan[dayKey]!.add(name);
+        _plan[dayKey]!.add(nameOrId);
       });
     }
   }
@@ -134,10 +135,20 @@ class _WorkoutPlanEditorPageState extends State<WorkoutPlanEditorPage> {
     return _initialEncoded != current;
   }
 
+  String _getLocalizedNameByIdOrName(String key, List<ExerciseInfo> catalog) {
+    final found = catalog.firstWhere(
+      (e) => e.id == key,
+      orElse: () =>
+          ExerciseInfo(id: key, name: key, icon: Icons.fitness_center),
+    );
+    return found.name;
+  }
+
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
     final locale = loc.localeName;
+    final catalog = getExerciseCatalog(loc);
 
     return PopScope(
       canPop: false, // block automatic pop, handle manually
@@ -167,21 +178,25 @@ class _WorkoutPlanEditorPageState extends State<WorkoutPlanEditorPage> {
         ),
         body: ListView.builder(
           padding: const EdgeInsets.all(12),
-          // Використовуємо фіксований список ключів, щоб порядок днів завжди був правильним
           itemCount: _weekDaysKeys.length,
           itemBuilder: (context, index) {
-            final dayKey = _weekDaysKeys[index]; // 'Mon', 'Tue'...
-            final exercises = _plan[dayKey]!;
+            final dayKey = _weekDaysKeys[index];
+            final exercisesIDs = _plan[dayKey]!;
             final localizedDayName = _getLocalizedDayName(dayKey, locale);
 
             return ExpansionTile(
-              title: Text(localizedDayName), // 'Понеділок' / 'Monday'
+              title: Text(localizedDayName),
               children: [
-                ...exercises.asMap().entries.map((entry) {
+                ...exercisesIDs.asMap().entries.map((entry) {
                   final i = entry.key;
-                  final ex = entry.value;
+                  final exIdOrName = entry.value;
+                  final displayedName = _getLocalizedNameByIdOrName(
+                    exIdOrName,
+                    catalog,
+                  );
+
                   return ListTile(
-                    title: Text(ex),
+                    title: Text(displayedName),
                     trailing: IconButton(
                       icon: const Icon(Icons.delete_outline),
                       onPressed: () => _removeExercise(dayKey, i),
