@@ -75,6 +75,7 @@ class ProfileSettingsList extends StatelessWidget {
               if (confirmed == true) {
                 final prefs = await SharedPreferences.getInstance();
                 await prefs.remove('current_user_id');
+                if (!context.mounted) return;
                 Navigator.of(context).pushReplacement(
                   MaterialPageRoute(builder: (_) => const WelcomePage()),
                 );

@@ -14,8 +14,9 @@ class WillPopSavePrompt extends StatelessWidget {
 
   Future<bool> handlePop(BuildContext context) async {
     if (!await hasUnsavedChanges()) return true;
+    if (!context.mounted) return false;
     final loc = AppLocalizations.of(context)!;
-
+    if (!context.mounted) return false;
     final result = await showDialog<ExitChoice>(
       context: context,
       builder: (ctx) => AlertDialog(

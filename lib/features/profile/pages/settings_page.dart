@@ -115,15 +115,13 @@ class _SettingsPageState extends State<SettingsPage> {
           ),
           TextButton(
             onPressed: () async {
-              // Очистити всі ключі
               await _prefs.clear();
-              // Після очищення — поновити стан
+              if (!mounted) return;
               setState(() {
                 ThemeService.isDarkModeNotifier.value = false;
                 _notificationsEnabled = true;
               });
-              if (!mounted) return;
-              Navigator.of(ctx).pop();
+              Navigator.of(context).pop();
               ScaffoldMessenger.of(
                 context,
               ).showSnackBar(SnackBar(content: Text(loc.dataClearedSuccess)));

@@ -48,7 +48,7 @@ class ExerciseHeader extends StatelessWidget {
                 initialQuery: nameController.text,
               );
               if (picked == null) return;
-
+              if (!context.mounted) return;
               if (picked.id == '__custom__') {
                 final custom = await showDialog<String>(
                   context: context,
