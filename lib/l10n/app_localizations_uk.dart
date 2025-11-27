@@ -468,4 +468,17 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get exLegRaiseHang => 'Підйоми ніг у висі';
+
+  @override
+  String get proposalTitle => 'Створіть свій план тренувань!';
+
+  @override
+  String get proposalSubtitle =>
+      'Щоб досягти найкращих результатів, створіть розклад на тиждень. Ми нагадаємо вам про тренування.';
+
+  @override
+  String get goToPlan => 'Перейти до плану';
+
+  @override
+  String get maybeLater => 'Можливо пізніше';
 }

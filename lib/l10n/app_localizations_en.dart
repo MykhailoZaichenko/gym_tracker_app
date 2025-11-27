@@ -464,4 +464,17 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get exLegRaiseHang => 'Hanging Leg Raise';
+
+  @override
+  String get proposalTitle => 'Create your workout plan!';
+
+  @override
+  String get proposalSubtitle =>
+      'To get the best results, create a weekly schedule. We will remind you about your workouts.';
+
+  @override
+  String get goToPlan => 'Go to Plan';
+
+  @override
+  String get maybeLater => 'Maybe later';
 }

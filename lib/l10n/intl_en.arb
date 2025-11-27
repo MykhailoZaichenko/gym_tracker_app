@@ -337,5 +337,14 @@
   "exMachineRow": "Machine Row",
   "@exMachineRow": { "description": "Exercise name" },
   "exLegRaiseHang": "Hanging Leg Raise",
-  "@exLegRaiseHang": { "description": "Exercise name" }
+  "@exLegRaiseHang": { "description": "Exercise name" },
+
+  "proposalTitle": "Create your workout plan!",
+  "@proposalTitle": { "description": "Title for plan proposal dialog" },
+  "proposalSubtitle": "To get the best results, create a weekly schedule. We will remind you about your workouts.",
+  "@proposalSubtitle": { "description": "Content for plan proposal dialog" },
+  "goToPlan": "Go to Plan",
+  "@goToPlan": { "description": "Button to navigate to plan editor" },
+  "maybeLater": "Maybe later",
+  "@maybeLater": { "description": "Button to close proposal dialog" }
 }

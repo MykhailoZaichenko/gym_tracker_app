@@ -57,7 +57,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
                 AppPageTitle(title: loc.onboardingTitle),
                 const SizedBox(height: 20),
                 StyledTextField(
-                  autofocus: true,
+                  //TOdo think about autofocus
+                  // autofocus: true,
                   controller: _weightCtrl,
                   labelText: loc.weightLabel,
                   // Налаштування клавіатури для десяткових чисел

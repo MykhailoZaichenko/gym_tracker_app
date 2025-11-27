@@ -973,6 +973,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Hanging Leg Raise'**
   String get exLegRaiseHang;
+
+  /// Title for plan proposal dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Create your workout plan!'**
+  String get proposalTitle;
+
+  /// Content for plan proposal dialog
+  ///
+  /// In en, this message translates to:
+  /// **'To get the best results, create a weekly schedule. We will remind you about your workouts.'**
+  String get proposalSubtitle;
+
+  /// Button to navigate to plan editor
+  ///
+  /// In en, this message translates to:
+  /// **'Go to Plan'**
+  String get goToPlan;
+
+  /// Button to close proposal dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Maybe later'**
+  String get maybeLater;
 }
 
 class _AppLocalizationsDelegate

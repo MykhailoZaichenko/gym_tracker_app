@@ -7,6 +7,7 @@ import 'package:gym_tracker_app/features/workout/pages/workout_page.dart';
 import 'package:gym_tracker_app/features/workout/pages/workout_plan_editor_page.dart';
 import 'package:gym_tracker_app/features/home/home_exports.dart';
 import 'package:gym_tracker_app/l10n/app_localizations.dart';
+import 'package:gym_tracker_app/features/home/widgets/plan_proposal_dialog_widget.dart';
 
 class HomeCalendarPage extends StatefulWidget {
   const HomeCalendarPage({super.key});
@@ -27,6 +28,21 @@ class _HomeCalendarPageState extends State<HomeCalendarPage> {
     super.initState();
     _selectedDay = DateTime.now();
     _loadAllWorkouts();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkAndShowPlanProposal();
+    });
+  }
+
+  Future<void> _checkAndShowPlanProposal() async {
+    final prefs = await SharedPreferences.getInstance();
+    final hasSeen = prefs.getBool('has_seen_plan_proposal') ?? false;
+
+    if (!hasSeen && mounted) {
+      await showPlanProposal(context);
+
+      await prefs.setBool('has_seen_plan_proposal', true);
+    }
   }
 
   Future<void> _loadAllWorkouts() async {
