@@ -1,14 +1,11 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/l10n/app_localizations.dart';
-import 'package:gym_tracker_app/services/firestore_service.dart';
 import 'package:intl/intl.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
 import 'package:gym_tracker_app/core/constants/exersise_meta.dart';
 import 'package:gym_tracker_app/features/profile/models/user_model.dart';
 import 'package:gym_tracker_app/features/profile/profile_exports.dart';
+import 'package:gym_tracker_app/services/firestore_service.dart';
+import 'package:gym_tracker_app/features/workout/models/workout_exercise_model.dart'; // Потрібен для моделі WorkoutExercise
 
 class ProfileGrafPage extends StatefulWidget {
   const ProfileGrafPage({super.key});
@@ -21,6 +18,9 @@ class _ProfileGrafPageState extends State<ProfileGrafPage> {
   User? _user;
   bool _isLoading = true;
   final FirestoreService _firestore = FirestoreService();
+
+  // Всі тренування поточного користувача
+  Map<String, List<WorkoutExercise>> _allWorkouts = {};
 
   // stats and UI
   DateTime _visibleMonth = DateTime.now();
@@ -35,57 +35,32 @@ class _ProfileGrafPageState extends State<ProfileGrafPage> {
   void initState() {
     super.initState();
     _loadData();
-    // _loadCurrentUser().then((_) => _computeStats());
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
+  // Завантажуємо дані профілю ТА тренування з Firestore
   Future<void> _loadData() async {
-    // 1. Завантажуємо юзера з Firestore
+    setState(() => _isLoading = true);
+
+    // 1. Отримуємо профіль
     final user = await _firestore.getUser();
+
+    // 2. Отримуємо тренування
+    final workouts = await _firestore.getAllWorkouts();
 
     if (!mounted) return;
 
     setState(() {
       _user = user;
+      _allWorkouts = workouts; // Зберігаємо завантажені тренування
       _isLoading = false;
     });
 
-    // Передаємо завантажені тренування для підрахунку
-    _computeStats();
+    // 3. Рахуємо статистику на основі завантажених даних
+    _recalculateStats();
   }
 
-  // compute stats for _visibleMonth, uses user.weightKg if available
-  Future<void> _computeStats() async {
-    final prefs = await SharedPreferences.getInstance();
-    final raw = prefs.getString('all_workouts');
-    if (raw == null) {
-      if (!mounted) return;
-      setState(() {
-        _totalSets = 0;
-        _totalWeight = 0.0;
-        _calories = 0.0;
-      });
-      return;
-    }
-
-    late Map<String, dynamic> decoded;
-    try {
-      final parsed = jsonDecode(raw);
-      decoded = (parsed is Map<String, dynamic>) ? parsed : <String, dynamic>{};
-    } catch (_) {
-      if (!mounted) return;
-      setState(() {
-        _totalSets = 0;
-        _totalWeight = 0.0;
-        _calories = 0.0;
-      });
-      return;
-    }
-
+  // Метод перерахунку (викликається при зміні місяця або після завантаження)
+  void _recalculateStats() {
     final firstDayOfMonth = DateTime(
       _visibleMonth.year,
       _visibleMonth.month,
@@ -105,34 +80,30 @@ class _ProfileGrafPageState extends State<ProfileGrafPage> {
     final double? userWeight = _user?.weightKg;
     final canComputeCalories = userWeight != null;
 
-    decoded.forEach((dateStr, exercisesRaw) {
+    // Проходимо по мапі тренувань, яку ми завантажили з Firestore
+    _allWorkouts.forEach((dateStr, exercises) {
       DateTime date;
       try {
         date = DateTime.parse(dateStr);
       } catch (_) {
         return;
       }
+
+      // Фільтр за датою (чи входить у вибраний місяць)
       if (date.isBefore(firstDayOfMonth) || date.isAfter(lastDayOfMonth)) {
         return;
       }
 
-      final List<dynamic> exerciseList = (exercisesRaw is List<dynamic>)
-          ? exercisesRaw
-          : <dynamic>[];
-      for (final exEntry in exerciseList) {
-        if (exEntry is! Map<String, dynamic>) continue;
-        final sets = (exEntry['sets'] is List<dynamic>)
-            ? exEntry['sets'] as List<dynamic>
-            : <dynamic>[];
-        final exId = exEntry['exerciseId'] as String?;
+      for (final ex in exercises) {
+        // Отримуємо MET для вправи (якщо є ID, інакше дефолт)
+        final exId = ex.exerciseId;
         final met = (exId != null && kExerciseMet.containsKey(exId))
             ? kExerciseMet[exId]!
             : 4.0;
 
-        for (final s in sets) {
-          if (s is! Map<String, dynamic>) continue;
-          final reps = (s['reps'] as num?)?.toInt() ?? 0;
-          final weight = (s['weight'] as num?)?.toDouble() ?? 0.0;
+        for (final s in ex.sets) {
+          final reps = s.reps ?? 0;
+          final weight = s.weight ?? 0.0;
           if (reps <= 0) continue;
 
           totalSets += 1;
@@ -148,7 +119,6 @@ class _ProfileGrafPageState extends State<ProfileGrafPage> {
       }
     });
 
-    if (!mounted) return;
     setState(() {
       _totalSets = totalSets;
       _totalWeight = totalWeight;
@@ -161,7 +131,7 @@ class _ProfileGrafPageState extends State<ProfileGrafPage> {
       _slideToLeft = false;
       _visibleMonth = DateTime(_visibleMonth.year, _visibleMonth.month - 1, 1);
     });
-    _computeStats();
+    _recalculateStats(); // Перераховуємо для нового місяця
   }
 
   void _nextMonth() {
@@ -169,7 +139,7 @@ class _ProfileGrafPageState extends State<ProfileGrafPage> {
       _slideToLeft = true;
       _visibleMonth = DateTime(_visibleMonth.year, _visibleMonth.month + 1, 1);
     });
-    _computeStats();
+    _recalculateStats(); // Перераховуємо для нового місяця
   }
 
   Future<void> _onEditProfile(BuildContext ctx) async {
@@ -182,20 +152,19 @@ class _ProfileGrafPageState extends State<ProfileGrafPage> {
       setState(() {
         _user = updated;
       });
-      _computeStats();
+      _recalculateStats(); // Перераховуємо (раптом вага змінилася)
     }
   }
 
   void _onProfileUpdated(User updated) {
     if (!mounted) return;
     setState(() => _user = updated);
-    _computeStats();
+    _recalculateStats();
   }
 
   @override
   Widget build(BuildContext context) {
     final locale = AppLocalizations.of(context)!.localeName;
-
     final monthName = DateFormat.MMMM(locale).format(_visibleMonth);
     final capitalizedMonth = toBeginningOfSentenceCase(monthName);
 
@@ -206,12 +175,13 @@ class _ProfileGrafPageState extends State<ProfileGrafPage> {
             : Padding(
                 padding: const EdgeInsets.all(20),
                 child: Center(
-                  //Todo think how to del this scrollable element listView
                   child: ListView(
                     shrinkWrap: true,
                     children: [
                       ProfileHeader(user: _user, onEditPressed: _onEditProfile),
                       const SizedBox(height: 12),
+                      // ProfileStatsCard залишається таким самим,
+                      // ми просто передаємо йому нові, правильні дані
                       ProfileStatsCard(
                         visibleMonth: _visibleMonth,
                         ukMonthLabel: capitalizedMonth,
@@ -224,7 +194,7 @@ class _ProfileGrafPageState extends State<ProfileGrafPage> {
                           setState(() {
                             _visibleMonth = newMonth;
                           });
-                          _computeStats();
+                          _recalculateStats();
                         },
                       ),
                       const SizedBox(height: 12),

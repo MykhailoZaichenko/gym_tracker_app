@@ -105,6 +105,37 @@ class _RegisterPageState extends State<RegisterPage> {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(text)));
   }
 
+  Future<void> _onGoogleRegisterPressed() async {
+    setState(() => _loading = true);
+    try {
+      // Цей метод в AuthService вже містить логіку створення юзера, якщо його немає
+      final user = await _auth.loginWithGoogle();
+
+      if (user != null) {
+        // Додатково: якщо ви хочете зберегти вагу з onboarding для Google юзера,
+        // це можна зробити тут, аналогічно до звичайної реєстрації.
+        final prefs = await SharedPreferences.getInstance();
+        final savedWeight = prefs.getDouble('user_weight');
+
+        // Якщо вага є і у профілю вона ще 0 (новий юзер)
+        if (savedWeight != null &&
+            savedWeight > 0 &&
+            (user.weightKg == null || user.weightKg == 0)) {
+          // Оновлюємо профіль через ваш сервіс (потрібно буде імпортувати FirestoreService або додати метод в AuthService)
+          await _auth.updateProfile(user.copyWith(weightKg: savedWeight));
+          await prefs.remove('user_weight');
+        }
+
+        if (!mounted) return;
+        _goToApp();
+      }
+    } catch (e) {
+      _showMessage('Google Sign-In error: $e');
+    } finally {
+      if (mounted) setState(() => _loading = false);
+    }
+  }
+
   Future<void> _onRegisterPressed() async {
     FocusScope.of(context).unfocus();
 
@@ -285,6 +316,30 @@ class _RegisterPageState extends State<RegisterPage> {
                         onPressed: _onRegisterPressed,
                         text: loc.registerAction,
                       ),
+                      const SizedBox(height: 12),
+
+                      // 2. Кнопка Google (Додано)
+                      SizedBox(
+                        width: double.infinity,
+                        child: OutlinedButton.icon(
+                          onPressed: _loading ? null : _onGoogleRegisterPressed,
+                          icon: const Icon(
+                            Icons.g_mobiledata,
+                            size: 32,
+                          ), // Або Image.asset
+                          label: const Text('Google'),
+                          style: OutlinedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 10),
+                            side: BorderSide(
+                              color: Theme.of(context).dividerColor,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                        ),
+                      ),
+
                       const SizedBox(height: 12),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,

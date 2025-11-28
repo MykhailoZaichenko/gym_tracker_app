@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:gym_tracker_app/services/firestore_service.dart';
 import 'package:gym_tracker_app/features/profile/models/user_model.dart'
     as app_user;
@@ -7,6 +8,7 @@ class AuthService {
   final firebase_auth.FirebaseAuth _firebaseAuth =
       firebase_auth.FirebaseAuth.instance;
   final FirestoreService _firestoreService = FirestoreService();
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
 
   // Потік змін стану авторизації (вхід/вихід)
   Stream<app_user.User?> get authStateChanges {
@@ -15,6 +17,57 @@ class AuthService {
       // Якщо є Firebase-юзер, завантажуємо наш профіль з Firestore
       return await _firestoreService.getUser();
     });
+  }
+
+  Future<app_user.User?> loginWithGoogle() async {
+    try {
+      // 1. Запускаємо нативний процес входу Google (відкривається вікно вибору акаунту)
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+
+      // Якщо користувач закрив вікно і не вибрав акаунт
+      if (googleUser == null) return null;
+
+      // 2. Отримуємо токени з Google
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+
+      // 3. Створюємо "квиток" для входу у Firebase
+      final firebase_auth.AuthCredential credential =
+          firebase_auth.GoogleAuthProvider.credential(
+            accessToken: googleAuth.accessToken,
+            idToken: googleAuth.idToken,
+          );
+
+      // 4. Входимо у Firebase за допомогою цього квитка
+      final userCredential = await _firebaseAuth.signInWithCredential(
+        credential,
+      );
+      final user = userCredential.user;
+
+      if (user != null) {
+        // 5. Перевіряємо, чи є такий юзер у нашій базі Firestore
+        var appUser = await _firestoreService.getUser();
+
+        if (appUser == null) {
+          // Якщо немає (перший вхід) — створюємо профіль
+          appUser = app_user.User(
+            id: null,
+            email: user.email ?? '',
+            name: user.displayName ?? 'Google User', // Беремо ім'я з Google
+            passwordHash: '',
+            salt: '',
+            weightKg: 0, // Вагу доведеться вказати пізніше
+            avatarUrl: user.photoURL, // Беремо фото з Google!
+          );
+          await _firestoreService.saveUser(appUser);
+        }
+        return appUser;
+      }
+    } catch (e) {
+      // Тут можна додати логування помилки
+      throw Exception('Помилка входу через Google: $e');
+    }
+    return null;
   }
 
   // Реєстрація (тепер повертає User, як і раніше)
@@ -114,6 +167,7 @@ class AuthService {
 
   // Вихід
   Future<void> logout() async {
+    await _googleSignIn.signOut();
     await _firebaseAuth.signOut();
   }
 
