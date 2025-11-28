@@ -3,8 +3,8 @@ class User {
   final int? id;
   final String name;
   final String email;
-  final String passwordHash;
-  final String salt;
+  final String? passwordHash;
+  final String? salt;
   final String? avatarUrl; // шлях в файловій системі або null
   final double? weightKg;
 

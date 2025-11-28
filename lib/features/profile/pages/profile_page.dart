@@ -2,10 +2,10 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/l10n/app_localizations.dart';
+import 'package:gym_tracker_app/services/firestore_service.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:gym_tracker_app/data/sources/local/app_db.dart';
 import 'package:gym_tracker_app/core/constants/exersise_meta.dart';
 import 'package:gym_tracker_app/features/profile/models/user_model.dart';
 import 'package:gym_tracker_app/features/profile/profile_exports.dart';
@@ -20,6 +20,7 @@ class ProfileGrafPage extends StatefulWidget {
 class _ProfileGrafPageState extends State<ProfileGrafPage> {
   User? _user;
   bool _isLoading = true;
+  final FirestoreService _firestore = FirestoreService();
 
   // stats and UI
   DateTime _visibleMonth = DateTime.now();
@@ -33,7 +34,8 @@ class _ProfileGrafPageState extends State<ProfileGrafPage> {
   @override
   void initState() {
     super.initState();
-    _loadCurrentUser().then((_) => _computeStats());
+    _loadData();
+    // _loadCurrentUser().then((_) => _computeStats());
   }
 
   @override
@@ -41,23 +43,19 @@ class _ProfileGrafPageState extends State<ProfileGrafPage> {
     super.dispose();
   }
 
-  Future<void> _loadCurrentUser() async {
-    final prefs = await SharedPreferences.getInstance();
-    final userId = prefs.getInt('current_user_id');
-    if (userId == null) {
-      if (!mounted) return;
-      setState(() {
-        _user = null;
-        _isLoading = false;
-      });
-      return;
-    }
-    final user = await AppDb().getUserById(userId);
+  Future<void> _loadData() async {
+    // 1. Завантажуємо юзера з Firestore
+    final user = await _firestore.getUser();
+
     if (!mounted) return;
+
     setState(() {
       _user = user;
       _isLoading = false;
     });
+
+    // Передаємо завантажені тренування для підрахунку
+    _computeStats();
   }
 
   // compute stats for _visibleMonth, uses user.weightKg if available

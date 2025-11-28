@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/data/seed/exercise_catalog.dart';
 import 'package:gym_tracker_app/features/workout/models/workout_exercise_model.dart';
 import 'package:gym_tracker_app/l10n/app_localizations.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:gym_tracker_app/services/firestore_service.dart';
+
 import 'package:gym_tracker_app/features/workout/workout_exports.dart';
 import 'package:gym_tracker_app/widget/common/pop_save_wideget.dart';
 import 'package:intl/intl.dart';
@@ -27,6 +28,7 @@ class WorkoutPage extends StatefulWidget {
 
 class _WorkoutPageState extends State<WorkoutPage> {
   late List<WorkoutExercise> _exercises = [];
+  final FirestoreService _firestore = FirestoreService();
 
   bool _isLoading = true;
   String? _initialEncoded;
@@ -34,9 +36,6 @@ class _WorkoutPageState extends State<WorkoutPage> {
   final List<TextEditingController> _nameCtrls = [];
   final List<List<TextEditingController>> _weightCtrls = [];
   final List<List<TextEditingController>> _repsCtrls = [];
-
-  String get _prefsKey =>
-      'workout_${widget.date.toIso8601String().split('T').first}';
 
   @override
   void initState() {
@@ -54,19 +53,17 @@ class _WorkoutPageState extends State<WorkoutPage> {
 
   // Завантажуємо збережені вправи або беремо widget.exercises
   Future<void> _loadExercises() async {
-    final prefs = await SharedPreferences.getInstance();
-    final rawJson = prefs.getString(_prefsKey);
+    final savedExercises = await _firestore.getWorkout(widget.date);
 
-    if (rawJson != null) {
-      final List<dynamic> decoded = jsonDecode(rawJson);
-      _exercises = decoded
-          .map((m) => WorkoutExercise.fromMap(m as Map<String, dynamic>))
-          .toList();
+    if (savedExercises.isNotEmpty) {
+      _exercises = savedExercises;
     } else if (widget.exercises.isNotEmpty) {
       _exercises = List.from(widget.exercises);
     } else {
+      // Якщо пусто — перевіряємо план на цей день
+      final plan = await _firestore.getWeeklyPlan();
       final weekdayKey = DateFormat.E('en').format(widget.date);
-      final planned = prefs.getStringList('plan_$weekdayKey') ?? [];
+      final planned = plan[weekdayKey] ?? [];
 
       if (planned.isNotEmpty) {
         _exercises = planned
@@ -83,10 +80,12 @@ class _WorkoutPageState extends State<WorkoutPage> {
       }
     }
 
-    _initControllers();
-    setState(() {
-      _isLoading = false;
-    });
+    if (mounted) {
+      _initControllers();
+      setState(() {
+        _isLoading = false;
+      });
+    }
     _initialEncoded = jsonEncode(_exercises.map((e) => e.toMap()).toList());
   }
 
@@ -130,7 +129,6 @@ class _WorkoutPageState extends State<WorkoutPage> {
     return exercise.name;
   }
 
-  // Зберігаємо дані з контролерів у модель і в SharedPreferences
   Future<void> _saveExercises() async {
     for (var i = 0; i < _exercises.length; i++) {
       _exercises[i].name = _nameCtrls[i].text;
@@ -140,11 +138,9 @@ class _WorkoutPageState extends State<WorkoutPage> {
       }
     }
 
-    final prefs = await SharedPreferences.getInstance();
-    final encoded = jsonEncode(_exercises.map((e) => e.toMap()).toList());
-    await prefs.setString(_prefsKey, encoded);
+    await _firestore.saveWorkout(widget.date, _exercises);
 
-    _initialEncoded = encoded;
+    _initialEncoded = jsonEncode(_exercises.map((e) => e.toMap()).toList());
   }
 
   // Серіалізація поточного стану з контролерів (не змінює модель _exercises)

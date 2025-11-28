@@ -11,7 +11,6 @@ import 'package:gym_tracker_app/widget/common/hero_widget.dart';
 import 'package:gym_tracker_app/widget/common/page_title.dart';
 import 'package:gym_tracker_app/widget/common/primary_filled_button.dart';
 import 'package:gym_tracker_app/widget/common/primary_text_button.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:gym_tracker_app/widget/common/widget_tree.dart';
 
 class LoginPage extends StatefulWidget {
@@ -68,11 +67,6 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
-  Future<void> _persistUserId(int id) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt('current_user_id', id);
-  }
-
   String? _validateEmail(String? v) {
     final loc = AppLocalizations.of(context)!;
     if (v == null || v.trim().isEmpty) return loc.errEmailRequired;
@@ -113,7 +107,7 @@ class _LoginPageState extends State<LoginPage> {
       if (user == null) {
         _showMessage('Invalid email or password');
       } else {
-        await _persistUserId(user.id!);
+        // await _persistUserId(user.id!);
         if (!mounted) return;
         _goToApp();
       }

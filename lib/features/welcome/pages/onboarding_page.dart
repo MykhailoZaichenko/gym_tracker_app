@@ -30,6 +30,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
     final weight = double.tryParse(_weightCtrl.text.replaceAll(',', '.'));
     if (weight == null || weight <= 0) return;
 
+    // Зберігаємо вагу локально, щоб підтягнути її при реєстрації
     final prefs = await SharedPreferences.getInstance();
     await prefs.setDouble('user_weight', weight);
 
@@ -43,6 +44,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
+
     return Scaffold(
       appBar: AppBar(),
       body: Center(
@@ -57,7 +59,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                 AppPageTitle(title: loc.onboardingTitle),
                 const SizedBox(height: 20),
                 StyledTextField(
-                  //TOdo think about autofocus
+                  //todo think about autofocus
                   // autofocus: true,
                   controller: _weightCtrl,
                   labelText: loc.weightLabel,
@@ -65,7 +67,6 @@ class _OnboardingPageState extends State<OnboardingPage> {
                   keyboardType: const TextInputType.numberWithOptions(
                     decimal: true,
                   ),
-                  // Валідатор переноситься без змін
                   validator: (value) {
                     final parsed = double.tryParse(value!.replaceAll(',', '.'));
                     if (parsed == null || parsed <= 0) {

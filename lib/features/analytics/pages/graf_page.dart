@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:gym_tracker_app/core/constants/constants.dart';
@@ -6,7 +5,7 @@ import 'package:gym_tracker_app/core/theme/theme_service.dart';
 import 'package:gym_tracker_app/core/utils.dart';
 import 'package:gym_tracker_app/features/analytics/widgets/line_chart_card.dart';
 import 'package:gym_tracker_app/l10n/app_localizations.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:gym_tracker_app/services/firestore_service.dart';
 import 'package:intl/intl.dart';
 import 'package:gym_tracker_app/data/seed/exercise_catalog.dart';
 
@@ -20,6 +19,7 @@ class GrafPage extends StatefulWidget {
 class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
   Map<String, List<WorkoutExerciseGraf>> _allWorkouts = {};
   bool _isLoading = true;
+  final FirestoreService _firestore = FirestoreService();
 
   // Список унікальних назв (вже локалізованих) для відображення
   List<String> _displayExerciseNames = [];
@@ -43,55 +43,39 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
   }
 
   Future<void> _loadAllWorkouts() async {
-    final prefs = await SharedPreferences.getInstance();
-    final raw = prefs.getString('all_workouts');
-    if (raw != null) {
-      final Map<String, dynamic> decoded = jsonDecode(raw);
-      _allWorkouts = decoded.map((key, value) {
-        final list = (value as List<dynamic>)
-            .map(
-              (item) =>
-                  WorkoutExerciseGraf.fromMap(item as Map<String, dynamic>),
-            )
-            .toList();
-        return MapEntry(key, list);
-      });
-    } else {
-      _allWorkouts = {};
-    }
+    final rawWorkouts = await _firestore.getAllWorkouts();
+
+    // Перетворюємо у формат для графіків
+    _allWorkouts = rawWorkouts.map((key, value) {
+      final list = value
+          .map(
+            (e) => WorkoutExerciseGraf(
+              name: e.name,
+              exerciseId: e.exerciseId,
+              sets: e.sets
+                  .map((s) => SetData(weight: s.weight, reps: s.reps))
+                  .toList(),
+            ),
+          )
+          .toList();
+      return MapEntry(key, list);
+    });
+
     setState(() => _isLoading = false);
   }
 
-  // ---- ЛОГІКА НОРМАЛІЗАЦІЇ ----
-
-  /// Намагається знайти ID вправи (наприклад 'lunge') на основі збережених даних.
-  /// Це об'єднує "Lunge", "Випади" та "lunge" в один ідентифікатор.
   String _getCanonicalId(WorkoutExerciseGraf ex, List<ExerciseInfo> catalog) {
-    // 1. Якщо ID вже збережено коректно - використовуємо його
+    final rawName = ex.name.trim();
     if (ex.exerciseId != null && ex.exerciseId!.isNotEmpty) {
       return ex.exerciseId!;
     }
-
-    final rawName = ex.name.trim();
-    // Якщо назва пуста, повертаємо 'unknown', щоб потім відфільтрувати
     if (rawName.isEmpty) return 'unknown';
-
-    // 2. Шукаємо точний збіг назви з ID або локалізованою назвою в каталозі
     try {
       final found = catalog.firstWhere(
         (c) => c.id == rawName || c.name.toLowerCase() == rawName.toLowerCase(),
       );
       return found.id;
     } catch (_) {}
-
-    // 3. ЕВРИСТИКА ДЛЯ СТАРИХ ДАНИХ (English -> ID)
-    final potentialId = rawName.toLowerCase().replaceAll(' ', '_');
-    try {
-      final foundById = catalog.firstWhere((c) => c.id == potentialId);
-      return foundById.id;
-    } catch (_) {}
-
-    // 4. Якщо нічого не знайшли, вважаємо це кастомною вправою.
     return rawName;
   }
 
