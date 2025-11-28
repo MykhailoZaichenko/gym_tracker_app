@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/l10n/app_localizations.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:gym_tracker_app/services/auth_service.dart';
 
 import 'package:gym_tracker_app/features/profile/models/user_model.dart';
 import 'package:gym_tracker_app/features/profile/pages/profile_edit_page.dart';
@@ -73,11 +73,16 @@ class ProfileSettingsList extends StatelessWidget {
                 ),
               );
               if (confirmed == true) {
-                final prefs = await SharedPreferences.getInstance();
-                await prefs.remove('current_user_id');
+                // Виконуємо вихід з Firebase
+                await AuthService().logout();
+
+                // Якщо у вас налаштований StreamBuilder в main.dart,
+                // він сам перекине на WelcomePage.
+                // Але можна і вручну для певності:
                 if (!context.mounted) return;
-                Navigator.of(context).pushReplacement(
+                Navigator.of(context).pushAndRemoveUntil(
                   MaterialPageRoute(builder: (_) => const WelcomePage()),
+                  (route) => false,
                 );
               }
             },

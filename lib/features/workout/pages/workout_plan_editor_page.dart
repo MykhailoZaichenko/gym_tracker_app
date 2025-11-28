@@ -3,10 +3,10 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/data/seed/exercise_catalog.dart';
 import 'package:gym_tracker_app/l10n/app_localizations.dart';
+import 'package:gym_tracker_app/services/firestore_service.dart';
 import 'package:gym_tracker_app/widget/common/pop_save_wideget.dart';
 import 'package:gym_tracker_app/features/workout/widgets/workout_picker_widget.dart';
 import 'package:intl/intl.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class WorkoutPlanEditorPage extends StatefulWidget {
   const WorkoutPlanEditorPage({super.key});
@@ -17,6 +17,9 @@ class WorkoutPlanEditorPage extends StatefulWidget {
 
 class _WorkoutPlanEditorPageState extends State<WorkoutPlanEditorPage> {
   String? _initialEncoded;
+  final FirestoreService _firestore = FirestoreService();
+
+  // Ключі днів тижня для бази даних (незмінні)
   final List<String> _weekDaysKeys = [
     'Mon',
     'Tue',
@@ -26,34 +29,52 @@ class _WorkoutPlanEditorPageState extends State<WorkoutPlanEditorPage> {
     'Sat',
     'Sun',
   ];
+
+  // Мапа плану: Ключ дня -> Список ID вправ
   final Map<String, List<String>> _plan = {};
 
   @override
   void initState() {
     super.initState();
+    // Ініціалізація порожніх списків
     for (var day in _weekDaysKeys) {
       _plan[day] = [];
     }
-
     _loadPlan();
   }
 
+  // Отримання локалізованої назви дня тижня для UI (Mon -> Понеділок)
   String _getLocalizedDayName(String key, String locale) {
     final index = _weekDaysKeys.indexOf(key) + 1;
+    // 2024-01-01 був понеділком
     final date = DateTime(2024, 1, 1).add(Duration(days: index - 1));
-
     final fullDayName = DateFormat.EEEE(locale).format(date);
     return toBeginningOfSentenceCase(fullDayName) ?? fullDayName;
   }
 
+  // Отримання локалізованої назви вправи за її ID
+  String _getLocalizedNameByIdOrName(String key, List<ExerciseInfo> catalog) {
+    // 1. Шукаємо в каталозі за ID
+    try {
+      final found = catalog.firstWhere((e) => e.id == key);
+      return found.name;
+    } catch (_) {
+      // 2. Якщо не знайдено (кастомна вправа), повертаємо як є
+      return key;
+    }
+  }
+
   Future<void> _loadPlan() async {
-    final prefs = await SharedPreferences.getInstance();
-    for (final dayKey in _weekDaysKeys) {
-      final list = prefs.getStringList('plan_$dayKey');
-      if (list != null) {
-        _plan[dayKey] = list;
+    // Завантажуємо план з Firestore
+    final savedPlan = await _firestore.getWeeklyPlan();
+
+    // Оновлюємо локальний _plan даними з бази
+    for (var day in _weekDaysKeys) {
+      if (savedPlan.containsKey(day)) {
+        _plan[day] = savedPlan[day]!;
       }
     }
+
     if (mounted) {
       setState(() {
         _initialEncoded = jsonEncode(_plan);
@@ -63,14 +84,15 @@ class _WorkoutPlanEditorPageState extends State<WorkoutPlanEditorPage> {
 
   Future<void> _savePlan() async {
     final loc = AppLocalizations.of(context)!;
-    final prefs = await SharedPreferences.getInstance();
-    for (final day in _plan.keys) {
-      await prefs.setStringList('plan_$day', _plan[day]!);
-    }
+
+    // Зберігаємо в Firestore
+    await _firestore.saveWeeklyPlan(_plan);
+
     if (!mounted) return;
     ScaffoldMessenger.of(
       context,
     ).showSnackBar(SnackBar(content: Text(loc.planSavedSuccess)));
+
     setState(() {
       _initialEncoded = jsonEncode(_plan);
     });
@@ -82,6 +104,7 @@ class _WorkoutPlanEditorPageState extends State<WorkoutPlanEditorPage> {
 
     if (selected == null) return;
 
+    // Якщо це кастомна вправа - запитуємо назву, інакше беремо ID
     final nameOrId = selected == ExerciseInfo.getEnterCustom(loc)
         ? await _askCustomExerciseName(dayKey)
         : selected.id;
@@ -108,6 +131,7 @@ class _WorkoutPlanEditorPageState extends State<WorkoutPlanEditorPage> {
         content: TextField(
           controller: controller,
           decoration: InputDecoration(hintText: loc.exerciseNameHint),
+          autofocus: true,
         ),
         actions: [
           TextButton(
@@ -135,15 +159,6 @@ class _WorkoutPlanEditorPageState extends State<WorkoutPlanEditorPage> {
     return _initialEncoded != current;
   }
 
-  String _getLocalizedNameByIdOrName(String key, List<ExerciseInfo> catalog) {
-    final found = catalog.firstWhere(
-      (e) => e.id == key,
-      orElse: () =>
-          ExerciseInfo(id: key, name: key, icon: Icons.fitness_center),
-    );
-    return found.name;
-  }
-
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
@@ -151,10 +166,9 @@ class _WorkoutPlanEditorPageState extends State<WorkoutPlanEditorPage> {
     final catalog = getExerciseCatalog(loc);
 
     return PopScope(
-      canPop: false, // block automatic pop, handle manually
+      canPop: false,
       onPopInvokedWithResult: (didPop, result) async {
         if (!didPop) {
-          // run your save‑prompt logic
           final allow = await WillPopSavePrompt(
             hasUnsavedChanges: () async => _hasUnsavedChanges(),
             onSave: _savePlan,
@@ -190,6 +204,8 @@ class _WorkoutPlanEditorPageState extends State<WorkoutPlanEditorPage> {
                 ...exercisesIDs.asMap().entries.map((entry) {
                   final i = entry.key;
                   final exIdOrName = entry.value;
+
+                  // Конвертуємо ID в локалізовану назву для відображення
                   final displayedName = _getLocalizedNameByIdOrName(
                     exIdOrName,
                     catalog,

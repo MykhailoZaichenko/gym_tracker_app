@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:gym_tracker_app/features/workout/models/workout_exercise_model.dart';
@@ -8,6 +7,7 @@ import 'package:gym_tracker_app/features/workout/pages/workout_plan_editor_page.
 import 'package:gym_tracker_app/features/home/home_exports.dart';
 import 'package:gym_tracker_app/l10n/app_localizations.dart';
 import 'package:gym_tracker_app/features/home/widgets/plan_proposal_dialog_widget.dart';
+import 'package:gym_tracker_app/services/firestore_service.dart';
 
 class HomeCalendarPage extends StatefulWidget {
   const HomeCalendarPage({super.key});
@@ -19,6 +19,7 @@ class HomeCalendarPage extends StatefulWidget {
 class _HomeCalendarPageState extends State<HomeCalendarPage> {
   late Map<String, List<WorkoutExercise>> _allWorkouts;
   bool _isLoading = true;
+  final FirestoreService _firestore = FirestoreService();
 
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
@@ -40,36 +41,16 @@ class _HomeCalendarPageState extends State<HomeCalendarPage> {
 
     if (!hasSeen && mounted) {
       await showPlanProposal(context);
-
       await prefs.setBool('has_seen_plan_proposal', true);
     }
   }
 
   Future<void> _loadAllWorkouts() async {
-    final prefs = await SharedPreferences.getInstance();
-    final raw = prefs.getString('all_workouts');
-    if (raw != null) {
-      final Map<String, dynamic> decoded = jsonDecode(raw);
-      _allWorkouts = decoded.map((date, listJson) {
-        final exercises = (listJson as List<dynamic>)
-            .map((m) => WorkoutExercise.fromMap(m as Map<String, dynamic>))
-            .toList();
-        return MapEntry(date, exercises);
-      });
-    } else {
-      _allWorkouts = {};
+    // Завантажуємо всі тренування з Firestore
+    _allWorkouts = await _firestore.getAllWorkouts();
+    if (mounted) {
+      setState(() => _isLoading = false);
     }
-    setState(() => _isLoading = false);
-  }
-
-  Future<void> _saveAllWorkouts() async {
-    final prefs = await SharedPreferences.getInstance();
-    final encoded = jsonEncode(
-      _allWorkouts.map(
-        (date, list) => MapEntry(date, list.map((e) => e.toMap()).toList()),
-      ),
-    );
-    await prefs.setString('all_workouts', encoded);
   }
 
   String _keyOf(DateTime date) => date.toIso8601String().split('T').first;
@@ -79,23 +60,27 @@ class _HomeCalendarPageState extends State<HomeCalendarPage> {
     return _allWorkouts[_keyOf(_selectedDay!)] ?? [];
   }
 
-  void _openWorkoutDay(DateTime date) {
+  void _openWorkoutDay(DateTime date) async {
     final initialExercises = List<WorkoutExercise>.from(
       _allWorkouts[_keyOf(date)] ?? [],
     );
-    Navigator.of(context).push(
+
+    // Переходимо на WorkoutPage
+    await Navigator.of(context).push(
       MaterialPageRoute(
         builder: (_) => WorkoutPage(
           date: date,
           exercises: initialExercises,
-          onSave: (newExercises) async {
-            _allWorkouts[_keyOf(date)] = newExercises.cast<WorkoutExercise>();
-            await _saveAllWorkouts();
-            setState(() {});
+          onSave: (newExercises) {
+            // Callback не обов'язковий для збереження (бо WorkoutPage зберігає в DB),
+            // але корисний для миттєвого оновлення UI Home Page
           },
         ),
       ),
     );
+
+    // Після повернення — перезавантажуємо дані, щоб відобразити зміни
+    _loadAllWorkouts();
   }
 
   @override

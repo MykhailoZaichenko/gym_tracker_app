@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/core/theme/theme_service.dart';
 
 import 'package:gym_tracker_app/l10n/app_localizations.dart';
+import 'package:gym_tracker_app/services/firestore_service.dart';
 import 'package:gym_tracker_app/widget/common/avatar_widget.dart';
 import 'package:gym_tracker_app/widget/common/confirm_dialog.dart';
 
@@ -13,9 +14,6 @@ import 'package:gym_tracker_app/widget/common/style_text_field.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
-import 'package:gym_tracker_app/data/sources/local/app_db.dart';
 import 'package:gym_tracker_app/features/profile/models/user_model.dart';
 
 class EditProfilePage extends StatefulWidget {
@@ -28,13 +26,14 @@ class EditProfilePage extends StatefulWidget {
 }
 
 class _EditProfilePageState extends State<EditProfilePage> {
-  // ... (змінні - без змін)
   final _formKey = GlobalKey<FormState>();
   late final TextEditingController _nameCtrl;
   late final TextEditingController _emailCtrl;
   late final TextEditingController _weightCtrl;
   bool _saving = false;
   bool _isPickingAvatar = false;
+
+  final FirestoreService _firestore = FirestoreService();
 
   String? _avatarPath;
   final ImagePicker _picker = ImagePicker();
@@ -49,18 +48,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     );
     _avatarPath = widget.user.avatarUrl;
 
-    _loadWeightFromPrefs();
-  }
-
-  Future<void> _loadWeightFromPrefs() async {
-    final prefs = await SharedPreferences.getInstance();
-    final localWeight = prefs.getDouble('user_weight');
-    final fallbackWeight = widget.user.weightKg;
-
-    final value = localWeight ?? fallbackWeight;
-    if (value != null) {
-      _weightCtrl.text = value.toStringAsFixed(1);
-    }
+    // _loadWeightFromPrefs();
   }
 
   @override
@@ -133,16 +121,16 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
       final newPath = await _copyFileToAppDir(
         picked.path,
-        userId: widget.user.id,
+        // userId: widget.user.id,
       );
       if (newPath == null) return; // error handling simplified for brevity
 
-      if (_avatarPath != null && _avatarPath != newPath) {
-        try {
-          final oldFile = File(_avatarPath!);
-          if (await oldFile.exists()) await oldFile.delete();
-        } catch (_) {}
-      }
+      // if (_avatarPath != null && _avatarPath != newPath) {
+      //   try {
+      //     final oldFile = File(_avatarPath!);
+      //     if (await oldFile.exists()) await oldFile.delete();
+      //   } catch (_) {}
+      // }
 
       setState(() {
         _avatarPath = newPath;
@@ -185,15 +173,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
     );
 
     try {
-      await AppDb().updateUser(updatedUser);
-
-      final prefs = await SharedPreferences.getInstance();
-      if (updatedUser.id != null) {
-        await prefs.setInt('current_user_id', updatedUser.id!);
-      }
-      if (weight != null && weight > 0) {
-        await prefs.setDouble('user_weight', weight);
-      }
+      // Зберігаємо в Firestore
+      await _firestore.saveUser(updatedUser);
 
       if (!mounted) return;
       Navigator.of(context).pop(updatedUser);

@@ -3,13 +3,14 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/features/auth/widgets/auth_form_widget.dart';
 import 'package:gym_tracker_app/l10n/app_localizations.dart';
+import 'package:gym_tracker_app/services/firestore_service.dart';
 import 'package:gym_tracker_app/widget/common/hero_widget.dart';
 import 'package:gym_tracker_app/widget/common/page_title.dart';
 import 'package:gym_tracker_app/widget/common/primary_filled_button.dart';
 import 'package:gym_tracker_app/widget/common/primary_text_button.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:gym_tracker_app/features/auth/pages/login_page.dart';
 import 'package:gym_tracker_app/widget/common/widget_tree.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../services/auth_service.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -46,6 +47,7 @@ class _RegisterPageState extends State<RegisterPage> {
   Timer? _passwordConfirmDebounce;
 
   final AuthService _auth = AuthService();
+  final FirestoreService _firestore = FirestoreService();
   bool _loading = false;
 
   @override
@@ -98,11 +100,6 @@ class _RegisterPageState extends State<RegisterPage> {
     super.dispose();
   }
 
-  Future<void> _persistUserId(int id) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt('current_user_id', id);
-  }
-
   void _showMessage(String text) {
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(text)));
@@ -121,16 +118,32 @@ class _RegisterPageState extends State<RegisterPage> {
 
     setState(() => _loading = true);
     try {
-      final user = await _auth.register(
+      // 1. Реєструємо користувача (створюється у Firestore з вагою 0/null)
+      final newUser = await _auth.register(
         email: email,
         name: name,
         password: password,
       );
-      if (user.id == null) {
-        _showMessage('Реєстрація пройшла, але ID користувача не отримано');
-        return;
+
+      // 2. Зчитуємо вагу з SharedPreferences (збережену на Onboarding)
+      final prefs = await SharedPreferences.getInstance();
+      final savedWeight = prefs.getDouble('user_weight');
+
+      // 3. Якщо вага була введена, оновлюємо профіль у Firestore
+      if (savedWeight != null && savedWeight > 0) {
+        // Створюємо оновлену копію юзера з правильною вагою
+        // (Припускаємо, що модель User має метод copyWith)
+        final updatedUser = newUser.copyWith(weightKg: savedWeight);
+
+        // Зберігаємо оновлений профіль
+        await _firestore.saveUser(updatedUser);
+
+        // Очищаємо тимчасове значення
+        await prefs.remove('user_weight');
       }
-      await _persistUserId(user.id!);
+
+      // 4. Переходимо до додатку
+      if (!mounted) return;
       _goToApp();
     } catch (e) {
       _showMessage(e.toString().replaceAll('Exception: ', ''));
@@ -242,28 +255,24 @@ class _RegisterPageState extends State<RegisterPage> {
                       AuthPageWidget(
                         formKey: _formKey,
                         authFormType: AuthFormType.register,
-                        // Email Fields
                         emailFieldKey: _emailFieldKey,
                         controllerEmail: _emailCtrl,
                         emailFocus: emailFocus,
                         validateEmail: _validateEmail,
                         onEmailChanged: _onEmailChanged,
                         onEmailSubmitted: _onEmailSubmitted,
-                        // Name Fields
                         nameFieldKey: _nameFieldKey,
                         controllerName: _nameCtrl,
                         nameFocus: nameFocus,
                         validateName: _validateName,
                         onNameChanged: _onNameChanged,
                         onNameSubmitted: _onNameSubmitted,
-                        // Password Fields
                         passwordFieldKey: _passwordFieldKey,
                         controllerPassword: _passwordCtrl,
                         paswFocus: passwordFocus,
                         validatePassword: _validatePassword,
                         onPasswordChanged: _onPasswordChanged,
                         onPasswordSubmitted: _onPasswordSubmitted,
-                        // Confirm Password Fields
                         passwordConfirmFieldKey: _passwordConfirmFieldKey,
                         controllerPasswordConfirm: _passwordConfirmCtrl,
                         passwordConfirmFocus: passwordConfirmFocus,
