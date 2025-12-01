@@ -5,7 +5,7 @@ import 'package:gym_tracker_app/features/profile/pages/profile_page.dart';
 import '../layout/navbar_widget.dart';
 
 String? title = 'Gym Tracker';
-List<Widget> pages = [HomeCalendarPage(), ProfileGrafPage()];
+List<Widget> pages = [HomePage(), ProfileGrafPage()];
 
 class WidgetTree extends StatelessWidget {
   const WidgetTree({super.key});

@@ -9,14 +9,14 @@ import 'package:gym_tracker_app/l10n/app_localizations.dart';
 import 'package:gym_tracker_app/features/home/widgets/plan_proposal_dialog_widget.dart';
 import 'package:gym_tracker_app/services/firestore_service.dart';
 
-class HomeCalendarPage extends StatefulWidget {
-  const HomeCalendarPage({super.key});
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
 
   @override
-  State<HomeCalendarPage> createState() => _HomeCalendarPageState();
+  State<HomePage> createState() => _HomePageState();
 }
 
-class _HomeCalendarPageState extends State<HomeCalendarPage> {
+class _HomePageState extends State<HomePage> {
   late Map<String, List<WorkoutExercise>> _allWorkouts;
   bool _isLoading = true;
   final FirestoreService _firestore = FirestoreService();
@@ -36,17 +36,19 @@ class _HomeCalendarPageState extends State<HomeCalendarPage> {
   }
 
   Future<void> _checkAndShowPlanProposal() async {
+    final userId = _firestore.currentUserId;
+    if (userId == null) return;
     final prefs = await SharedPreferences.getInstance();
-    final hasSeen = prefs.getBool('has_seen_plan_proposal') ?? false;
+    final key = 'has_seen_plan_proposal_$userId';
+    final hasSeen = prefs.getBool(key) ?? false;
 
     if (!hasSeen && mounted) {
       await showPlanProposal(context);
-      await prefs.setBool('has_seen_plan_proposal', true);
+      await prefs.setBool(key, true);
     }
   }
 
   Future<void> _loadAllWorkouts() async {
-    // Завантажуємо всі тренування з Firestore
     _allWorkouts = await _firestore.getAllWorkouts();
     if (mounted) {
       setState(() => _isLoading = false);
@@ -71,15 +73,11 @@ class _HomeCalendarPageState extends State<HomeCalendarPage> {
         builder: (_) => WorkoutPage(
           date: date,
           exercises: initialExercises,
-          onSave: (newExercises) {
-            // Callback не обов'язковий для збереження (бо WorkoutPage зберігає в DB),
-            // але корисний для миттєвого оновлення UI Home Page
-          },
+          onSave: (newExercises) {},
         ),
       ),
     );
 
-    // Після повернення — перезавантажуємо дані, щоб відобразити зміни
     _loadAllWorkouts();
   }
 
@@ -120,6 +118,13 @@ class _HomeCalendarPageState extends State<HomeCalendarPage> {
                   });
                 }
               },
+              // onReturnToToday: () {
+              //   setState(() {
+              //     final now = DateTime.now();
+              //     _focusedDay = now;
+              //     _selectedDay = now; // Повертаємо вибір на сьогодні
+              //   });
+              // },
               onDaySelected: (selected, focused) {
                 setState(() {
                   _selectedDay = selected;
