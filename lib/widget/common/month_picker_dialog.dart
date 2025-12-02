@@ -5,6 +5,8 @@ import 'package:intl/intl.dart';
 class MonthPickerDialog extends StatefulWidget {
   const MonthPickerDialog({
     required this.initialDate,
+    required this.firstDate,
+    required this.lastDate,
     super.key,
     this.title,
     this.cancelLabel,
@@ -12,6 +14,8 @@ class MonthPickerDialog extends StatefulWidget {
   });
 
   final DateTime initialDate;
+  final DateTime firstDate;
+  final DateTime lastDate;
   final String? title;
   final String? cancelLabel;
   final String? okLabel;
@@ -24,16 +28,23 @@ Future<DateTime?> showMonthPicker({
   required BuildContext context,
   required DateTime initialDate,
 
+  DateTime? firstDate,
+  DateTime? lastDate,
   String? title,
   String? cancelLabel,
   String? okLabel,
 }) {
   final loc = AppLocalizations.of(context)!;
+  final now = DateTime.now();
+  final start = firstDate ?? DateTime(2024, 1);
+  final end = lastDate ?? DateTime(now.year, 12);
   return showDialog<DateTime>(
     context: context,
     barrierDismissible: true,
     builder: (_) => MonthPickerDialog(
       initialDate: initialDate,
+      firstDate: start,
+      lastDate: end,
       title: title,
       cancelLabel: cancelLabel = loc.cancel,
       okLabel: okLabel = loc.ok,
@@ -53,6 +64,8 @@ class _MonthPickerDialogState extends State<MonthPickerDialog>
     super.initState();
     _year = widget.initialDate.year;
     _selectedMonth = widget.initialDate.month;
+    if (_year < widget.firstDate.year) _year = widget.firstDate.year;
+    if (_year > widget.lastDate.year) _year = widget.lastDate.year;
     _yearController = TextEditingController(text: _year.toString());
     _animController = AnimationController(
       vsync: this,
@@ -70,15 +83,51 @@ class _MonthPickerDialogState extends State<MonthPickerDialog>
   void _apply() {
     final parsedYear = int.tryParse(_yearController.text.trim());
     if (parsedYear != null) _year = parsedYear;
+    if (!_isMonthSelectable(_year, _selectedMonth)) return;
     final picked = DateTime(_year, _selectedMonth, 1);
     Navigator.of(context).pop(picked);
   }
 
   void _changeYear(int delta) {
-    setState(() {
-      _year += delta;
-      _yearController.text = _year.toString();
-    });
+    final newYear = _year + delta;
+    if (newYear >= widget.firstDate.year && newYear <= widget.lastDate.year) {
+      setState(() {
+        _year = newYear;
+        _yearController.text = _year.toString();
+
+        if (!_isMonthSelectable(_year, _selectedMonth)) {
+          for (int m = 1; m <= 12; m++) {
+            if (_isMonthSelectable(_year, m)) {
+              _selectedMonth = m;
+              break;
+            }
+          }
+        }
+      });
+    }
+  }
+
+  bool _isMonthSelectable(int year, int month) {
+    final dateToCheck = DateTime(year, month);
+    // Порівнюємо з першим числом місяця firstDate та останнім числом місяця lastDate
+    // Для спрощення: перевіряємо, чи місяць випадає з діапазону
+
+    // Якщо рік менший за мінімальний або більший за максимальний -> false
+    if (year < widget.firstDate.year || year > widget.lastDate.year) {
+      return false;
+    }
+
+    // Якщо це рік початку, перевіряємо місяць
+    if (year == widget.firstDate.year && month < widget.firstDate.month) {
+      return false;
+    }
+
+    // Якщо це рік кінця, перевіряємо місяць
+    if (year == widget.lastDate.year && month > widget.lastDate.month) {
+      return false;
+    }
+
+    return true;
   }
 
   @override
@@ -86,6 +135,9 @@ class _MonthPickerDialogState extends State<MonthPickerDialog>
     final theme = Theme.of(context);
     final primary = theme.colorScheme.primary;
     final loc = AppLocalizations.of(context)!;
+
+    final canGoBack = _year > widget.firstDate.year;
+    final canGoForward = _year < widget.lastDate.year;
 
     return ScaleTransition(
       scale: CurvedAnimation(
@@ -115,7 +167,7 @@ class _MonthPickerDialogState extends State<MonthPickerDialog>
               children: [
                 IconButton(
                   icon: const Icon(Icons.chevron_left_rounded),
-                  onPressed: () => _changeYear(-1),
+                  onPressed: canGoBack ? () => _changeYear(-1) : null,
                   tooltip: loc.prevYear,
                 ),
                 SizedBox(
@@ -124,32 +176,34 @@ class _MonthPickerDialogState extends State<MonthPickerDialog>
                     controller: _yearController,
                     keyboardType: TextInputType.number,
                     textAlign: TextAlign.center,
+                    readOnly: true,
                     decoration: InputDecoration(
                       isDense: true,
-                      contentPadding: const EdgeInsets.symmetric(vertical: 8),
-                      enabledBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: primary.withAlpha(80)),
-                      ),
-                      focusedBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: primary, width: 2),
-                      ),
+                      border: InputBorder.none,
+                      // contentPadding: const EdgeInsets.symmetric(vertical: 8),
+                      // enabledBorder: UnderlineInputBorder(
+                      //   borderSide: BorderSide(color: primary.withAlpha(80)),
+                      // ),
+                      // focusedBorder: UnderlineInputBorder(
+                      //   borderSide: BorderSide(color: primary, width: 2),
+                      // ),
                     ),
                     style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w600,
                     ),
-                    onSubmitted: (_) {
-                      final parsed = int.tryParse(_yearController.text.trim());
-                      if (parsed != null) {
-                        setState(() => _year = parsed);
-                      } else {
-                        _yearController.text = _year.toString();
-                      }
-                    },
+                    // onSubmitted: (_) {
+                    //   final parsed = int.tryParse(_yearController.text.trim());
+                    //   if (parsed != null) {
+                    //     setState(() => _year = parsed);
+                    //   } else {
+                    //     _yearController.text = _year.toString();
+                    //   }
+                    // },
                   ),
                 ),
                 IconButton(
                   icon: const Icon(Icons.chevron_right_rounded),
-                  onPressed: () => _changeYear(1),
+                  onPressed: canGoForward ? () => _changeYear(1) : null,
                   tooltip: loc.nextYear,
                 ),
               ],
@@ -164,6 +218,7 @@ class _MonthPickerDialogState extends State<MonthPickerDialog>
               children: List.generate(12, (i) {
                 final month = i + 1;
                 final selected = month == _selectedMonth;
+                final enabled = _isMonthSelectable(_year, month);
                 final monthName = DateFormat.MMMM(
                   loc.localeName,
                 ).format(DateTime(2024, month));
@@ -190,18 +245,25 @@ class _MonthPickerDialogState extends State<MonthPickerDialog>
                       style: TextStyle(
                         fontWeight: FontWeight
                             .w500, // fixed weight to avoid width change
-                        color: selected
-                            ? theme.colorScheme.primary
-                            : theme.colorScheme.onSurface,
+                        color: enabled
+                            ? (selected
+                                  ? theme.colorScheme.primary
+                                  : theme.colorScheme.onSurface)
+                            : theme.colorScheme.onSurface.withValues(
+                                alpha: 0.3,
+                              ),
                       ),
                     ),
                     selected: selected,
+                    onSelected: enabled
+                        ? (_) => setState(() => _selectedMonth = month)
+                        : null,
                     selectedColor: theme.colorScheme.primary.withValues(
                       alpha: 0.15,
                     ),
                     backgroundColor: theme.colorScheme.surfaceContainerHighest,
                     showCheckmark: false,
-                    onSelected: (_) => setState(() => _selectedMonth = month),
+                    // onSelected: (_) => setState(() => _selectedMonth = month),
                   ),
                 );
               }),
@@ -218,7 +280,9 @@ class _MonthPickerDialogState extends State<MonthPickerDialog>
             ),
           ),
           FilledButton.tonal(
-            onPressed: _apply,
+            onPressed: _isMonthSelectable(_year, _selectedMonth)
+                ? _apply
+                : null,
             style: FilledButton.styleFrom(
               padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
               shape: RoundedRectangleBorder(

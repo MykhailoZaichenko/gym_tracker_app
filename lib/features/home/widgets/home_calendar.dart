@@ -12,6 +12,7 @@ class HomeCalendar extends StatelessWidget {
   final Map<String, List<WorkoutExercise>> allWorkouts;
   final void Function(DateTime?) onMonthPicked;
   final void Function(DateTime, DateTime) onDaySelected;
+  final void Function(DateTime) onPageChanged;
 
   const HomeCalendar({
     super.key,
@@ -20,6 +21,7 @@ class HomeCalendar extends StatelessWidget {
     required this.allWorkouts,
     required this.onMonthPicked,
     required this.onDaySelected,
+    required this.onPageChanged,
   });
 
   String _keyOf(DateTime date) => date.toIso8601String().split('T').first;
@@ -27,20 +29,32 @@ class HomeCalendar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final locale = AppLocalizations.of(context)!.localeName;
+    final now = DateTime.now();
+
+    final lastAllowedDay = DateTime(now.year, now.month + 1, 0);
+
+    final startingDayOfWeek = locale.startsWith('uk')
+        ? StartingDayOfWeek.monday
+        : StartingDayOfWeek.sunday;
 
     return TableCalendar(
       locale: locale,
+      startingDayOfWeek: startingDayOfWeek,
+      onPageChanged: onPageChanged,
       calendarBuilders: CalendarBuilders(
         headerTitleBuilder: (context, day) {
           final monthName = DateFormat.MMMM(locale).format(day);
-
-          // Робимо першу літеру великою (для української це важливо)
+          final year = day.year;
           final capitalized = toBeginningOfSentenceCase(monthName);
+
           return InkWell(
             onTap: () async {
+              final now = DateTime.now();
               final picked = await showMonthPicker(
                 context: context,
                 initialDate: day,
+                firstDate: DateTime(2024, 1, 1),
+                lastDate: DateTime(now.year, now.month + 1, 0),
               );
               onMonthPicked(picked);
             },
@@ -49,13 +63,16 @@ class HomeCalendar extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: 12),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    '$capitalized ${day.year}',
-                    style: Theme.of(context).textTheme.titleMedium,
+                    '$capitalized $year',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   const SizedBox(width: 4),
-                  const Icon(Icons.arrow_drop_down),
+                  const Icon(Icons.arrow_drop_down, size: 20),
                 ],
               ),
             ),
@@ -63,8 +80,8 @@ class HomeCalendar extends StatelessWidget {
         },
       ),
       availableCalendarFormats: const {CalendarFormat.month: 'Month'},
-      firstDay: DateTime.utc(2000, 1, 1),
-      lastDay: DateTime.utc(2100, 12, 31),
+      firstDay: DateTime.utc(2024, 1, 1),
+      lastDay: lastAllowedDay,
       focusedDay: focusedDay,
       selectedDayPredicate: (day) => isSameDay(day, selectedDay),
       eventLoader: (day) => allWorkouts[_keyOf(day)] ?? <WorkoutExercise>[],

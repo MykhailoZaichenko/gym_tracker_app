@@ -362,6 +362,9 @@ class AppLocalizationsUk extends AppLocalizations {
   String get navHome => 'Головна';
 
   @override
+  String get backToToday => 'Сьогодні';
+
+  @override
   String get navProfile => 'Профіль';
 
   @override

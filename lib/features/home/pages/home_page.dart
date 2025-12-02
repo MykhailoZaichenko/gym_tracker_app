@@ -88,6 +88,10 @@ class _HomePageState extends State<HomePage> {
     }
 
     final loc = AppLocalizations.of(context)!;
+    final now = DateTime.now();
+
+    final isCurrentMonth =
+        _focusedDay.year == now.year && _focusedDay.month == now.month;
 
     return SafeArea(
       child: Scaffold(
@@ -118,13 +122,11 @@ class _HomePageState extends State<HomePage> {
                   });
                 }
               },
-              // onReturnToToday: () {
-              //   setState(() {
-              //     final now = DateTime.now();
-              //     _focusedDay = now;
-              //     _selectedDay = now; // Повертаємо вибір на сьогодні
-              //   });
-              // },
+              onPageChanged: (focusedDay) {
+                setState(() {
+                  _focusedDay = focusedDay;
+                });
+              },
               onDaySelected: (selected, focused) {
                 setState(() {
                   _selectedDay = selected;
@@ -142,13 +144,54 @@ class _HomePageState extends State<HomePage> {
             ),
           ],
         ),
-        floatingActionButton: _selectedDay == null
-            ? null
-            : FloatingActionButton(
-                tooltip: loc.editExercisesTooltip,
-                child: const Icon(Icons.edit),
-                onPressed: () => _openWorkoutDay(_selectedDay!),
+        floatingActionButton: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            // Кнопка "Повернутись до сьогодні"
+            // З'являється, якщо ми не в поточному місяці
+            if (!isCurrentMonth) ...[
+              FloatingActionButton.extended(
+                heroTag: 'btn_today',
+                onPressed: () {
+                  setState(() {
+                    final today = DateTime.now();
+                    _focusedDay = today;
+                    _selectedDay = today;
+                  });
+                },
+                icon: const Icon(Icons.calendar_today), // Або arrow_forward_ios
+                label: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      loc.backToToday,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    const Icon(Icons.double_arrow_rounded, size: 18),
+                  ],
+                ),
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                foregroundColor: Theme.of(context).colorScheme.onPrimary,
               ),
+              const SizedBox(height: 16), // Відступ між кнопками
+            ],
+
+            // Стандартна кнопка редагування (якщо день вибрано)
+            if (_selectedDay != null)
+              FloatingActionButton(
+                heroTag: 'btn_edit',
+                tooltip: loc.editExercisesTooltip,
+                onPressed: () => _openWorkoutDay(_selectedDay!),
+                child: const Icon(Icons.edit),
+              ),
+          ],
+        ),
       ),
     );
   }

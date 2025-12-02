@@ -758,6 +758,12 @@ abstract class AppLocalizations {
   /// **'Home'**
   String get navHome;
 
+  /// Button to return to today's date
+  ///
+  /// In en, this message translates to:
+  /// **'Latest'**
+  String get backToToday;
+
   /// Navbar profile label
   ///
   /// In en, this message translates to:

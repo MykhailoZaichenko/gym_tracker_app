@@ -55,6 +55,17 @@ class _ProfileStatsCardState extends State<ProfileStatsCard> {
     final monthLabel =
         '${widget.visibleMonth.year} - ${widget.visibleMonth.month.toString().padLeft(2, '0')}';
 
+    final now = DateTime.now();
+
+    final canGoBack =
+        widget.visibleMonth.year > 2024 ||
+        (widget.visibleMonth.year == 2024 && widget.visibleMonth.month > 1);
+
+    final canGoForward =
+        widget.visibleMonth.year < now.year ||
+        (widget.visibleMonth.year == now.year &&
+            widget.visibleMonth.month < now.month);
+
     return GestureDetector(
       onHorizontalDragEnd: (details) {
         final velocity = details.primaryVelocity ?? 0;
@@ -109,10 +120,14 @@ class _ProfileStatsCardState extends State<ProfileStatsCard> {
                     child: InkWell(
                       borderRadius: BorderRadius.circular(8),
                       onTap: () async {
+                        final now = DateTime.now();
                         final result = await showMonthPicker(
                           context: context,
                           initialDate: widget.visibleMonth,
+                          firstDate: DateTime(2024, 1, 1),
+                          lastDate: DateTime(now.year, now.month + 1, 0),
                         );
+
                         if (result != null) {
                           _handlePick(result);
                         }
@@ -154,7 +169,7 @@ class _ProfileStatsCardState extends State<ProfileStatsCard> {
                       const SizedBox(width: 24),
                       IconButton(
                         icon: const Icon(Icons.chevron_left),
-                        onPressed: _handlePrev,
+                        onPressed: canGoBack ? _handlePrev : null,
                       ),
                       Row(
                         children: [
@@ -164,7 +179,7 @@ class _ProfileStatsCardState extends State<ProfileStatsCard> {
                       ),
                       IconButton(
                         icon: const Icon(Icons.chevron_right),
-                        onPressed: _handleNext,
+                        onPressed: canGoForward ? _handleNext : null,
                       ),
                       const SizedBox(width: 24),
                     ],

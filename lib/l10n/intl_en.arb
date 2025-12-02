@@ -264,6 +264,8 @@
   "@unsavedChangesMsg": { "description": "Pop save dialog content" },
   "navHome": "Home",
   "@navHome": { "description": "Navbar home label" },
+  "backToToday": "Latest",
+  "@backToToday": { "description": "Button to return to today's date" },
   "navProfile": "Profile",
   "@navProfile": { "description": "Navbar profile label" },
   

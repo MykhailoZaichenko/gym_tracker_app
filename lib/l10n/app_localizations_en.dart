@@ -358,6 +358,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get navHome => 'Home';
 
   @override
+  String get backToToday => 'Latest';
+
+  @override
   String get navProfile => 'Profile';
 
   @override

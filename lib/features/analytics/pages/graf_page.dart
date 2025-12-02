@@ -6,6 +6,7 @@ import 'package:gym_tracker_app/core/utils.dart';
 import 'package:gym_tracker_app/features/analytics/widgets/line_chart_card.dart';
 import 'package:gym_tracker_app/l10n/app_localizations.dart';
 import 'package:gym_tracker_app/services/firestore_service.dart';
+import 'package:gym_tracker_app/widget/common/month_picker_dialog.dart';
 import 'package:intl/intl.dart';
 import 'package:gym_tracker_app/data/seed/exercise_catalog.dart';
 
@@ -296,23 +297,53 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
   }
 
   void _prevMonth() {
-    setState(
-      () => _visibleMonth = DateTime(
-        _visibleMonth.year,
-        _visibleMonth.month - 1,
-        1,
-      ),
-    );
+    setState(() {
+      if (_range == RangeMode.month) {
+        if (_visibleMonth.year > 2024) {
+          _visibleMonth = DateTime(
+            _visibleMonth.year,
+            _visibleMonth.month - 1,
+            1,
+          );
+        }
+      } else {
+        // Рік назад
+        if (_visibleMonth.year > 2024) {
+          _visibleMonth = DateTime(
+            _visibleMonth.year - 1,
+            _visibleMonth.month,
+            1,
+          );
+        }
+      }
+    });
   }
 
   void _nextMonth() {
-    setState(
-      () => _visibleMonth = DateTime(
-        _visibleMonth.year,
-        _visibleMonth.month + 1,
-        1,
-      ),
-    );
+    final now = DateTime.now();
+    setState(() {
+      if (_range == RangeMode.month) {
+        // Перевірка: чи наступний місяць не в майбутньому
+        final nextMonth = DateTime(
+          _visibleMonth.year,
+          _visibleMonth.month + 1,
+          1,
+        );
+        if (nextMonth.year < now.year ||
+            (nextMonth.year == now.year && nextMonth.month <= now.month)) {
+          _visibleMonth = nextMonth;
+        }
+      } else {
+        // Рік вперед
+        if (_visibleMonth.year < now.year) {
+          _visibleMonth = DateTime(
+            _visibleMonth.year + 1,
+            _visibleMonth.month,
+            1,
+          );
+        }
+      }
+    });
   }
 
   double _bottomInterval() {
@@ -356,6 +387,7 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
     }
 
     final loc = AppLocalizations.of(context)!;
+    final locale = loc.localeName;
 
     // Оновлюємо список вправ при кожному build
     _prepareExerciseList(loc);
@@ -368,6 +400,22 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
       if (s.y > maxY) maxY = s.y;
     }
     final double yInterval = (maxY <= 0) ? 1.0 : (maxY / 4).toDouble();
+
+    final monthName = DateFormat.MMMM(locale).format(_visibleMonth);
+    final capitalizedMonth = toBeginningOfSentenceCase(monthName);
+    final now = DateTime.now();
+
+    bool canGoBack = _visibleMonth.year > 2024;
+    bool canGoForward = false;
+
+    if (_range == RangeMode.month) {
+      canGoForward =
+          _visibleMonth.year < now.year ||
+          (_visibleMonth.year == now.year && _visibleMonth.month < now.month);
+    } else {
+      // Для року
+      canGoForward = _visibleMonth.year < now.year;
+    }
 
     return Scaffold(
       appBar: AppBar(title: Text(loc.chartsTitle), centerTitle: true),
@@ -406,21 +454,61 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
             ),
             const SizedBox(height: 8),
             if (_range == RangeMode.month)
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.chevron_left),
-                    onPressed: _prevMonth,
-                  ),
-                  Text(
-                    '${_visibleMonth.year} - ${_visibleMonth.month.toString().padLeft(2, '0')}',
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.chevron_right),
-                    onPressed: _nextMonth,
-                  ),
-                ],
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.chevron_left),
+                      onPressed: canGoBack ? _prevMonth : null,
+                    ),
+
+                    // Клікабельний місяць
+                    InkWell(
+                      borderRadius: BorderRadius.circular(8),
+                      onTap: () async {
+                        // Викликаємо діалог вибору місяця
+                        final now = DateTime.now();
+                        final picked = await showMonthPicker(
+                          context: context,
+                          initialDate: _visibleMonth,
+                          // Можемо обмежити дати, як і в інших місцях
+                          firstDate: DateTime(2024, 1),
+                          lastDate: DateTime(now.year, now.month),
+                        );
+
+                        if (picked != null) {
+                          setState(() {
+                            _visibleMonth = picked;
+                          });
+                        }
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 8,
+                        ),
+                        child: Row(
+                          children: [
+                            Text(
+                              '$capitalizedMonth ${_visibleMonth.year}',
+                              style: Theme.of(context).textTheme.titleMedium
+                                  ?.copyWith(fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(width: 4),
+                            const Icon(Icons.arrow_drop_down, size: 20),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                    IconButton(
+                      icon: const Icon(Icons.chevron_right),
+                      onPressed: canGoForward ? _nextMonth : null,
+                    ),
+                  ],
+                ),
               ),
             const SizedBox(height: 8),
             Expanded(
