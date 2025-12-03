@@ -1,6 +1,8 @@
 import 'dart:async';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:gym_tracker_app/features/auth/pages/verify_email_page.dart';
 import 'package:gym_tracker_app/features/auth/widgets/auth_form_widget.dart';
 import 'package:gym_tracker_app/l10n/app_localizations.dart';
 import 'package:gym_tracker_app/services/firestore_service.dart';
@@ -183,10 +185,26 @@ class _RegisterPageState extends State<RegisterPage> {
     }
   }
 
-  void _goToApp() {
+  Future<void> _goToApp() async {
+    try {
+      final email = _emailCtrl.text.trim();
+      final password = _passwordCtrl.text;
+      UserCredential userCredential = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(email: email, password: password);
+
+      // 2. ВАЖЛИВО: Одразу відправляємо лист підтвердження!
+      // Бо VerifyEmailPage відкриється, але юзер ще не натиснув там кнопку "Resend"
+      await userCredential.user?.sendEmailVerification();
+
+      // 3. НІЯКОЇ НАВІГАЦІЇ ТУТ НЕ ТРЕБА (якщо це окрема сторінка)
+      // Якщо це було модальне вікно або сторінка в стеку, можна зробити лише:
+      // Navigator.pop(context); // Щоб закрити сторінку реєстрації і повернутися до StreamBuilder
+    } catch (e) {
+      // Обробка помилок
+    }
     Navigator.pushAndRemoveUntil(
       context,
-      MaterialPageRoute(builder: (_) => const WidgetTree()),
+      MaterialPageRoute(builder: (_) => const VerifyEmailPage()),
       (route) => false,
     );
   }

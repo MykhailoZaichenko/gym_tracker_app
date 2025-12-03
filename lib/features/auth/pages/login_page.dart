@@ -300,7 +300,7 @@ class _LoginPageState extends State<LoginPage> {
                           // Якщо у вас немає картинки, використовуйте Icon(Icons.login) тимчасово
                           // Краще: Image.asset('assets/images/google_logo.png', height: 24),
                           icon: const Icon(Icons.g_mobiledata, size: 32),
-                          label: const Text('Увійти через Google'),
+                          label: const Text('Google'),
                           style: OutlinedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(vertical: 12),
                             side: BorderSide(

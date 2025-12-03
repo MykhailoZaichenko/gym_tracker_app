@@ -22,23 +22,85 @@ class AvatarWidget extends StatelessWidget {
     final theme = Theme.of(context);
     final initial = name.isNotEmpty ? name[0].toUpperCase() : '';
 
-    Widget avatarCircle() {
+    ImageProvider? getImageProvider() {
       if (avatarPath != null && avatarPath!.isNotEmpty) {
+        // 1. Перевірка на URL (Google Photo)
+        if (avatarPath!.startsWith('http')) {
+          return NetworkImage(avatarPath!);
+        }
+
+        // 2. Перевірка на локальний файл
         final file = File(avatarPath!);
         if (file.existsSync()) {
-          return CircleAvatar(radius: radius, backgroundImage: FileImage(file));
+          return FileImage(file);
         }
       }
-      return CircleAvatar(
-        radius: radius,
-        backgroundColor: theme.colorScheme.primary,
-        child: Text(
-          initial,
-          style: TextStyle(color: Colors.white, fontSize: radius * 0.6),
-        ),
-      );
+      return null;
     }
 
-    return Column(children: [avatarCircle()]);
+    final imageProvider = getImageProvider();
+
+    return Column(
+      children: [
+        Stack(
+          children: [
+            CircleAvatar(
+              radius: radius,
+              backgroundColor: theme.colorScheme.primary,
+              backgroundImage: imageProvider,
+              child: imageProvider == null
+                  ? Text(
+                      initial,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: radius * 0.8, // Трохи збільшив шрифт
+                        fontWeight: FontWeight.bold,
+                      ),
+                    )
+                  : null,
+            ),
+
+            // Кнопка редагування (якщо передана)
+            if (onEditPressed != null)
+              Positioned(
+                bottom: 0,
+                right: 0,
+                child: InkWell(
+                  onTap: onEditPressed,
+                  child: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.secondary,
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: theme.scaffoldBackgroundColor,
+                        width: 2,
+                      ),
+                    ),
+                    child: const Icon(
+                      Icons.edit,
+                      size: 16,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        ),
+
+        // Кнопка видалення (якщо передана і є аватар)
+        if (onDeletePressed != null && avatarPath != null)
+          Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: InkWell(
+              onTap: onDeletePressed,
+              child: Text(
+                'Видалити фото', // Можна локалізувати
+                style: TextStyle(color: theme.colorScheme.error, fontSize: 12),
+              ),
+            ),
+          ),
+      ],
+    );
   }
 }

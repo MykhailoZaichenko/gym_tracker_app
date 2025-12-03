@@ -19,6 +19,13 @@ class AuthService {
     });
   }
 
+  Future<void> sendEmailVerification() async {
+    final user = _firebaseAuth.currentUser;
+    if (user != null && !user.emailVerified) {
+      await user.sendEmailVerification();
+    }
+  }
+
   Future<app_user.User?> loginWithGoogle() async {
     try {
       // 1. Запускаємо нативний процес входу Google (відкривається вікно вибору акаунту)
@@ -86,6 +93,8 @@ class AuthService {
       if (cred.user == null) {
         throw Exception('Не вдалося створити користувача');
       }
+
+      await cred.user!.sendEmailVerification();
 
       // 2. Створюємо нашу модель User (без хешів і солі, бо Firebase це робить сам)
       // Ми можемо зберегти ID з Firebase або залишити його null, якщо він не потрібен локально
@@ -167,7 +176,19 @@ class AuthService {
 
   // Вихід
   Future<void> logout() async {
-    await _googleSignIn.signOut();
+    try {
+      // 1. Перевіряємо, чи взагалі був вхід через Google
+      // Це врятує тебе від помилки, якщо юзер зайшов через логін/пароль
+      if (await _googleSignIn.isSignedIn()) {
+        await _googleSignIn.disconnect();
+      } else {
+        // Якщо не залогінений в Google плагіні - нічого не робимо або просто signOut
+        await _googleSignIn.signOut();
+      }
+    } catch (e) {
+      // 2. Якщо Google викине помилку - ми її глушимо і йдемо далі
+      print("Google disconnect error: $e");
+    }
     await _firebaseAuth.signOut();
   }
 

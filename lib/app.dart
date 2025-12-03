@@ -1,6 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart' as fb_auth;
 import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/core/locale/locale_serviece.dart';
+import 'package:gym_tracker_app/features/auth/pages/login_page.dart';
+import 'package:gym_tracker_app/features/auth/pages/verify_email_page.dart';
+import 'package:gym_tracker_app/features/home/pages/home_page.dart';
 import 'package:gym_tracker_app/features/welcome/pages/welcome_page.dart';
 import 'package:gym_tracker_app/l10n/app_localizations.dart';
 import 'package:gym_tracker_app/widget/common/widget_tree.dart';
@@ -54,7 +57,7 @@ class _MyAppState extends State<MyApp> {
               darkTheme: ThemeData.dark(),
               themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
               home: StreamBuilder<fb_auth.User?>(
-                stream: fb_auth.FirebaseAuth.instance.authStateChanges(),
+                stream: fb_auth.FirebaseAuth.instance.userChanges(),
                 builder: (context, snapshot) {
                   // Поки перевіряємо статус
                   if (snapshot.connectionState == ConnectionState.waiting) {
@@ -62,11 +65,17 @@ class _MyAppState extends State<MyApp> {
                       body: Center(child: CircularProgressIndicator()),
                     );
                   }
-                  // Якщо є дані (юзер) -> показуємо додаток
                   if (snapshot.hasData) {
-                    return const WidgetTree();
+                    final user = snapshot.data!;
+
+                    // Перевіряємо, чи підтверджена пошта
+                    if (user.emailVerified) {
+                      return const WidgetTree(); // Пускаємо в додаток
+                    } else {
+                      return const VerifyEmailPage(); // Просимо підтвердити
+                    }
                   }
-                  // Якщо немає -> сторінка вітання/входу
+
                   return const WelcomePage();
                 },
               ),
