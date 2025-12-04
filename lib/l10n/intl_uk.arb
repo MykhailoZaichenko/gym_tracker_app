@@ -165,5 +165,38 @@
   "proposalTitle": "Створіть свій план тренувань!",
   "proposalSubtitle": "Щоб досягти найкращих результатів, створіть розклад на тиждень. Ми нагадаємо вам про тренування.",
   "goToPlan": "Перейти до плану",
-  "maybeLater": "Можливо пізніше"
+  "maybeLater": "Можливо пізніше",
+
+  "verifyEmailTitle": "Підтвердження пошти",
+  "verifyEmailMessage": "Лист із підтвердженням було надіслано на вашу електронну пошту. Будь ласка, перейдіть за посиланням у листі.",
+  "resendEmail": "Надіслати лист ще раз",
+  "cancelLogout": "Скасувати (Вийти)",
+  "resetPasswordTitle": "Скидання паролю",
+  "resetPasswordInstruction": "Введіть свій email. Ми надішлемо вам посилання для створення нового паролю.",
+  "resetPasswordEmailSent": "Лист для скидання паролю надіслано! Перевірте пошту.",
+  "send": "Надіслати",
+  "googleButton": "Google",
+  "errGoogleSignIn": "Помилка входу через Google",
+  "errInvalidCredentials": "Невірний email або пароль",
+  "errLoginGeneral": "Помилка входу",
+
+  "errUserNotFound": "Користувача з такою поштою не знайдено",
+  "errWrongPassword": "Невірний пароль",
+  "errEmailAlreadyInUse": "Цей email вже використовується іншим акаунтом",
+  "errWeakPassword": "Пароль занадто слабкий",
+  "errTooManyRequests": "Забагато спроб. Спробуйте пізніше",
+  "errRequiresRecentLogin": "Для цієї дії потрібно зайти в акаунт заново",
+  "errUnknown": "Сталася невідома помилка",
+
+  "delPhoto": "Видалити фото",
+
+  "navJournal": "Щоденник",
+  "navHistory": "Історія",
+  "navStats": "Статистика",
+  "startWorkout": "Почати тренування",
+  "continueWorkout": "Продовжити тренування",
+  "workoutToday": "Тренування на сьогодні",
+  "noWorkoutToday": "На сьогодні немає записів",
+  "addExerciseBtn": "Додати вправу",
+  "addSetBtn": "Додати підхід"
 }

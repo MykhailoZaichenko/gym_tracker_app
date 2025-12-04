@@ -48,7 +48,8 @@ class ExerciseSetsList extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 8),
-        Center(
+        SizedBox(
+          width: double.infinity,
           child: IconButton(
             icon: const Icon(Icons.add),
             onPressed: () => onAddSet(),

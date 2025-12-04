@@ -484,4 +484,96 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get maybeLater => 'Можливо пізніше';
+
+  @override
+  String get verifyEmailTitle => 'Підтвердження пошти';
+
+  @override
+  String get verifyEmailMessage =>
+      'Лист із підтвердженням було надіслано на вашу електронну пошту. Будь ласка, перейдіть за посиланням у листі.';
+
+  @override
+  String get resendEmail => 'Надіслати лист ще раз';
+
+  @override
+  String get cancelLogout => 'Скасувати (Вийти)';
+
+  @override
+  String get resetPasswordTitle => 'Скидання паролю';
+
+  @override
+  String get resetPasswordInstruction =>
+      'Введіть свій email. Ми надішлемо вам посилання для створення нового паролю.';
+
+  @override
+  String get resetPasswordEmailSent =>
+      'Лист для скидання паролю надіслано! Перевірте пошту.';
+
+  @override
+  String get send => 'Надіслати';
+
+  @override
+  String get googleButton => 'Google';
+
+  @override
+  String get errGoogleSignIn => 'Помилка входу через Google';
+
+  @override
+  String get errInvalidCredentials => 'Невірний email або пароль';
+
+  @override
+  String get errLoginGeneral => 'Помилка входу';
+
+  @override
+  String get errUserNotFound => 'Користувача з такою поштою не знайдено';
+
+  @override
+  String get errWrongPassword => 'Невірний пароль';
+
+  @override
+  String get errEmailAlreadyInUse =>
+      'Цей email вже використовується іншим акаунтом';
+
+  @override
+  String get errWeakPassword => 'Пароль занадто слабкий';
+
+  @override
+  String get errTooManyRequests => 'Забагато спроб. Спробуйте пізніше';
+
+  @override
+  String get errRequiresRecentLogin =>
+      'Для цієї дії потрібно зайти в акаунт заново';
+
+  @override
+  String get errUnknown => 'Сталася невідома помилка';
+
+  @override
+  String get delPhoto => 'Видалити фото';
+
+  @override
+  String get navJournal => 'Щоденник';
+
+  @override
+  String get navHistory => 'Історія';
+
+  @override
+  String get navStats => 'Статистика';
+
+  @override
+  String get startWorkout => 'Почати тренування';
+
+  @override
+  String get continueWorkout => 'Продовжити тренування';
+
+  @override
+  String get workoutToday => 'Тренування на сьогодні';
+
+  @override
+  String get noWorkoutToday => 'На сьогодні немає записів';
+
+  @override
+  String get addExerciseBtn => 'Додати вправу';
+
+  @override
+  String get addSetBtn => 'Додати підхід';
 }

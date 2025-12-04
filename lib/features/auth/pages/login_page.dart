@@ -1,14 +1,15 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:gym_tracker_app/data/sources/local/app_db.dart';
 import 'package:gym_tracker_app/features/auth/widgets/auth_form_widget.dart';
 
 import 'package:gym_tracker_app/features/welcome/pages/onboarding_page.dart';
 import 'package:gym_tracker_app/l10n/app_localizations.dart';
 import 'package:gym_tracker_app/services/auth_service.dart';
+import 'package:gym_tracker_app/utils/error_utils.dart';
 import 'package:gym_tracker_app/widget/common/hero_widget.dart';
 import 'package:gym_tracker_app/widget/common/page_title.dart';
+import 'package:gym_tracker_app/widget/common/password_reset_dialog.dart';
 import 'package:gym_tracker_app/widget/common/primary_filled_button.dart';
 import 'package:gym_tracker_app/widget/common/primary_text_button.dart';
 import 'package:gym_tracker_app/widget/common/widget_tree.dart';
@@ -84,6 +85,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> _onGoogleLoginPressed() async {
+    final loc = AppLocalizations.of(context)!;
     setState(() => _loading = true);
     try {
       final user = await _auth.loginWithGoogle();
@@ -92,7 +94,7 @@ class _LoginPageState extends State<LoginPage> {
         _goToApp(); // Перехід на головну
       }
     } catch (e) {
-      _showMessage('Google Sign-In error: $e');
+      _showMessage('${loc.errGoogleSignIn}: $e');
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -120,99 +122,24 @@ class _LoginPageState extends State<LoginPage> {
     try {
       final user = await _auth.login(email: email, password: password);
       if (user == null) {
-        _showMessage('Invalid email or password');
+        if (!mounted) return;
+        _showMessage(AppLocalizations.of(context)!.errInvalidCredentials);
       } else {
-        // await _persistUserId(user.id!);
         if (!mounted) return;
         _goToApp();
       }
     } catch (e) {
-      _showMessage('Login error: ${e.toString()}');
+      final errorMessage = getLocalizedFirebaseError(context, e);
+      _showMessage(errorMessage);
     } finally {
       if (mounted) setState(() => _loading = false);
     }
   }
 
   Future<void> _onForgotPressed() async {
-    final emailCtrl = TextEditingController(text: controllerEmail.text.trim());
-    final loc = AppLocalizations.of(context)!;
-    await showDialog<void>(
+    showForgotPasswordDialog(
       context: context,
-      builder: (ctx) {
-        return AlertDialog(
-          title: const Text('Reset password (local)'),
-          content: TextField(
-            controller: emailCtrl,
-            decoration: InputDecoration(labelText: loc.emailLabel),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(ctx).pop(),
-              child: Text(loc.cancel),
-            ),
-            TextButton(
-              onPressed: () async {
-                final email = emailCtrl.text.trim();
-                if (email.isEmpty) {
-                  _showMessage(loc.errEmailRequired);
-                  return;
-                }
-                final user = await AppDb().getUserByEmail(email);
-                if (!mounted) return;
-                if (user == null) {
-                  _showMessage('No user with that email');
-                  return;
-                }
-
-                Navigator.of(context).pop();
-
-                final newpasswordCtrl = TextEditingController();
-                final newPassword = await showDialog<String>(
-                  context: context,
-                  builder: (ctx2) {
-                    return AlertDialog(
-                      title: const Text('Enter new password'),
-                      content: TextField(
-                        controller: newpasswordCtrl,
-                        decoration: const InputDecoration(
-                          labelText: 'New password',
-                        ),
-                        obscureText: true,
-                      ),
-                      actions: [
-                        TextButton(
-                          onPressed: () => Navigator.of(ctx2).pop(),
-                          child: const Text('Cancel'),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            final newpassword = newpasswordCtrl.text;
-                            if (newpassword.isEmpty) {
-                              if (mounted) _showMessage('Password required');
-                              return;
-                            }
-                            Navigator.of(ctx2).pop(newpassword); // return value
-                          },
-                          child: Text(loc.save),
-                        ),
-                      ],
-                    );
-                  },
-                );
-
-                // after await — check mounted before using context
-                if (!mounted || newPassword == null || newPassword.isEmpty) {
-                  return;
-                }
-
-                await _auth.changePassword(user.id!, newPassword);
-                if (mounted) _showMessage('Password updated');
-              },
-              child: const Text('Reset'),
-            ),
-          ],
-        );
-      },
+      initialEmail: controllerEmail.text.trim(),
     );
   }
 
@@ -300,7 +227,7 @@ class _LoginPageState extends State<LoginPage> {
                           // Якщо у вас немає картинки, використовуйте Icon(Icons.login) тимчасово
                           // Краще: Image.asset('assets/images/google_logo.png', height: 24),
                           icon: const Icon(Icons.g_mobiledata, size: 32),
-                          label: const Text('Google'),
+                          label: Text(loc.googleButton),
                           style: OutlinedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(vertical: 12),
                             side: BorderSide(

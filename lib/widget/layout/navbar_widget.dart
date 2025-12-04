@@ -12,11 +12,29 @@ class NavbarWidget extends StatelessWidget {
       valueListenable: selectedPageNotifier,
       builder: (BuildContext context, dynamic selectedPage, Widget? child) {
         return NavigationBar(
+          // selectedIndex: selectedPage >= 4 ? 0 : selectedPage, // Захист
+          // onDestinationSelected: (int value) {
+          //   selectedPageNotifier.value = value;
+          // },
           destinations: [
-            NavigationDestination(icon: Icon(Icons.home), label: loc.navHome),
             NavigationDestination(
-              icon: Icon(Icons.person),
-              label: loc.navProfile,
+              icon: const Icon(Icons.today),
+              selectedIcon: const Icon(Icons.today_outlined),
+              label: loc.navJournal, // "Щоденник"
+            ),
+            NavigationDestination(
+              icon: const Icon(Icons.calendar_month_outlined),
+              selectedIcon: const Icon(Icons.calendar_month),
+              label: loc.navHistory, // "Історія"
+            ),
+            NavigationDestination(
+              icon: const Icon(Icons.bar_chart),
+              label: loc.navStats, // "Статистика"
+            ),
+            NavigationDestination(
+              icon: const Icon(Icons.person_outline),
+              selectedIcon: const Icon(Icons.person),
+              label: loc.navProfile, // "Профіль"
             ),
           ],
           onDestinationSelected: (int value) {

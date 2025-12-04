@@ -348,5 +348,85 @@
   "goToPlan": "Go to Plan",
   "@goToPlan": { "description": "Button to navigate to plan editor" },
   "maybeLater": "Maybe later",
-  "@maybeLater": { "description": "Button to close proposal dialog" }
+  "@maybeLater": { "description": "Button to close proposal dialog" },
+  
+  "verifyEmailTitle": "Verify Email",
+  "@verifyEmailTitle": { "description": "Verify Email Page Title"},
+  "verifyEmailMessage": "A verification email has been sent to your email address. Please follow the link in the email.",
+  "@verifyEmailMessage": { "description": "Verify Email Page Message"},
+  "resendEmail": "Resend Email",
+  "@resendEmail": { "description": "Resend Email Button"},
+  "cancelLogout": "Cancel (Logout)",
+  "@cancelLogout": { "description": "Cancel and Logout Button"},
+  "resetPasswordTitle": "Reset Password",
+  "@resetPasswordTitle": { "description": "Reset Password Dialog Title"},
+  "resetPasswordInstruction": "Enter your email. We will send you a link to reset your password.",
+  "@resetPasswordInstruction": { "description": "Reset Password Dialog Instruction"},
+  "resetPasswordEmailSent": "Password reset email sent! Check your inbox.",
+  "@resetPasswordEmailSent": { "description": "Reset Password Email Sent Message"},
+  "send": "Send",
+  "@send": { "description": "Send Button"},
+  "googleButton": "Google",
+  "@googleButton": { "description": "Google Sign-In Button"},
+  "errGoogleSignIn": "Google Sign-In error",
+  "@errGoogleSignIn": { "description": "Google Sign-In error message"},
+  "errInvalidCredentials": "Invalid email or password",
+  "@errInvalidCredentials": { "description": "Invalid credentials error message"},
+  "errLoginGeneral": "Login error",
+  "@errLoginGeneral": { "description": "General login error message"},
+
+  "errUserNotFound": "User with this email not found",
+  "@errUserNotFound": { "description": "User not found error message"},
+  "errWrongPassword": "Wrong password",
+  "@errWrongPassword": { "description": "Wrong password error message"},
+  "errEmailAlreadyInUse": "The email address is already in use",
+  "@errEmailAlreadyInUse": { "description": "Email already in use error message"},
+  "errWeakPassword": "Password is too weak",
+  "@errWeakPassword": { "description": "Weak password error message"},
+  "errTooManyRequests": "Too many requests. Try again later",
+  "@errTooManyRequests": { "description": "Too many requests error message"},
+  "errRequiresRecentLogin": "This action requires you to log in again",
+  "@errRequiresRecentLogin": { "description": "Requires recent login error message"},
+  "errUnknown": "An unknown error occurred",
+  "@errUnknown": { "description": "Unknown error message"},
+
+  "delPhoto": "Delete photo",
+  "@delPhoto": {"description": "Delete photo text"},
+
+  "navJournal": "Journal",
+  "@navJournal": {
+    "description": "Label for the first tab in the bottom navigation bar (Today's workout)"
+  },
+  "navHistory": "History",
+  "@navHistory": {
+    "description": "Label for the second tab in the bottom navigation bar (Calendar/Past workouts)"
+  },
+  "navStats": "Statistics",
+  "@navStats": {
+    "description": "Label for the third tab in the bottom navigation bar (Graphs and analysis)"
+  },
+  "startWorkout": "Start Workout",
+  "@startWorkout": {
+    "description": "Text on the main button to begin a new workout session"
+  },
+  "continueWorkout": "Continue Workout",
+  "@continueWorkout": {
+    "description": "Text on the main button to resume an existing workout session for today"
+  },
+  "workoutToday": "Workout for Today",
+  "@workoutToday": {
+    "description": "Title displayed on the dashboard card showing the current day's workout"
+  },
+  "noWorkoutToday": "No workout logged for today",
+  "@noWorkoutToday": {
+    "description": "Message displayed on the Journal tab when there is no workout data for the current day"
+  },
+  "addExerciseBtn": "Add Exercise",
+  "@addExerciseBtn": {
+    "description": "Button label to open the exercise picker and add a new exercise to the workout"
+  },
+  "addSetBtn": "Add Set",
+  "@addSetBtn": {
+    "description": "Button label inside a specific exercise card to add a new set row"
+  }
 }

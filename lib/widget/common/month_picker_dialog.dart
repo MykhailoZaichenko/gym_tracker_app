@@ -108,7 +108,7 @@ class _MonthPickerDialogState extends State<MonthPickerDialog>
   }
 
   bool _isMonthSelectable(int year, int month) {
-    final dateToCheck = DateTime(year, month);
+    // final dateToCheck = DateTime(year, month);
     // Порівнюємо з першим числом місяця firstDate та останнім числом місяця lastDate
     // Для спрощення: перевіряємо, чи місяць випадає з діапазону
 
@@ -133,7 +133,7 @@ class _MonthPickerDialogState extends State<MonthPickerDialog>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final primary = theme.colorScheme.primary;
+    // final primary = theme.colorScheme.primary;
     final loc = AppLocalizations.of(context)!;
 
     final canGoBack = _year > widget.firstDate.year;

@@ -17,7 +17,10 @@ class FirestoreService {
   Future<void> saveUser(app_user.User user) async {
     if (currentUserId == null) return;
     // Зберігаємо в колекцію 'users', документ називаємо ID юзера
-    await _db.collection('users').doc(currentUserId).set(user.toMap());
+    await _db
+        .collection('users')
+        .doc(currentUserId)
+        .set(user.toMap(), SetOptions(merge: true));
   }
 
   // Отримання профілю

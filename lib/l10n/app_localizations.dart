@@ -1003,6 +1003,180 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Maybe later'**
   String get maybeLater;
+
+  /// Verify Email Page Title
+  ///
+  /// In en, this message translates to:
+  /// **'Verify Email'**
+  String get verifyEmailTitle;
+
+  /// Verify Email Page Message
+  ///
+  /// In en, this message translates to:
+  /// **'A verification email has been sent to your email address. Please follow the link in the email.'**
+  String get verifyEmailMessage;
+
+  /// Resend Email Button
+  ///
+  /// In en, this message translates to:
+  /// **'Resend Email'**
+  String get resendEmail;
+
+  /// Cancel and Logout Button
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel (Logout)'**
+  String get cancelLogout;
+
+  /// Reset Password Dialog Title
+  ///
+  /// In en, this message translates to:
+  /// **'Reset Password'**
+  String get resetPasswordTitle;
+
+  /// Reset Password Dialog Instruction
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your email. We will send you a link to reset your password.'**
+  String get resetPasswordInstruction;
+
+  /// Reset Password Email Sent Message
+  ///
+  /// In en, this message translates to:
+  /// **'Password reset email sent! Check your inbox.'**
+  String get resetPasswordEmailSent;
+
+  /// Send Button
+  ///
+  /// In en, this message translates to:
+  /// **'Send'**
+  String get send;
+
+  /// Google Sign-In Button
+  ///
+  /// In en, this message translates to:
+  /// **'Google'**
+  String get googleButton;
+
+  /// Google Sign-In error message
+  ///
+  /// In en, this message translates to:
+  /// **'Google Sign-In error'**
+  String get errGoogleSignIn;
+
+  /// Invalid credentials error message
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid email or password'**
+  String get errInvalidCredentials;
+
+  /// General login error message
+  ///
+  /// In en, this message translates to:
+  /// **'Login error'**
+  String get errLoginGeneral;
+
+  /// User not found error message
+  ///
+  /// In en, this message translates to:
+  /// **'User with this email not found'**
+  String get errUserNotFound;
+
+  /// Wrong password error message
+  ///
+  /// In en, this message translates to:
+  /// **'Wrong password'**
+  String get errWrongPassword;
+
+  /// Email already in use error message
+  ///
+  /// In en, this message translates to:
+  /// **'The email address is already in use'**
+  String get errEmailAlreadyInUse;
+
+  /// Weak password error message
+  ///
+  /// In en, this message translates to:
+  /// **'Password is too weak'**
+  String get errWeakPassword;
+
+  /// Too many requests error message
+  ///
+  /// In en, this message translates to:
+  /// **'Too many requests. Try again later'**
+  String get errTooManyRequests;
+
+  /// Requires recent login error message
+  ///
+  /// In en, this message translates to:
+  /// **'This action requires you to log in again'**
+  String get errRequiresRecentLogin;
+
+  /// Unknown error message
+  ///
+  /// In en, this message translates to:
+  /// **'An unknown error occurred'**
+  String get errUnknown;
+
+  /// Delete photo text
+  ///
+  /// In en, this message translates to:
+  /// **'Delete photo'**
+  String get delPhoto;
+
+  /// Label for the first tab in the bottom navigation bar (Today's workout)
+  ///
+  /// In en, this message translates to:
+  /// **'Journal'**
+  String get navJournal;
+
+  /// Label for the second tab in the bottom navigation bar (Calendar/Past workouts)
+  ///
+  /// In en, this message translates to:
+  /// **'History'**
+  String get navHistory;
+
+  /// Label for the third tab in the bottom navigation bar (Graphs and analysis)
+  ///
+  /// In en, this message translates to:
+  /// **'Statistics'**
+  String get navStats;
+
+  /// Text on the main button to begin a new workout session
+  ///
+  /// In en, this message translates to:
+  /// **'Start Workout'**
+  String get startWorkout;
+
+  /// Text on the main button to resume an existing workout session for today
+  ///
+  /// In en, this message translates to:
+  /// **'Continue Workout'**
+  String get continueWorkout;
+
+  /// Title displayed on the dashboard card showing the current day's workout
+  ///
+  /// In en, this message translates to:
+  /// **'Workout for Today'**
+  String get workoutToday;
+
+  /// Message displayed on the Journal tab when there is no workout data for the current day
+  ///
+  /// In en, this message translates to:
+  /// **'No workout logged for today'**
+  String get noWorkoutToday;
+
+  /// Button label to open the exercise picker and add a new exercise to the workout
+  ///
+  /// In en, this message translates to:
+  /// **'Add Exercise'**
+  String get addExerciseBtn;
+
+  /// Button label inside a specific exercise card to add a new set row
+  ///
+  /// In en, this message translates to:
+  /// **'Add Set'**
+  String get addSetBtn;
 }
 
 class _AppLocalizationsDelegate

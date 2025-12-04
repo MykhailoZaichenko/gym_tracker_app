@@ -7,6 +7,7 @@ import 'package:gym_tracker_app/l10n/app_localizations.dart';
 import 'package:gym_tracker_app/services/firestore_service.dart';
 
 import 'package:gym_tracker_app/features/workout/workout_exports.dart';
+import 'package:gym_tracker_app/utils/utils.dart';
 import 'package:gym_tracker_app/widget/common/pop_save_wideget.dart';
 import 'package:intl/intl.dart';
 
@@ -14,12 +15,14 @@ class WorkoutPage extends StatefulWidget {
   final DateTime date;
   final List<WorkoutExercise> exercises;
   final void Function(List<WorkoutExercise>) onSave;
+  final bool shouldAutoPick;
 
   const WorkoutPage({
     super.key,
     required this.date,
     required this.exercises,
     required this.onSave,
+    this.shouldAutoPick = false,
   });
 
   @override
@@ -43,15 +46,6 @@ class _WorkoutPageState extends State<WorkoutPage> {
     _loadExercises();
   }
 
-  /// Якщо value ціле — повертає без .0, інакше — як є
-  String _formatDouble(double? value) {
-    if (value == null) return '';
-    return value == value.roundToDouble()
-        ? value.toInt().toString()
-        : value.toString();
-  }
-
-  // Завантажуємо збережені вправи або беремо widget.exercises
   Future<void> _loadExercises() async {
     final savedExercises = await _firestore.getWorkout(widget.date);
 
@@ -60,21 +54,24 @@ class _WorkoutPageState extends State<WorkoutPage> {
     } else if (widget.exercises.isNotEmpty) {
       _exercises = List.from(widget.exercises);
     } else {
-      // Якщо пусто — перевіряємо план на цей день
-      final plan = await _firestore.getWeeklyPlan();
-      final weekdayKey = DateFormat.E('en').format(widget.date);
-      final planned = plan[weekdayKey] ?? [];
+      if (!widget.shouldAutoPick) {
+        final plan = await _firestore.getWeeklyPlan();
+        final weekdayKey = DateFormat.E('en').format(widget.date);
+        final planned = plan[weekdayKey] ?? [];
 
-      if (planned.isNotEmpty) {
-        _exercises = planned
-            .map(
-              (idOrName) => WorkoutExercise(
-                name: idOrName,
-                exerciseId: idOrName,
-                sets: [SetData()],
-              ),
-            )
-            .toList();
+        if (planned.isNotEmpty) {
+          _exercises = planned
+              .map(
+                (idOrName) => WorkoutExercise(
+                  name: idOrName,
+                  exerciseId: idOrName,
+                  sets: [SetData()],
+                ),
+              )
+              .toList();
+        } else {
+          _exercises = [];
+        }
       } else {
         _exercises = [];
       }
@@ -85,11 +82,16 @@ class _WorkoutPageState extends State<WorkoutPage> {
       setState(() {
         _isLoading = false;
       });
+      if (widget.shouldAutoPick && _exercises.isEmpty) {
+        // Невелика затримка, щоб UI встиг побудуватися
+        Future.delayed(const Duration(milliseconds: 100), () {
+          _addExercise();
+        });
+      }
     }
     _initialEncoded = jsonEncode(_exercises.map((e) => e.toMap()).toList());
   }
 
-  // Ініціалізуємо TextEditingController-и на основі _exercises
   void _initControllers() {
     _nameCtrls.clear();
     _weightCtrls.clear();
@@ -101,7 +103,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
       final wList = <TextEditingController>[];
       final rList = <TextEditingController>[];
       for (var set in ex.sets) {
-        wList.add(TextEditingController(text: _formatDouble(set.weight)));
+        wList.add(TextEditingController(text: formatDouble(set.weight)));
         rList.add(TextEditingController(text: set.reps?.toString() ?? ''));
       }
       _weightCtrls.add(wList);
@@ -121,7 +123,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
     }
 
     final foundByName = catalog.firstWhere(
-      (e) => e.id == exercise.name, // Перевіряємо, чи name є ID
+      (e) => e.id == exercise.name,
       orElse: () => ExerciseInfo(id: '', name: '', icon: Icons.error),
     );
     if (foundByName.name.isNotEmpty) return foundByName.name;
@@ -143,7 +145,6 @@ class _WorkoutPageState extends State<WorkoutPage> {
     _initialEncoded = jsonEncode(_exercises.map((e) => e.toMap()).toList());
   }
 
-  // Серіалізація поточного стану з контролерів (не змінює модель _exercises)
   String _encodeCurrentFromControllers() {
     final current = <Map<String, dynamic>>[];
     for (var i = 0; i < _exercises.length; i++) {
@@ -173,15 +174,45 @@ class _WorkoutPageState extends State<WorkoutPage> {
     return _initialEncoded != current;
   }
 
-  // Додаємо нову вправу
-  void _addExercise() {
+  Future<void> _addExercise() async {
+    final selected = await showExercisePicker(context);
+    if (selected == null) return;
+
+    String name = selected.name;
+    String? id = selected.id;
+
+    if (selected.id == '__custom__') {
+      name = '';
+      id = null;
+    }
+
     setState(() {
       _exercises.add(
-        WorkoutExercise(name: '', exerciseId: null, sets: [SetData()]),
+        WorkoutExercise(name: name, exerciseId: id, sets: [SetData()]),
       );
-      _nameCtrls.add(TextEditingController());
+      _nameCtrls.add(TextEditingController(text: name));
       _weightCtrls.add([TextEditingController()]);
       _repsCtrls.add([TextEditingController()]);
+    });
+  }
+
+  void _addSet(int exIndex) {
+    setState(() {
+      // Копіюємо попередній сет для зручності, якщо він є
+      final lastSet = _exercises[exIndex].sets.isNotEmpty
+          ? _exercises[exIndex].sets.last
+          : null;
+
+      _exercises[exIndex].sets.add(
+        SetData(weight: lastSet?.weight, reps: lastSet?.reps),
+      );
+
+      _weightCtrls[exIndex].add(
+        TextEditingController(text: formatDouble(lastSet?.weight)),
+      );
+      _repsCtrls[exIndex].add(
+        TextEditingController(text: lastSet?.reps?.toString() ?? ''),
+      );
     });
   }
 
@@ -194,20 +225,10 @@ class _WorkoutPageState extends State<WorkoutPage> {
     });
   }
 
-  void _addSet(int exIndex) {
-    setState(() {
-      _exercises[exIndex].sets.add(SetData());
-      _weightCtrls[exIndex].add(TextEditingController());
-      _repsCtrls[exIndex].add(TextEditingController());
-    });
-  }
-
   void _removeExercise(int index) {
     setState(() {
       _exercises.removeAt(index);
-
       _nameCtrls.removeAt(index).dispose();
-
       _weightCtrls.removeAt(index).forEach((c) => c.dispose());
       _repsCtrls.removeAt(index).forEach((c) => c.dispose());
     });
@@ -293,15 +314,19 @@ class _WorkoutPageState extends State<WorkoutPage> {
           ],
         ),
         body: ListView.builder(
-          padding: const EdgeInsets.all(8),
+          padding: const EdgeInsets.fromLTRB(8, 8, 8, 80),
+          // padding: const EdgeInsets.all(8),
           itemCount: _exercises.length,
           itemBuilder: (context, i) {
             final exercise = _exercises[i];
             final localizedName = _getLocalizedName(exercise, loc);
             return Card(
-              margin: const EdgeInsets.all(8),
+              margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
               child: Padding(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(12),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -346,7 +371,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
                         );
                       },
                     ),
-                    const SizedBox(height: 8),
+                    const Divider(),
                     ExerciseSetsList(
                       exercise: exercise,
                       weightControllers: _weightCtrls[i],

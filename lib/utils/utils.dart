@@ -8,3 +8,10 @@ String formatNumberCompact(double v) {
   if (v == v.roundToDouble()) return v.toInt().toString();
   return v.toStringAsFixed(1);
 }
+
+String formatDouble(double? value) {
+  if (value == null) return '';
+  return value == value.roundToDouble()
+      ? value.toInt().toString()
+      : value.toString();
+}

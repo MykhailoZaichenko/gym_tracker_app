@@ -9,7 +9,6 @@ import 'package:gym_tracker_app/widget/common/avatar_widget.dart';
 import 'package:gym_tracker_app/widget/common/confirm_dialog.dart';
 
 import 'package:gym_tracker_app/widget/common/primary_filled_button.dart';
-import 'package:gym_tracker_app/widget/common/secondary_icon_text_button.dart';
 import 'package:gym_tracker_app/widget/common/style_text_field.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as p;
@@ -47,8 +46,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
       text: widget.user.weightKg?.toString() ?? '',
     );
     _avatarPath = widget.user.avatarUrl;
-
-    // _loadWeightFromPrefs();
   }
 
   @override
@@ -82,14 +79,12 @@ class _EditProfilePageState extends State<EditProfilePage> {
     return null;
   }
 
-  // ... (_appDir, _copyFileToAppDir, _pickAvatar, _removeAvatar - без змін) ...
   Future<Directory> _appDir() async {
     final dir = await getApplicationDocumentsDirectory();
     return dir;
   }
 
   Future<String?> _copyFileToAppDir(String sourcePath, {int? userId}) async {
-    // ... (код копіювання файлу)
     try {
       final src = File(sourcePath);
       if (!await src.exists()) return null;
@@ -119,18 +114,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
       );
       if (picked == null) return;
 
-      final newPath = await _copyFileToAppDir(
-        picked.path,
-        // userId: widget.user.id,
-      );
-      if (newPath == null) return; // error handling simplified for brevity
-
-      // if (_avatarPath != null && _avatarPath != newPath) {
-      //   try {
-      //     final oldFile = File(_avatarPath!);
-      //     if (await oldFile.exists()) await oldFile.delete();
-      //   } catch (_) {}
-      // }
+      final newPath = await _copyFileToAppDir(picked.path);
+      if (newPath == null) return;
 
       setState(() {
         _avatarPath = newPath;
@@ -173,7 +158,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
     );
 
     try {
-      // Зберігаємо в Firestore
       await _firestore.saveUser(updatedUser);
 
       if (!mounted) return;
@@ -247,42 +231,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
                             );
                             if (confirmed == true) await _removeAvatar();
                           },
-                        ),
-                        const SizedBox(height: 12),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SecondaryIconTextButton(
-                              label: loc.edit,
-                              icon: Icons.edit,
-                              variant: ButtonVariant.outlined,
-                              isLoading: _isPickingAvatar,
-                              onPressed: _pickAvatar,
-                            ),
-                            const SizedBox(width: 12),
-                            if ((_avatarPath != null &&
-                                    _avatarPath!.isNotEmpty) ||
-                                (widget.user.avatarUrl != null &&
-                                    widget.user.avatarUrl!.isNotEmpty))
-                              SecondaryIconTextButton(
-                                label: loc.delete,
-                                icon: Icons.delete_outline,
-                                variant: ButtonVariant.destructive,
-                                onPressed: () async {
-                                  final confirmed =
-                                      await showConfirmationDialog(
-                                        context: context,
-                                        title: loc.deletePhotoTitle,
-                                        content: loc.deletePhotoConfirm,
-                                        confirmText: loc.yes,
-                                        cancelText: loc.no,
-                                      );
-                                  if (confirmed == true) {
-                                    await _removeAvatar();
-                                  }
-                                },
-                              ),
-                          ],
                         ),
                       ],
                     ),

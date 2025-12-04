@@ -480,4 +480,95 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get maybeLater => 'Maybe later';
+
+  @override
+  String get verifyEmailTitle => 'Verify Email';
+
+  @override
+  String get verifyEmailMessage =>
+      'A verification email has been sent to your email address. Please follow the link in the email.';
+
+  @override
+  String get resendEmail => 'Resend Email';
+
+  @override
+  String get cancelLogout => 'Cancel (Logout)';
+
+  @override
+  String get resetPasswordTitle => 'Reset Password';
+
+  @override
+  String get resetPasswordInstruction =>
+      'Enter your email. We will send you a link to reset your password.';
+
+  @override
+  String get resetPasswordEmailSent =>
+      'Password reset email sent! Check your inbox.';
+
+  @override
+  String get send => 'Send';
+
+  @override
+  String get googleButton => 'Google';
+
+  @override
+  String get errGoogleSignIn => 'Google Sign-In error';
+
+  @override
+  String get errInvalidCredentials => 'Invalid email or password';
+
+  @override
+  String get errLoginGeneral => 'Login error';
+
+  @override
+  String get errUserNotFound => 'User with this email not found';
+
+  @override
+  String get errWrongPassword => 'Wrong password';
+
+  @override
+  String get errEmailAlreadyInUse => 'The email address is already in use';
+
+  @override
+  String get errWeakPassword => 'Password is too weak';
+
+  @override
+  String get errTooManyRequests => 'Too many requests. Try again later';
+
+  @override
+  String get errRequiresRecentLogin =>
+      'This action requires you to log in again';
+
+  @override
+  String get errUnknown => 'An unknown error occurred';
+
+  @override
+  String get delPhoto => 'Delete photo';
+
+  @override
+  String get navJournal => 'Journal';
+
+  @override
+  String get navHistory => 'History';
+
+  @override
+  String get navStats => 'Statistics';
+
+  @override
+  String get startWorkout => 'Start Workout';
+
+  @override
+  String get continueWorkout => 'Continue Workout';
+
+  @override
+  String get workoutToday => 'Workout for Today';
+
+  @override
+  String get noWorkoutToday => 'No workout logged for today';
+
+  @override
+  String get addExerciseBtn => 'Add Exercise';
+
+  @override
+  String get addSetBtn => 'Add Set';
 }

@@ -2,11 +2,11 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 
 class AvatarWidget extends StatelessWidget {
-  final String? avatarPath; // Local file path or null
-  final String name; // To show first letter if no image
+  final String? avatarPath;
+  final String name;
   final double radius;
-  final VoidCallback? onEditPressed; // optional edit handler
-  final VoidCallback? onDeletePressed; // optional delete handler
+  final VoidCallback? onEditPressed;
+  final VoidCallback? onDeletePressed;
 
   const AvatarWidget({
     super.key,
@@ -60,7 +60,6 @@ class AvatarWidget extends StatelessWidget {
                   : null,
             ),
 
-            // Кнопка редагування (якщо передана)
             if (onEditPressed != null)
               Positioned(
                 bottom: 0,
@@ -68,7 +67,7 @@ class AvatarWidget extends StatelessWidget {
                 child: InkWell(
                   onTap: onEditPressed,
                   child: Container(
-                    padding: const EdgeInsets.all(8),
+                    padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
                       color: theme.colorScheme.secondary,
                       shape: BoxShape.circle,
@@ -85,21 +84,44 @@ class AvatarWidget extends StatelessWidget {
                   ),
                 ),
               ),
+            if (onDeletePressed != null && avatarPath != null)
+              Positioned(
+                bottom: 0,
+                left: 0,
+                child: InkWell(
+                  onTap: onDeletePressed,
+                  child: Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: Color.fromARGB(255, 189, 0, 0),
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: theme.scaffoldBackgroundColor,
+                        width: 2,
+                      ),
+                    ),
+                    child: const Icon(
+                      Icons.delete,
+                      size: 16,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
           ],
         ),
 
-        // Кнопка видалення (якщо передана і є аватар)
-        if (onDeletePressed != null && avatarPath != null)
-          Padding(
-            padding: const EdgeInsets.only(top: 8.0),
-            child: InkWell(
-              onTap: onDeletePressed,
-              child: Text(
-                'Видалити фото', // Можна локалізувати
-                style: TextStyle(color: theme.colorScheme.error, fontSize: 12),
-              ),
-            ),
-          ),
+        // if (onDeletePressed != null && avatarPath != null)
+        //   Padding(
+        //     padding: const EdgeInsets.only(top: 8.0),
+        //     child: InkWell(
+        //       onTap: onDeletePressed,
+        //       child: Text(
+        //         loc.delPhoto, // Можна локалізувати
+        //         style: TextStyle(color: theme.colorScheme.error, fontSize: 12),
+        //       ),
+        //     ),
+        //   ),
       ],
     );
   }

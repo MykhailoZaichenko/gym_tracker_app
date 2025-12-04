@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gym_tracker_app/core/utils.dart';
+import 'package:gym_tracker_app/utils/utils.dart';
 import 'package:gym_tracker_app/l10n/app_localizations.dart';
 import 'package:gym_tracker_app/widget/common/month_picker_dialog.dart';
 import 'package:gym_tracker_app/widget/common/stat_tile_widget.dart';

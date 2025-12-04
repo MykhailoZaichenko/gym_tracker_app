@@ -1,9 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart' as fb_auth;
 import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/core/locale/locale_serviece.dart';
-import 'package:gym_tracker_app/features/auth/pages/login_page.dart';
 import 'package:gym_tracker_app/features/auth/pages/verify_email_page.dart';
-import 'package:gym_tracker_app/features/home/pages/home_page.dart';
 import 'package:gym_tracker_app/features/welcome/pages/welcome_page.dart';
 import 'package:gym_tracker_app/l10n/app_localizations.dart';
 import 'package:gym_tracker_app/widget/common/widget_tree.dart';

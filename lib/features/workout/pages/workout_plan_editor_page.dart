@@ -85,7 +85,6 @@ class _WorkoutPlanEditorPageState extends State<WorkoutPlanEditorPage> {
   Future<void> _savePlan() async {
     final loc = AppLocalizations.of(context)!;
 
-    // Зберігаємо в Firestore
     await _firestore.saveWeeklyPlan(_plan);
 
     if (!mounted) return;
@@ -184,7 +183,10 @@ class _WorkoutPlanEditorPageState extends State<WorkoutPlanEditorPage> {
           title: Text(loc.editPlanTitle),
           actions: [
             IconButton(
-              onPressed: _savePlan,
+              onPressed: () async {
+                await _savePlan();
+                if (context.mounted) Navigator.pop(context, true);
+              },
               icon: const Icon(Icons.save),
               tooltip: loc.savePlanTooltip,
             ),

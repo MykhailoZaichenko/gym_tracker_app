@@ -7,14 +7,14 @@ import 'package:gym_tracker_app/features/profile/profile_exports.dart';
 import 'package:gym_tracker_app/services/firestore_service.dart';
 import 'package:gym_tracker_app/features/workout/models/workout_exercise_model.dart'; // Потрібен для моделі WorkoutExercise
 
-class ProfileGrafPage extends StatefulWidget {
-  const ProfileGrafPage({super.key});
+class ProfilePage extends StatefulWidget {
+  const ProfilePage({super.key});
 
   @override
-  State<ProfileGrafPage> createState() => _ProfileGrafPageState();
+  State<ProfilePage> createState() => _ProfilePageState();
 }
 
-class _ProfileGrafPageState extends State<ProfileGrafPage> {
+class _ProfilePageState extends State<ProfilePage> {
   User? _user;
   bool _isLoading = true;
   final FirestoreService _firestore = FirestoreService();

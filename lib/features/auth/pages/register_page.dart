@@ -11,7 +11,6 @@ import 'package:gym_tracker_app/widget/common/page_title.dart';
 import 'package:gym_tracker_app/widget/common/primary_filled_button.dart';
 import 'package:gym_tracker_app/widget/common/primary_text_button.dart';
 import 'package:gym_tracker_app/features/auth/pages/login_page.dart';
-import 'package:gym_tracker_app/widget/common/widget_tree.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../services/auth_service.dart';
 
@@ -108,6 +107,7 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   Future<void> _onGoogleRegisterPressed() async {
+    final loc = AppLocalizations.of(context)!;
     setState(() => _loading = true);
     try {
       // Цей метод в AuthService вже містить логіку створення юзера, якщо його немає
@@ -132,7 +132,7 @@ class _RegisterPageState extends State<RegisterPage> {
         _goToApp();
       }
     } catch (e) {
-      _showMessage('Google Sign-In error: $e');
+      _showMessage('${loc.errGoogleSignIn}: $e');
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -151,31 +151,23 @@ class _RegisterPageState extends State<RegisterPage> {
 
     setState(() => _loading = true);
     try {
-      // 1. Реєструємо користувача (створюється у Firestore з вагою 0/null)
       final newUser = await _auth.register(
         email: email,
         name: name,
         password: password,
       );
 
-      // 2. Зчитуємо вагу з SharedPreferences (збережену на Onboarding)
       final prefs = await SharedPreferences.getInstance();
       final savedWeight = prefs.getDouble('user_weight');
 
-      // 3. Якщо вага була введена, оновлюємо профіль у Firestore
       if (savedWeight != null && savedWeight > 0) {
-        // Створюємо оновлену копію юзера з правильною вагою
-        // (Припускаємо, що модель User має метод copyWith)
         final updatedUser = newUser.copyWith(weightKg: savedWeight);
 
-        // Зберігаємо оновлений профіль
         await _firestore.saveUser(updatedUser);
 
-        // Очищаємо тимчасове значення
         await prefs.remove('user_weight');
       }
 
-      // 4. Переходимо до додатку
       if (!mounted) return;
       _goToApp();
     } catch (e) {
@@ -192,16 +184,11 @@ class _RegisterPageState extends State<RegisterPage> {
       UserCredential userCredential = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(email: email, password: password);
 
-      // 2. ВАЖЛИВО: Одразу відправляємо лист підтвердження!
-      // Бо VerifyEmailPage відкриється, але юзер ще не натиснув там кнопку "Resend"
       await userCredential.user?.sendEmailVerification();
-
-      // 3. НІЯКОЇ НАВІГАЦІЇ ТУТ НЕ ТРЕБА (якщо це окрема сторінка)
-      // Якщо це було модальне вікно або сторінка в стеку, можна зробити лише:
-      // Navigator.pop(context); // Щоб закрити сторінку реєстрації і повернутися до StreamBuilder
     } catch (e) {
-      // Обробка помилок
+      _showMessage(e.toString().replaceAll('Exception: ', ''));
     }
+    if (!mounted) return;
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(builder: (_) => const VerifyEmailPage()),
@@ -239,7 +226,6 @@ class _RegisterPageState extends State<RegisterPage> {
     return null;
   }
 
-  // Функції debounce для передачі в AuthPageWidget
   void _onEmailChanged(String value) {
     _emailDebounce?.cancel();
     _emailDebounce = Timer(const Duration(milliseconds: 700), () {
@@ -268,7 +254,6 @@ class _RegisterPageState extends State<RegisterPage> {
     });
   }
 
-  // Обробники submit для полів
   void _onEmailSubmitted(_) => FocusScope.of(context).requestFocus(nameFocus);
   void _onNameSubmitted(_) =>
       FocusScope.of(context).requestFocus(passwordFocus);
@@ -336,16 +321,12 @@ class _RegisterPageState extends State<RegisterPage> {
                       ),
                       const SizedBox(height: 12),
 
-                      // 2. Кнопка Google (Додано)
                       SizedBox(
                         width: double.infinity,
                         child: OutlinedButton.icon(
                           onPressed: _loading ? null : _onGoogleRegisterPressed,
-                          icon: const Icon(
-                            Icons.g_mobiledata,
-                            size: 32,
-                          ), // Або Image.asset
-                          label: const Text('Google'),
+                          icon: const Icon(Icons.g_mobiledata, size: 32),
+                          label: Text(loc.googleButton),
                           style: OutlinedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(vertical: 10),
                             side: BorderSide(

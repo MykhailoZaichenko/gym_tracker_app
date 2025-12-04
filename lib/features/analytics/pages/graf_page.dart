@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:gym_tracker_app/core/constants/constants.dart';
 import 'package:gym_tracker_app/core/theme/theme_service.dart';
-import 'package:gym_tracker_app/core/utils.dart';
+import 'package:gym_tracker_app/utils/utils.dart';
 import 'package:gym_tracker_app/features/analytics/widgets/line_chart_card.dart';
 import 'package:gym_tracker_app/l10n/app_localizations.dart';
 import 'package:gym_tracker_app/services/firestore_service.dart';

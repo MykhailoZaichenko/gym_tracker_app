@@ -7,7 +7,7 @@ class LocaleService {
 
   // Notifier, який тримає поточну локаль. За замовчуванням - українська.
   static final ValueNotifier<Locale> localeNotifier = ValueNotifier(
-    const Locale('uk'),
+    const Locale('en'),
   );
 
   // Завантаження збереженої мови при запуску
