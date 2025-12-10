@@ -500,6 +500,12 @@ abstract class AppLocalizations {
   /// **'{count, plural, one{1 set} other{{count} sets}}'**
   String setsCount(int count);
 
+  /// Exercise count plural
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{1 exercise} other{{count} exercises}}'**
+  String exercisesCount(int count);
+
   /// Delete set menu item
   ///
   /// In en, this message translates to:

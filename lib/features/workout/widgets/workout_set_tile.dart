@@ -8,17 +8,23 @@ class ExerciseSetTile extends StatelessWidget {
     required this.weightController,
     required this.repsController,
     required this.onRemoveSetTile,
+    required this.weightFocusNode,
+    required this.repsFocusNode,
+    this.isLastSet = false,
+    this.onRepsSubmitted,
   });
 
   final int index;
   final TextEditingController weightController;
   final TextEditingController repsController;
   final VoidCallback onRemoveSetTile;
+  final FocusNode? weightFocusNode;
+  final FocusNode? repsFocusNode;
+  final bool isLastSet;
+  final VoidCallback? onRepsSubmitted;
 
   @override
   Widget build(BuildContext context) {
-    final weightFocus = FocusNode();
-    final repsFocus = FocusNode();
     final loc = AppLocalizations.of(context)!;
 
     return Container(
@@ -67,19 +73,20 @@ class ExerciseSetTile extends StatelessWidget {
                 SizedBox(
                   width: 50,
                   child: TextField(
-                    focusNode: weightFocus,
+                    focusNode: weightFocusNode,
                     textAlign: TextAlign.center,
                     controller: weightController,
                     keyboardType: const TextInputType.numberWithOptions(
                       decimal: true,
                     ),
                     textInputAction: TextInputAction.next,
+                    scrollPadding: const EdgeInsets.only(bottom: 200),
                     decoration: InputDecoration(
                       hintText: loc.weightUnitHint,
                       border: InputBorder.none,
                     ),
                     onSubmitted: (_) {
-                      FocusScope.of(context).requestFocus(repsFocus);
+                      repsFocusNode!.requestFocus();
                     },
                   ),
                 ),
@@ -88,17 +95,23 @@ class ExerciseSetTile extends StatelessWidget {
                 SizedBox(
                   width: 50,
                   child: TextField(
-                    focusNode: repsFocus,
+                    focusNode: repsFocusNode,
                     textAlign: TextAlign.center,
                     controller: repsController,
                     keyboardType: TextInputType.number,
-                    textInputAction: TextInputAction.done,
+                    scrollPadding: const EdgeInsets.only(bottom: 200),
+                    textInputAction: isLastSet
+                        ? TextInputAction.done
+                        : TextInputAction.next,
                     decoration: InputDecoration(
                       hintText: loc.repsUnitHint,
                       border: InputBorder.none,
                     ),
                     onSubmitted: (_) {
-                      repsFocus.unfocus();
+                      // Викликаємо колбек для переходу на наступний сет
+                      if (onRepsSubmitted != null) {
+                        onRepsSubmitted!();
+                      }
                     },
                   ),
                 ),

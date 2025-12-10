@@ -3,22 +3,26 @@ import 'package:gym_tracker_app/features/workout/widgets/workout_set_tile.dart';
 import 'package:gym_tracker_app/features/workout/models/workout_exercise_model.dart';
 
 class ExerciseSetsList extends StatelessWidget {
+  final WorkoutExercise exercise;
+  final List<TextEditingController> weightControllers;
+  final List<TextEditingController> repsControllers;
+  final List<FocusNode> weightFocusNodes;
+  final List<FocusNode> repsFocusNodes;
+  final VoidCallback onAddSet;
+  final void Function(int setIndex) onRemoveSet;
+  final String Function(double? v) formatDouble;
+
   const ExerciseSetsList({
     super.key,
     required this.exercise,
     required this.weightControllers,
     required this.repsControllers,
+    required this.weightFocusNodes,
+    required this.repsFocusNodes,
     required this.onAddSet,
     required this.onRemoveSet,
     required this.formatDouble,
   });
-
-  final WorkoutExercise exercise;
-  final List<TextEditingController> weightControllers;
-  final List<TextEditingController> repsControllers;
-  final VoidCallback onAddSet;
-  final void Function(int setIndex) onRemoveSet;
-  final String Function(double? v) formatDouble;
 
   @override
   Widget build(BuildContext context) {
@@ -32,17 +36,19 @@ class ExerciseSetsList extends StatelessWidget {
               for (int j = 0; j < exercise.sets.length; j++)
                 ExerciseSetTile(
                   index: j,
-                  weightController: weightControllers.length > j
-                      ? weightControllers[j]
-                      : TextEditingController(
-                          text: formatDouble(exercise.sets[j].weight),
-                        ),
-                  repsController: repsControllers.length > j
-                      ? repsControllers[j]
-                      : TextEditingController(
-                          text: exercise.sets[j].reps?.toString() ?? '',
-                        ),
+                  weightController: weightControllers[j],
+                  repsController: repsControllers[j],
+                  weightFocusNode: weightFocusNodes[j],
+                  repsFocusNode: repsFocusNodes[j],
+                  isLastSet: j == exercise.sets.length - 1,
                   onRemoveSetTile: () => onRemoveSet(j),
+                  onRepsSubmitted: () {
+                    if (j + 1 < weightFocusNodes.length) {
+                      weightFocusNodes[j + 1].requestFocus();
+                    } else {
+                      FocusScope.of(context).unfocus();
+                    }
+                  },
                 ),
             ],
           ),

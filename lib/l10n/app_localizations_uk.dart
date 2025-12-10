@@ -221,6 +221,19 @@ class AppLocalizationsUk extends AppLocalizations {
   }
 
   @override
+  String exercisesCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count вправ',
+      many: '$count вправ',
+      few: '$count вправи',
+      one: '1 вправа',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String deleteSet(int number) {
     return 'Видалити підхід $number';
   }

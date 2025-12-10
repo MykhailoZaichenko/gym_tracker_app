@@ -74,6 +74,7 @@
   "repsUnitHint": "Повт",
 
   "setsCount": "{count, plural, one{1 підхід} few{{count} підходи} many{{count} підходів} other{{count} підходів}}",
+  "exercisesCount": "{count, plural, one{1 вправа} few{{count} вправи} many{{count} вправ} other{{count} вправ}}",
   "deleteSet": "Видалити підхід {number}",
   "setNumber": "Підхід {number}",
   

@@ -118,7 +118,7 @@ class _JournalPageState extends State<JournalPage> {
                     Padding(
                       padding: const EdgeInsets.only(top: 8.0),
                       child: Text(
-                        '${_todaysWorkout!.length} вправ',
+                        loc.exercisesCount(_todaysWorkout!.length),
                         style: Theme.of(context).textTheme.bodyLarge,
                       ),
                     ),

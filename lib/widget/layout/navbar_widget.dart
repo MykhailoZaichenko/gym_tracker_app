@@ -2,9 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/l10n/app_localizations.dart';
 import 'package:gym_tracker_app/widget/layout/navigation_state.dart';
 
-class NavbarWidget extends StatelessWidget {
+class NavbarWidget extends StatefulWidget {
   const NavbarWidget({super.key});
 
+  @override
+  State<NavbarWidget> createState() => _NavbarWidgetState();
+}
+
+class _NavbarWidgetState extends State<NavbarWidget> {
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
@@ -12,10 +17,10 @@ class NavbarWidget extends StatelessWidget {
       valueListenable: selectedPageNotifier,
       builder: (BuildContext context, dynamic selectedPage, Widget? child) {
         return NavigationBar(
-          // selectedIndex: selectedPage >= 4 ? 0 : selectedPage, // Захист
-          // onDestinationSelected: (int value) {
-          //   selectedPageNotifier.value = value;
-          // },
+          selectedIndex: selectedPage >= 4 ? 0 : selectedPage, // Захист
+          onDestinationSelected: (int value) {
+            selectedPageNotifier.value = value;
+          },
           destinations: [
             NavigationDestination(
               icon: const Icon(Icons.today),
@@ -37,10 +42,10 @@ class NavbarWidget extends StatelessWidget {
               label: loc.navProfile, // "Профіль"
             ),
           ],
-          onDestinationSelected: (int value) {
-            selectedPageNotifier.value = value;
-          },
-          selectedIndex: selectedPage,
+          // onDestinationSelected: (int value) {
+          //   selectedPageNotifier.value = value;
+          // },
+          // selectedIndex: selectedPage,
         );
       },
     );

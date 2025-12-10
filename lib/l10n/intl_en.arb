@@ -149,6 +149,16 @@
     }
   },
 
+  "exercisesCount": "{count, plural, one{1 exercise} other{{count} exercises}}",
+  "@exercisesCount": {
+    "description": "Exercise count plural",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+
   "deleteSet": "Delete set {number}",
   "@deleteSet": {
     "description": "Delete set menu item",

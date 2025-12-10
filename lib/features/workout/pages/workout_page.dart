@@ -39,11 +39,28 @@ class _WorkoutPageState extends State<WorkoutPage> {
   final List<TextEditingController> _nameCtrls = [];
   final List<List<TextEditingController>> _weightCtrls = [];
   final List<List<TextEditingController>> _repsCtrls = [];
-
+  final List<List<FocusNode>> _weightFocusNodes = [];
+  final List<List<FocusNode>> _repsFocusNodes = [];
   @override
   void initState() {
     super.initState();
     _loadExercises();
+  }
+
+  void _addFocusListener(FocusNode node, TextEditingController controller) {
+    node.addListener(() {
+      if (node.hasFocus) {
+        // Чекаємо кадр, щоб переконатися, що клавіатура та фокус відпрацювали
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted && controller.text.isNotEmpty) {
+            controller.selection = TextSelection(
+              baseOffset: 0,
+              extentOffset: controller.text.length,
+            );
+          }
+        });
+      }
+    });
   }
 
   Future<void> _loadExercises() async {
@@ -95,19 +112,36 @@ class _WorkoutPageState extends State<WorkoutPage> {
   void _initControllers() {
     _nameCtrls.clear();
     _weightCtrls.clear();
+    _weightFocusNodes.clear();
     _repsCtrls.clear();
 
     for (var ex in _exercises) {
       _nameCtrls.add(TextEditingController(text: ex.name));
-
       final wList = <TextEditingController>[];
       final rList = <TextEditingController>[];
+      final wfList = <FocusNode>[];
+      final rfList = <FocusNode>[];
+
       for (var set in ex.sets) {
-        wList.add(TextEditingController(text: formatDouble(set.weight)));
-        rList.add(TextEditingController(text: set.reps?.toString() ?? ''));
+        final wCtrl = TextEditingController(text: formatDouble(set.weight));
+        final rCtrl = TextEditingController(text: set.reps?.toString() ?? '');
+        final wNode = FocusNode();
+        final rNode = FocusNode();
+
+        // Додаємо слухачів для виділення
+        _addFocusListener(wNode, wCtrl);
+        _addFocusListener(rNode, rCtrl);
+
+        wList.add(wCtrl);
+        rList.add(rCtrl);
+        wfList.add(wNode);
+        rfList.add(rNode);
       }
+
       _weightCtrls.add(wList);
       _repsCtrls.add(rList);
+      _weightFocusNodes.add(wfList);
+      _repsFocusNodes.add(rfList);
     }
   }
 
@@ -190,15 +224,31 @@ class _WorkoutPageState extends State<WorkoutPage> {
       _exercises.add(
         WorkoutExercise(name: name, exerciseId: id, sets: [SetData()]),
       );
+
       _nameCtrls.add(TextEditingController(text: name));
-      _weightCtrls.add([TextEditingController()]);
-      _repsCtrls.add([TextEditingController()]);
+
+      final wCtrl = TextEditingController();
+      final rCtrl = TextEditingController();
+      final wNode = FocusNode();
+      final rNode = FocusNode();
+
+      // Слухачі
+      _addFocusListener(wNode, wCtrl);
+      _addFocusListener(rNode, rCtrl);
+
+      _weightCtrls.add([wCtrl]);
+      _repsCtrls.add([rCtrl]);
+      _weightFocusNodes.add([wNode]);
+      _repsFocusNodes.add([rNode]);
+
+      Future.delayed(const Duration(milliseconds: 100), () {
+        wNode.requestFocus();
+      });
     });
   }
 
   void _addSet(int exIndex) {
     setState(() {
-      // Копіюємо попередній сет для зручності, якщо він є
       final lastSet = _exercises[exIndex].sets.isNotEmpty
           ? _exercises[exIndex].sets.last
           : null;
@@ -207,12 +257,33 @@ class _WorkoutPageState extends State<WorkoutPage> {
         SetData(weight: lastSet?.weight, reps: lastSet?.reps),
       );
 
-      _weightCtrls[exIndex].add(
-        TextEditingController(text: formatDouble(lastSet?.weight)),
+      final weightCtrl = TextEditingController(
+        text: formatDouble(lastSet?.weight),
       );
-      _repsCtrls[exIndex].add(
-        TextEditingController(text: lastSet?.reps?.toString() ?? ''),
+      final repsCtrl = TextEditingController(
+        text: lastSet?.reps?.toString() ?? '',
       );
+
+      // Додаємо слухачі для нових полів
+      final wNode = FocusNode();
+      final rNode = FocusNode();
+      _addFocusListener(wNode, weightCtrl);
+      _addFocusListener(rNode, repsCtrl);
+
+      // Виділення при створенні також корисне
+      weightCtrl.selection = TextSelection(
+        baseOffset: 0,
+        extentOffset: weightCtrl.text.length,
+      );
+
+      _weightCtrls[exIndex].add(weightCtrl);
+      _repsCtrls[exIndex].add(repsCtrl);
+      _weightFocusNodes[exIndex].add(wNode);
+      _repsFocusNodes[exIndex].add(rNode);
+
+      Future.delayed(const Duration(milliseconds: 50), () {
+        wNode.requestFocus();
+      });
     });
   }
 
@@ -222,6 +293,8 @@ class _WorkoutPageState extends State<WorkoutPage> {
       _exercises[exIndex].sets.removeAt(setIndex);
       _weightCtrls[exIndex].removeAt(setIndex);
       _repsCtrls[exIndex].removeAt(setIndex);
+      _weightFocusNodes[exIndex].removeAt(setIndex).dispose();
+      _repsFocusNodes[exIndex].removeAt(setIndex).dispose();
     });
   }
 
@@ -229,8 +302,22 @@ class _WorkoutPageState extends State<WorkoutPage> {
     setState(() {
       _exercises.removeAt(index);
       _nameCtrls.removeAt(index).dispose();
-      _weightCtrls.removeAt(index).forEach((c) => c.dispose());
-      _repsCtrls.removeAt(index).forEach((c) => c.dispose());
+      for (var c in _weightCtrls[index]) {
+        c.dispose();
+      }
+      for (var c in _repsCtrls[index]) {
+        c.dispose();
+      }
+      for (var f in _weightFocusNodes[index]) {
+        f.dispose();
+      }
+      for (var f in _repsFocusNodes[index]) {
+        f.dispose();
+      }
+      _weightCtrls.removeAt(index);
+      _repsCtrls.removeAt(index);
+      _weightFocusNodes.removeAt(index);
+      _repsFocusNodes.removeAt(index);
     });
   }
 
@@ -249,6 +336,16 @@ class _WorkoutPageState extends State<WorkoutPage> {
         c.dispose();
       }
     }
+    for (var list in _weightFocusNodes)
+      // ignore: curly_braces_in_flow_control_structures
+      for (var f in list) {
+        f.dispose();
+      }
+    for (var list in _repsFocusNodes)
+      // ignore: curly_braces_in_flow_control_structures
+      for (var f in list) {
+        f.dispose();
+      }
     super.dispose();
   }
 
@@ -315,7 +412,6 @@ class _WorkoutPageState extends State<WorkoutPage> {
         ),
         body: ListView.builder(
           padding: const EdgeInsets.fromLTRB(8, 8, 8, 80),
-          // padding: const EdgeInsets.all(8),
           itemCount: _exercises.length,
           itemBuilder: (context, i) {
             final exercise = _exercises[i];
@@ -377,13 +473,10 @@ class _WorkoutPageState extends State<WorkoutPage> {
                       weightControllers: _weightCtrls[i],
                       repsControllers: _repsCtrls[i],
                       onAddSet: () => _addSet(i),
+                      weightFocusNodes: _weightFocusNodes[i],
+                      repsFocusNodes: _repsFocusNodes[i],
                       onRemoveSet: (setIndex) => _removeSet(i, setIndex),
-                      formatDouble: (v) {
-                        if (v == null) return '';
-                        return v == v.roundToDouble()
-                            ? v.toInt().toString()
-                            : v.toString();
-                      },
+                      formatDouble: formatDouble,
                     ),
                     const SizedBox(height: 8),
                   ],

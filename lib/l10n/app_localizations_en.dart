@@ -218,6 +218,17 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String exercisesCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count exercises',
+      one: '1 exercise',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String deleteSet(int number) {
     return 'Delete set $number';
   }
