@@ -40,15 +40,15 @@ class ExerciseSetsList extends StatelessWidget {
                   repsController: repsControllers[j],
                   weightFocusNode: weightFocusNodes[j],
                   repsFocusNode: repsFocusNodes[j],
-                  isLastSet: j == exercise.sets.length - 1,
+                  // isLastSet: j == exercise.sets.length - 1,
                   onRemoveSetTile: () => onRemoveSet(j),
-                  onRepsSubmitted: () {
-                    if (j + 1 < weightFocusNodes.length) {
-                      weightFocusNodes[j + 1].requestFocus();
-                    } else {
-                      FocusScope.of(context).unfocus();
-                    }
-                  },
+                  // onRepsSubmitted: () {
+                  //   if (j + 1 < weightFocusNodes.length) {
+                  //     weightFocusNodes[j + 1].requestFocus();
+                  //   } else {
+                  //     FocusScope.of(context).unfocus();
+                  //   }
+                  // },
                 ),
             ],
           ),

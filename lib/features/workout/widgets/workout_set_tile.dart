@@ -10,8 +10,8 @@ class ExerciseSetTile extends StatelessWidget {
     required this.onRemoveSetTile,
     required this.weightFocusNode,
     required this.repsFocusNode,
-    this.isLastSet = false,
-    this.onRepsSubmitted,
+    // this.isLastSet = false,
+    // this.onRepsSubmitted,
   });
 
   final int index;
@@ -20,8 +20,8 @@ class ExerciseSetTile extends StatelessWidget {
   final VoidCallback onRemoveSetTile;
   final FocusNode? weightFocusNode;
   final FocusNode? repsFocusNode;
-  final bool isLastSet;
-  final VoidCallback? onRepsSubmitted;
+  // final bool isLastSet;
+  // final VoidCallback? onRepsSubmitted;
 
   @override
   Widget build(BuildContext context) {
@@ -100,19 +100,20 @@ class ExerciseSetTile extends StatelessWidget {
                     controller: repsController,
                     keyboardType: TextInputType.number,
                     scrollPadding: const EdgeInsets.only(bottom: 200),
-                    textInputAction: isLastSet
-                        ? TextInputAction.done
-                        : TextInputAction.next,
+                    textInputAction:
+                        // isLastSet
+                        TextInputAction.done,
+                    // : TextInputAction.next,
                     decoration: InputDecoration(
                       hintText: loc.repsUnitHint,
                       border: InputBorder.none,
                     ),
-                    onSubmitted: (_) {
-                      // Викликаємо колбек для переходу на наступний сет
-                      if (onRepsSubmitted != null) {
-                        onRepsSubmitted!();
-                      }
-                    },
+                    // onSubmitted: (_) {
+                    //   // Викликаємо колбек для переходу на наступний сет
+                    //   if (onRepsSubmitted != null) {
+                    //     onRepsSubmitted!();
+                    //   }
+                    // },
                   ),
                 ),
               ],
