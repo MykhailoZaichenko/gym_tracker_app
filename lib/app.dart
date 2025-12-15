@@ -33,18 +33,13 @@ class _MyAppState extends State<MyApp> {
           builder: (context, currentLocale, child) {
             return MaterialApp(
               locale: currentLocale,
-              // 1. Вказуємо клас, який надає локалізації
               localizationsDelegates: const [
-                AppLocalizations.delegate, // Наш згенерований делегат
+                AppLocalizations.delegate,
                 GlobalMaterialLocalizations.delegate,
                 GlobalWidgetsLocalizations.delegate,
                 GlobalCupertinoLocalizations.delegate,
               ],
-              // 2. Вказуємо список підтримуваних мов
-              supportedLocales: const [
-                Locale('en', ''), // English
-                Locale('uk', ''), // Ukrainian
-              ],
+              supportedLocales: const [Locale('en', ''), Locale('uk', '')],
               debugShowCheckedModeBanner: false,
               theme: ThemeData(
                 colorScheme: ColorScheme.fromSeed(
@@ -57,7 +52,6 @@ class _MyAppState extends State<MyApp> {
               home: StreamBuilder<fb_auth.User?>(
                 stream: fb_auth.FirebaseAuth.instance.userChanges(),
                 builder: (context, snapshot) {
-                  // Поки перевіряємо статус
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Scaffold(
                       body: Center(child: CircularProgressIndicator()),
@@ -66,11 +60,10 @@ class _MyAppState extends State<MyApp> {
                   if (snapshot.hasData) {
                     final user = snapshot.data!;
 
-                    // Перевіряємо, чи підтверджена пошта
                     if (user.emailVerified) {
-                      return const WidgetTree(); // Пускаємо в додаток
+                      return const WidgetTree();
                     } else {
-                      return const VerifyEmailPage(); // Просимо підтвердити
+                      return const VerifyEmailPage();
                     }
                   }
 

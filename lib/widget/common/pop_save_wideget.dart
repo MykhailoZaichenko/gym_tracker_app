@@ -13,10 +13,14 @@ class WillPopSavePrompt extends StatelessWidget {
   });
 
   Future<bool> handlePop(BuildContext context) async {
-    if (!await hasUnsavedChanges()) return true;
+    // 1. Перевіряємо, чи є зміни
+    final hasChanges = await hasUnsavedChanges();
+    if (!hasChanges) return true; // Можна виходити
+
     if (!context.mounted) return false;
     final loc = AppLocalizations.of(context)!;
-    if (!context.mounted) return false;
+
+    // 2. Показуємо діалог
     final result = await showDialog<ExitChoice>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -29,7 +33,7 @@ class WillPopSavePrompt extends StatelessWidget {
           ),
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(ExitChoice.discard),
-            child: Text(loc.discard),
+            child: Text(loc.discard), // "Не зберігати"
           ),
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(ExitChoice.save),
@@ -39,27 +43,39 @@ class WillPopSavePrompt extends StatelessWidget {
       ),
     );
 
-    if (result == ExitChoice.cancel || result == null) return false;
-    if (result == ExitChoice.discard) return true;
+    // 3. Обробляємо результат
+    if (result == null || result == ExitChoice.cancel) {
+      return false; // Залишаємось на сторінці
+    }
 
-    await onSave();
-    return true;
+    if (result == ExitChoice.discard) {
+      return true; // Виходимо без збереження
+    }
+
+    if (result == ExitChoice.save) {
+      await onSave(); // Зберігаємо
+      return true; // Виходимо
+    }
+
+    return false;
   }
 
   @override
   Widget build(BuildContext context) {
     return PopScope(
-      canPop: false, // prevent automatic pop unless you allow it manually
-      onPopInvokedWithResult: (didPop, result) {
-        if (!didPop) {
-          // your custom logic when back is pressed but route not yet popped
-          handlePop(context);
-        } else {
-          // optional: you can inspect `result` if needed
-          debugPrint('Route popped with result: $result');
+      canPop: false, // Блокуємо автоматичний вихід
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) return;
+
+        // Викликаємо нашу логіку
+        final shouldPop = await handlePop(context);
+
+        if (shouldPop && context.mounted) {
+          // Якщо дозволено вихід -> закриваємо екран вручну
+          Navigator.of(context).pop(result);
         }
       },
-      child: const SizedBox.shrink(), // Placeholder, не рендерить нічого
+      child: const SizedBox.shrink(),
     );
   }
 }

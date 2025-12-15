@@ -46,7 +46,6 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
   Future<void> _loadAllWorkouts() async {
     final rawWorkouts = await _firestore.getAllWorkouts();
 
-    // Перетворюємо у формат для графіків
     _allWorkouts = rawWorkouts.map((key, value) {
       final list = value
           .map(
@@ -94,12 +93,10 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
     final catalog = getExerciseCatalog(loc);
     final uniqueCanonicalIds = <String>{};
 
-    // Збираємо всі унікальні ID зі всіх тренувань
     for (final list in _allWorkouts.values) {
       for (final ex in list) {
         final id = _getCanonicalId(ex, catalog);
 
-        // --- ФІКС ТУТ: Фільтруємо 'unknown' (вправи без назви) ---
         if (id != 'unknown') {
           uniqueCanonicalIds.add(id);
         }

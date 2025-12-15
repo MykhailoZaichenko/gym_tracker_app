@@ -19,7 +19,6 @@ class AppDb {
   Future<Database> _init() async {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, 'app.db');
-    // Збільшуємо версію до 2, щоб застосувати міграцію додавання колонки weightKg
     return openDatabase(
       path,
       version: 2,
@@ -44,12 +43,10 @@ class AppDb {
 
   FutureOr<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
     if (oldVersion < 2 && newVersion >= 2) {
-      // Додаємо колонку weightKg у таблицю users
       try {
         await db.execute('ALTER TABLE users ADD COLUMN weightKg REAL;');
       } catch (e) {
-        // Якщо колонка вже існує або інша помилка, ігноруємо, але логувати корисно під час розробки
-        // print('Migration to v2: $e');
+        print('Migration to v2: $e');
       }
     }
     // Майбутні міграції додавай тут

@@ -47,10 +47,6 @@ class _JournalPageState extends State<JournalPage> {
           // Якщо тренування нове, передаємо пустий список, але з прапорцем autoPick
           exercises: _todaysWorkout ?? [],
           shouldAutoPick: isNew, // <--- Відкриє пікер, якщо це нове тренування
-          onSave: (updatedExercises) {
-            // Оновлюємо стан головної сторінки після повернення
-            _checkTodayWorkout();
-          },
         ),
       ),
     );

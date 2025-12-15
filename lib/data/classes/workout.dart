@@ -1,5 +1,3 @@
-// lib/data/classes/workout.dart
-
 class SetData {
   double? weight;
   int? reps;

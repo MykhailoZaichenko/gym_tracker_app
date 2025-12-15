@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/data/seed/exercise_catalog.dart';
 import 'package:gym_tracker_app/features/workout/models/workout_exercise_model.dart';
+import 'package:gym_tracker_app/features/workout/models/workout_model.dart';
 import 'package:gym_tracker_app/l10n/app_localizations.dart';
 import 'package:gym_tracker_app/services/firestore_service.dart';
 
@@ -13,15 +14,15 @@ import 'package:intl/intl.dart';
 
 class WorkoutPage extends StatefulWidget {
   final DateTime date;
-  final List<WorkoutExercise> exercises;
-  final void Function(List<WorkoutExercise>) onSave;
+  final String? workoutId;
+  final List<WorkoutExercise>? exercises;
   final bool shouldAutoPick;
 
   const WorkoutPage({
     super.key,
     required this.date,
-    required this.exercises,
-    required this.onSave,
+    this.workoutId,
+    this.exercises,
     this.shouldAutoPick = false,
   });
 
@@ -41,6 +42,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
   final List<List<TextEditingController>> _repsCtrls = [];
   final List<List<FocusNode>> _weightFocusNodes = [];
   final List<List<FocusNode>> _repsFocusNodes = [];
+
   @override
   void initState() {
     super.initState();
@@ -64,13 +66,23 @@ class _WorkoutPageState extends State<WorkoutPage> {
   }
 
   Future<void> _loadExercises() async {
-    final savedExercises = await _firestore.getWorkout(widget.date);
+    // 1. Спочатку пробуємо завантажити з Firebase (якщо є збережене тренування)
+    // Тут увага: getWorkout тепер має повертати список, або ми шукаємо по ID
+    // Але якщо ти використовуєш getWorkout(date), воно поверне збережені.
+    // Якщо у нас вже є workoutId, краще було б вантажити по ньому, але залишимо як є.
+    List<WorkoutExercise> savedExercises = [];
+
+    // Якщо передали ID, спробуємо знайти конкретне тренування (опціонально)
+    // Якщо ні - використовуємо стару логіку getWorkout(date)
+    savedExercises = await _firestore.getWorkout(widget.date);
 
     if (savedExercises.isNotEmpty) {
       _exercises = savedExercises;
-    } else if (widget.exercises.isNotEmpty) {
-      _exercises = List.from(widget.exercises);
+    } else if (widget.exercises != null && widget.exercises!.isNotEmpty) {
+      // 2. Якщо в базі пусто, але передали аргументи (редагування з HomePage)
+      _exercises = List.from(widget.exercises!);
     } else {
+      // 3. Якщо все пусто - перевіряємо план
       if (!widget.shouldAutoPick) {
         final plan = await _firestore.getWeeklyPlan();
         final weekdayKey = DateFormat.E('en').format(widget.date);
@@ -166,17 +178,49 @@ class _WorkoutPageState extends State<WorkoutPage> {
   }
 
   Future<void> _saveExercises() async {
+    // 1. Валідація та збір даних
     for (var i = 0; i < _exercises.length; i++) {
       _exercises[i].name = _nameCtrls[i].text;
       for (var j = 0; j < _exercises[i].sets.length; j++) {
-        _exercises[i].sets[j].weight = double.tryParse(_weightCtrls[i][j].text);
-        _exercises[i].sets[j].reps = int.tryParse(_repsCtrls[i][j].text);
+        final weightText = _weightCtrls[i][j].text.replaceAll(',', '.');
+        final repsText = _repsCtrls[i][j].text;
+        _exercises[i].sets[j].weight = double.tryParse(weightText);
+        _exercises[i].sets[j].reps = int.tryParse(repsText);
       }
     }
 
-    await _firestore.saveWorkout(widget.date, _exercises);
+    // 2. Генерація ID
+    final String idToSave = widget.date.toIso8601String().split('T').first;
 
-    _initialEncoded = jsonEncode(_exercises.map((e) => e.toMap()).toList());
+    final workout = WorkoutModel(
+      id: idToSave,
+      date: widget.date,
+      exercises: _exercises,
+    );
+
+    try {
+      // 3. Збереження
+      await _firestore.saveWorkout(workout);
+
+      if (mounted) {
+        // Оновлюємо початковий стан для відстеження змін
+        setState(() {
+          _initialEncoded = jsonEncode(
+            _exercises.map((e) => e.toMap()).toList(),
+          );
+        });
+
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Тренування збережено!')));
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Помилка збереження: $e')));
+      }
+    }
   }
 
   String _encodeCurrentFromControllers() {
@@ -202,7 +246,6 @@ class _WorkoutPageState extends State<WorkoutPage> {
     return jsonEncode(current);
   }
 
-  // Перевірка на незбережені зміни
   bool _hasUnsavedChanges() {
     final current = _encodeCurrentFromControllers();
     return _initialEncoded != current;
@@ -232,7 +275,6 @@ class _WorkoutPageState extends State<WorkoutPage> {
       final wNode = FocusNode();
       final rNode = FocusNode();
 
-      // Слухачі
       _addFocusListener(wNode, wCtrl);
       _addFocusListener(rNode, rCtrl);
 
@@ -264,13 +306,11 @@ class _WorkoutPageState extends State<WorkoutPage> {
         text: lastSet?.reps?.toString() ?? '',
       );
 
-      // Додаємо слухачі для нових полів
       final wNode = FocusNode();
       final rNode = FocusNode();
       _addFocusListener(wNode, weightCtrl);
       _addFocusListener(rNode, repsCtrl);
 
-      // Виділення при створенні також корисне
       weightCtrl.selection = TextSelection(
         baseOffset: 0,
         extentOffset: weightCtrl.text.length,
@@ -287,7 +327,6 @@ class _WorkoutPageState extends State<WorkoutPage> {
     });
   }
 
-  // Видаляємо сет з вправи
   void _removeSet(int exIndex, int setIndex) {
     setState(() {
       _exercises[exIndex].sets.removeAt(setIndex);
@@ -326,16 +365,16 @@ class _WorkoutPageState extends State<WorkoutPage> {
     for (var c in _nameCtrls) {
       c.dispose();
     }
-    for (var list in _weightCtrls) {
+    for (var list in _weightCtrls)
+      // ignore: curly_braces_in_flow_control_structures
       for (var c in list) {
         c.dispose();
       }
-    }
-    for (var list in _repsCtrls) {
+    for (var list in _repsCtrls)
+      // ignore: curly_braces_in_flow_control_structures
       for (var c in list) {
         c.dispose();
       }
-    }
     for (var list in _weightFocusNodes)
       // ignore: curly_braces_in_flow_control_structures
       for (var f in list) {
@@ -355,6 +394,8 @@ class _WorkoutPageState extends State<WorkoutPage> {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
     final loc = AppLocalizations.of(context)!;
+
+    // Оновлення назв при локалізації
     for (int i = 0; i < _exercises.length; i++) {
       final exercise = _exercises[i];
       final localizedName = _getLocalizedName(exercise, loc);
@@ -376,6 +417,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
         }
       }
     }
+
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) async {
@@ -384,7 +426,6 @@ class _WorkoutPageState extends State<WorkoutPage> {
             hasUnsavedChanges: () async => _hasUnsavedChanges(),
             onSave: () async {
               await _saveExercises();
-              widget.onSave(_exercises);
             },
           ).handlePop(context);
 
@@ -404,7 +445,6 @@ class _WorkoutPageState extends State<WorkoutPage> {
               tooltip: loc.save,
               onPressed: () async {
                 await _saveExercises();
-                widget.onSave(_exercises);
                 if (context.mounted) Navigator.pop(context);
               },
             ),
@@ -415,7 +455,6 @@ class _WorkoutPageState extends State<WorkoutPage> {
           itemCount: _exercises.length,
           itemBuilder: (context, i) {
             final exercise = _exercises[i];
-            final localizedName = _getLocalizedName(exercise, loc);
             return Card(
               margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
               shape: RoundedRectangleBorder(
@@ -438,20 +477,15 @@ class _WorkoutPageState extends State<WorkoutPage> {
 
                         var found = catalog.firstWhere(
                           (e) => e.id == nameOrId,
-                          orElse: () => ExerciseInfo(
-                            id: '',
-                            name: '',
-                            icon: Icons.code,
-                          ), // тимчасова пуста
+                          orElse: () =>
+                              ExerciseInfo(id: '', name: '', icon: Icons.code),
                         );
                         if (found.id.isEmpty) {
                           found = catalog.firstWhere(
-                            (e) =>
-                                e.name ==
-                                nameOrId, // Шукаємо за локалізованою назвою
+                            (e) => e.name == nameOrId,
                             orElse: () => ExerciseInfo(
                               id: 'none',
-                              name: localizedName,
+                              name: nameOrId, // fallback name
                               icon: Icons.fitness_center,
                             ),
                           );

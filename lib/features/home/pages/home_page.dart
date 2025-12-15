@@ -57,11 +57,6 @@ class _HomePageState extends State<HomePage> {
 
   String _keyOf(DateTime date) => date.toIso8601String().split('T').first;
 
-  List<WorkoutExercise> get _selectedExercises {
-    if (_selectedDay == null) return [];
-    return _allWorkouts[_keyOf(_selectedDay!)] ?? [];
-  }
-
   void _openWorkoutDay(DateTime date) async {
     final initialExercises = List<WorkoutExercise>.from(
       _allWorkouts[_keyOf(date)] ?? [],
@@ -70,11 +65,7 @@ class _HomePageState extends State<HomePage> {
     // Переходимо на WorkoutPage
     await Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (_) => WorkoutPage(
-          date: date,
-          exercises: initialExercises,
-          onSave: (newExercises) {},
-        ),
+        builder: (_) => WorkoutPage(date: date, exercises: initialExercises),
       ),
     );
 
@@ -93,106 +84,129 @@ class _HomePageState extends State<HomePage> {
     final isCurrentMonth =
         _focusedDay.year == now.year && _focusedDay.month == now.month;
 
-    return SafeArea(
-      child: Scaffold(
-        appBar: HomeHeader(
-          onOpenAnalytics: () {
-            Navigator.of(
-              context,
-            ).push(MaterialPageRoute(builder: (_) => GrafPage()));
-          },
-          onOpenPlanEditor: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const WorkoutPlanEditorPage()),
-            );
-          },
-        ),
-        body: Column(
-          children: [
-            HomeCalendar(
-              selectedDay: _selectedDay,
-              focusedDay: _focusedDay,
-              allWorkouts: _allWorkouts,
-              onMonthPicked: (picked) {
-                if (picked != null) {
-                  setState(() {
-                    _focusedDay = picked;
-                    _selectedDay = picked;
-                  });
-                }
-              },
-              onPageChanged: (focusedDay) {
-                setState(() {
-                  _focusedDay = focusedDay;
-                });
-              },
-              onDaySelected: (selected, focused) {
-                setState(() {
-                  _selectedDay = selected;
-                  _focusedDay = focused;
-                });
-              },
-            ),
-            const SizedBox(height: 12),
-            Expanded(
-              child: HomeExerciseList(
-                selectedDay: _selectedDay,
-                selectedExercises: _selectedExercises,
-                keyOf: _keyOf,
-              ),
-            ),
-          ],
-        ),
-        floatingActionButton: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            // Кнопка "Повернутись до сьогодні"
-            // З'являється, якщо ми не в поточному місяці
-            if (!isCurrentMonth) ...[
-              FloatingActionButton.extended(
-                heroTag: 'btn_today',
-                onPressed: () {
-                  setState(() {
-                    final today = DateTime.now();
-                    _focusedDay = today;
-                    _selectedDay = today;
-                  });
-                },
-                icon: const Icon(Icons.calendar_today), // Або arrow_forward_ios
-                label: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      loc.backToToday,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    const Icon(Icons.double_arrow_rounded, size: 18),
-                  ],
-                ),
-                backgroundColor: Theme.of(context).colorScheme.primary,
-                foregroundColor: Theme.of(context).colorScheme.onPrimary,
-              ),
-              const SizedBox(height: 16), // Відступ між кнопками
-            ],
+    return StreamBuilder<Map<String, List<WorkoutExercise>>>(
+      stream: _firestore.getAllWorkoutsStream(),
+      builder: (context, snapshot) {
+        // Якщо завантаження (перший раз)
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+        }
 
-            // Стандартна кнопка редагування (якщо день вибрано)
-            if (_selectedDay != null)
-              FloatingActionButton(
-                heroTag: 'btn_edit',
-                tooltip: loc.editExercisesTooltip,
-                onPressed: () => _openWorkoutDay(_selectedDay!),
-                child: const Icon(Icons.edit),
-              ),
-          ],
-        ),
-      ),
+        // Отримуємо дані (або пусту мапу, якщо помилка/пусто)
+        final allWorkouts = snapshot.data ?? {};
+
+        // Отримуємо вправи для вибраного дня
+        final selectedExercises =
+            allWorkouts[_keyOf(_selectedDay ?? now)] ?? [];
+
+        return SafeArea(
+          child: Scaffold(
+            appBar: HomeHeader(
+              onOpenAnalytics: () {
+                Navigator.of(
+                  context,
+                ).push(MaterialPageRoute(builder: (_) => GrafPage()));
+              },
+              onOpenPlanEditor: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const WorkoutPlanEditorPage(),
+                  ),
+                );
+              },
+            ),
+            body: Column(
+              children: [
+                HomeCalendar(
+                  selectedDay: _selectedDay,
+                  focusedDay: _focusedDay,
+                  allWorkouts: _allWorkouts,
+                  onMonthPicked: (picked) {
+                    if (picked != null) {
+                      setState(() {
+                        _focusedDay = picked;
+                        _selectedDay = picked;
+                      });
+                    }
+                  },
+                  onPageChanged: (focusedDay) {
+                    setState(() {
+                      _focusedDay = focusedDay;
+                    });
+                  },
+                  onDaySelected: (selected, focused) {
+                    setState(() {
+                      _selectedDay = selected;
+                      _focusedDay = focused;
+                    });
+                  },
+                ),
+                const SizedBox(height: 12),
+                Expanded(
+                  child: HomeExerciseList(
+                    selectedDay: _selectedDay,
+                    selectedExercises: selectedExercises,
+                    keyOf: _keyOf,
+                  ),
+                ),
+              ],
+            ),
+            floatingActionButton: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                // Кнопка "Повернутись до сьогодні"
+                // З'являється, якщо ми не в поточному місяці
+                if (!isCurrentMonth) ...[
+                  FloatingActionButton.extended(
+                    heroTag: 'btn_today',
+                    onPressed: () {
+                      setState(() {
+                        final today = DateTime.now();
+                        _focusedDay = today;
+                        _selectedDay = today;
+                      });
+                    },
+                    icon: const Icon(
+                      Icons.calendar_today,
+                    ), // Або arrow_forward_ios
+                    label: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          loc.backToToday,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        const Icon(Icons.double_arrow_rounded, size: 18),
+                      ],
+                    ),
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                    foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                  ),
+                  const SizedBox(height: 16), // Відступ між кнопками
+                ],
+
+                // Стандартна кнопка редагування (якщо день вибрано)
+                if (_selectedDay != null)
+                  FloatingActionButton(
+                    heroTag: 'btn_edit',
+                    tooltip: loc.editExercisesTooltip,
+                    onPressed: () => _openWorkoutDay(_selectedDay!),
+                    child: const Icon(Icons.edit),
+                  ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }
