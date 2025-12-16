@@ -3,27 +3,16 @@ import 'package:gym_tracker_app/core/theme/theme_service.dart';
 import 'package:gym_tracker_app/l10n/app_localizations.dart';
 
 class HomeHeader extends StatelessWidget implements PreferredSizeWidget {
-  final VoidCallback onOpenAnalytics;
   final VoidCallback onOpenPlanEditor;
 
-  const HomeHeader({
-    super.key,
-    required this.onOpenAnalytics,
-    required this.onOpenPlanEditor,
-  });
+  const HomeHeader({super.key, required this.onOpenPlanEditor});
 
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
     return AppBar(
       title: Text(loc.calendarTitle),
-      centerTitle: true,
       actions: [
-        IconButton(
-          icon: const Icon(Icons.bar_chart_outlined),
-          tooltip: loc.progressTooltip,
-          onPressed: onOpenAnalytics,
-        ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 6.0),
           child: OutlinedButton.icon(

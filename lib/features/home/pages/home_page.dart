@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:gym_tracker_app/features/workout/models/workout_exercise_model.dart';
-import 'package:gym_tracker_app/features/analytics/pages/graf_page.dart';
 import 'package:gym_tracker_app/features/workout/pages/workout_page.dart';
 import 'package:gym_tracker_app/features/workout/pages/workout_plan_editor_page.dart';
 import 'package:gym_tracker_app/features/home/home_exports.dart';
@@ -104,11 +103,6 @@ class _HomePageState extends State<HomePage> {
         return SafeArea(
           child: Scaffold(
             appBar: HomeHeader(
-              onOpenAnalytics: () {
-                Navigator.of(
-                  context,
-                ).push(MaterialPageRoute(builder: (_) => GrafPage()));
-              },
               onOpenPlanEditor: () {
                 Navigator.push(
                   context,

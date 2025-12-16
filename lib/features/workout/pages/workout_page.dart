@@ -200,7 +200,8 @@ class _WorkoutPageState extends State<WorkoutPage> {
 
     try {
       // 3. Збереження
-      await _firestore.saveWorkout(workout);
+      // await
+      _firestore.saveWorkout(workout);
 
       if (mounted) {
         // Оновлюємо початковий стан для відстеження змін
@@ -421,17 +422,18 @@ class _WorkoutPageState extends State<WorkoutPage> {
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) async {
-        if (!didPop) {
-          final allow = await WillPopSavePrompt(
-            hasUnsavedChanges: () async => _hasUnsavedChanges(),
-            onSave: () async {
-              await _saveExercises();
-            },
-          ).handlePop(context);
+        if (didPop) return;
 
-          if (allow && context.mounted) {
-            Navigator.pop(context, result);
-          }
+        final allow = await WillPopSavePrompt(
+          hasUnsavedChanges: () async => _hasUnsavedChanges(),
+          onSave: () async {
+            await _saveExercises();
+            // Тут widget.onSave не обов'язковий, бо ми вже зберегли в БД
+          },
+        ).handlePop(context);
+
+        if (allow && context.mounted) {
+          Navigator.pop(context, result);
         }
       },
       child: Scaffold(
