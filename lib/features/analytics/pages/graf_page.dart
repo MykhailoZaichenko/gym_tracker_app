@@ -382,7 +382,7 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
     if (_isLoading) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
-
+    final GlobalKey<TooltipState> tooltipKey = GlobalKey<TooltipState>();
     final loc = AppLocalizations.of(context)!;
     final locale = loc.localeName;
 
@@ -553,6 +553,79 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
                                 ),
                                 const SizedBox(width: 6),
                                 Text(loc.liftedWeight),
+                                IconButton(
+                                  // При натисканні викликаємо показ Tooltip вручну
+                                  onPressed: () {
+                                    tooltipKey.currentState
+                                        ?.ensureTooltipVisible();
+                                  },
+                                  // Стандартний tooltip кнопки вимикаємо, щоб не дублювався
+                                  tooltip: null,
+                                  icon: Tooltip(
+                                    key: tooltipKey,
+                                    message: loc
+                                        .liftedWeightHelp, // "Обсяг = Вага * Повтори"
+                                    // НАЛАШТУВАННЯ ВИГЛЯДУ (як на фото)
+                                    preferBelow: false, // Показувати ЗВЕРХУ
+                                    verticalOffset: 20, // Відступ від іконки
+                                    showDuration: const Duration(
+                                      seconds: 4,
+                                    ), // Скільки часу висить
+                                    triggerMode: TooltipTriggerMode
+                                        .manual, // Керуємо вручну через onPressed
+                                    // Стиль "хмаринки"
+                                    decoration: BoxDecoration(
+                                      color: Theme.of(
+                                        context,
+                                      ).cardColor, // Колір фону (білий у світлій темі)
+                                      borderRadius: BorderRadius.circular(
+                                        12,
+                                      ), // Заокруглення
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withValues(
+                                            alpha: 0.1,
+                                          ), // Легка тінь
+                                          blurRadius: 10,
+                                          spreadRadius: 2,
+                                          offset: const Offset(0, 4),
+                                        ),
+                                      ],
+                                      border: Border.all(
+                                        color: Theme.of(
+                                          context,
+                                        ).dividerColor.withValues(alpha: 0.1),
+                                      ),
+                                    ),
+
+                                    // Стиль тексту всередині
+                                    textStyle: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium
+                                        ?.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.onSurface,
+                                        ),
+
+                                    // Відступи всередині хмаринки
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                      vertical: 12,
+                                    ),
+                                    margin: const EdgeInsets.symmetric(
+                                      horizontal: 20,
+                                    ), // Відступи від країв екрану
+                                    // Сама іконка
+                                    child: Icon(
+                                      Icons.help_outline_rounded,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.onSurfaceVariant,
+                                    ),
+                                  ),
+                                ),
                               ],
                             ),
                           ],

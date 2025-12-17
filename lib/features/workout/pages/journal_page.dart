@@ -4,6 +4,7 @@ import 'package:gym_tracker_app/features/workout/models/workout_exercise_model.d
 import 'package:gym_tracker_app/features/workout/pages/workout_page.dart';
 import 'package:gym_tracker_app/l10n/app_localizations.dart';
 import 'package:gym_tracker_app/services/firestore_service.dart';
+import 'package:gym_tracker_app/widget/common/fading_edge.dart';
 import 'package:gym_tracker_app/widget/common/primary_filled_button.dart';
 import 'package:intl/intl.dart';
 
@@ -146,88 +147,99 @@ class _JournalPageState extends State<JournalPage> {
 
                   // --- ВЕРТИКАЛЬНИЙ СПИСОК карток вправ ---
                   Expanded(
-                    child: ListView.builder(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      itemCount: _todaysWorkout!.length,
-                      itemBuilder: (context, index) {
-                        final ex = _todaysWorkout![index];
-                        final exerciseInfo = _getExerciseInfo(ex, loc);
-                        final titleText = exerciseInfo.name.isEmpty
-                            ? '${loc.exerciseDefaultName} ${index + 1}'
-                            : exerciseInfo.name;
+                    child: FadingEdge(
+                      startFadeSize: 0.05,
+                      endFadeSize: 0.1,
+                      child: ListView.builder(
+                        padding: const EdgeInsets.only(
+                          left: 16.0,
+                          right: 16.0,
+                          top: 0,
+                          bottom: 80,
+                        ),
+                        itemCount: _todaysWorkout!.length,
+                        itemBuilder: (context, index) {
+                          final ex = _todaysWorkout![index];
+                          final exerciseInfo = _getExerciseInfo(ex, loc);
+                          final titleText = exerciseInfo.name.isEmpty
+                              ? '${loc.exerciseDefaultName} ${index + 1}'
+                              : exerciseInfo.name;
 
-                        return Card(
-                          margin: const EdgeInsets.symmetric(vertical: 6.0),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            side: BorderSide(
-                              color: theme.dividerColor.withValues(alpha: 0.1),
-                            ),
-                          ),
-                          elevation: 2, // Невелика тінь, як на скетчі
-                          child: Padding(
-                            padding: const EdgeInsets.all(12.0),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                // ІКОНКА ВПРАВИ ЗЛІВА
-                                CircleAvatar(
-                                  radius: 24,
-                                  backgroundColor: theme.primaryColor
-                                      .withValues(alpha: 0.1),
-                                  child: Icon(
-                                    exerciseInfo.icon,
-                                    color: theme.primaryColor,
-                                  ),
+                          return Card(
+                            margin: const EdgeInsets.symmetric(vertical: 6.0),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              side: BorderSide(
+                                color: theme.dividerColor.withValues(
+                                  alpha: 0.1,
                                 ),
-                                const SizedBox(width: 16),
-                                // ТЕКСТОВА ЧАСТИНА СПРАВА
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      // Назва вправи
-                                      Text(
-                                        titleText,
-                                        style: theme.textTheme.titleMedium
-                                            ?.copyWith(
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                      ),
-                                      const SizedBox(height: 4),
-                                      // Кількість сетів
-                                      Text(
-                                        loc.setsCount(ex.sets.length),
-                                        style: theme.textTheme.bodySmall
-                                            ?.copyWith(color: Colors.grey),
-                                      ),
-                                      const SizedBox(height: 8),
-                                      // Деталі сетів (перші 3)
-                                      ...ex.sets.take(3).map((s) {
-                                        return Padding(
-                                          padding: const EdgeInsets.only(
-                                            bottom: 2.0,
-                                          ),
-                                          child: Text(
-                                            '${loc.setLabelCompact} ${ex.sets.indexOf(s) + 1}: ${s.weight ?? '-'} ${loc.weightUnit} x ${s.reps ?? '-'}',
-                                            style: theme.textTheme.bodyMedium,
-                                          ),
-                                        );
-                                      }),
-                                      if (ex.sets.length > 3)
+                              ),
+                            ),
+                            elevation: 2, // Невелика тінь, як на скетчі
+                            child: Padding(
+                              padding: const EdgeInsets.all(12.0),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  // ІКОНКА ВПРАВИ ЗЛІВА
+                                  CircleAvatar(
+                                    radius: 24,
+                                    backgroundColor: theme.primaryColor
+                                        .withValues(alpha: 0.1),
+                                    child: Icon(
+                                      exerciseInfo.icon,
+                                      color: theme.primaryColor,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 16),
+                                  // ТЕКСТОВА ЧАСТИНА СПРАВА
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        // Назва вправи
                                         Text(
-                                          '...',
-                                          style: theme.textTheme.bodySmall,
+                                          titleText,
+                                          style: theme.textTheme.titleMedium
+                                              ?.copyWith(
+                                                fontWeight: FontWeight.bold,
+                                              ),
                                         ),
-                                    ],
+                                        const SizedBox(height: 4),
+                                        // Кількість сетів
+                                        Text(
+                                          loc.setsCount(ex.sets.length),
+                                          style: theme.textTheme.bodySmall
+                                              ?.copyWith(color: Colors.grey),
+                                        ),
+                                        const SizedBox(height: 8),
+                                        // Деталі сетів (перші 3)
+                                        ...ex.sets.take(3).map((s) {
+                                          return Padding(
+                                            padding: const EdgeInsets.only(
+                                              bottom: 2.0,
+                                            ),
+                                            child: Text(
+                                              '${loc.setLabelCompact} ${ex.sets.indexOf(s) + 1}: ${s.weight ?? '-'} ${loc.weightUnit} x ${s.reps ?? '-'}',
+                                              style: theme.textTheme.bodyMedium,
+                                            ),
+                                          );
+                                        }),
+                                        if (ex.sets.length > 3)
+                                          Text(
+                                            '...',
+                                            style: theme.textTheme.bodySmall,
+                                          ),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
-                        );
-                      },
+                          );
+                        },
+                      ),
                     ),
                   ),
                   const SizedBox(height: 10),

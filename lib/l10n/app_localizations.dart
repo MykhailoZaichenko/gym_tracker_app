@@ -563,8 +563,20 @@ abstract class AppLocalizations {
   /// Legend label
   ///
   /// In en, this message translates to:
-  /// **'Lifted weight'**
+  /// **'Lifted volume'**
   String get liftedWeight;
+
+  /// Tooltip text explaining the volume formula
+  ///
+  /// In en, this message translates to:
+  /// **'Volume = Weight × Reps'**
+  String get liftedWeightHelp;
+
+  /// Semantics/Tooltip for the help button itself
+  ///
+  /// In en, this message translates to:
+  /// **'Formula description'**
+  String get liftedWeightDescription;
 
   /// Summary label
   ///

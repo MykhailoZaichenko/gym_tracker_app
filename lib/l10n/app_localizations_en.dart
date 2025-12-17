@@ -262,7 +262,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noDataRange => 'No data for selected exercise in this range';
 
   @override
-  String get liftedWeight => 'Lifted weight';
+  String get liftedWeight => 'Lifted volume';
+
+  @override
+  String get liftedWeightHelp => 'Volume = Weight × Reps';
+
+  @override
+  String get liftedWeightDescription => 'Formula description';
 
   @override
   String get totalLifted => 'Total lifted:';

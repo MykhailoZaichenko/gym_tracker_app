@@ -42,9 +42,16 @@ class _MyAppState extends State<MyApp> {
               supportedLocales: const [Locale('en', ''), Locale('uk', '')],
               debugShowCheckedModeBanner: false,
               theme: ThemeData(
+                useMaterial3: true,
                 colorScheme: ColorScheme.fromSeed(
                   seedColor: isDarkMode ? Colors.indigo : Colors.teal,
                   brightness: Brightness.light,
+                ),
+                appBarTheme: const AppBarTheme(
+                  scrolledUnderElevation: 0, // Глобально вимикає ефект
+                  backgroundColor: Colors.transparent, // Або твій колір фону
+                  surfaceTintColor:
+                      Colors.transparent, // Прибирає відтінок оверлею
                 ),
               ),
               darkTheme: ThemeData.dark(),

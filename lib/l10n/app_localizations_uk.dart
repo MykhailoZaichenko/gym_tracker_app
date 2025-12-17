@@ -267,7 +267,13 @@ class AppLocalizationsUk extends AppLocalizations {
   String get noDataRange => 'Немає даних для вибраної вправи у цьому діапазоні';
 
   @override
-  String get liftedWeight => 'Піднята вага';
+  String get liftedWeight => 'Піднятий обсяг';
+
+  @override
+  String get liftedWeightHelp => 'Обсяг = Вага × Повтори';
+
+  @override
+  String get liftedWeightDescription => 'Опис формули';
 
   @override
   String get totalLifted => 'Всього піднято:';

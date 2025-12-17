@@ -195,8 +195,16 @@
   "@tabYear": { "description": "Tab label" },
   "noDataRange": "No data for selected exercise in this range",
   "@noDataRange": { "description": "Empty graph state range" },
-  "liftedWeight": "Lifted weight",
+  "liftedWeight": "Lifted volume",
   "@liftedWeight": { "description": "Legend label" },
+"liftedWeightHelp": "Volume = Weight × Reps",
+  "@liftedWeightHelp": {
+    "description": "Tooltip text explaining the volume formula"
+  },
+  "liftedWeightDescription": "Formula description",
+  "@liftedWeightDescription": {
+    "description": "Semantics/Tooltip for the help button itself"
+  },
   "totalLifted": "Total lifted:",
   "@totalLifted": { "description": "Summary label" },
   "pointsCount": "Points:",

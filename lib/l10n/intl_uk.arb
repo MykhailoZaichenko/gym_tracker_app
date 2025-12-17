@@ -87,7 +87,9 @@
   "tabYear": "Рік",
 
   "noDataRange": "Немає даних для вибраної вправи у цьому діапазоні",
-  "liftedWeight": "Піднята вага",
+  "liftedWeight": "Піднятий обсяг",
+"liftedWeightHelp": "Обсяг = Вага × Повтори",
+  "liftedWeightDescription": "Опис формули",
   "totalLifted": "Всього піднято:",
   "pointsCount": "Точок:",
 
