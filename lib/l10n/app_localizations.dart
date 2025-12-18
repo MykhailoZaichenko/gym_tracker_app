@@ -1195,6 +1195,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Add Set'**
   String get addSetBtn;
+
+  /// Badge shown when internet connection is restored
+  ///
+  /// In en, this message translates to:
+  /// **'Synchronized'**
+  String get synchronized;
 }
 
 class _AppLocalizationsDelegate

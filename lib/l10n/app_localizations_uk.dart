@@ -595,4 +595,7 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get addSetBtn => 'Додати підхід';
+
+  @override
+  String get synchronized => 'Синхронізовано';
 }

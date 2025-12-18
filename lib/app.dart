@@ -4,6 +4,7 @@ import 'package:gym_tracker_app/core/locale/locale_serviece.dart';
 import 'package:gym_tracker_app/features/auth/pages/verify_email_page.dart';
 import 'package:gym_tracker_app/features/welcome/pages/welcome_page.dart';
 import 'package:gym_tracker_app/l10n/app_localizations.dart';
+import 'package:gym_tracker_app/widget/common/sync_badge.dart';
 import 'package:gym_tracker_app/widget/common/widget_tree.dart';
 
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -41,6 +42,9 @@ class _MyAppState extends State<MyApp> {
               ],
               supportedLocales: const [Locale('en', ''), Locale('uk', '')],
               debugShowCheckedModeBanner: false,
+              builder: (context, child) {
+                return SyncBadge(child: child!);
+              },
               theme: ThemeData(
                 useMaterial3: true,
                 colorScheme: ColorScheme.fromSeed(

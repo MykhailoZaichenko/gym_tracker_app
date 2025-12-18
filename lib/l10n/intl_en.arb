@@ -446,5 +446,10 @@
   "addSetBtn": "Add Set",
   "@addSetBtn": {
     "description": "Button label inside a specific exercise card to add a new set row"
-  }
+  },
+
+  "synchronized": "Synchronized",
+"@synchronized": {
+  "description": "Badge shown when internet connection is restored"
+}
 }

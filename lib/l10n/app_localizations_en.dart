@@ -588,4 +588,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get addSetBtn => 'Add Set';
+
+  @override
+  String get synchronized => 'Synchronized';
 }

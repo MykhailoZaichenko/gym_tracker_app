@@ -201,5 +201,7 @@
   "workoutToday": "Тренування на сьогодні",
   "noWorkoutToday": "На сьогодні немає записів",
   "addExerciseBtn": "Додати вправу",
-  "addSetBtn": "Додати підхід"
+  "addSetBtn": "Додати підхід",
+
+  "synchronized": "Синхронізовано"
 }
