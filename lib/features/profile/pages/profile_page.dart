@@ -173,15 +173,19 @@ class _ProfilePageState extends State<ProfilePage> {
         body: _isLoading
             ? const Center(child: CircularProgressIndicator())
             : Padding(
-                padding: const EdgeInsets.all(20),
+                padding: const EdgeInsets.symmetric(vertical: 20),
                 child: Center(
                   child: ListView(
                     shrinkWrap: true,
                     children: [
-                      ProfileHeader(user: _user, onEditPressed: _onEditProfile),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: ProfileHeader(
+                          user: _user,
+                          onEditPressed: _onEditProfile,
+                        ),
+                      ),
                       const SizedBox(height: 12),
-                      // ProfileStatsCard залишається таким самим,
-                      // ми просто передаємо йому нові, правильні дані
                       ProfileStatsCard(
                         visibleMonth: _visibleMonth,
                         ukMonthLabel: capitalizedMonth,
@@ -198,9 +202,12 @@ class _ProfilePageState extends State<ProfilePage> {
                         },
                       ),
                       const SizedBox(height: 12),
-                      ProfileSettingsList(
-                        user: _user,
-                        onProfileUpdated: _onProfileUpdated,
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: ProfileSettingsList(
+                          user: _user,
+                          onProfileUpdated: _onProfileUpdated,
+                        ),
                       ),
                     ],
                   ),

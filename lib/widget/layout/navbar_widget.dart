@@ -23,8 +23,8 @@ class _NavbarWidgetState extends State<NavbarWidget> {
           },
           destinations: [
             NavigationDestination(
-              icon: const Icon(Icons.today),
-              selectedIcon: const Icon(Icons.today_outlined),
+              icon: const Icon(Icons.today_outlined),
+              selectedIcon: const Icon(Icons.today),
               label: loc.navJournal, // "Щоденник"
             ),
             NavigationDestination(
@@ -33,7 +33,8 @@ class _NavbarWidgetState extends State<NavbarWidget> {
               label: loc.navHistory, // "Історія"
             ),
             NavigationDestination(
-              icon: const Icon(Icons.bar_chart),
+              icon: const Icon(Icons.area_chart_outlined),
+              selectedIcon: const Icon(Icons.area_chart),
               label: loc.navStats, // "Статистика"
             ),
             NavigationDestination(
@@ -42,10 +43,6 @@ class _NavbarWidgetState extends State<NavbarWidget> {
               label: loc.navProfile, // "Профіль"
             ),
           ],
-          // onDestinationSelected: (int value) {
-          //   selectedPageNotifier.value = value;
-          // },
-          // selectedIndex: selectedPage,
         );
       },
     );

@@ -56,7 +56,7 @@ class ProgressLineChart extends StatelessWidget {
       return {'min': v - delta, 'max': v + delta};
     }
 
-    final paddingRel = 0.05;
+    final paddingRel = 0.1;
     final minWithPad = rawMin - (rawMax - rawMin) * paddingRel;
     final maxWithPad = rawMax + (rawMax - rawMin) * paddingRel;
 

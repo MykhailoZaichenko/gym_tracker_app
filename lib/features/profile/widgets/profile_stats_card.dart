@@ -47,7 +47,7 @@ class _ProfileStatsCardState extends State<ProfileStatsCard> {
     final initialIndex = _calculateIndex(widget.visibleMonth);
     _pageController = PageController(
       initialPage: initialIndex,
-      viewportFraction: 0.92,
+      viewportFraction: 0.925,
     );
   }
 
@@ -132,12 +132,12 @@ class _ProfileStatsCardState extends State<ProfileStatsCard> {
             },
             child: Container(
               margin: const EdgeInsets.symmetric(
-                horizontal: 4,
+                horizontal: 6,
                 vertical: 8,
               ), // Відступи між картками
               decoration: BoxDecoration(
                 color: theme.cardColor,
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(10),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withValues(alpha: 0.05),
@@ -153,11 +153,9 @@ class _ProfileStatsCardState extends State<ProfileStatsCard> {
                 ),
               ),
               child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 16,
-                  horizontal: 8,
-                ),
+                padding: const EdgeInsets.all(16.0),
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     // 🔽 Заголовок з вибором місяця
@@ -208,7 +206,8 @@ class _ProfileStatsCardState extends State<ProfileStatsCard> {
                     // 📊 Статистика
                     Expanded(
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           StatTile(
                             icon: Icons.fitness_center,
@@ -220,11 +219,7 @@ class _ProfileStatsCardState extends State<ProfileStatsCard> {
                                 ? loc.setsCount(widget.totalSets)
                                 : loc.setsCount(0).replaceAll('0', ''),
                           ),
-                          Container(
-                            width: 1,
-                            height: 40,
-                            color: theme.dividerColor,
-                          ),
+                          const SizedBox(width: 8),
                           StatTile(
                             icon: Icons.square_foot,
                             value: isCurrent
@@ -232,11 +227,7 @@ class _ProfileStatsCardState extends State<ProfileStatsCard> {
                                 : '-',
                             label: '${loc.weightLabel} (${loc.weightUnit})',
                           ),
-                          Container(
-                            width: 1,
-                            height: 40,
-                            color: theme.dividerColor,
-                          ),
+                          const SizedBox(width: 8),
                           StatTile(
                             icon: Icons.local_fire_department,
                             value: isCurrent

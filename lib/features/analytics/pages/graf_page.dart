@@ -229,15 +229,24 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
     switch (_range) {
       case RangeMode.month:
         final dayNum = x.round();
+        // Захист від некоректних днів (наприклад, 32 січня)
+        final maxDays = DateTime(
+          _visibleMonth.year,
+          _visibleMonth.month + 1,
+          0,
+        ).day;
+        if (dayNum < 1 || dayNum > maxDays) return null;
         return DateTime(_visibleMonth.year, _visibleMonth.month, dayNum);
       case RangeMode.year:
         final month = x.round();
-        return DateTime(DateTime.now().year, month, 1);
+        if (month < 1 || month > 12) return null;
+        return DateTime(_visibleMonth.year, month, 1);
     }
   }
 
   void _onPointTapped(DateTime day) {
     final loc = AppLocalizations.of(context)!;
+    if (_range == RangeMode.year) return;
     final key =
         '${day.year.toString().padLeft(4, '0')}-${day.month.toString().padLeft(2, '0')}-${day.day.toString().padLeft(2, '0')}';
     final exList = _allWorkouts[key] ?? [];
@@ -346,7 +355,8 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
   double _bottomInterval() {
     switch (_range) {
       case RangeMode.month:
-        return 5;
+        //todo зробити динамічний інтервал типу якщо там до 15 днів покищо введено, то 1, а якщо всі 30 введено то 3 або 2
+        return 1;
       case RangeMode.year:
         return 1;
     }
