@@ -6,6 +6,7 @@ import 'package:gym_tracker_app/l10n/app_localizations.dart';
 import 'package:gym_tracker_app/services/firestore_service.dart';
 import 'package:gym_tracker_app/widget/common/fading_edge.dart';
 import 'package:gym_tracker_app/widget/common/primary_filled_button.dart';
+import 'package:gym_tracker_app/widget/common/status_icon_widget.dart';
 import 'package:intl/intl.dart';
 
 class JournalPage extends StatefulWidget {
@@ -105,7 +106,7 @@ class _JournalPageState extends State<JournalPage> {
                 // ВЕЛИКА ІКОНКА СТАТУСУ (тільки якщо тренування НЕМАЄ)
                 if (_todaysWorkout == null) ...[
                   const Spacer(),
-                  _buildStatusIcon(context, null, size: 80),
+                  const StatusIconWidget(color: null, size: 80),
                   const SizedBox(height: 20),
                   Text(
                     loc.noWorkoutToday,
@@ -120,7 +121,12 @@ class _JournalPageState extends State<JournalPage> {
                     padding: const EdgeInsets.symmetric(horizontal: 20.0),
                     child: Row(
                       children: [
-                        _buildStatusIcon(context, Colors.green, size: 40),
+                        StatusIconWidget(
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? Colors.greenAccent[400]
+                              : Colors.green,
+                          size: 40,
+                        ),
                         const SizedBox(width: 16),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -261,25 +267,6 @@ class _JournalPageState extends State<JournalPage> {
                 ),
               ],
             ),
-    );
-  }
-
-  Widget _buildStatusIcon(
-    BuildContext context,
-    Color? color, {
-    required double size,
-  }) {
-    return Container(
-      padding: EdgeInsets.all(size / 4),
-      decoration: BoxDecoration(
-        color: (color ?? Theme.of(context).primaryColor).withValues(alpha: 0.1),
-        shape: BoxShape.circle,
-      ),
-      child: Icon(
-        color != null ? Icons.check_circle_outline : Icons.fitness_center,
-        size: size,
-        color: color ?? Theme.of(context).primaryColor,
-      ),
     );
   }
 }

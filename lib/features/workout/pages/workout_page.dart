@@ -66,42 +66,34 @@ class _WorkoutPageState extends State<WorkoutPage> {
   }
 
   Future<void> _loadExercises() async {
-    // 1. Спочатку пробуємо завантажити з Firebase (якщо є збережене тренування)
-    // Тут увага: getWorkout тепер має повертати список, або ми шукаємо по ID
-    // Але якщо ти використовуєш getWorkout(date), воно поверне збережені.
-    // Якщо у нас вже є workoutId, краще було б вантажити по ньому, але залишимо як є.
-    List<WorkoutExercise> savedExercises = [];
-
-    // Якщо передали ID, спробуємо знайти конкретне тренування (опціонально)
-    // Якщо ні - використовуємо стару логіку getWorkout(date)
-    savedExercises = await _firestore.getWorkout(widget.date);
+    final savedExercises = await _firestore.getWorkout(widget.date);
 
     if (savedExercises.isNotEmpty) {
       _exercises = savedExercises;
     } else if (widget.exercises != null && widget.exercises!.isNotEmpty) {
-      // 2. Якщо в базі пусто, але передали аргументи (редагування з HomePage)
       _exercises = List.from(widget.exercises!);
     } else {
-      // 3. Якщо все пусто - перевіряємо план
-      if (!widget.shouldAutoPick) {
+      try {
         final plan = await _firestore.getWeeklyPlan();
-        final weekdayKey = DateFormat.E('en').format(widget.date);
-        final planned = plan[weekdayKey] ?? [];
 
-        if (planned.isNotEmpty) {
-          _exercises = planned
-              .map(
-                (idOrName) => WorkoutExercise(
-                  name: idOrName,
-                  exerciseId: idOrName,
-                  sets: [SetData()],
-                ),
-              )
-              .toList();
+        final dayKey = DateFormat.E('en').format(widget.date);
+
+        // Якщо на цей день є вправи
+        if (plan.containsKey(dayKey) && plan[dayKey]!.isNotEmpty) {
+          final plannedIds = plan[dayKey]!;
+
+          _exercises = plannedIds.map((idOrName) {
+            return WorkoutExercise(
+              name: idOrName,
+              exerciseId: idOrName,
+              sets: [SetData()],
+            );
+          }).toList();
         } else {
           _exercises = [];
         }
-      } else {
+      } catch (e) {
+        debugPrint("Error loading plan: $e");
         _exercises = [];
       }
     }
@@ -111,13 +103,14 @@ class _WorkoutPageState extends State<WorkoutPage> {
       setState(() {
         _isLoading = false;
       });
+
       if (widget.shouldAutoPick && _exercises.isEmpty) {
-        // Невелика затримка, щоб UI встиг побудуватися
         Future.delayed(const Duration(milliseconds: 100), () {
           _addExercise();
         });
       }
     }
+
     _initialEncoded = jsonEncode(_exercises.map((e) => e.toMap()).toList());
   }
 

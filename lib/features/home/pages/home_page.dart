@@ -16,6 +16,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  late Stream<Map<String, List<WorkoutExercise>>> _workoutsStream;
   late Map<String, List<WorkoutExercise>> _allWorkouts;
   bool _isLoading = true;
   final FirestoreService _firestore = FirestoreService();
@@ -28,7 +29,7 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     _selectedDay = DateTime.now();
     _loadAllWorkouts();
-
+    _workoutsStream = _firestore.getAllWorkoutsStream();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _checkAndShowPlanProposal();
     });
@@ -84,7 +85,7 @@ class _HomePageState extends State<HomePage> {
         _focusedDay.year == now.year && _focusedDay.month == now.month;
 
     return StreamBuilder<Map<String, List<WorkoutExercise>>>(
-      stream: _firestore.getAllWorkoutsStream(),
+      stream: _workoutsStream,
       builder: (context, snapshot) {
         // Якщо завантаження (перший раз)
         if (snapshot.connectionState == ConnectionState.waiting) {

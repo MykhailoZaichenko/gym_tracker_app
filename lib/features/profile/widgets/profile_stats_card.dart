@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gym_tracker_app/core/constants/date_constants.dart';
 import 'package:gym_tracker_app/utils/utils.dart';
 import 'package:gym_tracker_app/l10n/app_localizations.dart';
 import 'package:gym_tracker_app/widget/common/month_picker_dialog.dart';
@@ -35,15 +36,18 @@ class _ProfileStatsCardState extends State<ProfileStatsCard> {
   late PageController _pageController;
 
   // Базова дата для розрахунку індексу (січень 2024)
-  final DateTime _baseDate = DateTime(2024, 1, 1);
+  late final DateTime _baseDate;
   late int _maxPageCount;
 
   @override
   void initState() {
     super.initState();
-    final now = DateTime.now();
+    _baseDate = DateConstants.appStartDate;
+    final current = DateConstants.currentMonthStart;
     _maxPageCount =
-        (now.year - _baseDate.year) * 12 + (now.month - _baseDate.month) + 1;
+        (current.year - _baseDate.year) * 12 +
+        (current.month - _baseDate.month) +
+        1;
     final initialIndex = _calculateIndex(widget.visibleMonth);
     _pageController = PageController(
       initialPage: initialIndex,
@@ -54,9 +58,11 @@ class _ProfileStatsCardState extends State<ProfileStatsCard> {
   @override
   void didUpdateWidget(ProfileStatsCard oldWidget) {
     super.didUpdateWidget(oldWidget);
-    final now = DateTime.now();
+    final current = DateConstants.currentMonthStart;
     _maxPageCount =
-        (now.year - _baseDate.year) * 12 + (now.month - _baseDate.month) + 1;
+        (current.year - _baseDate.year) * 12 +
+        (current.month - _baseDate.month) +
+        1;
     if (oldWidget.visibleMonth != widget.visibleMonth) {
       final newIndex = _calculateIndex(widget.visibleMonth);
       if (_pageController.hasClients &&
@@ -164,16 +170,11 @@ class _ProfileStatsCardState extends State<ProfileStatsCard> {
                       child: InkWell(
                         onTap: isCurrent
                             ? () async {
-                                final now = DateTime.now();
                                 final result = await showMonthPicker(
                                   context: context,
                                   initialDate: date,
                                   firstDate: _baseDate,
-                                  lastDate: DateTime(
-                                    now.year,
-                                    now.month + 1,
-                                    0,
-                                  ),
+                                  lastDate: DateConstants.appMaxDate,
                                 );
                                 if (result != null) {
                                   // Переходимо на вибраний місяць

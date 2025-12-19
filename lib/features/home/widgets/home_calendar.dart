@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gym_tracker_app/core/constants/date_constants.dart';
 import 'package:gym_tracker_app/core/theme/theme_service.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:gym_tracker_app/widget/common/month_picker_dialog.dart';
@@ -25,13 +26,22 @@ class HomeCalendar extends StatelessWidget {
   });
 
   String _keyOf(DateTime date) => date.toIso8601String().split('T').first;
+  bool _isSameMonth(DateTime a, DateTime b) {
+    return a.year == b.year && a.month == b.month;
+  }
 
   @override
   Widget build(BuildContext context) {
     final locale = AppLocalizations.of(context)!.localeName;
-    final now = DateTime.now();
 
-    final lastAllowedDay = DateTime(now.year, now.month + 1, 0);
+    final firstAllowedDay = DateConstants.appStartDate;
+    final lastAllowedDay = DateConstants.appMaxDate;
+
+    final isAtStart = _isSameMonth(focusedDay, firstAllowedDay);
+    final isAtEnd = _isSameMonth(focusedDay, lastAllowedDay);
+
+    final activeColor = Theme.of(context).iconTheme.color ?? Colors.black;
+    final disabledColor = Colors.grey.withValues(alpha: 0.5);
 
     final startingDayOfWeek = locale.startsWith('uk')
         ? StartingDayOfWeek.monday
@@ -41,6 +51,18 @@ class HomeCalendar extends StatelessWidget {
       locale: locale,
       startingDayOfWeek: startingDayOfWeek,
       onPageChanged: onPageChanged,
+      headerStyle: HeaderStyle(
+        titleCentered: true,
+        formatButtonVisible: false,
+        leftChevronIcon: Icon(
+          Icons.chevron_left,
+          color: isAtStart ? disabledColor : activeColor,
+        ),
+        rightChevronIcon: Icon(
+          Icons.chevron_right,
+          color: isAtEnd ? disabledColor : activeColor,
+        ),
+      ),
       calendarBuilders: CalendarBuilders(
         headerTitleBuilder: (context, day) {
           final monthName = DateFormat.MMMM(locale).format(day);
@@ -49,12 +71,11 @@ class HomeCalendar extends StatelessWidget {
 
           return InkWell(
             onTap: () async {
-              final now = DateTime.now();
               final picked = await showMonthPicker(
                 context: context,
                 initialDate: day,
-                firstDate: DateTime(2024, 1, 1),
-                lastDate: DateTime(now.year, now.month + 1, 0),
+                firstDate: DateConstants.appStartDate,
+                lastDate: DateConstants.appMaxDate,
               );
               onMonthPicked(picked);
             },
@@ -80,7 +101,7 @@ class HomeCalendar extends StatelessWidget {
         },
       ),
       availableCalendarFormats: const {CalendarFormat.month: 'Month'},
-      firstDay: DateTime.utc(2024, 1, 1),
+      firstDay: firstAllowedDay,
       lastDay: lastAllowedDay,
       focusedDay: focusedDay,
       selectedDayPredicate: (day) => isSameDay(day, selectedDay),

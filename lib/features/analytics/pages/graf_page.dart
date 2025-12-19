@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:gym_tracker_app/core/constants/constants.dart';
+import 'package:gym_tracker_app/core/constants/date_constants.dart';
 import 'package:gym_tracker_app/core/theme/theme_service.dart';
 import 'package:gym_tracker_app/utils/utils.dart';
 import 'package:gym_tracker_app/features/analytics/widgets/line_chart_card.dart';
@@ -37,7 +38,11 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
     _tabController = TabController(length: 2, vsync: this);
     _tabController.addListener(() {
       if (!_tabController.indexIsChanging) {
-        setState(() => _range = RangeMode.values[_tabController.index]);
+        setState(() {
+          _range = RangeMode.values[_tabController.index];
+          // При перемиканні вкладок скидаємо на поточну дату, щоб уникнути плутанини
+          _visibleMonth = DateTime.now();
+        });
       }
     });
     _loadAllWorkouts();
@@ -79,7 +84,6 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
     return rawName;
   }
 
-  /// Отримує локалізовану назву для відображення в UI за канонічним ID
   String _getLocalizedNameById(String canonicalId, List<ExerciseInfo> catalog) {
     try {
       final found = catalog.firstWhere((c) => c.id == canonicalId);
@@ -96,14 +100,12 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
     for (final list in _allWorkouts.values) {
       for (final ex in list) {
         final id = _getCanonicalId(ex, catalog);
-
         if (id != 'unknown') {
           uniqueCanonicalIds.add(id);
         }
       }
     }
 
-    // Перетворюємо ID на красиві локалізовані назви для списку
     final names = uniqueCanonicalIds
         .map((id) => _getLocalizedNameById(id, catalog))
         .toSet()
@@ -112,7 +114,6 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
     names.sort();
     _displayExerciseNames = names;
 
-    // Логіка збереження вибору при оновленні списку
     if (_displayExerciseNames.isNotEmpty) {
       if (_selectedExerciseDisplay == null ||
           !_displayExerciseNames.contains(_selectedExerciseDisplay)) {
@@ -132,7 +133,6 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
     final Map<DateTime, double> result = {};
     final catalog = getExerciseCatalog(loc);
 
-    // Знаходимо ID для обраної назви
     String targetCanonicalId = selectedDisplayName;
     try {
       final found = catalog.firstWhere((c) => c.name == selectedDisplayName);
@@ -141,7 +141,6 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
 
     _allWorkouts.forEach((dateStr, exercises) {
       final date = DateTime.parse(dateStr);
-
       final matching = exercises.where((ex) {
         final exId = _getCanonicalId(ex, catalog);
         return exId == targetCanonicalId;
@@ -171,8 +170,8 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
     if (_selectedExerciseDisplay == null) return [];
 
     final acc = _accumulatePerDay(_selectedExerciseDisplay!, loc);
-
     Iterable<MapEntry<DateTime, double>> entries = acc.entries;
+
     switch (_range) {
       case RangeMode.month:
         final first = DateTime(_visibleMonth.year, _visibleMonth.month, 1);
@@ -186,8 +185,9 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
         );
         break;
       case RangeMode.year:
-        final yearStart = DateTime(DateTime.now().year, 1, 1);
-        final yearEnd = DateTime(DateTime.now().year, 12, 31);
+        // Фільтруємо по вибраному року (_visibleMonth.year)
+        final yearStart = DateTime(_visibleMonth.year, 1, 1);
+        final yearEnd = DateTime(_visibleMonth.year, 12, 31);
         entries = entries.where(
           (e) => !e.key.isBefore(yearStart) && !e.key.isAfter(yearEnd),
         );
@@ -198,7 +198,74 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
     return sorted;
   }
 
-  // ... UI методи без змін ...
+  // ---- НАВІГАЦІЯ (Unified Logic) ----
+
+  // 1. Чи можна йти назад?
+  bool get _canGoBack {
+    final minDate = DateConstants.appStartDate;
+    if (_range == RangeMode.month) {
+      // Перевіряємо, чи поточний видимий місяць пізніше за стартовий
+      return _visibleMonth.year > minDate.year ||
+          (_visibleMonth.year == minDate.year &&
+              _visibleMonth.month > minDate.month);
+    } else {
+      // Для року: чи рік більше стартового
+      return _visibleMonth.year > minDate.year;
+    }
+  }
+
+  // 2. Чи можна йти вперед?
+  bool get _canGoForward {
+    final currentMonthStart = DateConstants.currentMonthStart;
+    if (_range == RangeMode.month) {
+      // Для місяців: не можна, якщо це поточний місяць (або майбутнє)
+      // isBefore строго менше, тому це працює правильно
+      return _visibleMonth.isBefore(currentMonthStart);
+    } else {
+      // Для років: не можна, якщо це поточний рік
+      return _visibleMonth.year < currentMonthStart.year;
+    }
+  }
+
+  // 3. Перемикання назад (Уніфіковано)
+  void _prevPeriod() {
+    if (!_canGoBack) return;
+    setState(() {
+      if (_range == RangeMode.month) {
+        _visibleMonth = DateTime(
+          _visibleMonth.year,
+          _visibleMonth.month - 1,
+          1,
+        );
+      } else {
+        _visibleMonth = DateTime(
+          _visibleMonth.year - 1,
+          _visibleMonth.month,
+          1,
+        );
+      }
+    });
+  }
+
+  // 4. Перемикання вперед (Уніфіковано)
+  void _nextPeriod() {
+    if (!_canGoForward) return;
+    setState(() {
+      if (_range == RangeMode.month) {
+        _visibleMonth = DateTime(
+          _visibleMonth.year,
+          _visibleMonth.month + 1,
+          1,
+        );
+      } else {
+        _visibleMonth = DateTime(
+          _visibleMonth.year + 1,
+          _visibleMonth.month,
+          1,
+        );
+      }
+    });
+  }
 
   List<FlSpot> _buildSpots(List<MapEntry<DateTime, double>> entries) {
     final spots = <FlSpot>[];
@@ -229,7 +296,6 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
     switch (_range) {
       case RangeMode.month:
         final dayNum = x.round();
-        // Захист від некоректних днів (наприклад, 32 січня)
         final maxDays = DateTime(
           _visibleMonth.year,
           _visibleMonth.month + 1,
@@ -246,7 +312,9 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
 
   void _onPointTapped(DateTime day) {
     final loc = AppLocalizations.of(context)!;
+    // Якщо рік - поки що не показуємо деталі (або можна показати список днів)
     if (_range == RangeMode.year) return;
+
     final key =
         '${day.year.toString().padLeft(4, '0')}-${day.month.toString().padLeft(2, '0')}-${day.day.toString().padLeft(2, '0')}';
     final exList = _allWorkouts[key] ?? [];
@@ -302,64 +370,8 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
     );
   }
 
-  void _prevMonth() {
-    setState(() {
-      if (_range == RangeMode.month) {
-        if (_visibleMonth.year > 2024) {
-          _visibleMonth = DateTime(
-            _visibleMonth.year,
-            _visibleMonth.month - 1,
-            1,
-          );
-        }
-      } else {
-        // Рік назад
-        if (_visibleMonth.year > 2024) {
-          _visibleMonth = DateTime(
-            _visibleMonth.year - 1,
-            _visibleMonth.month,
-            1,
-          );
-        }
-      }
-    });
-  }
-
-  void _nextMonth() {
-    final now = DateTime.now();
-    setState(() {
-      if (_range == RangeMode.month) {
-        // Перевірка: чи наступний місяць не в майбутньому
-        final nextMonth = DateTime(
-          _visibleMonth.year,
-          _visibleMonth.month + 1,
-          1,
-        );
-        if (nextMonth.year < now.year ||
-            (nextMonth.year == now.year && nextMonth.month <= now.month)) {
-          _visibleMonth = nextMonth;
-        }
-      } else {
-        // Рік вперед
-        if (_visibleMonth.year < now.year) {
-          _visibleMonth = DateTime(
-            _visibleMonth.year + 1,
-            _visibleMonth.month,
-            1,
-          );
-        }
-      }
-    });
-  }
-
   double _bottomInterval() {
-    switch (_range) {
-      case RangeMode.month:
-        //todo зробити динамічний інтервал типу якщо там до 15 днів покищо введено, то 1, а якщо всі 30 введено то 3 або 2
-        return 1;
-      case RangeMode.year:
-        return 1;
-    }
+    return 1; // Інтервал регулюється всередині LineChartCard
   }
 
   Widget _buildBottomTitle(double value) {
@@ -396,7 +408,6 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
     final loc = AppLocalizations.of(context)!;
     final locale = loc.localeName;
 
-    // Оновлюємо список вправ при кожному build
     _prepareExerciseList(loc);
 
     final entries = _filteredEntriesForRange(loc);
@@ -408,20 +419,14 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
     }
     final double yInterval = (maxY <= 0) ? 1.0 : (maxY / 4).toDouble();
 
-    final monthName = DateFormat.MMMM(locale).format(_visibleMonth);
-    final capitalizedMonth = toBeginningOfSentenceCase(monthName);
-    final now = DateTime.now();
-
-    bool canGoBack = _visibleMonth.year > 2024;
-    bool canGoForward = false;
-
+    // Форматування заголовка (Місяць або Рік)
+    String dateLabel;
     if (_range == RangeMode.month) {
-      canGoForward =
-          _visibleMonth.year < now.year ||
-          (_visibleMonth.year == now.year && _visibleMonth.month < now.month);
+      final monthName = DateFormat.MMMM(locale).format(_visibleMonth);
+      dateLabel =
+          '${toBeginningOfSentenceCase(monthName)} ${_visibleMonth.year}';
     } else {
-      // Для року
-      canGoForward = _visibleMonth.year < now.year;
+      dateLabel = _visibleMonth.year.toString();
     }
 
     return Scaffold(
@@ -430,6 +435,7 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
         padding: const EdgeInsets.all(12),
         child: Column(
           children: [
+            // Exercise Dropdown
             Row(
               children: [
                 Text(loc.exerciseLabel),
@@ -449,6 +455,8 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
               ],
             ),
             const SizedBox(height: 8),
+
+            // Tabs (Month/Year)
             TabBar(
               controller: _tabController,
               labelColor: Theme.of(context).colorScheme.secondary,
@@ -460,64 +468,72 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
               ],
             ),
             const SizedBox(height: 8),
-            if (_range == RangeMode.month)
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.chevron_left),
-                      onPressed: canGoBack ? _prevMonth : null,
-                    ),
 
-                    // Клікабельний місяць
-                    InkWell(
-                      borderRadius: BorderRadius.circular(8),
-                      onTap: () async {
-                        // Викликаємо діалог вибору місяця
-                        final now = DateTime.now();
-                        final picked = await showMonthPicker(
-                          context: context,
-                          initialDate: _visibleMonth,
-                          // Можемо обмежити дати, як і в інших місцях
-                          firstDate: DateTime(2024, 1),
-                          lastDate: DateTime(now.year, now.month),
-                        );
+            // === 📅 NAVIGATOR (UNIFIED) ===
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // BACK
+                  IconButton(
+                    icon: const Icon(Icons.chevron_left),
+                    onPressed: _canGoBack ? _prevPeriod : null,
+                    color: _canGoBack ? null : Colors.grey.withOpacity(0.3),
+                  ),
 
-                        if (picked != null) {
-                          setState(() {
-                            _visibleMonth = picked;
-                          });
-                        }
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 8,
-                        ),
-                        child: Row(
-                          children: [
-                            Text(
-                              '$capitalizedMonth ${_visibleMonth.year}',
-                              style: Theme.of(context).textTheme.titleMedium
-                                  ?.copyWith(fontWeight: FontWeight.bold),
-                            ),
+                  // DATE LABEL (Clickable only in Month mode)
+                  InkWell(
+                    borderRadius: BorderRadius.circular(8),
+                    onTap: _range == RangeMode.month
+                        ? () async {
+                            final picked = await showMonthPicker(
+                              context: context,
+                              initialDate: _visibleMonth,
+                              firstDate: DateConstants.appStartDate,
+                              lastDate: DateConstants.appMaxDate,
+                            );
+                            if (picked != null) {
+                              setState(() {
+                                _visibleMonth = picked;
+                              });
+                            }
+                          }
+                        : null, // У режимі "Рік" поки що просто текст
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 8,
+                      ),
+                      child: Row(
+                        children: [
+                          Text(
+                            dateLabel,
+                            style: Theme.of(context).textTheme.titleMedium
+                                ?.copyWith(fontWeight: FontWeight.bold),
+                          ),
+                          // Показуємо стрілочку вибору тільки для місяців
+                          if (_range == RangeMode.month) ...[
                             const SizedBox(width: 4),
                             const Icon(Icons.arrow_drop_down, size: 20),
                           ],
-                        ),
+                        ],
                       ),
                     ),
+                  ),
 
-                    IconButton(
-                      icon: const Icon(Icons.chevron_right),
-                      onPressed: canGoForward ? _nextMonth : null,
-                    ),
-                  ],
-                ),
+                  // FORWARD
+                  IconButton(
+                    icon: const Icon(Icons.chevron_right),
+                    onPressed: _canGoForward ? _nextPeriod : null,
+                    color: _canGoForward ? null : Colors.grey.withOpacity(0.3),
+                  ),
+                ],
               ),
+            ),
             const SizedBox(height: 8),
+
+            // CHART CARD
             Expanded(
               child: _selectedExerciseDisplay == null
                   ? Center(
@@ -553,6 +569,7 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
                               },
                             ),
                             const SizedBox(height: 8),
+                            // VOLUME HELPER TOOLTIP
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -564,38 +581,26 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
                                 const SizedBox(width: 6),
                                 Text(loc.liftedWeight),
                                 IconButton(
-                                  // При натисканні викликаємо показ Tooltip вручну
                                   onPressed: () {
                                     tooltipKey.currentState
                                         ?.ensureTooltipVisible();
                                   },
-                                  // Стандартний tooltip кнопки вимикаємо, щоб не дублювався
                                   tooltip: null,
                                   icon: Tooltip(
                                     key: tooltipKey,
-                                    message: loc
-                                        .liftedWeightHelp, // "Обсяг = Вага * Повтори"
-                                    // НАЛАШТУВАННЯ ВИГЛЯДУ (як на фото)
-                                    preferBelow: false, // Показувати ЗВЕРХУ
-                                    verticalOffset: 20, // Відступ від іконки
-                                    showDuration: const Duration(
-                                      seconds: 4,
-                                    ), // Скільки часу висить
-                                    triggerMode: TooltipTriggerMode
-                                        .manual, // Керуємо вручну через onPressed
-                                    // Стиль "хмаринки"
+                                    message: loc.liftedWeightHelp,
+                                    preferBelow: false,
+                                    verticalOffset: 20,
+                                    showDuration: const Duration(seconds: 4),
+                                    triggerMode: TooltipTriggerMode.manual,
                                     decoration: BoxDecoration(
-                                      color: Theme.of(
-                                        context,
-                                      ).cardColor, // Колір фону (білий у світлій темі)
-                                      borderRadius: BorderRadius.circular(
-                                        12,
-                                      ), // Заокруглення
+                                      color: Theme.of(context).cardColor,
+                                      borderRadius: BorderRadius.circular(12),
                                       boxShadow: [
                                         BoxShadow(
                                           color: Colors.black.withValues(
                                             alpha: 0.1,
-                                          ), // Легка тінь
+                                          ),
                                           blurRadius: 10,
                                           spreadRadius: 2,
                                           offset: const Offset(0, 4),
@@ -607,8 +612,6 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
                                         ).dividerColor.withValues(alpha: 0.1),
                                       ),
                                     ),
-
-                                    // Стиль тексту всередині
                                     textStyle: Theme.of(context)
                                         .textTheme
                                         .bodyMedium
@@ -618,16 +621,13 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
                                             context,
                                           ).colorScheme.onSurface,
                                         ),
-
-                                    // Відступи всередині хмаринки
                                     padding: const EdgeInsets.symmetric(
                                       horizontal: 16,
                                       vertical: 12,
                                     ),
                                     margin: const EdgeInsets.symmetric(
                                       horizontal: 20,
-                                    ), // Відступи від країв екрану
-                                    // Сама іконка
+                                    ),
                                     child: Icon(
                                       Icons.help_outline_rounded,
                                       color: Theme.of(
@@ -644,6 +644,8 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
                     ),
             ),
             const SizedBox(height: 8),
+
+            // TOTALS ROW
             Padding(
               padding: const EdgeInsets.only(
                 bottom: 8.0,
@@ -674,6 +676,7 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
   }
 }
 
+// ... Models stay the same ...
 class WorkoutExerciseGraf {
   String name;
   String? exerciseId;

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gym_tracker_app/core/constants/date_constants.dart';
 import 'package:gym_tracker_app/l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
 
@@ -35,9 +36,8 @@ Future<DateTime?> showMonthPicker({
   String? okLabel,
 }) {
   final loc = AppLocalizations.of(context)!;
-  final now = DateTime.now();
-  final start = firstDate ?? DateTime(2024, 1);
-  final end = lastDate ?? DateTime(now.year, 12);
+  final start = firstDate ?? DateConstants.appStartDate;
+  final end = lastDate ?? DateConstants.appMaxDate;
   return showDialog<DateTime>(
     context: context,
     barrierDismissible: true,
@@ -108,21 +108,14 @@ class _MonthPickerDialogState extends State<MonthPickerDialog>
   }
 
   bool _isMonthSelectable(int year, int month) {
-    // final dateToCheck = DateTime(year, month);
-    // Порівнюємо з першим числом місяця firstDate та останнім числом місяця lastDate
-    // Для спрощення: перевіряємо, чи місяць випадає з діапазону
-
-    // Якщо рік менший за мінімальний або більший за максимальний -> false
     if (year < widget.firstDate.year || year > widget.lastDate.year) {
       return false;
     }
 
-    // Якщо це рік початку, перевіряємо місяць
     if (year == widget.firstDate.year && month < widget.firstDate.month) {
       return false;
     }
 
-    // Якщо це рік кінця, перевіряємо місяць
     if (year == widget.lastDate.year && month > widget.lastDate.month) {
       return false;
     }
@@ -133,7 +126,6 @@ class _MonthPickerDialogState extends State<MonthPickerDialog>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    // final primary = theme.colorScheme.primary;
     final loc = AppLocalizations.of(context)!;
 
     final canGoBack = _year > widget.firstDate.year;
@@ -180,25 +172,10 @@ class _MonthPickerDialogState extends State<MonthPickerDialog>
                     decoration: InputDecoration(
                       isDense: true,
                       border: InputBorder.none,
-                      // contentPadding: const EdgeInsets.symmetric(vertical: 8),
-                      // enabledBorder: UnderlineInputBorder(
-                      //   borderSide: BorderSide(color: primary.withAlpha(80)),
-                      // ),
-                      // focusedBorder: UnderlineInputBorder(
-                      //   borderSide: BorderSide(color: primary, width: 2),
-                      // ),
                     ),
                     style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w600,
                     ),
-                    // onSubmitted: (_) {
-                    //   final parsed = int.tryParse(_yearController.text.trim());
-                    //   if (parsed != null) {
-                    //     setState(() => _year = parsed);
-                    //   } else {
-                    //     _yearController.text = _year.toString();
-                    //   }
-                    // },
                   ),
                 ),
                 IconButton(
