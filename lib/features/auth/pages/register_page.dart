@@ -106,30 +106,44 @@ class _RegisterPageState extends State<RegisterPage> {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(text)));
   }
 
+  void _navigateToNextPage() {
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (_) => const VerifyEmailPage()),
+      (route) => false,
+    );
+  }
+
   Future<void> _onGoogleRegisterPressed() async {
     final loc = AppLocalizations.of(context)!;
     setState(() => _loading = true);
     try {
-      // Цей метод в AuthService вже містить логіку створення юзера, якщо його немає
+      // 1. Вхід через Google
       final user = await _auth.loginWithGoogle();
 
       if (user != null) {
-        // Додатково: якщо ви хочете зберегти вагу з onboarding для Google юзера,
-        // це можна зробити тут, аналогічно до звичайної реєстрації.
+        // 2. Логіка збереження ваги (якщо треба)
         final prefs = await SharedPreferences.getInstance();
         final savedWeight = prefs.getDouble('user_weight');
 
-        // Якщо вага є і у профілю вона ще 0 (новий юзер)
         if (savedWeight != null &&
             savedWeight > 0 &&
             (user.weightKg == null || user.weightKg == 0)) {
-          // Оновлюємо профіль через ваш сервіс (потрібно буде імпортувати FirestoreService або додати метод в AuthService)
-          await _auth.updateProfile(user.copyWith(weightKg: savedWeight));
+          // Оновлюємо профіль
+          // Переконайтеся, що user.id не пустий, щоб Firestore не лаявся
+          final updatedUser = user.copyWith(weightKg: savedWeight);
+
+          // Важливо: тут краще використати _firestore.saveUser, якщо _auth.updateProfile
+          // не зберігає дані в базу, а тільки в Auth.
+          await _firestore.saveUser(updatedUser);
+
           await prefs.remove('user_weight');
         }
 
         if (!mounted) return;
-        _goToApp();
+
+        // 3. ВАЖЛИВО: Просто переходимо далі, НЕ викликаємо _goToApp()
+        _navigateToNextPage();
       }
     } catch (e) {
       _showMessage('${loc.errGoogleSignIn}: $e');
@@ -169,7 +183,7 @@ class _RegisterPageState extends State<RegisterPage> {
       }
 
       if (!mounted) return;
-      _goToApp();
+      await _completeEmailRegistration();
     } catch (e) {
       _showMessage(e.toString().replaceAll('Exception: ', ''));
     } finally {
@@ -177,23 +191,23 @@ class _RegisterPageState extends State<RegisterPage> {
     }
   }
 
-  Future<void> _goToApp() async {
+  // Цей метод викликається ТІЛЬКИ для реєстрації через Email/Password
+  Future<void> _completeEmailRegistration() async {
     try {
       final email = _emailCtrl.text.trim();
       final password = _passwordCtrl.text;
+
+      // Створюємо юзера в Auth
       UserCredential userCredential = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(email: email, password: password);
 
       await userCredential.user?.sendEmailVerification();
+
+      if (!mounted) return;
+      _navigateToNextPage(); // Викликаємо навігацію
     } catch (e) {
       _showMessage(e.toString().replaceAll('Exception: ', ''));
     }
-    if (!mounted) return;
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(builder: (_) => const VerifyEmailPage()),
-      (route) => false,
-    );
   }
 
   String? _validateEmail(String? v) {
