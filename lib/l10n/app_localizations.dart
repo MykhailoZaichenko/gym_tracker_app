@@ -1201,6 +1201,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Synchronized'**
   String get synchronized;
+
+  /// Delete Account Button
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Account'**
+  String get deleteAccount;
+
+  /// Delete Account Dialog Title
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Account?'**
+  String get deleteAccountTitle;
+
+  /// Delete Account Dialog Warning Message
+  ///
+  /// In en, this message translates to:
+  /// **'This action cannot be undone. All your data (workouts, stats, profile) will be permanently lost.'**
+  String get deleteAccountWarning;
+
+  /// Security Update Title
+  ///
+  /// In en, this message translates to:
+  /// **'Security Update'**
+  String get securityUpdate;
+
+  /// Re-login required message before account deletion
+  ///
+  /// In en, this message translates to:
+  /// **'For security reasons, please Log Out and Log In again before deleting your account.'**
+  String get reLoginRequiredMsg;
 }
 
 class _AppLocalizationsDelegate

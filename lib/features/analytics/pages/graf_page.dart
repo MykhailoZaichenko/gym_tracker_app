@@ -370,8 +370,15 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
     );
   }
 
-  double _bottomInterval() {
-    return 1; // Інтервал регулюється всередині LineChartCard
+  double _bottomInterval(int pointsCount) {
+    switch (_range) {
+      case RangeMode.year:
+        return 1.0;
+      case RangeMode.month:
+        if (pointsCount <= 5) return 5.0;
+        if (pointsCount <= 15) return 3.0;
+        return 2.0;
+    }
   }
 
   Widget _buildBottomTitle(double value) {
@@ -412,6 +419,8 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
 
     final entries = _filteredEntriesForRange(loc);
     final spots = _buildSpots(entries);
+
+    final dynamicInterval = _bottomInterval(spots.length);
 
     double maxY = 1;
     for (final s in spots) {
@@ -560,7 +569,7 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
                               maxY: maxY,
                               yInterval: yInterval,
                               range: _range,
-                              bottomInterval: _bottomInterval,
+                              bottomInterval: () => dynamicInterval,
                               buildBottomTitle: _buildBottomTitle,
                               formatY: formatNumberCompact,
                               onPointTap: (x) {

@@ -598,4 +598,21 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get synchronized => 'Синхронізовано';
+
+  @override
+  String get deleteAccount => 'Видалити акаунт';
+
+  @override
+  String get deleteAccountTitle => 'Видалити акаунт?';
+
+  @override
+  String get deleteAccountWarning =>
+      'Цю дію неможливо скасувати. Всі ваші дані (тренування, статистика, профіль) будуть втрачені назавжди.';
+
+  @override
+  String get securityUpdate => 'Вимога безпеки';
+
+  @override
+  String get reLoginRequiredMsg =>
+      'З міркувань безпеки, будь ласка, вийдіть з акаунту та увійдіть знову перед видаленням.';
 }

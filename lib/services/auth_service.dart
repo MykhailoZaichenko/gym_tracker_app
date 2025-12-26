@@ -125,6 +125,14 @@ class AuthService {
     }
   }
 
+  Future<void> deleteAccount() async {
+    final user = _firebaseAuth.currentUser;
+    if (user == null) return;
+
+    // Спроба видалити
+    await user.delete();
+  }
+
   Future<void> resetPassword(String email) async {
     await _firebaseAuth.sendPasswordResetEmail(email: email);
   }

@@ -451,5 +451,15 @@
   "synchronized": "Synchronized",
 "@synchronized": {
   "description": "Badge shown when internet connection is restored"
-}
+},
+  "deleteAccount": "Delete Account",
+  "@deleteAccount": { "description": "Delete Account Button" },
+  "deleteAccountTitle": "Delete Account?",
+  "@deleteAccountTitle": { "description": "Delete Account Dialog Title" },
+  "deleteAccountWarning": "This action cannot be undone. All your data (workouts, stats, profile) will be permanently lost.",
+  "@deleteAccountWarning": { "description": "Delete Account Dialog Warning Message" },
+  "securityUpdate": "Security Update",
+  "@securityUpdate": { "description": "Security Update Title" },
+  "reLoginRequiredMsg": "For security reasons, please Log Out and Log In again before deleting your account.",
+  "@reLoginRequiredMsg": { "description": "Re-login required message before account deletion" }
 }

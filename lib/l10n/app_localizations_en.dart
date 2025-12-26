@@ -591,4 +591,21 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get synchronized => 'Synchronized';
+
+  @override
+  String get deleteAccount => 'Delete Account';
+
+  @override
+  String get deleteAccountTitle => 'Delete Account?';
+
+  @override
+  String get deleteAccountWarning =>
+      'This action cannot be undone. All your data (workouts, stats, profile) will be permanently lost.';
+
+  @override
+  String get securityUpdate => 'Security Update';
+
+  @override
+  String get reLoginRequiredMsg =>
+      'For security reasons, please Log Out and Log In again before deleting your account.';
 }

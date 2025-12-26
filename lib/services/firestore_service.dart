@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/features/workout/models/workout_exercise_model.dart';
 import 'package:gym_tracker_app/features/profile/models/user_model.dart'
     as app_user;
@@ -52,6 +53,63 @@ class FirestoreService {
       // Ігноруємо помилки мережі
     }
     return null;
+  }
+
+  /// Повне видалення даних користувача (включно з підколекціями)
+  Future<void> deleteUserData() async {
+    final uid = currentUserId;
+    if (uid == null) return;
+
+    try {
+      // 1. Видаляємо всі тренування з підколекції 'workouts'
+      // Шлях: users/{uid}/workouts/{workoutId}
+      final workoutsRef = _db
+          .collection('users')
+          .doc(uid)
+          .collection('workouts');
+
+      await _deleteCollection(workoutsRef);
+
+      // 2. Видаляємо документ самого користувача
+      // Шлях: users/{uid}
+      await _db.collection('users').doc(uid).delete();
+
+      // 3. Видаляємо план тренувань (якщо він в окремій колекції)
+      // Шлях: weekly_plans/{uid}
+      await _db.collection('weekly_plans').doc(uid).delete();
+
+      // Якщо є ще якісь колекції (наприклад, 'history', 'measurements'),
+      // додайте їх видалення тут аналогічно до кроку 1.
+    } catch (e) {
+      debugPrint("Error deleting user data: $e");
+      rethrow; // Прокидаємо помилку далі, щоб UI міг її показати
+    }
+  }
+
+  /// Допоміжний метод для пакетного видалення документів у колекції
+  Future<void> _deleteCollection(
+    CollectionReference collection, {
+    int batchSize = 50,
+  }) async {
+    while (true) {
+      // Беремо пачку документів (ліміт для зменшення навантаження)
+      final snapshot = await collection.limit(batchSize).get();
+
+      if (snapshot.docs.isEmpty) {
+        break; // Якщо документів немає — ми все видалили
+      }
+
+      final batch = _db.batch();
+      for (var doc in snapshot.docs) {
+        batch.delete(doc.reference);
+      }
+
+      // Виконуємо видалення пачки
+      await batch.commit();
+
+      // Невелика пауза, щоб не заблокувати потік (опціонально)
+      await Future.delayed(const Duration(milliseconds: 10));
+    }
   }
 
   // --- ТРЕНУВАННЯ ---

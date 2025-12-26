@@ -20,7 +20,7 @@ class _WidgetTreeState extends State<WidgetTree> {
   @override
   void initState() {
     super.initState();
-    selectedPageNotifier.value = 0;
+    selectedPageNotifier.value = 3;
   }
 
   @override

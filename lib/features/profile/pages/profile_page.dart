@@ -167,6 +167,7 @@ class _ProfilePageState extends State<ProfilePage> {
     final locale = AppLocalizations.of(context)!.localeName;
     final monthName = DateFormat.MMMM(locale).format(_visibleMonth);
     final capitalizedMonth = toBeginningOfSentenceCase(monthName);
+    final listPadding = MediaQuery.of(context).size.width * 0.05;
 
     return SafeArea(
       child: Scaffold(
@@ -179,7 +180,9 @@ class _ProfilePageState extends State<ProfilePage> {
                     shrinkWrap: true,
                     children: [
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: listPadding + 3,
+                        ),
                         child: ProfileHeader(
                           user: _user,
                           onEditPressed: _onEditProfile,
@@ -203,7 +206,9 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                       const SizedBox(height: 12),
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: listPadding + 3,
+                        ),
                         child: ProfileSettingsList(
                           user: _user,
                           onProfileUpdated: _onProfileUpdated,

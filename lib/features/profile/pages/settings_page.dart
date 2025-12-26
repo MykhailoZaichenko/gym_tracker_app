@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart'; // Додано для обробки помилок
 import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/core/constants/constants.dart';
 import 'package:gym_tracker_app/core/locale/locale_serviece.dart';
@@ -5,6 +6,8 @@ import 'package:gym_tracker_app/l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:gym_tracker_app/core/theme/theme_service.dart';
+import 'package:gym_tracker_app/services/auth_service.dart'; // Додано
+import 'package:gym_tracker_app/services/firestore_service.dart'; // Додано
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -15,6 +18,7 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
   late SharedPreferences _prefs;
   bool _notificationsEnabled = true;
+  bool _isLoading = false; // Додано для відображення прогресу видалення
 
   @override
   void initState() {
@@ -24,31 +28,95 @@ class _SettingsPageState extends State<SettingsPage> {
 
   Future<void> _loadSettings() async {
     _prefs = await SharedPreferences.getInstance();
-
-    // ініціалізуємо і локальне поле, і notifier
     final savedDark = _prefs.getBool(KCOnstats.themeModeKey) ?? false;
     ThemeService.isDarkModeNotifier.value = savedDark;
-    // setState(() {
-    //   _darkMode = savedDark;
-    // });
-
-    // підтягуємо уведомлення
     _notificationsEnabled = _prefs.getBool('notifications_enabled') ?? true;
+    if (mounted) setState(() {});
   }
 
-  // Оновлений toggle для темної теми
   Future<void> _toggleDarkMode(bool value) async {
     ThemeService.isDarkModeNotifier.value = value;
-
-    // 3) зберігаємо в SharedPreferences
     await _prefs.setBool(KCOnstats.themeModeKey, value);
   }
 
   Future<void> _toggleNotifications(bool value) async {
     setState(() => _notificationsEnabled = value);
     await _prefs.setBool('notifications_enabled', value);
-    // Запустіть ваш механізм налаштування пуш-повідомлень тут
   }
+
+  // --- ЛОГІКА ВИДАЛЕННЯ АКАУНТУ ---
+  Future<void> _onDeleteAccountPressed() async {
+    final loc = AppLocalizations.of(context)!;
+    final authService = AuthService();
+    final firestoreService = FirestoreService();
+
+    // 1. Діалог підтвердження
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(loc.deleteAccountTitle),
+        content: Text(loc.deleteAccountWarning),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text(loc.cancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            child: Text(loc.delete),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm != true) return;
+
+    setState(() => _isLoading = true);
+
+    try {
+      // 2. Видаляємо дані та юзера
+      await firestoreService.deleteUserData();
+      await authService.deleteAccount();
+
+      // 3. Вихід на головний екран (Welcome)
+      if (mounted) {
+        Navigator.of(context).popUntil((route) => route.isFirst);
+      }
+    } on FirebaseAuthException catch (e) {
+      if (mounted) {
+        setState(() => _isLoading = false);
+        // Якщо токен протух, просимо перелогінитись
+        if (e.code == 'requires-recent-login') {
+          showDialog(
+            context: context,
+            builder: (ctx) => AlertDialog(
+              title: Text(loc.securityUpdate),
+              content: Text(loc.reLoginRequiredMsg),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(ctx),
+                  child: Text(loc.ok),
+                ),
+              ],
+            ),
+          );
+        } else {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text("Error: ${e.message}")));
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isLoading = false);
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("Error: $e")));
+      }
+    }
+  }
+  // --------------------------------
 
   void _showLanguageSelector() {
     showModalBottomSheet(
@@ -58,7 +126,6 @@ class _SettingsPageState extends State<SettingsPage> {
       ),
       builder: (context) {
         final loc = AppLocalizations.of(context)!;
-
         return SafeArea(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -139,6 +206,11 @@ class _SettingsPageState extends State<SettingsPage> {
     final isDark = ThemeService.isDarkModeNotifier.value;
     final loc = AppLocalizations.of(context)!;
 
+    // Якщо йде процес видалення, показуємо лоадер на весь екран
+    if (_isLoading) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
     return Scaffold(
       appBar: AppBar(title: Text(loc.settingsTitle), centerTitle: true),
       body: SafeArea(
@@ -165,7 +237,6 @@ class _SettingsPageState extends State<SettingsPage> {
                     color: isDark ? Colors.white : theme.primaryColor,
                   ),
                   title: Text(loc.appLanguage),
-                  // Показуємо поточну вибрану мову
                   subtitle: Text(
                     locale.languageCode == 'uk' ? 'Українська' : 'English',
                   ),
@@ -186,17 +257,32 @@ class _SettingsPageState extends State<SettingsPage> {
             ),
             const Divider(),
 
+            // Очищення локальних даних
             ListTile(
               leading: Icon(
-                Icons.delete_forever,
-                color: theme.colorScheme.error,
+                Icons
+                    .cleaning_services_outlined, // Змінив іконку, щоб не плутати з видаленням акаунту
+                color: theme.colorScheme.onSurface,
               ),
-              title: Text(
-                loc.clearData,
-                style: TextStyle(color: theme.colorScheme.error),
-              ),
+              title: Text(loc.clearData),
               onTap: _confirmClearData,
             ),
+            const Divider(),
+
+            // === КНОПКА ВИДАЛЕННЯ АКАУНТУ ===
+            ListTile(
+              leading: const Icon(Icons.delete_forever, color: Colors.red),
+              title: Text(
+                loc.deleteAccount, // "Видалити акаунт"
+                style: const TextStyle(
+                  color: Colors.red,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              onTap: _onDeleteAccountPressed,
+            ),
+
+            // =================================
             const Divider(),
 
             ListTile(

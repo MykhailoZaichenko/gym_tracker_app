@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/core/constants/date_constants.dart';
+import 'package:gym_tracker_app/core/theme/theme_service.dart';
 import 'package:gym_tracker_app/utils/utils.dart';
 import 'package:gym_tracker_app/l10n/app_localizations.dart';
 import 'package:gym_tracker_app/widget/common/month_picker_dialog.dart';
@@ -51,7 +52,7 @@ class _ProfileStatsCardState extends State<ProfileStatsCard> {
     final initialIndex = _calculateIndex(widget.visibleMonth);
     _pageController = PageController(
       initialPage: initialIndex,
-      viewportFraction: 0.925,
+      viewportFraction: 0.9,
     );
   }
 
@@ -102,6 +103,7 @@ class _ProfileStatsCardState extends State<ProfileStatsCard> {
       child: PageView.builder(
         controller: _pageController,
         itemCount: _maxPageCount,
+        clipBehavior: Clip.none,
         onPageChanged: (index) {
           final newDate = _calculateDate(index);
           widget.onPickMonth(newDate);
@@ -142,13 +144,16 @@ class _ProfileStatsCardState extends State<ProfileStatsCard> {
                 vertical: 8,
               ), // Відступи між картками
               decoration: BoxDecoration(
-                color: theme.cardColor,
+                color: ThemeService.isDarkModeNotifier.value
+                    ? theme.colorScheme.surfaceContainer
+                    : Colors.white,
                 borderRadius: BorderRadius.circular(10),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withValues(alpha: 0.05),
                     blurRadius: 10,
-                    offset: const Offset(0, 4),
+                    offset: const Offset(0, 6),
+                    spreadRadius: isCurrent ? 0 : -2,
                   ),
                 ],
                 border: Border.all(
