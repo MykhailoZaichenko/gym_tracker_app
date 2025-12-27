@@ -30,7 +30,7 @@ class AppDb {
   FutureOr<void> _onCreate(Database db, int version) async {
     await db.execute('''
       CREATE TABLE users (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id TEXT PRIMARY KEY,
         email TEXT NOT NULL UNIQUE,
         name TEXT NOT NULL,
         passwordHash TEXT NOT NULL,
@@ -53,22 +53,26 @@ class AppDb {
   }
 
   // DAO: create user
-  Future<User> createUser(User user) async {
+  Future<UserModel> createUser(UserModel user) async {
     final db = await database;
-    final id = await db.insert('users', user.toMap());
-    return user.copyWith(id: id);
+    await db.insert(
+      'users',
+      user.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+    return user;
   }
 
   // DAO: get user by id
-  Future<User?> getUserById(int id) async {
+  Future<UserModel?> getUserById(int id) async {
     final db = await database;
     final rows = await db.query('users', where: 'id = ?', whereArgs: [id]);
     if (rows.isEmpty) return null;
-    return User.fromMap(rows.first);
+    return UserModel.fromMap(rows.first);
   }
 
   // DAO: get user by email
-  Future<User?> getUserByEmail(String email) async {
+  Future<UserModel?> getUserByEmail(String email) async {
     final db = await database;
     final rows = await db.query(
       'users',
@@ -76,11 +80,11 @@ class AppDb {
       whereArgs: [email],
     );
     if (rows.isEmpty) return null;
-    return User.fromMap(rows.first);
+    return UserModel.fromMap(rows.first);
   }
 
   // DAO: update user
-  Future<int> updateUser(User user) async {
+  Future<int> updateUser(UserModel user) async {
     final db = await database;
     return db.update(
       'users',

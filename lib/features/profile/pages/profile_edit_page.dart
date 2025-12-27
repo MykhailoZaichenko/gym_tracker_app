@@ -18,7 +18,7 @@ import 'package:gym_tracker_app/features/profile/models/user_model.dart';
 class EditProfilePage extends StatefulWidget {
   const EditProfilePage({super.key, required this.user});
 
-  final User user;
+  final UserModel user;
 
   @override
   State<EditProfilePage> createState() => _EditProfilePageState();

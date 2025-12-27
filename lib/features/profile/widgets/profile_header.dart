@@ -12,7 +12,7 @@ class ProfileHeader extends StatelessWidget {
     required this.onEditPressed,
   });
 
-  final User? user;
+  final UserModel? user;
   final Future<void> Function(BuildContext context) onEditPressed;
 
   @override

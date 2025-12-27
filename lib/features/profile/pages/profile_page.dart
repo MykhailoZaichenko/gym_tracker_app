@@ -5,7 +5,7 @@ import 'package:gym_tracker_app/core/constants/exersise_meta.dart';
 import 'package:gym_tracker_app/features/profile/models/user_model.dart';
 import 'package:gym_tracker_app/features/profile/profile_exports.dart';
 import 'package:gym_tracker_app/services/firestore_service.dart';
-import 'package:gym_tracker_app/features/workout/models/workout_exercise_model.dart'; // Потрібен для моделі WorkoutExercise
+import 'package:gym_tracker_app/features/workout/models/workout_exercise_model.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -15,7 +15,7 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  User? _user;
+  UserModel? _user;
   bool _isLoading = true;
   final FirestoreService _firestore = FirestoreService();
 
@@ -144,7 +144,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Future<void> _onEditProfile(BuildContext ctx) async {
     if (_user == null) return;
-    final updated = await Navigator.push<User?>(
+    final updated = await Navigator.push<UserModel?>(
       ctx,
       MaterialPageRoute(builder: (_) => EditProfilePage(user: _user!)),
     );
@@ -156,7 +156,7 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
-  void _onProfileUpdated(User updated) {
+  void _onProfileUpdated(UserModel updated) {
     if (!mounted) return;
     setState(() => _user = updated);
     _recalculateStats();

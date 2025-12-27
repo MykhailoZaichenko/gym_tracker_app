@@ -14,8 +14,8 @@ class ProfileSettingsList extends StatelessWidget {
     required this.onProfileUpdated,
   });
 
-  final User? user;
-  final void Function(User updated) onProfileUpdated;
+  final UserModel? user;
+  final void Function(UserModel updated) onProfileUpdated;
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +30,7 @@ class ProfileSettingsList extends StatelessWidget {
             title: Text(loc.editProfileTitle),
             onTap: () async {
               if (user == null) return;
-              final updated = await Navigator.push<User?>(
+              final updated = await Navigator.push<UserModel?>(
                 context,
                 MaterialPageRoute(builder: (_) => EditProfilePage(user: user!)),
               );

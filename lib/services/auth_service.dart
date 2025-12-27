@@ -10,7 +10,7 @@ class AuthService {
   final FirestoreService _firestoreService = FirestoreService();
   final GoogleSignIn _googleSignIn = GoogleSignIn();
 
-  Stream<app_user.User?> get authStateChanges {
+  Stream<app_user.UserModel?> get authStateChanges {
     return _firebaseAuth.authStateChanges().asyncMap((firebaseUser) async {
       if (firebaseUser == null) return null;
       return await _firestoreService.getUser();
@@ -28,7 +28,7 @@ class AuthService {
     await _firebaseAuth.sendPasswordResetEmail(email: email);
   }
 
-  Future<app_user.User?> loginWithGoogle() async {
+  Future<app_user.UserModel?> loginWithGoogle() async {
     final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
     if (googleUser == null) return null;
 
@@ -47,7 +47,7 @@ class AuthService {
       var appUser = await _firestoreService.getUser();
 
       if (appUser == null) {
-        appUser = app_user.User(
+        appUser = app_user.UserModel(
           id: null,
           email: user.email ?? '',
           name: user.displayName ?? 'Google User',
@@ -63,7 +63,7 @@ class AuthService {
     return null;
   }
 
-  Future<app_user.User> register({
+  Future<app_user.UserModel> register({
     required String email,
     required String name,
     required String password,
@@ -79,7 +79,7 @@ class AuthService {
 
     await cred.user!.sendEmailVerification();
 
-    final newUser = app_user.User(
+    final newUser = app_user.UserModel(
       id: null,
       email: email,
       name: name,
@@ -93,7 +93,7 @@ class AuthService {
     return newUser;
   }
 
-  Future<app_user.User?> login({
+  Future<app_user.UserModel?> login({
     required String email,
     required String password,
   }) async {
@@ -106,7 +106,7 @@ class AuthService {
     return user;
   }
 
-  Future<void> updateProfile(app_user.User user) async {
+  Future<void> updateProfile(app_user.UserModel user) async {
     await _firestoreService.saveUser(user);
   }
 

@@ -488,7 +488,9 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
                   IconButton(
                     icon: const Icon(Icons.chevron_left),
                     onPressed: _canGoBack ? _prevPeriod : null,
-                    color: _canGoBack ? null : Colors.grey.withOpacity(0.3),
+                    color: _canGoBack
+                        ? null
+                        : Colors.grey.withValues(alpha: 0.3),
                   ),
 
                   // DATE LABEL (Clickable only in Month mode)
@@ -535,7 +537,9 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
                   IconButton(
                     icon: const Icon(Icons.chevron_right),
                     onPressed: _canGoForward ? _nextPeriod : null,
-                    color: _canGoForward ? null : Colors.grey.withOpacity(0.3),
+                    color: _canGoForward
+                        ? null
+                        : Colors.grey.withValues(alpha: 0.3),
                   ),
                 ],
               ),

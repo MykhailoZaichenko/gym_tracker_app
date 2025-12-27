@@ -15,7 +15,7 @@ class FirestoreService {
 
   // --- КОРИСТУВАЧ ---
 
-  Future<void> saveUser(app_user.User user) async {
+  Future<void> saveUser(app_user.UserModel user) async {
     if (currentUserId == null) return;
     // Не використовуємо await, щоб UI не блокувався в офлайні
     _db
@@ -25,7 +25,7 @@ class FirestoreService {
         .catchError((e) => print("Offline save error (ignore): $e"));
   }
 
-  Future<app_user.User?> getUser() async {
+  Future<app_user.UserModel?> getUser() async {
     if (currentUserId == null) return null;
     try {
       // Спочатку пробуємо кеш для миттєвого відображення
@@ -35,7 +35,7 @@ class FirestoreService {
             .doc(currentUserId)
             .get(const GetOptions(source: Source.cache));
         if (doc.exists && doc.data() != null) {
-          return app_user.User.fromMap(doc.data()!);
+          return app_user.UserModel.fromMap(doc.data()!);
         }
       } catch (_) {}
 
@@ -47,7 +47,7 @@ class FirestoreService {
           .timeout(const Duration(seconds: 2)); // Швидкий таймаут
 
       if (doc.exists && doc.data() != null) {
-        return app_user.User.fromMap(doc.data()!);
+        return app_user.UserModel.fromMap(doc.data()!);
       }
     } catch (e) {
       // Ігноруємо помилки мережі

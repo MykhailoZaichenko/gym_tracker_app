@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/features/auth/pages/verify_email_page.dart';
@@ -22,6 +21,7 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
+  // ... (Контролери та змінні залишаються без змін) ...
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final GlobalKey<FormFieldState<String>> _emailFieldKey =
       GlobalKey<FormFieldState<String>>();
@@ -54,50 +54,29 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   void initState() {
     super.initState();
+    // ... (ініціалізація фокусів без змін) ...
     emailFocus = FocusNode();
     nameFocus = FocusNode();
     passwordFocus = FocusNode();
     passwordConfirmFocus = FocusNode();
-
-    emailFocus.addListener(() {
-      if (!emailFocus.hasFocus) {
-        _emailFieldKey.currentState?.validate();
-      }
-    });
-    nameFocus.addListener(() {
-      if (!nameFocus.hasFocus) {
-        _nameFieldKey.currentState?.validate();
-      }
-    });
-    passwordFocus.addListener(() {
-      if (!passwordFocus.hasFocus) {
-        _passwordFieldKey.currentState?.validate();
-      }
-    });
-    passwordConfirmFocus.addListener(() {
-      if (!passwordConfirmFocus.hasFocus) {
-        _passwordConfirmFieldKey.currentState?.validate();
-      }
-    });
+    // ... listeners ...
   }
 
   @override
   void dispose() {
+    // ... (dispose без змін) ...
     _emailCtrl.dispose();
     _nameCtrl.dispose();
     _passwordCtrl.dispose();
     _passwordConfirmCtrl.dispose();
-
     emailFocus.dispose();
     nameFocus.dispose();
     passwordFocus.dispose();
     passwordConfirmFocus.dispose();
-
     _emailDebounce?.cancel();
     _nameDebounce?.cancel();
     _passwordDebounce?.cancel();
     _passwordConfirmDebounce?.cancel();
-
     super.dispose();
   }
 
@@ -106,44 +85,34 @@ class _RegisterPageState extends State<RegisterPage> {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(text)));
   }
 
-  void _navigateToNextPage() {
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(builder: (_) => const VerifyEmailPage()),
-      (route) => false,
-    );
-  }
-
+  // --- ЛОГІКА GOOGLE (Тут ми пишемо в базу, бо Google верифікований) ---
   Future<void> _onGoogleRegisterPressed() async {
     final loc = AppLocalizations.of(context)!;
     setState(() => _loading = true);
     try {
-      // 1. Вхід через Google
       final user = await _auth.loginWithGoogle();
 
       if (user != null) {
-        // 2. Логіка збереження ваги (якщо треба)
         final prefs = await SharedPreferences.getInstance();
         final savedWeight = prefs.getDouble('user_weight');
 
-        if (savedWeight != null &&
-            savedWeight > 0 &&
-            (user.weightKg == null || user.weightKg == 0)) {
-          // Оновлюємо профіль
-          // Переконайтеся, що user.id не пустий, щоб Firestore не лаявся
+        // Якщо це новий юзер і є вага з онбордингу
+        if (savedWeight != null && savedWeight > 0) {
+          // Оновлюємо або створюємо запис у базі
+          // Важливо: loginWithGoogle зазвичай повертає UserModel.
+          // Переконайся, що він має ID.
           final updatedUser = user.copyWith(weightKg: savedWeight);
-
-          // Важливо: тут краще використати _firestore.saveUser, якщо _auth.updateProfile
-          // не зберігає дані в базу, а тільки в Auth.
           await _firestore.saveUser(updatedUser);
-
           await prefs.remove('user_weight');
         }
 
         if (!mounted) return;
-
-        // 3. ВАЖЛИВО: Просто переходимо далі, НЕ викликаємо _goToApp()
-        _navigateToNextPage();
+        // Для Google верифікація не потрібна, йдемо в додаток (VerifyPage це перевірить і пропустить)
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (_) => const VerifyEmailPage()),
+          (route) => false,
+        );
       }
     } catch (e) {
       _showMessage('${loc.errGoogleSignIn}: $e');
@@ -152,6 +121,7 @@ class _RegisterPageState extends State<RegisterPage> {
     }
   }
 
+  // --- ЛОГІКА EMAIL (Виправлена) ---
   Future<void> _onRegisterPressed() async {
     FocusScope.of(context).unfocus();
 
@@ -165,25 +135,31 @@ class _RegisterPageState extends State<RegisterPage> {
 
     setState(() => _loading = true);
     try {
-      final newUser = await _auth.register(
-        email: email,
-        name: name,
-        password: password,
-      );
+      // 1. Створюємо юзера в Firebase Auth
+      UserCredential userCredential = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(email: email, password: password);
 
+      // 2. Оновлюємо ім'я (displayName) в профілі Auth (щоб не загубити)
+      await userCredential.user?.updateDisplayName(name);
+
+      // 3. Надсилаємо лист підтвердження
+      await userCredential.user?.sendEmailVerification();
+
+      // 4. Отримуємо вагу (але НЕ зберігаємо в базу поки що)
       final prefs = await SharedPreferences.getInstance();
       final savedWeight = prefs.getDouble('user_weight');
 
-      if (savedWeight != null && savedWeight > 0) {
-        final updatedUser = newUser.copyWith(weightKg: savedWeight);
-
-        await _firestore.saveUser(updatedUser);
-
-        await prefs.remove('user_weight');
-      }
-
       if (!mounted) return;
-      await _completeEmailRegistration();
+
+      // 5. Переходимо на сторінку верифікації
+      // Передаємо вагу, щоб VerifyPage зберіг її ПІСЛЯ підтвердження
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (_) => VerifyEmailPage(pendingWeight: savedWeight),
+        ),
+        (route) => false,
+      );
     } catch (e) {
       _showMessage(e.toString().replaceAll('Exception: ', ''));
     } finally {
@@ -191,26 +167,9 @@ class _RegisterPageState extends State<RegisterPage> {
     }
   }
 
-  // Цей метод викликається ТІЛЬКИ для реєстрації через Email/Password
-  Future<void> _completeEmailRegistration() async {
-    try {
-      final email = _emailCtrl.text.trim();
-      final password = _passwordCtrl.text;
-
-      // Створюємо юзера в Auth
-      UserCredential userCredential = await FirebaseAuth.instance
-          .createUserWithEmailAndPassword(email: email, password: password);
-
-      await userCredential.user?.sendEmailVerification();
-
-      if (!mounted) return;
-      _navigateToNextPage(); // Викликаємо навігацію
-    } catch (e) {
-      _showMessage(e.toString().replaceAll('Exception: ', ''));
-    }
-  }
-
+  // ... (Валідатори та білдер UI залишаються без змін) ...
   String? _validateEmail(String? v) {
+    // ... твій код ...
     final loc = AppLocalizations.of(context)!;
     if (v == null || v.trim().isEmpty) return loc.errEmailRequired;
     final email = v.trim();
@@ -219,6 +178,7 @@ class _RegisterPageState extends State<RegisterPage> {
     return null;
   }
 
+  // ... інші валідатори ...
   String? _validateName(String? v) {
     final loc = AppLocalizations.of(context)!;
     if (v == null || v.trim().isEmpty) return loc.errNameRequired;
@@ -240,6 +200,7 @@ class _RegisterPageState extends State<RegisterPage> {
     return null;
   }
 
+  // ... Listeners ...
   void _onEmailChanged(String value) {
     _emailDebounce?.cancel();
     _emailDebounce = Timer(const Duration(milliseconds: 700), () {
@@ -277,6 +238,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
+    // ... твій UI код (без змін) ...
     final widthScreen = MediaQuery.of(context).size.width;
     final loc = AppLocalizations.of(context)!;
 

@@ -1,25 +1,29 @@
-// lib/models/user_model.dart
-class User {
-  final int? id;
+class UserModel {
+  // 1. Змінили тип на String, бо Firebase ID - це рядок
+  final String? id;
   final String name;
   final String email;
+
+  // Ці поля для Firebase Auth не потрібні (Firebase сам зберігає паролі безпечно),
+  // але я залишив їх, щоб не ламати вашу логіку, якщо вони десь використовуються.
   final String? passwordHash;
   final String? salt;
-  final String? avatarUrl; // шлях в файловій системі або null
+
+  final String? avatarUrl;
   final double? weightKg;
 
-  User({
+  UserModel({
     required this.id,
     required this.name,
     required this.email,
-    required this.passwordHash,
-    required this.salt,
+    this.passwordHash,
+    this.salt,
     this.avatarUrl,
     this.weightKg,
   });
 
-  User copyWith({
-    int? id,
+  UserModel copyWith({
+    String? id,
     String? name,
     String? email,
     String? passwordHash,
@@ -27,7 +31,7 @@ class User {
     String? avatarUrl,
     double? weightKg,
   }) {
-    return User(
+    return UserModel(
       id: id ?? this.id,
       name: name ?? this.name,
       email: email ?? this.email,
@@ -43,20 +47,22 @@ class User {
       'id': id,
       'name': name,
       'email': email,
-      'passwordHash': passwordHash,
-      'salt': salt,
+      // Не зберігайте паролі в Firestore, якщо користуєтесь Firebase Auth!
+      // 'passwordHash': passwordHash,
+      // 'salt': salt,
       'avatarUrl': avatarUrl,
       'weightKg': weightKg,
     };
   }
 
-  factory User.fromMap(Map<String, dynamic> m) {
-    return User(
-      id: m['id'] as int?,
+  factory UserModel.fromMap(Map<String, dynamic> m) {
+    return UserModel(
+      // Безпечне приведення типів
+      id: m['id'] as String? ?? '',
       name: m['name'] as String? ?? '',
       email: m['email'] as String? ?? '',
-      passwordHash: m['passwordHash'] as String? ?? '',
-      salt: m['salt'] as String? ?? '',
+      passwordHash: m['passwordHash'] as String?,
+      salt: m['salt'] as String?,
       avatarUrl: m['avatarUrl'] as String?,
       weightKg: (m['weightKg'] as num?)?.toDouble(),
     );
