@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart'; // Додано для обр
 import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/core/constants/constants.dart';
 import 'package:gym_tracker_app/core/locale/locale_serviece.dart';
+import 'package:gym_tracker_app/features/welcome/pages/welcome_page.dart';
 import 'package:gym_tracker_app/l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -44,13 +45,13 @@ class _SettingsPageState extends State<SettingsPage> {
     await _prefs.setBool('notifications_enabled', value);
   }
 
-  // --- ЛОГІКА ВИДАЛЕННЯ АКАУНТУ ---
   Future<void> _onDeleteAccountPressed() async {
+    // 1. Отримуємо локалізацію
     final loc = AppLocalizations.of(context)!;
     final authService = AuthService();
     final firestoreService = FirestoreService();
 
-    // 1. Діалог підтвердження
+    // 2. Показуємо діалог
     final confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -70,23 +71,29 @@ class _SettingsPageState extends State<SettingsPage> {
       ),
     );
 
+    // Якщо натиснули "Відміна" або закрили вікно — нічого не робимо
     if (confirm != true) return;
 
+    // Починаємо завантаження
     setState(() => _isLoading = true);
 
     try {
-      // 2. Видаляємо дані та юзера
+      // 3. Видаляємо дані з бази та самого юзера
       await firestoreService.deleteUserData();
       await authService.deleteAccount();
 
-      // 3. Вихід на головний екран (Welcome)
-      if (mounted) {
-        Navigator.of(context).popUntil((route) => route.isFirst);
-      }
+      if (!mounted) return;
+
+      // 4. ПРАВИЛЬНА НАВІГАЦІЯ:
+      // Переходимо на WelcomePage і видаляємо всю історію навігації
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (_) => const WelcomePage()),
+        (route) => false,
+      );
     } on FirebaseAuthException catch (e) {
       if (mounted) {
         setState(() => _isLoading = false);
-        // Якщо токен протух, просимо перелогінитись
+        // Обробка помилки, якщо треба перелогінитись
         if (e.code == 'requires-recent-login') {
           showDialog(
             context: context,
@@ -116,7 +123,6 @@ class _SettingsPageState extends State<SettingsPage> {
       }
     }
   }
-  // --------------------------------
 
   void _showLanguageSelector() {
     showModalBottomSheet(

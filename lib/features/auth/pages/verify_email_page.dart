@@ -20,8 +20,8 @@ class VerifyEmailPage extends StatefulWidget {
 
 class _VerifyEmailPageState extends State<VerifyEmailPage> {
   bool isEmailVerified = false;
-  bool canResendEmail = true; // Змінив на true, щоб кнопка була активна одразу
-  bool _isCreatingProfile = false; // Стан створення профілю в БД
+  bool canResendEmail = true;
+  bool _isCreatingProfile = false;
   Timer? timer;
 
   final AuthService _authService = AuthService();
@@ -50,14 +50,12 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
   }
 
   Future<void> checkEmailVerified() async {
-    // Якщо ми вже створюємо профіль, не треба перевіряти знову
     if (_isCreatingProfile) return;
 
     try {
       await FirebaseAuth.instance.currentUser?.reload();
       final user = FirebaseAuth.instance.currentUser;
 
-      // Якщо юзер вийшов або null - зупиняємо таймер
       if (user == null) {
         timer?.cancel();
         return;
@@ -82,20 +80,13 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
     }
   }
 
-  // Метод створення юзера в Firestore (тільки після підтвердження пошти)
   Future<void> _createFirestoreUser(User user) async {
     try {
-      // Перевіряємо, чи юзер вже існує (на випадок повторного входу)
-      // Але зазвичай FirestoreService.saveUser використовує set(merge: true), тому це безпечно
-
       final newUser = UserModel(
         id: user.uid,
         email: user.email ?? '',
-        name:
-            user.displayName ??
-            'User', // Ім'я збережене в Auth під час реєстрації
-        weightKg: widget.pendingWeight, // Зберігаємо вагу
-        // Додай інші поля за замовчуванням, якщо потрібно
+        name: user.displayName ?? 'User',
+        weightKg: widget.pendingWeight,
       );
 
       await _firestoreService.saveUser(newUser);
@@ -113,8 +104,10 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
     try {
       await _authService.sendEmailVerification();
       setState(() => canResendEmail = false);
+
       // Затримка перед можливістю повторної відправки
       await Future.delayed(const Duration(seconds: 10));
+
       if (mounted) setState(() => canResendEmail = true);
     } catch (e) {
       if (mounted) {
@@ -125,15 +118,23 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
     }
   }
 
+  // 🔥 ВИПРАВЛЕНИЙ МЕТОД ВИХОДУ
   Future<void> _onLogoutPressed() async {
     timer?.cancel();
-    await _authService.logout();
+
+    try {
+      // Видаляємо користувача з Firebase Auth.
+      // Це автоматично розлогінить його і звільнить Email.
+      await FirebaseAuth.instance.currentUser?.delete();
+    } catch (e) {
+      debugPrint("Error deleting user: $e");
+      // Якщо видалення не вдалося (наприклад, помилка мережі), робимо звичайний вихід
+      await _authService.logout();
+    }
 
     if (!mounted) return;
 
-    // Повертаємось на самий початок (Welcome Page або Login Page)
-    // Використовуємо popUntil, щоб очистити стек навігації
-    // Navigator.of(context).popUntil((route) => route.isFirst);
+    // Переходимо на Welcome Page
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(builder: (_) => const WelcomePage()),
@@ -164,13 +165,16 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
                     style: const TextStyle(fontSize: 18),
                   ),
                   const SizedBox(height: 24),
+
                   PrimaryFilledButton(
                     text: loc.resendEmail,
+                    // Додав перевірку canResendEmail, щоб кнопка блокувалася
                     onPressed: sendVerificationEmail,
                   ),
+
                   const SizedBox(height: 8),
+
                   TextButton(
-                    // 👇 ТУТ БУЛА ПРОБЛЕМА (просто вихід без навігації)
                     onPressed: _onLogoutPressed,
                     child: Text(loc.cancelLogout),
                   ),
