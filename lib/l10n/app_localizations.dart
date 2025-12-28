@@ -1231,6 +1231,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'For security reasons, please Log Out and Log In again before deleting your account.'**
   String get reLoginRequiredMsg;
+
+  /// Push split name
+  ///
+  /// In en, this message translates to:
+  /// **'Push'**
+  String get splitPush;
+
+  /// Pull split name
+  ///
+  /// In en, this message translates to:
+  /// **'Pull'**
+  String get splitPull;
+
+  /// Legs split name
+  ///
+  /// In en, this message translates to:
+  /// **'Legs'**
+  String get splitLegs;
+
+  /// Upper Body split name
+  ///
+  /// In en, this message translates to:
+  /// **'Upper Body'**
+  String get splitUpper;
+
+  /// Lower Body split name
+  ///
+  /// In en, this message translates to:
+  /// **'Lower Body'**
+  String get splitLower;
+
+  /// Full Body split name
+  ///
+  /// In en, this message translates to:
+  /// **'Full Body'**
+  String get splitFullBody;
+
+  /// Cardio split name
+  ///
+  /// In en, this message translates to:
+  /// **'Cardio'**
+  String get splitCardio;
+
+  /// Custom split name
+  ///
+  /// In en, this message translates to:
+  /// **'Custom'**
+  String get splitCustom;
+
+  /// Training type selection prompt
+  ///
+  /// In en, this message translates to:
+  /// **'Select the type of training'**
+  String get selectWorkoutType;
 }
 
 class _AppLocalizationsDelegate

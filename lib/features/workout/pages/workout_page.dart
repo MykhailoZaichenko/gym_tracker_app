@@ -11,12 +11,14 @@ import 'package:gym_tracker_app/features/workout/workout_exports.dart';
 import 'package:gym_tracker_app/utils/utils.dart';
 import 'package:gym_tracker_app/widget/common/pop_save_wideget.dart';
 import 'package:intl/intl.dart';
+// import 'package:intl/intl.dart';
 
 class WorkoutPage extends StatefulWidget {
   final DateTime date;
   final String? workoutId;
   final List<WorkoutExercise>? exercises;
   final bool shouldAutoPick;
+  final String workoutType;
 
   const WorkoutPage({
     super.key,
@@ -24,6 +26,7 @@ class WorkoutPage extends StatefulWidget {
     this.workoutId,
     this.exercises,
     this.shouldAutoPick = false,
+    required this.workoutType,
   });
 
   @override
@@ -33,6 +36,8 @@ class WorkoutPage extends StatefulWidget {
 class _WorkoutPageState extends State<WorkoutPage> {
   late List<WorkoutExercise> _exercises = [];
   final FirestoreService _firestore = FirestoreService();
+
+  late String _currentType;
 
   bool _isLoading = true;
   String? _initialEncoded;
@@ -46,7 +51,38 @@ class _WorkoutPageState extends State<WorkoutPage> {
   @override
   void initState() {
     super.initState();
-    _loadExercises();
+    _currentType = widget.workoutType;
+    if (widget.exercises != null && widget.exercises!.isNotEmpty) {
+      _exercises = List.from(widget.exercises!);
+      _initControllers();
+      _isLoading = false;
+      _initialEncoded = _encodeCurrentState();
+    } else {
+      _loadPreviousSession();
+    }
+  }
+
+  String _getLocalizedTemplateName(String key, AppLocalizations loc) {
+    switch (key) {
+      case 'push':
+        return loc.splitPush;
+      case 'pull':
+        return loc.splitPull;
+      case 'legs':
+        return loc.splitLegs;
+      case 'upper':
+        return loc.splitUpper;
+      case 'lower':
+        return loc.splitLower;
+      case 'full_body':
+        return loc.splitFullBody;
+      case 'cardio':
+        return loc.splitCardio;
+      case 'custom':
+        return loc.splitCustom;
+      default:
+        return key.toUpperCase();
+    }
   }
 
   void _addFocusListener(FocusNode node, TextEditingController controller) {
@@ -65,53 +101,69 @@ class _WorkoutPageState extends State<WorkoutPage> {
     });
   }
 
-  Future<void> _loadExercises() async {
-    final savedExercises = await _firestore.getWorkout(widget.date);
+  String _encodeCurrentState() {
+    final List<Map<String, dynamic>> state = [];
 
-    if (savedExercises.isNotEmpty) {
-      _exercises = savedExercises;
-    } else if (widget.exercises != null && widget.exercises!.isNotEmpty) {
-      _exercises = List.from(widget.exercises!);
-    } else {
-      try {
-        final plan = await _firestore.getWeeklyPlan();
+    for (int i = 0; i < _exercises.length; i++) {
+      final ex = _exercises[i];
+      final sets = <Map<String, dynamic>>[];
 
-        final dayKey = DateFormat.E('en').format(widget.date);
-
-        // Якщо на цей день є вправи
-        if (plan.containsKey(dayKey) && plan[dayKey]!.isNotEmpty) {
-          final plannedIds = plan[dayKey]!;
-
-          _exercises = plannedIds.map((idOrName) {
-            return WorkoutExercise(
-              name: idOrName,
-              exerciseId: idOrName,
-              sets: [SetData()],
-            );
-          }).toList();
-        } else {
-          _exercises = [];
+      for (int j = 0; j < ex.sets.length; j++) {
+        // Беремо дані з контролерів, якщо вони існують
+        String wText = '';
+        String rText = '';
+        if (i < _weightCtrls.length && j < _weightCtrls[i].length) {
+          wText = _weightCtrls[i][j].text;
+          rText = _repsCtrls[i][j].text;
         }
-      } catch (e) {
-        debugPrint("Error loading plan: $e");
-        _exercises = [];
-      }
-    }
 
-    if (mounted) {
-      _initControllers();
-      setState(() {
-        _isLoading = false;
-      });
-
-      if (widget.shouldAutoPick && _exercises.isEmpty) {
-        Future.delayed(const Duration(milliseconds: 100), () {
-          _addExercise();
+        sets.add({
+          'weight': double.tryParse(wText.replaceAll(',', '.')),
+          'reps': int.tryParse(rText),
+          'isCompleted': ex.sets[j].isCompleted,
         });
       }
-    }
 
-    _initialEncoded = jsonEncode(_exercises.map((e) => e.toMap()).toList());
+      state.add({
+        'name': (i < _nameCtrls.length) ? _nameCtrls[i].text : ex.name,
+        'exerciseId': ex.exerciseId,
+        'sets': sets,
+      });
+    }
+    return jsonEncode(state);
+  }
+
+  Future<void> _loadPreviousSession() async {
+    final lastWorkout = await _firestore.getLastWorkoutByType(_currentType);
+
+    if (lastWorkout != null && lastWorkout.exercises.isNotEmpty) {
+      setState(() {
+        _exercises = lastWorkout.exercises.map((e) {
+          return e.copyWith(
+            sets: e.sets.map((s) => s.copyWith(isCompleted: false)).toList(),
+          );
+        }).toList();
+        _isLoading = false;
+      });
+      _initControllers();
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Copied from last ${_currentType.toUpperCase()} workout',
+            ),
+          ),
+        );
+      }
+    } else {
+      setState(() {
+        _exercises = [];
+        _isLoading = false;
+      });
+      if (mounted) _addExercise();
+    }
+    _initialEncoded = _encodeCurrentState();
   }
 
   void _initControllers() {
@@ -119,6 +171,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
     _weightCtrls.clear();
     _weightFocusNodes.clear();
     _repsCtrls.clear();
+    _repsFocusNodes.clear();
 
     for (var ex in _exercises) {
       _nameCtrls.add(TextEditingController(text: ex.name));
@@ -189,6 +242,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
       id: idToSave,
       date: widget.date,
       exercises: _exercises,
+      type: _currentType,
     );
 
     try {
@@ -199,9 +253,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
       if (mounted) {
         // Оновлюємо початковий стан для відстеження змін
         setState(() {
-          _initialEncoded = jsonEncode(
-            _exercises.map((e) => e.toMap()).toList(),
-          );
+          _initialEncoded = _encodeCurrentState();
         });
 
         ScaffoldMessenger.of(
@@ -261,6 +313,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
       _exercises.add(
         WorkoutExercise(name: name, exerciseId: id, sets: [SetData()]),
       );
+      _initControllers();
 
       _nameCtrls.add(TextEditingController(text: name));
 
@@ -389,6 +442,17 @@ class _WorkoutPageState extends State<WorkoutPage> {
     }
     final loc = AppLocalizations.of(context)!;
 
+    final types = [
+      'push',
+      'pull',
+      'legs',
+      'upper',
+      'lower',
+      'full_body',
+      'cardio',
+      'custom',
+    ];
+
     // Оновлення назв при локалізації
     for (int i = 0; i < _exercises.length; i++) {
       final exercise = _exercises[i];
@@ -417,6 +481,14 @@ class _WorkoutPageState extends State<WorkoutPage> {
       onPopInvokedWithResult: (didPop, result) async {
         if (didPop) return;
 
+        final current = _encodeCurrentState();
+        final hasChanges = _initialEncoded != current;
+
+        if (!hasChanges) {
+          Navigator.pop(context, result);
+          return;
+        }
+
         final allow = await WillPopSavePrompt(
           hasUnsavedChanges: () async => _hasUnsavedChanges(),
           onSave: () async {
@@ -431,13 +503,55 @@ class _WorkoutPageState extends State<WorkoutPage> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text(
-            "${loc.workoutTitle} ${widget.date.toLocal().toIso8601String().split('T').first}",
+          // centerTitle: false, // Можна розкоментувати, якщо хочете по лівому краю
+          title: Column(
+            crossAxisAlignment:
+                CrossAxisAlignment.start, // Або .center, якщо centerTitle: true
+            children: [
+              // 1. ВИПАДАЮЧИЙ СПИСОК (Заголовок)
+              DropdownButtonHideUnderline(
+                child: DropdownButton<String>(
+                  value: types.contains(_currentType) ? _currentType : 'custom',
+                  isDense: true, // Робить список компактнішим по висоті
+                  icon: const Icon(
+                    Icons.keyboard_arrow_down,
+                    size: 20,
+                  ), // Менша іконка
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+                  onChanged: (String? newValue) {
+                    if (newValue != null) {
+                      setState(() => _currentType = newValue);
+                    }
+                  },
+                  items: types.map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(_getLocalizedTemplateName(value, loc)),
+                    );
+                  }).toList(),
+                ),
+              ),
+
+              // 2. ДАТА (Підзаголовок)
+              Text(
+                // Форматуємо дату: "Sat, Dec 28" або "28 груд." залежно від локалі
+                DateFormat.MMMMEEEEd(
+                  AppLocalizations.of(context)!.localeName,
+                ).format(widget.date),
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: Colors.grey, // Сірий колір для другорядного тексту
+                  fontSize: 12,
+                ),
+              ),
+            ],
           ),
           actions: [
             IconButton(
               icon: const Icon(Icons.save),
-              tooltip: loc.save,
+              tooltip: 'Save',
               onPressed: () async {
                 await _saveExercises();
                 if (context.mounted) Navigator.pop(context);

@@ -7,6 +7,7 @@ class WorkoutModel {
   final DateTime? endTime; // Час завершення (для підрахунку тривалості)
   final int durationSeconds; // Тривалість у секундах (якщо треба точніше)
   final List<WorkoutExercise> exercises; // Список вправ у цьому тренуванні
+  final String? type;
 
   WorkoutModel({
     required this.id,
@@ -14,6 +15,7 @@ class WorkoutModel {
     this.endTime,
     this.durationSeconds = 0,
     required this.exercises,
+    this.type,
   });
 
   // 1. Перетворення з об'єкта в JSON (для відправки в Firebase)
@@ -25,6 +27,7 @@ class WorkoutModel {
       'durationSeconds': durationSeconds,
       // Масиви вправ теж треба перетворити в Map
       'exercises': exercises.map((e) => e.toMap()).toList(),
+      'type': type,
     };
   }
 
@@ -42,6 +45,7 @@ class WorkoutModel {
               ?.map((e) => WorkoutExercise.fromMap(e))
               .toList() ??
           [],
+      type: map['type'],
     );
   }
 
@@ -52,6 +56,7 @@ class WorkoutModel {
     DateTime? endTime,
     int? durationSeconds,
     List<WorkoutExercise>? exercises,
+    String? type,
   }) {
     return WorkoutModel(
       id: id ?? this.id,
@@ -59,6 +64,7 @@ class WorkoutModel {
       endTime: endTime ?? this.endTime,
       durationSeconds: durationSeconds ?? this.durationSeconds,
       exercises: exercises ?? this.exercises,
+      type: type ?? this.type,
     );
   }
 }

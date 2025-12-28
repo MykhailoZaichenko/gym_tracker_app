@@ -209,5 +209,15 @@
   "deleteAccountTitle": "Видалити акаунт?",
   "deleteAccountWarning": "Цю дію неможливо скасувати. Всі ваші дані (тренування, статистика, профіль) будуть втрачені назавжди.",
   "securityUpdate": "Вимога безпеки",
-  "reLoginRequiredMsg": "З міркувань безпеки, будь ласка, вийдіть з акаунту та увійдіть знову перед видаленням."
+  "reLoginRequiredMsg": "З міркувань безпеки, будь ласка, вийдіть з акаунту та увійдіть знову перед видаленням.",
+
+  "splitPush": "Push (Жим)",
+  "splitPull": "Pull (Тяга)",
+  "splitLegs": "Ноги",
+  "splitUpper": "Верх тіла",
+  "splitLower": "Низ тіла",
+  "splitFullBody": "Все тіло",
+  "splitCardio": "Кардіо",
+  "splitCustom": "Інше",
+  "selectWorkoutType": "Оберіть тип тренування"
 }

@@ -608,4 +608,31 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get reLoginRequiredMsg =>
       'For security reasons, please Log Out and Log In again before deleting your account.';
+
+  @override
+  String get splitPush => 'Push';
+
+  @override
+  String get splitPull => 'Pull';
+
+  @override
+  String get splitLegs => 'Legs';
+
+  @override
+  String get splitUpper => 'Upper Body';
+
+  @override
+  String get splitLower => 'Lower Body';
+
+  @override
+  String get splitFullBody => 'Full Body';
+
+  @override
+  String get splitCardio => 'Cardio';
+
+  @override
+  String get splitCustom => 'Custom';
+
+  @override
+  String get selectWorkoutType => 'Select the type of training';
 }

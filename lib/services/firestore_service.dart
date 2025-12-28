@@ -127,6 +127,31 @@ class FirestoreService {
         .set(workout.toMap(), SetOptions(merge: true));
   }
 
+  // Отримати останнє тренування певного типу (Push, Pull...)
+  Future<WorkoutModel?> getLastWorkoutByType(String type) async {
+    final uid = currentUserId;
+    if (uid == null) return null;
+
+    try {
+      final querySnapshot = await _db
+          .collection('users')
+          .doc(uid)
+          .collection('workouts')
+          .where('type', isEqualTo: type) // Фільтр по типу
+          .orderBy('date', descending: true)
+          .limit(1)
+          .get();
+
+      if (querySnapshot.docs.isEmpty) return null;
+
+      final doc = querySnapshot.docs.first;
+      return WorkoutModel.fromMap(doc.data(), doc.id);
+    } catch (e) {
+      debugPrint("Error fetching last workout: $e");
+      return null;
+    }
+  }
+
   // Стрім для миттєвого відображення (вже у вас є, залишаємо)
   Stream<Map<String, List<WorkoutExercise>>> getAllWorkoutsStream() {
     if (currentUserId == null) return Stream.value({});
@@ -178,50 +203,43 @@ class FirestoreService {
   }
 
   // Отримання конкретного тренування
-  Future<List<WorkoutExercise>> getWorkout(DateTime date) async {
-    if (currentUserId == null) return [];
+  Future<WorkoutModel?> getWorkout(DateTime date) async {
+    if (currentUserId == null) return null;
 
     final startOfDay = DateTime(date.year, date.month, date.day);
     final endOfDay = DateTime(date.year, date.month, date.day, 23, 59, 59);
 
     try {
-      // ТІЛЬКИ КЕШ або СТРІМ. Get() з сервера буде висіти.
-      final query = await _db
+      // Спроба з кешу
+      var query = await _db
           .collection('users')
           .doc(currentUserId)
           .collection('workouts')
           .where('date', isGreaterThanOrEqualTo: Timestamp.fromDate(startOfDay))
           .where('date', isLessThanOrEqualTo: Timestamp.fromDate(endOfDay))
-          .get(const GetOptions(source: Source.cache)); // <--- Ключова зміна
+          .get(const GetOptions(source: Source.cache));
 
       if (query.docs.isNotEmpty) {
         final data = query.docs.first.data();
-        final model = WorkoutModel.fromMap(data, query.docs.first.id);
-        return model.exercises;
-      } else {
-        // Якщо в кеші пусто, можна спробувати сервер з малим таймаутом
-        try {
-          final serverQuery = await _db
-              .collection('users')
-              .doc(currentUserId)
-              .collection('workouts')
-              .where(
-                'date',
-                isGreaterThanOrEqualTo: Timestamp.fromDate(startOfDay),
-              )
-              .where('date', isLessThanOrEqualTo: Timestamp.fromDate(endOfDay))
-              .get()
-              .timeout(const Duration(seconds: 1)); // 1 сек
+        return WorkoutModel.fromMap(data, query.docs.first.id);
+      }
 
-          if (serverQuery.docs.isNotEmpty) {
-            final data = serverQuery.docs.first.data();
-            final model = WorkoutModel.fromMap(data, serverQuery.docs.first.id);
-            return model.exercises;
-          }
-        } catch (_) {}
+      // Спроба з сервера
+      query = await _db
+          .collection('users')
+          .doc(currentUserId)
+          .collection('workouts')
+          .where('date', isGreaterThanOrEqualTo: Timestamp.fromDate(startOfDay))
+          .where('date', isLessThanOrEqualTo: Timestamp.fromDate(endOfDay))
+          .get()
+          .timeout(const Duration(seconds: 1));
+
+      if (query.docs.isNotEmpty) {
+        final data = query.docs.first.data();
+        return WorkoutModel.fromMap(data, query.docs.first.id);
       }
     } catch (_) {}
-    return [];
+    return null;
   }
 
   // --- ТИЖНЕВИЙ ПЛАН ---

@@ -3,4 +3,3 @@ export 'widgets/workout_header.dart';
 export 'widgets/workout_set_tile.dart';
 export 'widgets/workout_sets_list.dart';
 export 'pages/workout_page.dart';
-export 'pages/workout_plan_editor_page.dart';

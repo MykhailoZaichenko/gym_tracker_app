@@ -5,35 +5,65 @@ class WorkoutExercise {
 
   WorkoutExercise({required this.name, this.exerciseId, required this.sets});
 
-  factory WorkoutExercise.fromMap(Map<String, dynamic> m) {
+  Map<String, dynamic> toMap() {
+    return {
+      'name': name,
+      'exerciseId': exerciseId,
+      'sets': sets.map((s) => s.toMap()).toList(),
+    };
+  }
+
+  factory WorkoutExercise.fromMap(Map<String, dynamic> map) {
     return WorkoutExercise(
-      name: m['name'] as String? ?? '',
-      exerciseId: m['exerciseId'] as String?,
-      sets: (m['sets'] as List<dynamic>? ?? [])
-          .map((e) => SetData.fromMap(e as Map<String, dynamic>))
-          .toList(),
+      name: map['name'] ?? '',
+      exerciseId: map['exerciseId'],
+      sets:
+          (map['sets'] as List<dynamic>?)
+              ?.map((s) => SetData.fromMap(s))
+              .toList() ??
+          [],
     );
   }
 
-  Map<String, dynamic> toMap() => {
-    'name': name,
-    if (exerciseId != null) 'exerciseId': exerciseId,
-    'sets': sets.map((s) => s.toMap()).toList(),
-  };
+  // 🔥 ДОДАНО: метод copyWith для вправи
+  WorkoutExercise copyWith({
+    String? name,
+    String? exerciseId,
+    List<SetData>? sets,
+  }) {
+    return WorkoutExercise(
+      name: name ?? this.name,
+      exerciseId: exerciseId ?? this.exerciseId,
+      sets: sets ?? this.sets,
+    );
+  }
 }
 
 class SetData {
   double? weight;
   int? reps;
+  bool isCompleted; // Для чекбоксів (галочок)
 
-  SetData({this.weight, this.reps});
+  SetData({this.weight, this.reps, this.isCompleted = false});
 
-  factory SetData.fromMap(Map<String, dynamic> m) {
+  Map<String, dynamic> toMap() {
+    return {'weight': weight, 'reps': reps, 'isCompleted': isCompleted};
+  }
+
+  factory SetData.fromMap(Map<String, dynamic> map) {
     return SetData(
-      weight: (m['weight'] as num?)?.toDouble(),
-      reps: m['reps'] as int?,
+      weight: (map['weight'] as num?)?.toDouble(),
+      reps: map['reps'] as int?,
+      isCompleted: map['isCompleted'] ?? false,
     );
   }
 
-  Map<String, dynamic> toMap() => {'weight': weight, 'reps': reps};
+  // 🔥 ДОДАНО: метод copyWith для сету (саме він викликає помилку)
+  SetData copyWith({double? weight, int? reps, bool? isCompleted}) {
+    return SetData(
+      weight: weight ?? this.weight,
+      reps: reps ?? this.reps,
+      isCompleted: isCompleted ?? this.isCompleted,
+    );
+  }
 }

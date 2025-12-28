@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:gym_tracker_app/features/workout/models/workout_exercise_model.dart';
 import 'package:gym_tracker_app/features/workout/pages/workout_page.dart';
-import 'package:gym_tracker_app/features/workout/pages/workout_plan_editor_page.dart';
 import 'package:gym_tracker_app/features/home/home_exports.dart';
 import 'package:gym_tracker_app/l10n/app_localizations.dart';
-import 'package:gym_tracker_app/features/home/widgets/plan_proposal_dialog_widget.dart';
 import 'package:gym_tracker_app/services/firestore_service.dart';
 
 class HomePage extends StatefulWidget {
@@ -43,7 +41,6 @@ class _HomePageState extends State<HomePage> {
     final hasSeen = prefs.getBool(key) ?? false;
 
     if (!hasSeen && mounted) {
-      await showPlanProposal(context);
       await prefs.setBool(key, true);
     }
   }
@@ -65,7 +62,11 @@ class _HomePageState extends State<HomePage> {
     // Переходимо на WorkoutPage
     await Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (_) => WorkoutPage(date: date, exercises: initialExercises),
+        builder: (_) => WorkoutPage(
+          date: date,
+          exercises: initialExercises,
+          workoutType: 'custom',
+        ),
       ),
     );
 
@@ -103,16 +104,6 @@ class _HomePageState extends State<HomePage> {
 
         return SafeArea(
           child: Scaffold(
-            appBar: HomeHeader(
-              onOpenPlanEditor: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const WorkoutPlanEditorPage(),
-                  ),
-                );
-              },
-            ),
             body: Column(
               children: [
                 HomeCalendar(

@@ -615,4 +615,31 @@ class AppLocalizationsUk extends AppLocalizations {
   @override
   String get reLoginRequiredMsg =>
       'З міркувань безпеки, будь ласка, вийдіть з акаунту та увійдіть знову перед видаленням.';
+
+  @override
+  String get splitPush => 'Push (Жим)';
+
+  @override
+  String get splitPull => 'Pull (Тяга)';
+
+  @override
+  String get splitLegs => 'Ноги';
+
+  @override
+  String get splitUpper => 'Верх тіла';
+
+  @override
+  String get splitLower => 'Низ тіла';
+
+  @override
+  String get splitFullBody => 'Все тіло';
+
+  @override
+  String get splitCardio => 'Кардіо';
+
+  @override
+  String get splitCustom => 'Інше';
+
+  @override
+  String get selectWorkoutType => 'Оберіть тип тренування';
 }

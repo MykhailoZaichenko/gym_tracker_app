@@ -461,5 +461,24 @@
   "securityUpdate": "Security Update",
   "@securityUpdate": { "description": "Security Update Title" },
   "reLoginRequiredMsg": "For security reasons, please Log Out and Log In again before deleting your account.",
-  "@reLoginRequiredMsg": { "description": "Re-login required message before account deletion" }
+  "@reLoginRequiredMsg": { "description": "Re-login required message before account deletion" },
+
+  "splitPush": "Push",
+  "@splitPush": {"description": "Push split name"},
+  "splitPull": "Pull",
+  "@splitPull": {"description": "Pull split name"},
+  "splitLegs": "Legs",
+  "@splitLegs": {"description": "Legs split name"},
+  "splitUpper": "Upper Body",
+  "@splitUpper": {"description": "Upper Body split name"},
+  "splitLower": "Lower Body",
+  "@splitLower": {"description": "Lower Body split name"},
+  "splitFullBody": "Full Body",
+  "@splitFullBody": {"description": "Full Body split name"},
+  "splitCardio": "Cardio",
+  "@splitCardio": {"description": "Cardio split name"},
+  "splitCustom": "Custom",
+  "@splitCustom": {"description": "Custom split name"},
+  "selectWorkoutType": "Select the type of training",
+  "@selectWorkoutType": {"description": "Training type selection prompt"}
 }

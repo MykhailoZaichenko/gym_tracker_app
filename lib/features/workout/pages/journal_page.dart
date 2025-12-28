@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/data/seed/exercise_catalog.dart';
 import 'package:gym_tracker_app/features/workout/models/workout_exercise_model.dart';
+import 'package:gym_tracker_app/features/workout/models/workout_model.dart';
 import 'package:gym_tracker_app/features/workout/pages/workout_page.dart';
 import 'package:gym_tracker_app/l10n/app_localizations.dart';
 import 'package:gym_tracker_app/services/firestore_service.dart';
@@ -19,7 +20,7 @@ class JournalPage extends StatefulWidget {
 class _JournalPageState extends State<JournalPage> {
   final FirestoreService _firestore = FirestoreService();
   bool _isLoading = true;
-  List<WorkoutExercise>? _todaysWorkout;
+  WorkoutModel? _todaysWorkout;
   final DateTime _today = DateTime.now();
 
   @override
@@ -28,31 +29,146 @@ class _JournalPageState extends State<JournalPage> {
     _checkTodayWorkout();
   }
 
-  // Перевіряємо, чи є тренування на сьогодні, при кожному вході на вкладку
   Future<void> _checkTodayWorkout() async {
     setState(() => _isLoading = true);
-    final workout = await _firestore.getWorkout(_today);
-    if (mounted) {
-      setState(() {
-        _todaysWorkout = workout.isNotEmpty ? workout : null;
-        _isLoading = false;
-      });
+    try {
+      final workout = await _firestore.getWorkout(_today);
+      if (mounted) {
+        setState(() {
+          _todaysWorkout = workout;
+        });
+      }
+    } catch (e) {
+      debugPrint("Journal load error: $e");
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
-  void _startOrContinueWorkout() async {
-    final isNew = _todaysWorkout == null;
+  // 1. Логіка натискання кнопки
+  void _onMainButtonPressed() {
+    final loc = AppLocalizations.of(context)!;
+
+    // Якщо тренування вже є -> Продовжуємо
+    if (_todaysWorkout != null) {
+      _continueCurrentWorkout();
+    } else {
+      // Якщо немає -> Відкриваємо вибір типу (Dropdown/Sheet)
+      _showWorkoutTypeSelector(loc);
+    }
+  }
+
+  void _showWorkoutTypeSelector(AppLocalizations loc) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (ctx) {
+        final types = [
+          'push',
+          'pull',
+          'legs',
+          'upper',
+          'lower',
+          'full_body',
+          'cardio',
+          'custom',
+        ];
+
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                loc.selectWorkoutType,
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+              const SizedBox(height: 16),
+              ...types.map(
+                (type) => ListTile(
+                  leading: _getIconForType(type),
+                  title: Text(_getLocalizedTemplateName(type, loc)),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () {
+                    Navigator.pop(ctx);
+                    _launchNewWorkout(type);
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _launchNewWorkout(String type) async {
+    await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) =>
+            WorkoutPage(date: _today, workoutType: type, shouldAutoPick: true),
+      ),
+    );
+    _checkTodayWorkout(); // Оновлюємо список після повернення
+  }
+
+  void _continueCurrentWorkout() async {
+    if (_todaysWorkout == null) return;
 
     await Navigator.of(context).push(
       MaterialPageRoute(
         builder: (_) => WorkoutPage(
           date: _today,
-          exercises: _todaysWorkout ?? [],
-          shouldAutoPick: isNew,
+          exercises: _todaysWorkout!.exercises,
+          workoutType: _todaysWorkout!.type ?? 'custom',
+          shouldAutoPick: false,
         ),
       ),
     );
     _checkTodayWorkout();
+  }
+
+  // --- Helpers ---
+  String _getLocalizedTemplateName(String key, AppLocalizations loc) {
+    switch (key) {
+      case 'push':
+        return loc.splitPush;
+      case 'pull':
+        return loc.splitPull;
+      case 'legs':
+        return loc.splitLegs;
+      case 'upper':
+        return loc.splitUpper;
+      case 'lower':
+        return loc.splitLower;
+      case 'full_body':
+        return loc.splitFullBody;
+      case 'cardio':
+        return loc.splitCardio;
+      case 'custom':
+        return loc.splitCustom;
+      default:
+        return key.toUpperCase();
+    }
+  }
+
+  Icon _getIconForType(String key) {
+    switch (key) {
+      case 'push':
+        return const Icon(Icons.arrow_upward);
+      case 'pull':
+        return const Icon(Icons.arrow_downward);
+      case 'legs':
+        return const Icon(Icons.directions_walk);
+      case 'cardio':
+        return const Icon(Icons.favorite);
+      case 'custom':
+        return const Icon(Icons.edit_note);
+      default:
+        return const Icon(Icons.fitness_center);
+    }
   }
 
   ExerciseInfo _getExerciseInfo(
@@ -60,21 +176,24 @@ class _JournalPageState extends State<JournalPage> {
     AppLocalizations loc,
   ) {
     final catalog = getExerciseCatalog(loc);
-    // 1. Шукаємо за ID
+    // Спроба знайти по ID
     if (exercise.exerciseId != null && exercise.exerciseId!.isNotEmpty) {
-      final found = catalog.firstWhere(
-        (e) => e.id == exercise.exerciseId,
-        orElse: () => ExerciseInfo(id: '', name: '', icon: Icons.error),
-      );
-      if (found.name.isNotEmpty) return found;
+      try {
+        return catalog.firstWhere((e) => e.id == exercise.exerciseId);
+      } catch (_) {}
     }
-    // 2. Шукаємо за назвою (для кастомних або старих)
-    final foundByName = catalog.firstWhere(
-      (e) => e.id == exercise.name,
-      orElse: () =>
-          ExerciseInfo(id: '', name: exercise.name, icon: Icons.fitness_center),
-    );
-    return foundByName;
+    // Спроба знайти по назві
+    try {
+      return catalog.firstWhere(
+        (e) => e.id == exercise.name || e.name == exercise.name,
+      );
+    } catch (_) {
+      return ExerciseInfo(
+        id: '',
+        name: exercise.name,
+        icon: Icons.fitness_center,
+      );
+    }
   }
 
   @override
@@ -83,8 +202,13 @@ class _JournalPageState extends State<JournalPage> {
     final dateStr = DateFormat.MMMMEEEEd(loc.localeName).format(_today);
     final theme = Theme.of(context);
 
+    // Перевірка на наявність вправ
+    final hasWorkout = _todaysWorkout != null;
+    final exerciseCount = hasWorkout ? _todaysWorkout!.exercises.length : 0;
+
     return Scaffold(
       appBar: AppBar(title: Text(loc.navJournal), centerTitle: false),
+      // НІЯКОГО FAB ТУТ
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : Column(
@@ -100,11 +224,10 @@ class _JournalPageState extends State<JournalPage> {
                     ),
                   ),
                 ),
-
                 const SizedBox(height: 20),
 
-                // ВЕЛИКА ІКОНКА СТАТУСУ (тільки якщо тренування НЕМАЄ)
-                if (_todaysWorkout == null) ...[
+                // ВАРІАНТ 1: НЕМАЄ ТРЕНУВАННЯ
+                if (!hasWorkout) ...[
                   const Spacer(),
                   const StatusIconWidget(color: null, size: 80),
                   const SizedBox(height: 20),
@@ -115,8 +238,9 @@ class _JournalPageState extends State<JournalPage> {
                     ),
                   ),
                   const Spacer(),
-                ] else ...[
-                  // Якщо тренування Є - показуємо заголовок і список
+                ]
+                // ВАРІАНТ 2: Є ТРЕНУВАННЯ (Список)
+                else ...[
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20.0),
                     child: Row(
@@ -132,13 +256,19 @@ class _JournalPageState extends State<JournalPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              loc.workoutToday,
+                              // Показуємо тип (наприклад "Push Workout")
+                              _todaysWorkout!.type != null
+                                  ? _getLocalizedTemplateName(
+                                      _todaysWorkout!.type!,
+                                      loc,
+                                    )
+                                  : loc.workoutToday,
                               style: theme.textTheme.titleLarge?.copyWith(
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
                             Text(
-                              loc.exercisesCount(_todaysWorkout!.length),
+                              loc.exercisesCount(exerciseCount),
                               style: theme.textTheme.bodyMedium?.copyWith(
                                 color: Colors.grey,
                               ),
@@ -148,120 +278,113 @@ class _JournalPageState extends State<JournalPage> {
                       ],
                     ),
                   ),
-
                   const SizedBox(height: 20),
 
-                  // --- ВЕРТИКАЛЬНИЙ СПИСОК карток вправ ---
+                  // 🔥 СПИСОК ВПРАВ
                   Expanded(
-                    child: FadingEdge(
-                      startFadeSize: 0.05,
-                      endFadeSize: 0.1,
-                      child: ListView.builder(
-                        padding: const EdgeInsets.only(
-                          left: 16.0,
-                          right: 16.0,
-                          top: 0,
-                          bottom: 80,
-                        ),
-                        itemCount: _todaysWorkout!.length,
-                        itemBuilder: (context, index) {
-                          final ex = _todaysWorkout![index];
-                          final exerciseInfo = _getExerciseInfo(ex, loc);
-                          final titleText = exerciseInfo.name.isEmpty
-                              ? '${loc.exerciseDefaultName} ${index + 1}'
-                              : exerciseInfo.name;
-
-                          return Card(
-                            margin: const EdgeInsets.symmetric(vertical: 6.0),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                              side: BorderSide(
-                                color: theme.dividerColor.withValues(
-                                  alpha: 0.1,
-                                ),
+                    child: exerciseCount == 0
+                        ? Center(child: Text("No exercises yet"))
+                        : FadingEdge(
+                            startFadeSize: 0.05,
+                            endFadeSize: 0.1,
+                            child: ListView.builder(
+                              padding: const EdgeInsets.only(
+                                left: 16.0,
+                                right: 16.0,
+                                top: 0,
+                                bottom: 80,
                               ),
-                            ),
-                            elevation: 2, // Невелика тінь, як на скетчі
-                            child: Padding(
-                              padding: const EdgeInsets.all(12.0),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  // ІКОНКА ВПРАВИ ЗЛІВА
-                                  CircleAvatar(
-                                    radius: 24,
-                                    backgroundColor: theme.primaryColor
-                                        .withValues(alpha: 0.1),
-                                    child: Icon(
-                                      exerciseInfo.icon,
-                                      color: theme.primaryColor,
-                                    ),
+                              itemCount: exerciseCount,
+                              itemBuilder: (context, index) {
+                                final ex = _todaysWorkout!.exercises[index];
+                                final exerciseInfo = _getExerciseInfo(ex, loc);
+                                final titleText = exerciseInfo.name.isEmpty
+                                    ? ex.name
+                                    : exerciseInfo.name;
+
+                                return Card(
+                                  margin: const EdgeInsets.symmetric(
+                                    vertical: 6.0,
                                   ),
-                                  const SizedBox(width: 16),
-                                  // ТЕКСТОВА ЧАСТИНА СПРАВА
-                                  Expanded(
-                                    child: Column(
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(12.0),
+                                    child: Row(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        // Назва вправи
-                                        Text(
-                                          titleText,
-                                          style: theme.textTheme.titleMedium
-                                              ?.copyWith(
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                        ),
-                                        const SizedBox(height: 4),
-                                        // Кількість сетів
-                                        Text(
-                                          loc.setsCount(ex.sets.length),
-                                          style: theme.textTheme.bodySmall
-                                              ?.copyWith(color: Colors.grey),
-                                        ),
-                                        const SizedBox(height: 8),
-                                        // Деталі сетів (перші 3)
-                                        ...ex.sets.take(3).map((s) {
-                                          return Padding(
-                                            padding: const EdgeInsets.only(
-                                              bottom: 2.0,
-                                            ),
-                                            child: Text(
-                                              '${loc.setLabelCompact} ${ex.sets.indexOf(s) + 1}: ${s.weight ?? '-'} ${loc.weightUnit} x ${s.reps ?? '-'}',
-                                              style: theme.textTheme.bodyMedium,
-                                            ),
-                                          );
-                                        }),
-                                        if (ex.sets.length > 3)
-                                          Text(
-                                            '...',
-                                            style: theme.textTheme.bodySmall,
+                                        CircleAvatar(
+                                          radius: 24,
+                                          backgroundColor: theme.primaryColor
+                                              .withValues(alpha: 0.1),
+                                          child: Icon(
+                                            exerciseInfo.icon,
+                                            color: theme.primaryColor,
                                           ),
+                                        ),
+                                        const SizedBox(width: 16),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                titleText,
+                                                style: theme
+                                                    .textTheme
+                                                    .titleMedium
+                                                    ?.copyWith(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                              ),
+                                              const SizedBox(height: 4),
+                                              Text(
+                                                loc.setsCount(ex.sets.length),
+                                                style: theme.textTheme.bodySmall
+                                                    ?.copyWith(
+                                                      color: Colors.grey,
+                                                    ),
+                                              ),
+                                              // Виводимо пару сетів для наочності
+                                              if (ex.sets.isNotEmpty)
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                        top: 4.0,
+                                                      ),
+                                                  child: Text(
+                                                    "${ex.sets.first.weight ?? 0}kg x ${ex.sets.first.reps ?? 0}",
+                                                    style: theme
+                                                        .textTheme
+                                                        .bodySmall,
+                                                  ),
+                                                ),
+                                            ],
+                                          ),
+                                        ),
                                       ],
                                     ),
                                   ),
-                                ],
-                              ),
+                                );
+                              },
                             ),
-                          );
-                        },
-                      ),
-                    ),
+                          ),
                   ),
                   const SizedBox(height: 10),
                 ],
 
-                // Кнопка внизу
+                // КНОПКА ВНИЗУ (Одна для всього)
                 Padding(
                   padding: const EdgeInsets.all(20.0),
                   child: SizedBox(
                     width: double.infinity,
                     height: 56,
                     child: PrimaryFilledButton(
-                      text: _todaysWorkout != null
-                          ? loc.continueWorkout
-                          : loc.startWorkout,
-                      onPressed: _startOrContinueWorkout,
+                      text: hasWorkout
+                          ? loc
+                                .continueWorkout // "Продовжити"
+                          : loc.startWorkout, // "Почати"
+                      onPressed: _onMainButtonPressed,
                     ),
                   ),
                 ),
