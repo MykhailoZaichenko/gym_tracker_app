@@ -12,37 +12,7 @@ class AppLocalizationsUk extends AppLocalizations {
   String get appName => 'Gym Tracker App';
 
   @override
-  String get getStarted => 'Почати';
-
-  @override
-  String get continueAction => 'Продовжити';
-
-  @override
-  String get onboardingTitle => 'Вкажіть вашу вагу для персоналізації';
-
-  @override
-  String get yourProgressFor => 'Ваш прогрес за';
-
-  @override
-  String get setsLabel => 'Підходів';
-
-  @override
-  String get weightRepsLabel => 'Вага (kg·reps)';
-
-  @override
-  String get calories => 'Калорії';
-
-  @override
-  String get planSavedSuccess => 'План збережено успішно';
-
-  @override
-  String get editPlanTitle => 'Редагування плану';
-
-  @override
-  String get savePlanTooltip => 'Зберегти план';
-
-  @override
-  String get guest => 'Гість';
+  String get ok => 'ОК';
 
   @override
   String get cancel => 'Скасувати';
@@ -69,7 +39,19 @@ class AppLocalizationsUk extends AppLocalizations {
   String get no => 'Ні';
 
   @override
-  String get ok => 'ОК';
+  String get send => 'Надіслати';
+
+  @override
+  String get guest => 'Гість';
+
+  @override
+  String get getStarted => 'Почати';
+
+  @override
+  String get continueAction => 'Продовжити';
+
+  @override
+  String get onboardingTitle => 'Вкажіть вашу вагу для персоналізації';
 
   @override
   String get loginTitle => 'Ввійти в обліковий запис';
@@ -90,29 +72,31 @@ class AppLocalizationsUk extends AppLocalizations {
   String get alreadyHaveAccount => 'Вже є акаунт?';
 
   @override
-  String get enterCustomExerciseName => 'Введіть назву вправи';
+  String get googleButton => 'Google';
 
   @override
-  String get exerciseNameHint => 'Назва вправи';
+  String get verifyEmailTitle => 'Підтвердження пошти';
 
   @override
-  String get addExercise => 'Додати вправу';
+  String get verifyEmailMessage =>
+      'Лист із підтвердженням було надіслано на вашу електронну пошту. Будь ласка, перейдіть за посиланням у листі.';
 
   @override
-  String get addExercisesHint =>
-      'Додайте вправи у календарі, щоб бачити графік';
+  String get resendEmail => 'Надіслати лист ще раз';
 
   @override
-  String get selectExercise => 'Оберіть вправу';
+  String get cancelLogout => 'Скасувати (Вийти)';
 
   @override
-  String get deleteExercise => 'Видалити вправу';
+  String get resetPasswordTitle => 'Скидання паролю';
 
   @override
-  String get searchExercise => 'Пошук вправи';
+  String get resetPasswordInstruction =>
+      'Введіть свій email. Ми надішлемо вам посилання для створення нового паролю.';
 
   @override
-  String get enterCustomName => 'Ввести власну назву';
+  String get resetPasswordEmailSent =>
+      'Лист для скидання паролю надіслано! Перевірте пошту.';
 
   @override
   String get emailLabel => 'Email';
@@ -139,6 +123,9 @@ class AppLocalizationsUk extends AppLocalizations {
   String get nameHint => 'Введіть імʼя';
 
   @override
+  String get weightLabel => 'Вага';
+
+  @override
   String get errEmailRequired => 'Email обовʼязковий';
 
   @override
@@ -163,19 +150,62 @@ class AppLocalizationsUk extends AppLocalizations {
   String get errWeightRequired => 'Введіть коректну вагу';
 
   @override
+  String get errWeightInvalid => 'Вага повинна бути числом > 0';
+
+  @override
+  String get errGoogleSignIn => 'Помилка входу через Google';
+
+  @override
+  String get errInvalidCredentials => 'Невірний email або пароль';
+
+  @override
+  String get errLoginGeneral => 'Помилка входу';
+
+  @override
+  String get errUserNotFound => 'Користувача з такою поштою не знайдено';
+
+  @override
+  String get errWrongPassword => 'Невірний пароль';
+
+  @override
+  String get errEmailAlreadyInUse =>
+      'Цей email вже використовується іншим акаунтом';
+
+  @override
+  String get errWeakPassword => 'Пароль занадто слабкий';
+
+  @override
+  String get errTooManyRequests => 'Забагато спроб. Спробуйте пізніше';
+
+  @override
+  String get errRequiresRecentLogin =>
+      'Для цієї дії потрібно зайти в акаунт заново';
+
+  @override
+  String get errUnknown => 'Сталася невідома помилка';
+
+  @override
+  String saveError(String error) {
+    return 'Помилка збереження: $error';
+  }
+
+  @override
+  String get navHome => 'Головна';
+
+  @override
+  String get navJournal => 'Щоденник';
+
+  @override
+  String get navHistory => 'Історія';
+
+  @override
+  String get navStats => 'Статистика';
+
+  @override
+  String get navProfile => 'Профіль';
+
+  @override
   String get calendarTitle => 'Календар тренувань';
-
-  @override
-  String get progressTooltip => 'Прогрес';
-
-  @override
-  String get myPlan => 'Мій план';
-
-  @override
-  String get editExercisesTooltip => 'Редагувати вправи';
-
-  @override
-  String get addExerciseTooltip => 'Додати вправу';
 
   @override
   String get selectDay => 'Оберіть день';
@@ -184,28 +214,99 @@ class AppLocalizationsUk extends AppLocalizations {
   String get selectMonth => 'Оберіть місяць';
 
   @override
+  String get pickMonthYear => 'Виберіть місяць і рік';
+
+  @override
+  String get prevYear => 'Попередній рік';
+
+  @override
+  String get nextYear => 'Наступний рік';
+
+  @override
+  String get backToToday => 'Сьогодні';
+
+  @override
   String get exercisesFor => 'Вправи за';
 
   @override
   String get noExercisesToday => 'Немає вправ за цей день';
 
   @override
-  String get exerciseDefaultName => 'Вправа';
+  String get workoutTitle => 'Тренування';
+
+  @override
+  String get startWorkout => 'Почати тренування';
+
+  @override
+  String get continueWorkout => 'Продовжити тренування';
+
+  @override
+  String get workoutToday => 'Тренування на сьогодні';
+
+  @override
+  String get noWorkoutToday => 'На сьогодні немає записів';
+
+  @override
+  String get saveChangesTitle => 'Зберегти зміни?';
+
+  @override
+  String get unsavedChangesMsg =>
+      'Є незбережені зміни. Зберегти перед виходом?';
+
+  @override
+  String get synchronized => 'Синхронізовано';
+
+  @override
+  String get selectWorkoutType => 'Оберіть тип тренування';
+
+  @override
+  String get splitPush => 'Push (Жим)';
+
+  @override
+  String get splitPull => 'Pull (Тяга)';
+
+  @override
+  String get splitLegs => 'Ноги';
+
+  @override
+  String get splitUpper => 'Верх тіла';
+
+  @override
+  String get splitLower => 'Низ тіла';
+
+  @override
+  String get splitFullBody => 'Все тіло';
+
+  @override
+  String get splitCardio => 'Кардіо';
+
+  @override
+  String get splitCustom => 'Інше';
+
+  @override
+  String get addExerciseBtn => 'Додати вправу';
+
+  @override
+  String get addSetBtn => 'Додати підхід';
+
+  @override
+  String get setsLabel => 'Підходів';
+
+  @override
+  String get weightRepsLabel => 'Вага (kg·reps)';
 
   @override
   String get setLabelCompact => 'Підх';
 
   @override
-  String get weightUnit => 'кг';
+  String setNumber(int number) {
+    return 'Підхід $number';
+  }
 
   @override
-  String get weightUnitHint => 'Кг';
-
-  @override
-  String get repsUnit => 'повт';
-
-  @override
-  String get repsUnitHint => 'Повт';
+  String deleteSet(int number) {
+    return 'Видалити підхід $number';
+  }
 
   @override
   String setsCount(int count) {
@@ -234,14 +335,19 @@ class AppLocalizationsUk extends AppLocalizations {
   }
 
   @override
-  String deleteSet(int number) {
-    return 'Видалити підхід $number';
-  }
+  String get weightUnit => 'кг';
 
   @override
-  String setNumber(int number) {
-    return 'Підхід $number';
-  }
+  String get weightUnitHint => 'Кг';
+
+  @override
+  String get repsUnit => 'повт';
+
+  @override
+  String get repsUnitHint => 'Повт';
+
+  @override
+  String get calories => 'Калорії';
 
   @override
   String caloriesCount(String count) {
@@ -249,7 +355,47 @@ class AppLocalizationsUk extends AppLocalizations {
   }
 
   @override
+  String get exerciseDefaultName => 'Вправа';
+
+  @override
+  String get enterCustomExerciseName => 'Введіть назву вправи';
+
+  @override
+  String get exerciseNameHint => 'Назва вправи';
+
+  @override
+  String get addExercise => 'Додати вправу';
+
+  @override
+  String get addExercisesHint =>
+      'Додайте вправи у календарі, щоб бачити графік';
+
+  @override
+  String get selectExercise => 'Оберіть вправу';
+
+  @override
+  String get deleteExercise => 'Видалити вправу';
+
+  @override
+  String get searchExercise => 'Пошук вправи';
+
+  @override
+  String get enterCustomName => 'Ввести власну назву';
+
+  @override
+  String get addExerciseTooltip => 'Додати вправу';
+
+  @override
+  String get editExercisesTooltip => 'Редагувати вправи';
+
+  @override
   String get chartsTitle => 'Прогрес — графіки';
+
+  @override
+  String get yourProgressFor => 'Ваш прогрес за';
+
+  @override
+  String get progressTooltip => 'Прогрес';
 
   @override
   String get exerciseLabel => 'Вправа:';
@@ -279,10 +425,16 @@ class AppLocalizationsUk extends AppLocalizations {
   String get totalLifted => 'Всього піднято:';
 
   @override
+  String get maxWeight => 'Макс. вага:';
+
+  @override
   String get pointsCount => 'Точок:';
 
   @override
   String get settingsTitle => 'Налаштування';
+
+  @override
+  String get editProfileTitle => 'Редагувати профіль';
 
   @override
   String get darkMode => 'Темний режим';
@@ -292,6 +444,42 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get notifications => 'Сповіщення';
+
+  @override
+  String get appLanguage => 'Мова додатку';
+
+  @override
+  String get selectLanguage => 'Виберіть мову';
+
+  @override
+  String get languageUk => 'Українська';
+
+  @override
+  String get languageEn => 'English';
+
+  @override
+  String get aboutApp => 'Про додаток';
+
+  @override
+  String get appDescription => 'Додаток для відстеження ваших тренувань.';
+
+  @override
+  String get delPhoto => 'Видалити фото';
+
+  @override
+  String get deletePhotoTitle => 'Видалити фото';
+
+  @override
+  String get deletePhotoConfirm => 'Ви дійсно хочете видалити фото?';
+
+  @override
+  String get logoutAction => 'Вийти';
+
+  @override
+  String get logoutTitle => 'Вихід із профілю';
+
+  @override
+  String get logoutConfirm => 'Ви дійсно хочете вийти?';
 
   @override
   String get clearData => 'Очистити всі дані';
@@ -307,84 +495,21 @@ class AppLocalizationsUk extends AppLocalizations {
   String get dataClearedSuccess => 'Дані успішно очищені';
 
   @override
-  String get aboutApp => 'Про додаток';
+  String get deleteAccount => 'Видалити акаунт';
 
   @override
-  String get appDescription => 'Додаток для відстеження ваших тренувань.';
+  String get deleteAccountTitle => 'Видалити акаунт?';
 
   @override
-  String get appLanguage => 'Мова додатку';
+  String get deleteAccountWarning =>
+      'Цю дію неможливо скасувати. Всі ваші дані (тренування, статистика, профіль) будуть втрачені назавжди.';
 
   @override
-  String get languageUk => 'Українська';
+  String get securityUpdate => 'Вимога безпеки';
 
   @override
-  String get languageEn => 'English';
-
-  @override
-  String get selectLanguage => 'Виберіть мову';
-
-  @override
-  String get logoutAction => 'Вийти';
-
-  @override
-  String get logoutTitle => 'Вихід із профілю';
-
-  @override
-  String get logoutConfirm => 'Ви дійсно хочете вийти?';
-
-  @override
-  String get editProfileTitle => 'Редагувати профіль';
-
-  @override
-  String get weightLabel => 'Вага';
-
-  @override
-  String get errWeightInvalid => 'Вага повинна бути числом > 0';
-
-  @override
-  String get deletePhotoTitle => 'Видалити фото';
-
-  @override
-  String get deletePhotoConfirm => 'Ви дійсно хочете видалити фото?';
-
-  @override
-  String saveError(String error) {
-    return 'Помилка збереження: $error';
-  }
-
-  @override
-  String onDay(String day) {
-    return 'на $day';
-  }
-
-  @override
-  String get workoutTitle => 'Тренування';
-
-  @override
-  String get pickMonthYear => 'Виберіть місяць і рік';
-
-  @override
-  String get prevYear => 'Попередній рік';
-
-  @override
-  String get nextYear => 'Наступний рік';
-
-  @override
-  String get saveChangesTitle => 'Зберегти зміни?';
-
-  @override
-  String get unsavedChangesMsg =>
-      'Є незбережені зміни. Зберегти перед виходом?';
-
-  @override
-  String get navHome => 'Головна';
-
-  @override
-  String get backToToday => 'Сьогодні';
-
-  @override
-  String get navProfile => 'Профіль';
+  String get reLoginRequiredMsg =>
+      'З міркувань безпеки, будь ласка, вийдіть з акаунту та увійдіть знову перед видаленням.';
 
   @override
   String get exSquat => 'Присідання';
@@ -490,156 +615,4 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get exLegRaiseHang => 'Підйоми ніг у висі';
-
-  @override
-  String get proposalTitle => 'Створіть свій план тренувань!';
-
-  @override
-  String get proposalSubtitle =>
-      'Щоб досягти найкращих результатів, створіть розклад на тиждень. Ми нагадаємо вам про тренування.';
-
-  @override
-  String get goToPlan => 'Перейти до плану';
-
-  @override
-  String get maybeLater => 'Можливо пізніше';
-
-  @override
-  String get verifyEmailTitle => 'Підтвердження пошти';
-
-  @override
-  String get verifyEmailMessage =>
-      'Лист із підтвердженням було надіслано на вашу електронну пошту. Будь ласка, перейдіть за посиланням у листі.';
-
-  @override
-  String get resendEmail => 'Надіслати лист ще раз';
-
-  @override
-  String get cancelLogout => 'Скасувати (Вийти)';
-
-  @override
-  String get resetPasswordTitle => 'Скидання паролю';
-
-  @override
-  String get resetPasswordInstruction =>
-      'Введіть свій email. Ми надішлемо вам посилання для створення нового паролю.';
-
-  @override
-  String get resetPasswordEmailSent =>
-      'Лист для скидання паролю надіслано! Перевірте пошту.';
-
-  @override
-  String get send => 'Надіслати';
-
-  @override
-  String get googleButton => 'Google';
-
-  @override
-  String get errGoogleSignIn => 'Помилка входу через Google';
-
-  @override
-  String get errInvalidCredentials => 'Невірний email або пароль';
-
-  @override
-  String get errLoginGeneral => 'Помилка входу';
-
-  @override
-  String get errUserNotFound => 'Користувача з такою поштою не знайдено';
-
-  @override
-  String get errWrongPassword => 'Невірний пароль';
-
-  @override
-  String get errEmailAlreadyInUse =>
-      'Цей email вже використовується іншим акаунтом';
-
-  @override
-  String get errWeakPassword => 'Пароль занадто слабкий';
-
-  @override
-  String get errTooManyRequests => 'Забагато спроб. Спробуйте пізніше';
-
-  @override
-  String get errRequiresRecentLogin =>
-      'Для цієї дії потрібно зайти в акаунт заново';
-
-  @override
-  String get errUnknown => 'Сталася невідома помилка';
-
-  @override
-  String get delPhoto => 'Видалити фото';
-
-  @override
-  String get navJournal => 'Щоденник';
-
-  @override
-  String get navHistory => 'Історія';
-
-  @override
-  String get navStats => 'Статистика';
-
-  @override
-  String get startWorkout => 'Почати тренування';
-
-  @override
-  String get continueWorkout => 'Продовжити тренування';
-
-  @override
-  String get workoutToday => 'Тренування на сьогодні';
-
-  @override
-  String get noWorkoutToday => 'На сьогодні немає записів';
-
-  @override
-  String get addExerciseBtn => 'Додати вправу';
-
-  @override
-  String get addSetBtn => 'Додати підхід';
-
-  @override
-  String get synchronized => 'Синхронізовано';
-
-  @override
-  String get deleteAccount => 'Видалити акаунт';
-
-  @override
-  String get deleteAccountTitle => 'Видалити акаунт?';
-
-  @override
-  String get deleteAccountWarning =>
-      'Цю дію неможливо скасувати. Всі ваші дані (тренування, статистика, профіль) будуть втрачені назавжди.';
-
-  @override
-  String get securityUpdate => 'Вимога безпеки';
-
-  @override
-  String get reLoginRequiredMsg =>
-      'З міркувань безпеки, будь ласка, вийдіть з акаунту та увійдіть знову перед видаленням.';
-
-  @override
-  String get splitPush => 'Push (Жим)';
-
-  @override
-  String get splitPull => 'Pull (Тяга)';
-
-  @override
-  String get splitLegs => 'Ноги';
-
-  @override
-  String get splitUpper => 'Верх тіла';
-
-  @override
-  String get splitLower => 'Низ тіла';
-
-  @override
-  String get splitFullBody => 'Все тіло';
-
-  @override
-  String get splitCardio => 'Кардіо';
-
-  @override
-  String get splitCustom => 'Інше';
-
-  @override
-  String get selectWorkoutType => 'Оберіть тип тренування';
 }

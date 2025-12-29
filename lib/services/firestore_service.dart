@@ -74,10 +74,6 @@ class FirestoreService {
       // Шлях: users/{uid}
       await _db.collection('users').doc(uid).delete();
 
-      // 3. Видаляємо план тренувань (якщо він в окремій колекції)
-      // Шлях: weekly_plans/{uid}
-      await _db.collection('weekly_plans').doc(uid).delete();
-
       // Якщо є ще якісь колекції (наприклад, 'history', 'measurements'),
       // додайте їх видалення тут аналогічно до кроку 1.
     } catch (e) {
@@ -240,41 +236,5 @@ class FirestoreService {
       }
     } catch (_) {}
     return null;
-  }
-
-  // --- ТИЖНЕВИЙ ПЛАН ---
-
-  Future<void> saveWeeklyPlan(Map<String, List<String>> plan) async {
-    if (currentUserId == null) return;
-    // Fire-and-forget
-    _db
-        .collection('users')
-        .doc(currentUserId)
-        .collection('settings')
-        .doc('weekly_plan')
-        .set(plan);
-  }
-
-  Future<Map<String, List<String>>> getWeeklyPlan() async {
-    if (currentUserId == null) return {};
-    try {
-      // Пріоритет кешу
-      final doc = await _db
-          .collection('users')
-          .doc(currentUserId)
-          .collection('settings')
-          .doc('weekly_plan')
-          .get(const GetOptions(source: Source.cache));
-
-      if (doc.exists && doc.data() != null) {
-        final data = doc.data()!;
-        final Map<String, List<String>> typedPlan = {};
-        data.forEach((key, value) {
-          typedPlan[key] = List<String>.from(value);
-        });
-        return typedPlan;
-      }
-    } catch (_) {}
-    return {};
   }
 }

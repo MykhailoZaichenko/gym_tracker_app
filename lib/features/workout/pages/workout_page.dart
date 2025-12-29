@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/data/seed/exercise_catalog.dart';
 import 'package:gym_tracker_app/features/workout/models/workout_exercise_model.dart';
 import 'package:gym_tracker_app/features/workout/models/workout_model.dart';
+import 'package:gym_tracker_app/features/workout/widgets/workout_type_selector.dart';
 import 'package:gym_tracker_app/l10n/app_localizations.dart';
 import 'package:gym_tracker_app/services/firestore_service.dart';
 
@@ -51,7 +52,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
   @override
   void initState() {
     super.initState();
-    _currentType = widget.workoutType;
+    _currentType = widget.workoutType.toLowerCase().trim();
     if (widget.exercises != null && widget.exercises!.isNotEmpty) {
       _exercises = List.from(widget.exercises!);
       _initControllers();
@@ -59,29 +60,6 @@ class _WorkoutPageState extends State<WorkoutPage> {
       _initialEncoded = _encodeCurrentState();
     } else {
       _loadPreviousSession();
-    }
-  }
-
-  String _getLocalizedTemplateName(String key, AppLocalizations loc) {
-    switch (key) {
-      case 'push':
-        return loc.splitPush;
-      case 'pull':
-        return loc.splitPull;
-      case 'legs':
-        return loc.splitLegs;
-      case 'upper':
-        return loc.splitUpper;
-      case 'lower':
-        return loc.splitLower;
-      case 'full_body':
-        return loc.splitFullBody;
-      case 'cardio':
-        return loc.splitCardio;
-      case 'custom':
-        return loc.splitCustom;
-      default:
-        return key.toUpperCase();
     }
   }
 
@@ -442,17 +420,6 @@ class _WorkoutPageState extends State<WorkoutPage> {
     }
     final loc = AppLocalizations.of(context)!;
 
-    final types = [
-      'push',
-      'pull',
-      'legs',
-      'upper',
-      'lower',
-      'full_body',
-      'cardio',
-      'custom',
-    ];
-
     // Оновлення назв при локалізації
     for (int i = 0; i < _exercises.length; i++) {
       final exercise = _exercises[i];
@@ -503,46 +470,26 @@ class _WorkoutPageState extends State<WorkoutPage> {
       },
       child: Scaffold(
         appBar: AppBar(
-          // centerTitle: false, // Можна розкоментувати, якщо хочете по лівому краю
+          centerTitle: true,
           title: Column(
-            crossAxisAlignment:
-                CrossAxisAlignment.start, // Або .center, якщо centerTitle: true
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // 1. ВИПАДАЮЧИЙ СПИСОК (Заголовок)
-              DropdownButtonHideUnderline(
-                child: DropdownButton<String>(
-                  value: types.contains(_currentType) ? _currentType : 'custom',
-                  isDense: true, // Робить список компактнішим по висоті
-                  icon: const Icon(
-                    Icons.keyboard_arrow_down,
-                    size: 20,
-                  ), // Менша іконка
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.onSurface,
-                  ),
-                  onChanged: (String? newValue) {
-                    if (newValue != null) {
-                      setState(() => _currentType = newValue);
-                    }
-                  },
-                  items: types.map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(_getLocalizedTemplateName(value, loc)),
-                    );
-                  }).toList(),
-                ),
+              WorkoutTypeSelector(
+                currentType: _currentType,
+                onChanged: (newValue) {
+                  setState(() {
+                    _currentType = newValue;
+                  });
+                  // Можна додати автоматичне збереження при зміні, якщо треба
+                  // _saveExercises();
+                },
               ),
-
-              // 2. ДАТА (Підзаголовок)
               Text(
-                // Форматуємо дату: "Sat, Dec 28" або "28 груд." залежно від локалі
                 DateFormat.MMMMEEEEd(
                   AppLocalizations.of(context)!.localeName,
                 ).format(widget.date),
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Colors.grey, // Сірий колір для другорядного тексту
+                  color: Colors.grey,
                   fontSize: 12,
                 ),
               ),

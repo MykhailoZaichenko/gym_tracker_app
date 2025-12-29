@@ -3,6 +3,7 @@ import 'package:gym_tracker_app/data/seed/exercise_catalog.dart';
 import 'package:gym_tracker_app/features/workout/models/workout_exercise_model.dart';
 import 'package:gym_tracker_app/features/workout/models/workout_model.dart';
 import 'package:gym_tracker_app/features/workout/pages/workout_page.dart';
+import 'package:gym_tracker_app/features/workout/widgets/workout_type_selection_sheet.dart';
 import 'package:gym_tracker_app/l10n/app_localizations.dart';
 import 'package:gym_tracker_app/services/firestore_service.dart';
 import 'package:gym_tracker_app/widget/common/fading_edge.dart';
@@ -59,49 +60,9 @@ class _JournalPageState extends State<JournalPage> {
   }
 
   void _showWorkoutTypeSelector(AppLocalizations loc) {
-    showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (ctx) {
-        final types = [
-          'push',
-          'pull',
-          'legs',
-          'upper',
-          'lower',
-          'full_body',
-          'cardio',
-          'custom',
-        ];
-
-        return Padding(
-          padding: const EdgeInsets.symmetric(vertical: 20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                loc.selectWorkoutType,
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
-              const SizedBox(height: 16),
-              ...types.map(
-                (type) => ListTile(
-                  leading: _getIconForType(type),
-                  title: Text(_getLocalizedTemplateName(type, loc)),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () {
-                    Navigator.pop(ctx);
-                    _launchNewWorkout(type);
-                  },
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
+    WorkoutTypeSelectionSheet.show(context, (selectedType) {
+      _launchNewWorkout(selectedType);
+    });
   }
 
   void _launchNewWorkout(String type) async {
@@ -128,47 +89,6 @@ class _JournalPageState extends State<JournalPage> {
       ),
     );
     _checkTodayWorkout();
-  }
-
-  // --- Helpers ---
-  String _getLocalizedTemplateName(String key, AppLocalizations loc) {
-    switch (key) {
-      case 'push':
-        return loc.splitPush;
-      case 'pull':
-        return loc.splitPull;
-      case 'legs':
-        return loc.splitLegs;
-      case 'upper':
-        return loc.splitUpper;
-      case 'lower':
-        return loc.splitLower;
-      case 'full_body':
-        return loc.splitFullBody;
-      case 'cardio':
-        return loc.splitCardio;
-      case 'custom':
-        return loc.splitCustom;
-      default:
-        return key.toUpperCase();
-    }
-  }
-
-  Icon _getIconForType(String key) {
-    switch (key) {
-      case 'push':
-        return const Icon(Icons.arrow_upward);
-      case 'pull':
-        return const Icon(Icons.arrow_downward);
-      case 'legs':
-        return const Icon(Icons.directions_walk);
-      case 'cardio':
-        return const Icon(Icons.favorite);
-      case 'custom':
-        return const Icon(Icons.edit_note);
-      default:
-        return const Icon(Icons.fitness_center);
-    }
   }
 
   ExerciseInfo _getExerciseInfo(
@@ -258,7 +178,7 @@ class _JournalPageState extends State<JournalPage> {
                             Text(
                               // Показуємо тип (наприклад "Push Workout")
                               _todaysWorkout!.type != null
-                                  ? _getLocalizedTemplateName(
+                                  ? WorkoutTypeSelectionSheet.getLocalizedTemplateName(
                                       _todaysWorkout!.type!,
                                       loc,
                                     )

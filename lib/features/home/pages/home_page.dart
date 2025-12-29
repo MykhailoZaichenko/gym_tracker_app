@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:gym_tracker_app/features/workout/models/workout_exercise_model.dart';
 import 'package:gym_tracker_app/features/workout/pages/workout_page.dart';
 import 'package:gym_tracker_app/features/home/home_exports.dart';
@@ -28,21 +27,6 @@ class _HomePageState extends State<HomePage> {
     _selectedDay = DateTime.now();
     _loadAllWorkouts();
     _workoutsStream = _firestore.getAllWorkoutsStream();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _checkAndShowPlanProposal();
-    });
-  }
-
-  Future<void> _checkAndShowPlanProposal() async {
-    final userId = _firestore.currentUserId;
-    if (userId == null) return;
-    final prefs = await SharedPreferences.getInstance();
-    final key = 'has_seen_plan_proposal_$userId';
-    final hasSeen = prefs.getBool(key) ?? false;
-
-    if (!hasSeen && mounted) {
-      await prefs.setBool(key, true);
-    }
   }
 
   Future<void> _loadAllWorkouts() async {
@@ -55,17 +39,19 @@ class _HomePageState extends State<HomePage> {
   String _keyOf(DateTime date) => date.toIso8601String().split('T').first;
 
   void _openWorkoutDay(DateTime date) async {
+    final workoutModel = await _firestore.getWorkout(date);
+    final type = workoutModel?.type ?? 'custom';
     final initialExercises = List<WorkoutExercise>.from(
       _allWorkouts[_keyOf(date)] ?? [],
     );
 
-    // Переходимо на WorkoutPage
+    if (!mounted) return;
     await Navigator.of(context).push(
       MaterialPageRoute(
         builder: (_) => WorkoutPage(
           date: date,
           exercises: initialExercises,
-          workoutType: 'custom',
+          workoutType: type,
         ),
       ),
     );

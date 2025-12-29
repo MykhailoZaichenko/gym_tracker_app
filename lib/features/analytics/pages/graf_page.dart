@@ -3,10 +3,12 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:gym_tracker_app/core/constants/constants.dart';
 import 'package:gym_tracker_app/core/constants/date_constants.dart';
 import 'package:gym_tracker_app/core/theme/theme_service.dart';
+import 'package:gym_tracker_app/features/analytics/models/workout_exercise_graf_model.dart';
 import 'package:gym_tracker_app/utils/utils.dart';
 import 'package:gym_tracker_app/features/analytics/widgets/line_chart_card.dart';
 import 'package:gym_tracker_app/l10n/app_localizations.dart';
 import 'package:gym_tracker_app/services/firestore_service.dart';
+import 'package:gym_tracker_app/widget/common/build_summary_item_widget.dart';
 import 'package:gym_tracker_app/widget/common/month_picker_dialog.dart';
 import 'package:intl/intl.dart';
 import 'package:gym_tracker_app/data/seed/exercise_catalog.dart';
@@ -162,6 +164,61 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
     });
 
     return result;
+  }
+
+  double _calculateMaxWeightForRange(AppLocalizations loc) {
+    if (_selectedExerciseDisplay == null) return 0.0;
+
+    final catalog = getExerciseCatalog(loc);
+    String targetCanonicalId = _selectedExerciseDisplay!;
+    try {
+      final found = catalog.firstWhere(
+        (c) => c.name == _selectedExerciseDisplay,
+      );
+      targetCanonicalId = found.id;
+    } catch (_) {}
+
+    // Визначаємо межі дат
+    DateTime start, end;
+    if (_range == RangeMode.month) {
+      start = DateTime(_visibleMonth.year, _visibleMonth.month, 1);
+      end = DateTime(
+        _visibleMonth.year,
+        _visibleMonth.month + 1,
+        0,
+        23,
+        59,
+        59,
+      );
+    } else {
+      start = DateTime(_visibleMonth.year, 1, 1);
+      end = DateTime(_visibleMonth.year, 12, 31, 23, 59, 59);
+    }
+
+    double maxW = 0.0;
+
+    _allWorkouts.forEach((dateStr, exercises) {
+      final date = DateTime.parse(dateStr);
+
+      // Фільтр по даті
+      if (date.isBefore(start) || date.isAfter(end)) return;
+
+      // Фільтр по вправі
+      final matching = exercises.where((ex) {
+        return _getCanonicalId(ex, catalog) == targetCanonicalId;
+      });
+
+      // Пошук максимуму
+      for (final ex in matching) {
+        for (final s in ex.sets) {
+          if (s.weight != null && s.weight! > maxW) {
+            maxW = s.weight!;
+          }
+        }
+      }
+    });
+
+    return maxW;
   }
 
   List<MapEntry<DateTime, double>> _filteredEntriesForRange(
@@ -404,6 +461,12 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
       s += e.value;
     }
     return s;
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
   }
 
   @override
@@ -669,10 +732,35 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    '${loc.totalLifted} ${formatNumberCompact(_totalForEntries(entries))}',
+                  Expanded(
+                    child: buildSummaryItem(
+                      context: context,
+                      label: loc.totalLifted,
+                      value: formatNumberCompact(_totalForEntries(entries)),
+                      color: Colors.blueAccent,
+                    ),
                   ),
-                  Text('${loc.pointsCount} ${entries.length}'),
+
+                  // Макс. вага
+                  Expanded(
+                    child: buildSummaryItem(
+                      context: context,
+                      label: loc.maxWeight,
+                      value:
+                          '${formatNumberCompact(_calculateMaxWeightForRange(loc))} ${loc.weightUnit}',
+                      color: Colors.orangeAccent,
+                    ),
+                  ),
+
+                  // Точок
+                  Expanded(
+                    child: buildSummaryItem(
+                      context: context,
+                      label: loc.pointsCount,
+                      value: entries.length.toString(),
+                      // color use default
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -681,55 +769,4 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
       ),
     );
   }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
-  }
-}
-
-// ... Models stay the same ...
-class WorkoutExerciseGraf {
-  String name;
-  String? exerciseId;
-  List<SetData> sets;
-
-  WorkoutExerciseGraf({
-    required this.name,
-    this.exerciseId,
-    required this.sets,
-  });
-
-  factory WorkoutExerciseGraf.fromMap(Map<String, dynamic> m) {
-    return WorkoutExerciseGraf(
-      name: m['name'] as String? ?? '',
-      exerciseId: m['exerciseId'] as String?,
-      sets: (m['sets'] as List<dynamic>? ?? [])
-          .map((e) => SetData.fromMap(e as Map<String, dynamic>))
-          .toList(),
-    );
-  }
-
-  Map<String, dynamic> toMap() => {
-    'name': name,
-    'exerciseId': exerciseId,
-    'sets': sets.map((s) => s.toMap()).toList(),
-  };
-}
-
-class SetData {
-  double? weight;
-  int? reps;
-
-  SetData({this.weight, this.reps});
-
-  factory SetData.fromMap(Map<String, dynamic> m) {
-    return SetData(
-      weight: (m['weight'] as num?)?.toDouble(),
-      reps: m['reps'] as int?,
-    );
-  }
-
-  Map<String, dynamic> toMap() => {'weight': weight, 'reps': reps};
 }

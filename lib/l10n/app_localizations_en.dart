@@ -12,37 +12,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appName => 'Gym Tracker App';
 
   @override
-  String get getStarted => 'Get Started';
-
-  @override
-  String get continueAction => 'Continue';
-
-  @override
-  String get onboardingTitle => 'Enter your weight for personalization';
-
-  @override
-  String get yourProgressFor => 'Your progress for';
-
-  @override
-  String get setsLabel => 'Sets';
-
-  @override
-  String get weightRepsLabel => 'Weight (kg·reps)';
-
-  @override
-  String get calories => 'Calories';
-
-  @override
-  String get planSavedSuccess => 'Plan saved successfully';
-
-  @override
-  String get editPlanTitle => 'Edit Plan';
-
-  @override
-  String get savePlanTooltip => 'Save plan';
-
-  @override
-  String get guest => 'Guest';
+  String get ok => 'OK';
 
   @override
   String get cancel => 'Cancel';
@@ -69,7 +39,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get no => 'No';
 
   @override
-  String get ok => 'OK';
+  String get send => 'Send';
+
+  @override
+  String get guest => 'Guest';
+
+  @override
+  String get getStarted => 'Get Started';
+
+  @override
+  String get continueAction => 'Continue';
+
+  @override
+  String get onboardingTitle => 'Enter your weight for personalization';
 
   @override
   String get loginTitle => 'Log in to your account';
@@ -90,28 +72,31 @@ class AppLocalizationsEn extends AppLocalizations {
   String get alreadyHaveAccount => 'Already have account?';
 
   @override
-  String get enterCustomExerciseName => 'Enter custom exercise name';
+  String get googleButton => 'Google';
 
   @override
-  String get exerciseNameHint => 'Exercise name';
+  String get verifyEmailTitle => 'Verify Email';
 
   @override
-  String get addExercise => 'Add exercise';
+  String get verifyEmailMessage =>
+      'A verification email has been sent to your email address. Please follow the link in the email.';
 
   @override
-  String get addExercisesHint => 'Add exercises in calendar to see the graph';
+  String get resendEmail => 'Resend Email';
 
   @override
-  String get selectExercise => 'Select exercise';
+  String get cancelLogout => 'Cancel (Logout)';
 
   @override
-  String get deleteExercise => 'Delete exercise';
+  String get resetPasswordTitle => 'Reset Password';
 
   @override
-  String get searchExercise => 'Search exercise';
+  String get resetPasswordInstruction =>
+      'Enter your email. We will send you a link to reset your password.';
 
   @override
-  String get enterCustomName => 'Enter custom name';
+  String get resetPasswordEmailSent =>
+      'Password reset email sent! Check your inbox.';
 
   @override
   String get emailLabel => 'Email';
@@ -138,6 +123,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get nameHint => 'Enter name';
 
   @override
+  String get weightLabel => 'Weight';
+
+  @override
   String get errEmailRequired => 'Email required';
 
   @override
@@ -162,19 +150,61 @@ class AppLocalizationsEn extends AppLocalizations {
   String get errWeightRequired => 'Enter correct weight';
 
   @override
+  String get errWeightInvalid => 'Weight must be a number > 0';
+
+  @override
+  String get errGoogleSignIn => 'Google Sign-In error';
+
+  @override
+  String get errInvalidCredentials => 'Invalid email or password';
+
+  @override
+  String get errLoginGeneral => 'Login error';
+
+  @override
+  String get errUserNotFound => 'User with this email not found';
+
+  @override
+  String get errWrongPassword => 'Wrong password';
+
+  @override
+  String get errEmailAlreadyInUse => 'The email address is already in use';
+
+  @override
+  String get errWeakPassword => 'Password is too weak';
+
+  @override
+  String get errTooManyRequests => 'Too many requests. Try again later';
+
+  @override
+  String get errRequiresRecentLogin =>
+      'This action requires you to log in again';
+
+  @override
+  String get errUnknown => 'An unknown error occurred';
+
+  @override
+  String saveError(String error) {
+    return 'Error saving: $error';
+  }
+
+  @override
+  String get navHome => 'Home';
+
+  @override
+  String get navJournal => 'Journal';
+
+  @override
+  String get navHistory => 'History';
+
+  @override
+  String get navStats => 'Statistics';
+
+  @override
+  String get navProfile => 'Profile';
+
+  @override
   String get calendarTitle => 'Workout Calendar';
-
-  @override
-  String get progressTooltip => 'Progress';
-
-  @override
-  String get myPlan => 'My Plan';
-
-  @override
-  String get editExercisesTooltip => 'Edit exercises';
-
-  @override
-  String get addExerciseTooltip => 'Add exercise';
 
   @override
   String get selectDay => 'Select a day';
@@ -183,28 +213,98 @@ class AppLocalizationsEn extends AppLocalizations {
   String get selectMonth => 'Select month';
 
   @override
+  String get pickMonthYear => 'Pick month and year';
+
+  @override
+  String get prevYear => 'Previous year';
+
+  @override
+  String get nextYear => 'Next year';
+
+  @override
+  String get backToToday => 'Latest';
+
+  @override
   String get exercisesFor => 'Exercises for';
 
   @override
   String get noExercisesToday => 'No exercises for this day';
 
   @override
-  String get exerciseDefaultName => 'Exercise';
+  String get workoutTitle => 'Workout';
+
+  @override
+  String get startWorkout => 'Start Workout';
+
+  @override
+  String get continueWorkout => 'Continue Workout';
+
+  @override
+  String get workoutToday => 'Workout for Today';
+
+  @override
+  String get noWorkoutToday => 'No workout logged for today';
+
+  @override
+  String get saveChangesTitle => 'Save changes?';
+
+  @override
+  String get unsavedChangesMsg => 'You have unsaved changes. Save before exit?';
+
+  @override
+  String get synchronized => 'Synchronized';
+
+  @override
+  String get selectWorkoutType => 'Select the type of training';
+
+  @override
+  String get splitPush => 'Push';
+
+  @override
+  String get splitPull => 'Pull';
+
+  @override
+  String get splitLegs => 'Legs';
+
+  @override
+  String get splitUpper => 'Upper Body';
+
+  @override
+  String get splitLower => 'Lower Body';
+
+  @override
+  String get splitFullBody => 'Full Body';
+
+  @override
+  String get splitCardio => 'Cardio';
+
+  @override
+  String get splitCustom => 'Custom';
+
+  @override
+  String get addExerciseBtn => 'Add Exercise';
+
+  @override
+  String get addSetBtn => 'Add Set';
+
+  @override
+  String get setsLabel => 'Sets';
+
+  @override
+  String get weightRepsLabel => 'Weight (kg·reps)';
 
   @override
   String get setLabelCompact => 'Set';
 
   @override
-  String get weightUnit => 'kg';
+  String setNumber(int number) {
+    return 'Set $number';
+  }
 
   @override
-  String get weightUnitHint => 'Kg';
-
-  @override
-  String get repsUnit => 'reps';
-
-  @override
-  String get repsUnitHint => 'Reps';
+  String deleteSet(int number) {
+    return 'Delete set $number';
+  }
 
   @override
   String setsCount(int count) {
@@ -229,14 +329,19 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String deleteSet(int number) {
-    return 'Delete set $number';
-  }
+  String get weightUnit => 'kg';
 
   @override
-  String setNumber(int number) {
-    return 'Set $number';
-  }
+  String get weightUnitHint => 'Kg';
+
+  @override
+  String get repsUnit => 'reps';
+
+  @override
+  String get repsUnitHint => 'Reps';
+
+  @override
+  String get calories => 'Calories';
 
   @override
   String caloriesCount(String count) {
@@ -244,7 +349,46 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get exerciseDefaultName => 'Exercise';
+
+  @override
+  String get enterCustomExerciseName => 'Enter custom exercise name';
+
+  @override
+  String get exerciseNameHint => 'Exercise name';
+
+  @override
+  String get addExercise => 'Add exercise';
+
+  @override
+  String get addExercisesHint => 'Add exercises in calendar to see the graph';
+
+  @override
+  String get selectExercise => 'Select exercise';
+
+  @override
+  String get deleteExercise => 'Delete exercise';
+
+  @override
+  String get searchExercise => 'Search exercise';
+
+  @override
+  String get enterCustomName => 'Enter custom name';
+
+  @override
+  String get addExerciseTooltip => 'Add exercise';
+
+  @override
+  String get editExercisesTooltip => 'Edit exercises';
+
+  @override
   String get chartsTitle => 'Progress — Charts';
+
+  @override
+  String get yourProgressFor => 'Your progress for';
+
+  @override
+  String get progressTooltip => 'Progress';
 
   @override
   String get exerciseLabel => 'Exercise:';
@@ -274,10 +418,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get totalLifted => 'Total lifted:';
 
   @override
+  String get maxWeight => 'Max weight:';
+
+  @override
   String get pointsCount => 'Points:';
 
   @override
   String get settingsTitle => 'Settings';
+
+  @override
+  String get editProfileTitle => 'Edit Profile';
 
   @override
   String get darkMode => 'Dark Mode';
@@ -287,6 +437,42 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get notifications => 'Notifications';
+
+  @override
+  String get appLanguage => 'App Language';
+
+  @override
+  String get selectLanguage => 'Select Language';
+
+  @override
+  String get languageUk => 'Українська';
+
+  @override
+  String get languageEn => 'English';
+
+  @override
+  String get aboutApp => 'About App';
+
+  @override
+  String get appDescription => 'App for tracking your workouts.';
+
+  @override
+  String get delPhoto => 'Delete photo';
+
+  @override
+  String get deletePhotoTitle => 'Delete photo';
+
+  @override
+  String get deletePhotoConfirm => 'Do you really want to delete the photo?';
+
+  @override
+  String get logoutAction => 'Log Out';
+
+  @override
+  String get logoutTitle => 'Log out from profile';
+
+  @override
+  String get logoutConfirm => 'Do you really want to log out?';
 
   @override
   String get clearData => 'Clear all data';
@@ -302,83 +488,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dataClearedSuccess => 'Data cleared successfully';
 
   @override
-  String get aboutApp => 'About App';
+  String get deleteAccount => 'Delete Account';
 
   @override
-  String get appDescription => 'App for tracking your workouts.';
+  String get deleteAccountTitle => 'Delete Account?';
 
   @override
-  String get appLanguage => 'App Language';
+  String get deleteAccountWarning =>
+      'This action cannot be undone. All your data (workouts, stats, profile) will be permanently lost.';
 
   @override
-  String get languageUk => 'Українська';
+  String get securityUpdate => 'Security Update';
 
   @override
-  String get languageEn => 'English';
-
-  @override
-  String get selectLanguage => 'Select Language';
-
-  @override
-  String get logoutAction => 'Log Out';
-
-  @override
-  String get logoutTitle => 'Log out from profile';
-
-  @override
-  String get logoutConfirm => 'Do you really want to log out?';
-
-  @override
-  String get editProfileTitle => 'Edit Profile';
-
-  @override
-  String get weightLabel => 'Weight';
-
-  @override
-  String get errWeightInvalid => 'Weight must be a number > 0';
-
-  @override
-  String get deletePhotoTitle => 'Delete photo';
-
-  @override
-  String get deletePhotoConfirm => 'Do you really want to delete the photo?';
-
-  @override
-  String saveError(String error) {
-    return 'Error saving: $error';
-  }
-
-  @override
-  String onDay(String day) {
-    return 'on $day';
-  }
-
-  @override
-  String get workoutTitle => 'Workout';
-
-  @override
-  String get pickMonthYear => 'Pick month and year';
-
-  @override
-  String get prevYear => 'Previous year';
-
-  @override
-  String get nextYear => 'Next year';
-
-  @override
-  String get saveChangesTitle => 'Save changes?';
-
-  @override
-  String get unsavedChangesMsg => 'You have unsaved changes. Save before exit?';
-
-  @override
-  String get navHome => 'Home';
-
-  @override
-  String get backToToday => 'Latest';
-
-  @override
-  String get navProfile => 'Profile';
+  String get reLoginRequiredMsg =>
+      'For security reasons, please Log Out and Log In again before deleting your account.';
 
   @override
   String get exSquat => 'Squat';
@@ -484,155 +608,4 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get exLegRaiseHang => 'Hanging Leg Raise';
-
-  @override
-  String get proposalTitle => 'Create your workout plan!';
-
-  @override
-  String get proposalSubtitle =>
-      'To get the best results, create a weekly schedule. We will remind you about your workouts.';
-
-  @override
-  String get goToPlan => 'Go to Plan';
-
-  @override
-  String get maybeLater => 'Maybe later';
-
-  @override
-  String get verifyEmailTitle => 'Verify Email';
-
-  @override
-  String get verifyEmailMessage =>
-      'A verification email has been sent to your email address. Please follow the link in the email.';
-
-  @override
-  String get resendEmail => 'Resend Email';
-
-  @override
-  String get cancelLogout => 'Cancel (Logout)';
-
-  @override
-  String get resetPasswordTitle => 'Reset Password';
-
-  @override
-  String get resetPasswordInstruction =>
-      'Enter your email. We will send you a link to reset your password.';
-
-  @override
-  String get resetPasswordEmailSent =>
-      'Password reset email sent! Check your inbox.';
-
-  @override
-  String get send => 'Send';
-
-  @override
-  String get googleButton => 'Google';
-
-  @override
-  String get errGoogleSignIn => 'Google Sign-In error';
-
-  @override
-  String get errInvalidCredentials => 'Invalid email or password';
-
-  @override
-  String get errLoginGeneral => 'Login error';
-
-  @override
-  String get errUserNotFound => 'User with this email not found';
-
-  @override
-  String get errWrongPassword => 'Wrong password';
-
-  @override
-  String get errEmailAlreadyInUse => 'The email address is already in use';
-
-  @override
-  String get errWeakPassword => 'Password is too weak';
-
-  @override
-  String get errTooManyRequests => 'Too many requests. Try again later';
-
-  @override
-  String get errRequiresRecentLogin =>
-      'This action requires you to log in again';
-
-  @override
-  String get errUnknown => 'An unknown error occurred';
-
-  @override
-  String get delPhoto => 'Delete photo';
-
-  @override
-  String get navJournal => 'Journal';
-
-  @override
-  String get navHistory => 'History';
-
-  @override
-  String get navStats => 'Statistics';
-
-  @override
-  String get startWorkout => 'Start Workout';
-
-  @override
-  String get continueWorkout => 'Continue Workout';
-
-  @override
-  String get workoutToday => 'Workout for Today';
-
-  @override
-  String get noWorkoutToday => 'No workout logged for today';
-
-  @override
-  String get addExerciseBtn => 'Add Exercise';
-
-  @override
-  String get addSetBtn => 'Add Set';
-
-  @override
-  String get synchronized => 'Synchronized';
-
-  @override
-  String get deleteAccount => 'Delete Account';
-
-  @override
-  String get deleteAccountTitle => 'Delete Account?';
-
-  @override
-  String get deleteAccountWarning =>
-      'This action cannot be undone. All your data (workouts, stats, profile) will be permanently lost.';
-
-  @override
-  String get securityUpdate => 'Security Update';
-
-  @override
-  String get reLoginRequiredMsg =>
-      'For security reasons, please Log Out and Log In again before deleting your account.';
-
-  @override
-  String get splitPush => 'Push';
-
-  @override
-  String get splitPull => 'Pull';
-
-  @override
-  String get splitLegs => 'Legs';
-
-  @override
-  String get splitUpper => 'Upper Body';
-
-  @override
-  String get splitLower => 'Lower Body';
-
-  @override
-  String get splitFullBody => 'Full Body';
-
-  @override
-  String get splitCardio => 'Cardio';
-
-  @override
-  String get splitCustom => 'Custom';
-
-  @override
-  String get selectWorkoutType => 'Select the type of training';
 }
