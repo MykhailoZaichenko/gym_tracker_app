@@ -190,6 +190,11 @@
   "@splitCardio": {"description": "Cardio split name"},
   "splitCustom": "Custom",
   "@splitCustom": {"description": "Custom split name"},
+  "copyPreviousWorkout": "Copy previous {type} workout",
+  "@copyPreviousWorkout": {
+    "description": "Button to copy data from last workout of specific type",
+    "placeholders": { "type": { "type": "String" } }
+  },
 
   "addExerciseBtn": "Add Exercise",
   "@addExerciseBtn": { "description": "Button label to add a new exercise" },

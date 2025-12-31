@@ -282,6 +282,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get splitCustom => 'Custom';
 
   @override
+  String copyPreviousWorkout(String type) {
+    return 'Copy previous $type workout';
+  }
+
+  @override
   String get addExerciseBtn => 'Add Exercise';
 
   @override

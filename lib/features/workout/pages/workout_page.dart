@@ -12,7 +12,6 @@ import 'package:gym_tracker_app/features/workout/workout_exports.dart';
 import 'package:gym_tracker_app/utils/utils.dart';
 import 'package:gym_tracker_app/widget/common/pop_save_wideget.dart';
 import 'package:intl/intl.dart';
-// import 'package:intl/intl.dart';
 
 class WorkoutPage extends StatefulWidget {
   final DateTime date;
@@ -39,6 +38,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
   final FirestoreService _firestore = FirestoreService();
 
   late String _currentType;
+  WorkoutModel? _lastMatchingWorkout;
 
   bool _isLoading = true;
   String? _initialEncoded;
@@ -114,34 +114,36 @@ class _WorkoutPageState extends State<WorkoutPage> {
   Future<void> _loadPreviousSession() async {
     final lastWorkout = await _firestore.getLastWorkoutByType(_currentType);
 
-    if (lastWorkout != null && lastWorkout.exercises.isNotEmpty) {
+    if (mounted) {
       setState(() {
-        _exercises = lastWorkout.exercises.map((e) {
-          return e.copyWith(
-            sets: e.sets.map((s) => s.copyWith(isCompleted: false)).toList(),
-          );
-        }).toList();
-        _isLoading = false;
-      });
-      _initControllers();
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'Copied from last ${_currentType.toUpperCase()} workout',
-            ),
-          ),
-        );
-      }
-    } else {
-      setState(() {
+        _lastMatchingWorkout = lastWorkout;
         _exercises = [];
         _isLoading = false;
       });
-      if (mounted) _addExercise();
     }
     _initialEncoded = _encodeCurrentState();
+  }
+
+  void _copyFromLastSession() {
+    if (_lastMatchingWorkout == null) return;
+
+    setState(() {
+      _exercises = _lastMatchingWorkout!.exercises.map((e) {
+        return e.copyWith(
+          sets: e.sets.map((s) => s.copyWith(isCompleted: false)).toList(),
+        );
+      }).toList();
+
+      _lastMatchingWorkout = null;
+    });
+
+    _initControllers(); // Ініціалізуємо контролери для нових вправ
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Copied from last ${_currentType.toUpperCase()} workout'),
+      ),
+    );
   }
 
   void _initControllers() {
@@ -460,7 +462,6 @@ class _WorkoutPageState extends State<WorkoutPage> {
           hasUnsavedChanges: () async => _hasUnsavedChanges(),
           onSave: () async {
             await _saveExercises();
-            // Тут widget.onSave не обов'язковий, бо ми вже зберегли в БД
           },
         ).handlePop(context);
 
@@ -479,9 +480,8 @@ class _WorkoutPageState extends State<WorkoutPage> {
                 onChanged: (newValue) {
                   setState(() {
                     _currentType = newValue;
+                    if (_exercises.isEmpty) _loadPreviousSession();
                   });
-                  // Можна додати автоматичне збереження при зміні, якщо треба
-                  // _saveExercises();
                 },
               ),
               Text(
@@ -506,81 +506,128 @@ class _WorkoutPageState extends State<WorkoutPage> {
             ),
           ],
         ),
-        body: ListView.builder(
+        body: ListView(
           padding: const EdgeInsets.fromLTRB(8, 8, 8, 80),
-          itemCount: _exercises.length,
-          itemBuilder: (context, i) {
-            final exercise = _exercises[i];
-            return Card(
-              margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(12),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    ExerciseHeader(
-                      exercise: exercise,
-                      nameController: _nameCtrls[i],
-                      onPickExercise: (ctx, {initialQuery}) =>
-                          showExercisePicker(ctx, initialQuery: initialQuery),
-                      onRemoveExercise: () => _removeExercise(i),
-                      buildIconForName: (nameOrId) {
-                        final loc = AppLocalizations.of(context)!;
-                        final catalog = getExerciseCatalog(loc);
-
-                        var found = catalog.firstWhere(
-                          (e) => e.id == nameOrId,
-                          orElse: () =>
-                              ExerciseInfo(id: '', name: '', icon: Icons.code),
-                        );
-                        if (found.id.isEmpty) {
-                          found = catalog.firstWhere(
-                            (e) => e.name == nameOrId,
-                            orElse: () => ExerciseInfo(
-                              id: 'none',
-                              name: nameOrId, // fallback name
-                              icon: Icons.fitness_center,
-                            ),
-                          );
-                        }
-
-                        final color = (nameOrId.isEmpty)
-                            ? Colors.grey.shade300
-                            : Theme.of(context).colorScheme.primary;
-                        return CircleAvatar(
-                          radius: 20,
-                          backgroundColor: color.withValues(alpha: 0.12),
-                          child: Icon(found.icon, color: color),
-                        );
-                      },
+          children: [
+            if (_exercises.isEmpty && _lastMatchingWorkout != null)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 16.0),
+                child: InkWell(
+                  onTap: _copyFromLastSession,
+                  borderRadius: BorderRadius.circular(12),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 16,
+                      horizontal: 16,
                     ),
-                    const Divider(),
-                    ExerciseSetsList(
-                      exercise: exercise,
-                      weightControllers: _weightCtrls[i],
-                      repsControllers: _repsCtrls[i],
-                      onAddSet: () => _addSet(i),
-                      weightFocusNodes: _weightFocusNodes[i],
-                      repsFocusNodes: _repsFocusNodes[i],
-                      onRemoveSet: (setIndex) => _removeSet(i, setIndex),
-                      formatDouble: formatDouble,
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.primaryContainer,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.primary.withValues(alpha: 0.3),
+                      ),
                     ),
-                    const SizedBox(height: 8),
-                  ],
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.content_copy,
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onPrimaryContainer,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          loc.copyPreviousWorkout(
+                            _getLocalizedType(_currentType, loc),
+                          ),
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onPrimaryContainer,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               ),
-            );
-          },
+
+            // Список вправ
+            ...List.generate(_exercises.length, (i) {
+              final exercise = _exercises[i];
+              return Card(
+                margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ExerciseHeader(
+                        exercise: exercise,
+                        nameController: _nameCtrls[i],
+                        onPickExercise: (ctx, {initialQuery}) =>
+                            showExercisePicker(ctx, initialQuery: initialQuery),
+                        onRemoveExercise: () => _removeExercise(i),
+                        buildIconForName: (nameOrId) {
+                          return CircleAvatar(
+                            child: const Icon(Icons.fitness_center),
+                          );
+                        },
+                      ),
+                      const Divider(),
+                      ExerciseSetsList(
+                        exercise: exercise,
+                        weightControllers: _weightCtrls[i],
+                        repsControllers: _repsCtrls[i],
+                        onAddSet: () => _addSet(i),
+                        weightFocusNodes: _weightFocusNodes[i],
+                        repsFocusNodes: _repsFocusNodes[i],
+                        onRemoveSet: (setIndex) => _removeSet(i, setIndex),
+                        formatDouble: formatDouble,
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }),
+          ],
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: _addExercise,
-          tooltip: loc.addExerciseTooltip,
           child: const Icon(Icons.add),
         ),
       ),
     );
+  }
+
+  String _getLocalizedType(String key, AppLocalizations loc) {
+    switch (key) {
+      case 'push':
+        return loc.splitPush;
+      case 'pull':
+        return loc.splitPull;
+      case 'legs':
+        return loc.splitLegs;
+      case 'upper':
+        return loc.splitUpper;
+      case 'lower':
+        return loc.splitLower;
+      case 'full_body':
+        return loc.splitFullBody;
+      case 'cardio':
+        return loc.splitCardio;
+      case 'custom':
+        return loc.splitCustom;
+      default:
+        return key.toUpperCase();
+    }
   }
 }

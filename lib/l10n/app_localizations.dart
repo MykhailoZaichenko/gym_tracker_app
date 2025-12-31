@@ -632,6 +632,12 @@ abstract class AppLocalizations {
   /// **'Custom'**
   String get splitCustom;
 
+  /// Button to copy data from last workout of specific type
+  ///
+  /// In en, this message translates to:
+  /// **'Copy previous {type} workout'**
+  String copyPreviousWorkout(String type);
+
   /// Button label to add a new exercise
   ///
   /// In en, this message translates to:

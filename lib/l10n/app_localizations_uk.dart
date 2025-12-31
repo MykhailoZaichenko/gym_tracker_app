@@ -284,6 +284,11 @@ class AppLocalizationsUk extends AppLocalizations {
   String get splitCustom => 'Інше';
 
   @override
+  String copyPreviousWorkout(String type) {
+    return 'Скопіювати минуле $type тренування';
+  }
+
+  @override
   String get addExerciseBtn => 'Додати вправу';
 
   @override

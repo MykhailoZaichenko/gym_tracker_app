@@ -101,6 +101,7 @@
   "splitFullBody": "Все тіло",
   "splitCardio": "Кардіо",
   "splitCustom": "Інше",
+  "copyPreviousWorkout": "Скопіювати минуле {type} тренування",
 
   "addExerciseBtn": "Додати вправу",
   "addSetBtn": "Додати підхід",
