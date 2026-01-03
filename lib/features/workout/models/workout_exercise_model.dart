@@ -25,7 +25,7 @@ class WorkoutExercise {
     );
   }
 
-  // 🔥 ДОДАНО: метод copyWith для вправи
+  // ДОДАНО: метод copyWith для вправи
   WorkoutExercise copyWith({
     String? name,
     String? exerciseId,
@@ -58,7 +58,7 @@ class SetData {
     );
   }
 
-  // 🔥 ДОДАНО: метод copyWith для сету (саме він викликає помилку)
+  // ДОДАНО: метод copyWith для сету (саме він викликає помилку)
   SetData copyWith({double? weight, int? reps, bool? isCompleted}) {
     return SetData(
       weight: weight ?? this.weight,

@@ -21,6 +21,9 @@ class AppLocalizationsUk extends AppLocalizations {
   String get save => 'Зберегти';
 
   @override
+  String get saved => 'Збережено';
+
+  @override
   String get close => 'Закрити';
 
   @override
@@ -124,6 +127,9 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get weightLabel => 'Вага';
+
+  @override
+  String get repsLabel => 'Повт';
 
   @override
   String get errEmailRequired => 'Email обовʼязковий';
@@ -620,4 +626,27 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get exLegRaiseHang => 'Підйоми ніг у висі';
+
+  @override
+  String get finishWorkout => 'Завершити тренування';
+
+  @override
+  String get workoutSummary => 'Підсумок тренування';
+
+  @override
+  String get durationLabel => 'Тривалість';
+
+  @override
+  String get noPreviousData => 'Немає даних для порівняння';
+
+  @override
+  String get greatJob => 'Чудова робота!';
+
+  @override
+  String get viewLastReport => 'Останній звіт';
+
+  @override
+  String copyLastWorkout(String type) {
+    return 'Скопійовано з останнього $type тренування';
+  }
 }

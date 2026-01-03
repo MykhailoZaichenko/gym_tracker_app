@@ -7,6 +7,7 @@ import 'package:gym_tracker_app/l10n/app_localizations.dart';
 import 'package:gym_tracker_app/services/firestore_service.dart';
 import 'package:gym_tracker_app/widget/common/avatar_widget.dart';
 import 'package:gym_tracker_app/widget/common/confirm_dialog.dart';
+import 'package:gym_tracker_app/widget/common/custome_snackbar.dart';
 
 import 'package:gym_tracker_app/widget/common/primary_filled_button.dart';
 import 'package:gym_tracker_app/widget/common/style_text_field.dart';
@@ -165,9 +166,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
     } catch (e) {
       if (!mounted) return;
       setState(() => _saving = false);
-      ScaffoldMessenger.of(
+      CustomSnackBar.show(
         context,
-      ).showSnackBar(SnackBar(content: Text(loc.saveError(e.toString()))));
+        message: loc.saveError(e.toString()),
+        isError: true,
+      );
     }
   }
 

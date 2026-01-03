@@ -7,6 +7,7 @@ import 'package:gym_tracker_app/features/welcome/pages/onboarding_page.dart';
 import 'package:gym_tracker_app/l10n/app_localizations.dart';
 import 'package:gym_tracker_app/services/auth_service.dart';
 import 'package:gym_tracker_app/utils/error_utils.dart';
+import 'package:gym_tracker_app/widget/common/custome_snackbar.dart';
 import 'package:gym_tracker_app/widget/common/hero_widget.dart';
 import 'package:gym_tracker_app/widget/common/page_title.dart';
 import 'package:gym_tracker_app/widget/common/password_reset_dialog.dart';
@@ -153,7 +154,7 @@ class _LoginPageState extends State<LoginPage> {
 
   void _showMessage(String text) {
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(text)));
+    CustomSnackBar.show(context, message: text, isError: true);
   }
 
   // Функції debounce для передачі в AuthPageWidget

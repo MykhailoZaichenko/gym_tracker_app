@@ -122,6 +122,12 @@ abstract class AppLocalizations {
   /// **'Save'**
   String get save;
 
+  /// Saved confirmation
+  ///
+  /// In en, this message translates to:
+  /// **'Saved'**
+  String get saved;
+
   /// Close button
   ///
   /// In en, this message translates to:
@@ -325,6 +331,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Weight'**
   String get weightLabel;
+
+  /// Repetitions label
+  ///
+  /// In en, this message translates to:
+  /// **'Reps'**
+  String get repsLabel;
 
   /// Error: email empty
   ///
@@ -1243,6 +1255,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Hanging Leg Raise'**
   String get exLegRaiseHang;
+
+  /// Button to finish workout
+  ///
+  /// In en, this message translates to:
+  /// **'Finish Workout'**
+  String get finishWorkout;
+
+  /// Title for summary dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Workout Summary'**
+  String get workoutSummary;
+
+  /// Label for duration
+  ///
+  /// In en, this message translates to:
+  /// **'Duration'**
+  String get durationLabel;
+
+  /// Message when no history found
+  ///
+  /// In en, this message translates to:
+  /// **'No previous data to compare'**
+  String get noPreviousData;
+
+  /// Encouraging message
+  ///
+  /// In en, this message translates to:
+  /// **'Great Job!'**
+  String get greatJob;
+
+  /// Button to open the summary of the last finished workout
+  ///
+  /// In en, this message translates to:
+  /// **'View Last Report'**
+  String get viewLastReport;
+
+  /// Snackbar message when copying last workout
+  ///
+  /// In en, this message translates to:
+  /// **'Copied from last \${type} workout'**
+  String copyLastWorkout(String type);
 }
 
 class _AppLocalizationsDelegate

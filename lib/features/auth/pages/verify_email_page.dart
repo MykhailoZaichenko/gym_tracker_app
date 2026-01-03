@@ -6,6 +6,7 @@ import 'package:gym_tracker_app/features/welcome/pages/welcome_page.dart';
 import 'package:gym_tracker_app/l10n/app_localizations.dart';
 import 'package:gym_tracker_app/services/auth_service.dart';
 import 'package:gym_tracker_app/services/firestore_service.dart';
+import 'package:gym_tracker_app/widget/common/custome_snackbar.dart';
 import 'package:gym_tracker_app/widget/common/primary_filled_button.dart';
 import 'package:gym_tracker_app/widget/common/widget_tree.dart';
 
@@ -93,9 +94,11 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
     } catch (e) {
       debugPrint('Error creating user profile: $e');
       if (mounted) {
-        ScaffoldMessenger.of(
+        CustomSnackBar.show(
           context,
-        ).showSnackBar(SnackBar(content: Text("Error creating profile: $e")));
+          message: "Error creating profile: $e",
+          isError: true,
+        );
       }
     }
   }
@@ -111,14 +114,12 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
       if (mounted) setState(() => canResendEmail = true);
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(e.toString())));
+        CustomSnackBar.show(context, message: e.toString(), isError: true);
       }
     }
   }
 
-  // 🔥 ВИПРАВЛЕНИЙ МЕТОД ВИХОДУ
+  // ВИПРАВЛЕНИЙ МЕТОД ВИХОДУ
   Future<void> _onLogoutPressed() async {
     timer?.cancel();
 

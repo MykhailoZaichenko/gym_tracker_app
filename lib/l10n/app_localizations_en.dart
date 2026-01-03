@@ -21,6 +21,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get save => 'Save';
 
   @override
+  String get saved => 'Saved';
+
+  @override
   String get close => 'Close';
 
   @override
@@ -124,6 +127,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get weightLabel => 'Weight';
+
+  @override
+  String get repsLabel => 'Reps';
 
   @override
   String get errEmailRequired => 'Email required';
@@ -613,4 +619,27 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get exLegRaiseHang => 'Hanging Leg Raise';
+
+  @override
+  String get finishWorkout => 'Finish Workout';
+
+  @override
+  String get workoutSummary => 'Workout Summary';
+
+  @override
+  String get durationLabel => 'Duration';
+
+  @override
+  String get noPreviousData => 'No previous data to compare';
+
+  @override
+  String get greatJob => 'Great Job!';
+
+  @override
+  String get viewLastReport => 'View Last Report';
+
+  @override
+  String copyLastWorkout(String type) {
+    return 'Copied from last \$$type workout';
+  }
 }

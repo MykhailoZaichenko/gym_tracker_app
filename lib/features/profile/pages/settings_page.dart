@@ -4,6 +4,7 @@ import 'package:gym_tracker_app/core/constants/constants.dart';
 import 'package:gym_tracker_app/core/locale/locale_serviece.dart';
 import 'package:gym_tracker_app/features/welcome/pages/welcome_page.dart';
 import 'package:gym_tracker_app/l10n/app_localizations.dart';
+import 'package:gym_tracker_app/widget/common/custome_snackbar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:gym_tracker_app/core/theme/theme_service.dart';
@@ -109,17 +110,21 @@ class _SettingsPageState extends State<SettingsPage> {
             ),
           );
         } else {
-          ScaffoldMessenger.of(
+          CustomSnackBar.show(
             context,
-          ).showSnackBar(SnackBar(content: Text("Error: ${e.message}")));
+            message: "Error deleting account: ${e.message}",
+            isError: true,
+          );
         }
       }
     } catch (e) {
       if (mounted) {
         setState(() => _isLoading = false);
-        ScaffoldMessenger.of(
+        CustomSnackBar.show(
           context,
-        ).showSnackBar(SnackBar(content: Text("Error: $e")));
+          message: "Error deleting account: $e",
+          isError: true,
+        );
       }
     }
   }
@@ -195,9 +200,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 _notificationsEnabled = true;
               });
               Navigator.of(context).pop();
-              ScaffoldMessenger.of(
-                context,
-              ).showSnackBar(SnackBar(content: Text(loc.dataClearedSuccess)));
+              CustomSnackBar.show(context, message: loc.dataClearedSuccess);
             },
             child: Text(loc.yes),
           ),

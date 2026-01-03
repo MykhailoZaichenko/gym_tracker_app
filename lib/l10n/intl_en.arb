@@ -10,6 +10,8 @@
   "@cancel": { "description": "Cancel button" },
   "save": "Save",
   "@save": { "description": "Save button" },
+  "saved": "Saved",
+  "@saved": { "description": "Saved confirmation" },
   "close": "Close",
   "@close": { "description": "Close button" },
   "discard": "Discard",
@@ -83,6 +85,8 @@
   "@nameHint": { "description": "Name input hint" },
   "weightLabel": "Weight",
   "@weightLabel": { "description": "Weight input label" },
+  "repsLabel": "Reps",
+  "@repsLabel": { "description": "Repetitions label" },
 
   "errEmailRequired": "Email required",
   "@errEmailRequired": { "description": "Error: email empty" },
@@ -406,5 +410,23 @@
   "exMachineRow": "Machine Row",
   "@exMachineRow": { "description": "Exercise name" },
   "exLegRaiseHang": "Hanging Leg Raise",
-  "@exLegRaiseHang": { "description": "Exercise name" }
+  "@exLegRaiseHang": { "description": "Exercise name" },
+
+  "finishWorkout": "Finish Workout",
+  "@finishWorkout": { "description": "Button to finish workout" },
+  "workoutSummary": "Workout Summary",
+  "@workoutSummary": { "description": "Title for summary dialog" },
+  "durationLabel": "Duration",
+  "@durationLabel": { "description": "Label for duration" },
+  "noPreviousData": "No previous data to compare",
+  "@noPreviousData": { "description": "Message when no history found" },
+  "greatJob": "Great Job!",
+  "@greatJob": { "description": "Encouraging message" },
+  "viewLastReport": "View Last Report",
+  "@viewLastReport": { "description": "Button to open the summary of the last finished workout" },
+  "copyLastWorkout": "Copied from last ${type} workout",
+  "@copyLastWorkout": {
+    "description": "Snackbar message when copying last workout",
+    "placeholders": { "type": { "type": "String" } }
+  }
 }

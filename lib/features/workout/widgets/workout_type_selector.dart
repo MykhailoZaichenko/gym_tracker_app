@@ -52,7 +52,7 @@ class WorkoutTypeSelector extends StatelessWidget {
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
 
-    // 🔥 ГОЛОВНИЙ ФІКС: Нормалізація
+    // ГОЛОВНИЙ ФІКС: Нормалізація
     // Перетворюємо вхідне значення в нижній регістр.
     // Якщо такого типу немає в списку validTypes -> ставимо 'custom'.
     final normalizedType = currentType.toLowerCase().trim();

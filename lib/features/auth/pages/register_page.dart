@@ -5,6 +5,7 @@ import 'package:gym_tracker_app/features/auth/pages/verify_email_page.dart';
 import 'package:gym_tracker_app/features/auth/widgets/auth_form_widget.dart';
 import 'package:gym_tracker_app/l10n/app_localizations.dart';
 import 'package:gym_tracker_app/services/firestore_service.dart';
+import 'package:gym_tracker_app/widget/common/custome_snackbar.dart';
 import 'package:gym_tracker_app/widget/common/hero_widget.dart';
 import 'package:gym_tracker_app/widget/common/page_title.dart';
 import 'package:gym_tracker_app/widget/common/primary_filled_button.dart';
@@ -82,7 +83,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
   void _showMessage(String text) {
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(text)));
+    CustomSnackBar.show(context, message: text, isError: true);
   }
 
   // --- ЛОГІКА GOOGLE (Тут ми пишемо в базу, бо Google верифікований) ---

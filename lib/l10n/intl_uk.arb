@@ -6,6 +6,7 @@
   "ok": "ОК",
   "cancel": "Скасувати",
   "save": "Зберегти",
+  "saved": "Збережено",
   "close": "Закрити",
   "discard": "Не зберігати",
   "edit": "Редагувати",
@@ -45,6 +46,7 @@
   "nameLabel": "Імʼя",
   "nameHint": "Введіть імʼя",
   "weightLabel": "Вага",
+  "repsLabel": "Повт",
 
   "errEmailRequired": "Email обовʼязковий",
   "errInvalidEmail": "Невірний email",
@@ -212,5 +214,12 @@
   "exHammerCurl": "Молотковий підйом",
   "exZottmanCurl": "Сгибания Зоттмана",
   "exMachineRow": "Тяга в блоці",
-  "exLegRaiseHang": "Підйоми ніг у висі"
+  "exLegRaiseHang": "Підйоми ніг у висі",
+  "finishWorkout": "Завершити тренування",
+  "workoutSummary": "Підсумок тренування",
+  "durationLabel": "Тривалість",
+  "noPreviousData": "Немає даних для порівняння",
+  "greatJob": "Чудова робота!",
+  "viewLastReport": "Останній звіт",
+  "copyLastWorkout": "Скопійовано з останнього {type} тренування"
 }
