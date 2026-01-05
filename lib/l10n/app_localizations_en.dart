@@ -642,4 +642,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String copyLastWorkout(String type) {
     return 'Copied from last \$$type workout';
   }
+
+  @override
+  String get comparisonTitle => 'Comparison';
+
+  @override
+  String get startValue => 'Start Value';
+
+  @override
+  String get currentValue => 'Current Value';
+
+  @override
+  String get difference => 'Difference';
 }

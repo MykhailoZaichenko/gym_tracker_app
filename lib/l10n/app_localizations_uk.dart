@@ -291,7 +291,7 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String copyPreviousWorkout(String type) {
-    return 'Скопіювати минуле $type тренування';
+    return 'Скопіювати минуле тренування $type ';
   }
 
   @override
@@ -649,4 +649,16 @@ class AppLocalizationsUk extends AppLocalizations {
   String copyLastWorkout(String type) {
     return 'Скопійовано з останнього $type тренування';
   }
+
+  @override
+  String get comparisonTitle => 'Порівняння';
+
+  @override
+  String get startValue => 'Початкове значення';
+
+  @override
+  String get currentValue => 'Поточне значення';
+
+  @override
+  String get difference => 'Різниця';
 }

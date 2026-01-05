@@ -102,6 +102,32 @@ class WorkoutSummaryDialog extends StatelessWidget {
     return a.name == b.name;
   }
 
+  // 🔥 Логіка визначення кольору бордера
+  Color _getBorderColor(WorkoutExercise current, WorkoutExercise? previous) {
+    if (previous == null || previous.name.isEmpty) {
+      return Colors.transparent; // Немає з чим порівнювати
+    }
+
+    // Рахуємо обсяг (Volume) = вага * повтори
+    double getVolume(List<SetData> sets) {
+      return sets.fold(
+        0.0,
+        (sum, set) => sum + (set.weight ?? 0) * (set.reps ?? 0),
+      );
+    }
+
+    final currentVol = getVolume(current.sets);
+    final prevVol = getVolume(previous.sets);
+
+    if (currentVol > prevVol) {
+      return Colors.green.withValues(alpha: 0.6); // Прогрес
+    } else if (currentVol < prevVol) {
+      return Colors.red.withValues(alpha: 0.6); // Регрес
+    } else {
+      return Colors.yellow.withValues(alpha: 0.6); // Без змін
+    }
+  }
+
   Widget _buildExerciseComparisonCard(
     BuildContext context,
     WorkoutExercise current,
@@ -111,10 +137,20 @@ class WorkoutSummaryDialog extends StatelessWidget {
     // Якщо немає історії для цієї вправи, просто показуємо список без порівняння
     final bool hasHistory = previous != null && previous.name.isNotEmpty;
 
+    // 🔥 Отримуємо колір для бордера
+    final borderColor = _getBorderColor(current, previous);
+
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 6),
       elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      // 🔥 ДОДАНО: side (бордер) до shape
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(
+          color: borderColor,
+          width: 2.0, // Товщина рамки
+        ),
+      ),
       child: Theme(
         data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
         child: ExpansionTile(
@@ -125,7 +161,10 @@ class WorkoutSummaryDialog extends StatelessWidget {
           childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
           children: [
             if (!hasHistory)
-              Text(loc.noPreviousData, style: TextStyle(color: Colors.grey))
+              Text(
+                loc.noPreviousData,
+                style: const TextStyle(color: Colors.grey),
+              )
             else
               _buildComparisonTable(context, current.sets, previous.sets, loc),
           ],
@@ -235,8 +274,8 @@ class WorkoutSummaryDialog extends StatelessWidget {
         bgColor = Colors.red.shade100; // Регрес
         textColor = Colors.red.shade800;
       } else {
-        bgColor = Colors.orange.shade100; // Так само (жовтий)
-        textColor = Colors.orange.shade900;
+        bgColor = Colors.yellow.shade100; // Так само (жовтий)
+        textColor = Colors.yellow.shade900;
       }
     }
 

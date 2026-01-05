@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/l10n/app_localizations.dart';
+import 'package:gym_tracker_app/utils/workout_utils.dart';
 
 class WorkoutTypeSelector extends StatelessWidget {
   final String currentType;
@@ -24,29 +25,6 @@ class WorkoutTypeSelector extends StatelessWidget {
     'cardio',
     'custom',
   ];
-
-  String _getLocalizedName(String key, AppLocalizations loc) {
-    switch (key) {
-      case 'push':
-        return loc.splitPush;
-      case 'pull':
-        return loc.splitPull;
-      case 'legs':
-        return loc.splitLegs;
-      case 'upper':
-        return loc.splitUpper;
-      case 'lower':
-        return loc.splitLower;
-      case 'full_body':
-        return loc.splitFullBody;
-      case 'cardio':
-        return loc.splitCardio;
-      case 'custom':
-        return loc.splitCustom;
-      default:
-        return key;
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -83,7 +61,7 @@ class WorkoutTypeSelector extends StatelessWidget {
         items: validTypes.map<DropdownMenuItem<String>>((String value) {
           return DropdownMenuItem<String>(
             value: value,
-            child: Text(_getLocalizedName(value, loc)),
+            child: Text(WorkoutUtils.getLocalizedType(value, loc)),
           );
         }).toList(),
       ),

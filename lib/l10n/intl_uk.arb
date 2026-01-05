@@ -103,7 +103,7 @@
   "splitFullBody": "Все тіло",
   "splitCardio": "Кардіо",
   "splitCustom": "Інше",
-  "copyPreviousWorkout": "Скопіювати минуле {type} тренування",
+  "copyPreviousWorkout": "Скопіювати минуле тренування {type} ",
 
   "addExerciseBtn": "Додати вправу",
   "addSetBtn": "Додати підхід",
@@ -221,5 +221,10 @@
   "noPreviousData": "Немає даних для порівняння",
   "greatJob": "Чудова робота!",
   "viewLastReport": "Останній звіт",
-  "copyLastWorkout": "Скопійовано з останнього {type} тренування"
+  "copyLastWorkout": "Скопійовано з останнього {type} тренування",
+
+  "comparisonTitle": "Порівняння",
+  "startValue": "Початкове значення",
+  "currentValue": "Поточне значення",
+  "difference": "Різниця"
 }

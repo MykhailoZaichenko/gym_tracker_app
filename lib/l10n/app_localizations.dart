@@ -1297,6 +1297,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Copied from last \${type} workout'**
   String copyLastWorkout(String type);
+
+  /// Comparison dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Comparison'**
+  String get comparisonTitle;
+
+  /// Start Value
+  ///
+  /// In en, this message translates to:
+  /// **'Start Value'**
+  String get startValue;
+
+  /// Current Value
+  ///
+  /// In en, this message translates to:
+  /// **'Current Value'**
+  String get currentValue;
+
+  /// Difference
+  ///
+  /// In en, this message translates to:
+  /// **'Difference'**
+  String get difference;
 }
 
 class _AppLocalizationsDelegate

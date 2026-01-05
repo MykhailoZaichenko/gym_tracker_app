@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/data/seed/exercise_catalog.dart';
 import 'package:gym_tracker_app/features/workout/models/workout_exercise_model.dart';
@@ -9,6 +8,7 @@ import 'package:gym_tracker_app/features/workout/widgets/workout_summary_dialog.
 import 'package:gym_tracker_app/features/workout/widgets/workout_type_selection_sheet.dart';
 import 'package:gym_tracker_app/l10n/app_localizations.dart';
 import 'package:gym_tracker_app/services/firestore_service.dart';
+import 'package:gym_tracker_app/utils/workout_utils.dart';
 import 'package:gym_tracker_app/widget/common/fading_edge.dart';
 import 'package:gym_tracker_app/widget/common/primary_filled_button.dart';
 import 'package:gym_tracker_app/widget/common/status_icon_widget.dart';
@@ -33,16 +33,16 @@ class _JournalPageState extends State<JournalPage> {
   Timer? _timer;
   String _elapsedTime = "00:00:00";
   String? _activeWorkoutType;
-  DateTime? _sessionStartTime; // Час початку для відновлення
+  DateTime? _sessionStartTime;
 
   // ДАНІ ДЛЯ ЗВІТУ
-  WorkoutModel? _comparisonWorkout; // Історія (для порівняння)
-  WorkoutModel? _lastReport; // Останній завершений звіт (для перегляду)
+  WorkoutModel? _comparisonWorkout;
+  WorkoutModel? _lastReport;
 
   @override
   void initState() {
     super.initState();
-    _restoreSessionState(); // Пробуємо відновити таймер при вході
+    _restoreSessionState();
     _checkTodayWorkout();
   }
 
@@ -64,13 +64,12 @@ class _JournalPageState extends State<JournalPage> {
       _activeWorkoutType = type;
       _isSessionActive = true;
 
-      // Відновлюємо історію для порівняння
+      // Відновлюємо історію для порівняння (під час активного тренування)
       try {
         final history = await _firestore.getLastWorkoutByType(type);
-        if (mounted) _comparisonWorkout = history;
+        if (mounted) setState(() => _comparisonWorkout = history);
       } catch (_) {}
 
-      // Запускаємо UI таймер
       _startUiTimer();
     }
   }
@@ -81,11 +80,15 @@ class _JournalPageState extends State<JournalPage> {
     _sessionStartTime = now;
     _activeWorkoutType = type;
     _isSessionActive = true;
+    _lastReport = null;
 
-    // Зберігаємо в пам'ять телефону
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('workout_start_time', now.toIso8601String());
     await prefs.setString('workout_type', type);
+
+    // Очищаємо дані про попередні звіти, бо почали нове
+    await prefs.remove('last_finished_workout_id');
+    await prefs.remove('last_comparison_date');
 
     _startUiTimer();
   }
@@ -107,8 +110,6 @@ class _JournalPageState extends State<JournalPage> {
   void _stopSessionLogic() async {
     _timer?.cancel();
     _isSessionActive = false;
-
-    // Очищаємо пам'ять
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('workout_start_time');
     await prefs.remove('workout_type');
@@ -117,28 +118,53 @@ class _JournalPageState extends State<JournalPage> {
   // --- ЗАВАНТАЖЕННЯ ДАНИХ ---
   Future<void> _checkTodayWorkout() async {
     setState(() => _isLoading = true);
+
+    // 1. Завантажуємо поточне тренування
     final workout = await _firestore.getWorkout(_today);
+
+    // 2. Отримуємо збережені ID зі сховища
+    final prefs = await SharedPreferences.getInstance();
+    final lastFinishedId = prefs.getString('last_finished_workout_id');
+    final lastComparisonDateIso = prefs.getString('last_comparison_date');
+
     if (mounted) {
       setState(() {
         _todaysWorkout = workout;
         _isLoading = false;
+
+        // 3. Відновлюємо звіт
+        if (workout != null && workout.id == lastFinishedId) {
+          _lastReport = workout;
+
+          // 4. ВІДНОВЛЮЄМО ПОРІВНЯННЯ ПО ДАТІ
+          // Якщо у нас немає comparisonWorkout, але є збережена дата - завантажуємо його
+          if (_comparisonWorkout == null && lastComparisonDateIso != null) {
+            _restoreComparisonByDate(DateTime.parse(lastComparisonDateIso));
+          }
+        }
       });
     }
   }
 
-  // --- ОБРОБНИКИ НАТИСКАНЬ ---
+  // Новий метод для завантаження конкретного старого тренування
+  Future<void> _restoreComparisonByDate(DateTime date) async {
+    try {
+      final oldWorkout = await _firestore.getWorkout(date);
+      if (mounted && oldWorkout != null) {
+        setState(() {
+          _comparisonWorkout = oldWorkout;
+        });
+      }
+    } catch (_) {}
+  }
+
   void _onStartPressed(AppLocalizations loc) {
     WorkoutTypeSelectionSheet.show(context, (selectedType) async {
-      // 1. Запускаємо логіку сесії
       _startSessionLogic(selectedType);
-
-      // 2. Підвантажуємо історію
       try {
         final history = await _firestore.getLastWorkoutByType(selectedType);
         if (mounted) _comparisonWorkout = history;
       } catch (_) {}
-
-      // 3. Відкриваємо едітор
       _openWorkoutPage(selectedType);
     });
   }
@@ -161,24 +187,31 @@ class _JournalPageState extends State<JournalPage> {
       _sessionStartTime ?? DateTime.now(),
     );
 
-    // 1. Зупиняємо логіку
     _stopSessionLogic();
 
-    // 2. Зберігаємо фінальну тривалість
     if (_todaysWorkout != null) {
       final updatedWorkout = _todaysWorkout!.copyWith(
         durationSeconds: duration.inSeconds,
       );
       await _firestore.saveWorkout(updatedWorkout);
 
+      // Зберігаємо ID звіту ТА Дату порівняння
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('last_finished_workout_id', updatedWorkout.id);
+
+      if (_comparisonWorkout != null) {
+        await prefs.setString(
+          'last_comparison_date',
+          _comparisonWorkout!.date.toIso8601String(),
+        );
+      }
+
       if (!mounted) return;
 
-      // 3. Зберігаємо звіт у змінну для повторного перегляду
       setState(() {
         _lastReport = updatedWorkout;
       });
 
-      // 4. Показуємо діалог
       _showSummaryDialog(updatedWorkout, duration);
     }
 
@@ -227,8 +260,18 @@ class _JournalPageState extends State<JournalPage> {
     final bool hasData =
         _todaysWorkout != null && _todaysWorkout!.exercises.isNotEmpty;
 
+    final displayType = _todaysWorkout?.type ?? _activeWorkoutType;
+    final localizedType = displayType != null
+        ? WorkoutUtils.getLocalizedType(displayType, loc)
+        : loc.workoutToday;
+
     return Scaffold(
-      appBar: AppBar(title: Text(loc.navJournal), centerTitle: false),
+      appBar: AppBar(
+        title: Text(loc.navJournal),
+        centerTitle: false,
+        scrolledUnderElevation: 0,
+        backgroundColor: theme.scaffoldBackgroundColor,
+      ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : Column(
@@ -244,7 +287,6 @@ class _JournalPageState extends State<JournalPage> {
                   ),
                 ),
 
-                // ТАЙМЕР
                 if (_isSessionActive)
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 20),
@@ -260,21 +302,10 @@ class _JournalPageState extends State<JournalPage> {
 
                 const SizedBox(height: 10),
 
-                // Вміст (заглушка або список)
-                if (!hasData && !_isSessionActive) ...[
-                  const Spacer(),
-                  const StatusIconWidget(color: null, size: 80),
-                  const SizedBox(height: 20),
-                  Text(
-                    loc.noWorkoutToday,
-                    style: theme.textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const Spacer(),
-                ] else if (hasData) ...[
+                // ЗАГОЛОВОК (фіксований)
+                if (hasData)
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                    padding: const EdgeInsets.fromLTRB(20, 0, 20, 10),
                     child: Row(
                       children: [
                         StatusIconWidget(
@@ -288,9 +319,7 @@ class _JournalPageState extends State<JournalPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              _todaysWorkout!.type != null
-                                  ? _todaysWorkout!.type!.toUpperCase()
-                                  : loc.workoutToday,
+                              localizedType.toUpperCase(),
                               style: theme.textTheme.titleLarge?.copyWith(
                                 fontWeight: FontWeight.bold,
                               ),
@@ -308,47 +337,64 @@ class _JournalPageState extends State<JournalPage> {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 20),
-                  Expanded(
-                    child: FadingEdge(
-                      startFadeSize: 0.05,
-                      endFadeSize: 0.1,
-                      child: ListView.builder(
-                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 80),
-                        itemCount: _todaysWorkout!.exercises.length,
-                        itemBuilder: (context, index) {
-                          final ex = _todaysWorkout!.exercises[index];
-                          final exerciseInfo = _getExerciseInfo(ex, loc);
-                          return Card(
-                            margin: const EdgeInsets.symmetric(vertical: 6.0),
-                            child: ListTile(
-                              leading: CircleAvatar(
-                                backgroundColor: theme.primaryColor.withValues(
-                                  alpha: 0.1,
-                                ),
-                                child: Icon(
-                                  exerciseInfo.icon,
-                                  color: theme.primaryColor,
-                                ),
-                              ),
-                              title: Text(
-                                ex.name,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              subtitle: Text(loc.setsCount(ex.sets.length)),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                  ),
-                ],
 
-                // --- ПАНЕЛЬ КЕРУВАННЯ ---
+                // СПИСОК ВПРАВ (скролиться)
+                Expanded(
+                  child: !hasData && !_isSessionActive
+                      ? Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const StatusIconWidget(color: null, size: 80),
+                            const SizedBox(height: 20),
+                            Text(
+                              loc.noWorkoutToday,
+                              style: theme.textTheme.headlineSmall?.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        )
+                      : hasData
+                      ? FadingEdge(
+                          startFadeSize: 0.0,
+                          endFadeSize: 0.1,
+                          child: ListView.builder(
+                            padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
+                            itemCount: _todaysWorkout!.exercises.length,
+                            itemBuilder: (context, index) {
+                              final ex = _todaysWorkout!.exercises[index];
+                              final exerciseInfo = _getExerciseInfo(ex, loc);
+                              return Card(
+                                margin: const EdgeInsets.symmetric(
+                                  vertical: 6.0,
+                                ),
+                                child: ListTile(
+                                  leading: CircleAvatar(
+                                    backgroundColor: theme.primaryColor
+                                        .withValues(alpha: 0.1),
+                                    child: Icon(
+                                      exerciseInfo.icon,
+                                      color: theme.primaryColor,
+                                    ),
+                                  ),
+                                  title: Text(
+                                    ex.name,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  subtitle: Text(loc.setsCount(ex.sets.length)),
+                                ),
+                              );
+                            },
+                          ),
+                        )
+                      : const SizedBox.shrink(),
+                ),
+
+                // КНОПКИ (завжди знизу)
                 Container(
-                  padding: const EdgeInsets.all(20.0),
+                  padding: const EdgeInsets.fromLTRB(20, 10, 20, 20),
                   decoration: BoxDecoration(
                     color: theme.scaffoldBackgroundColor,
                     boxShadow: [
@@ -359,81 +405,78 @@ class _JournalPageState extends State<JournalPage> {
                       ),
                     ],
                   ),
-                  child: Column(
-                    children: [
-                      // КНОПКА "ПЕРЕГЛЯНУТИ ЗВІТ" (Якщо тренування закінчено)
-                      if (!_isSessionActive && _lastReport != null)
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 12.0),
-                          child: TextButton.icon(
-                            onPressed: () {
-                              // Для звіту беремо тривалість з моделі або 0
-                              final dSeconds = _lastReport!.durationSeconds;
-                              _showSummaryDialog(
-                                _lastReport!,
-                                Duration(seconds: dSeconds),
-                              );
-                            },
-                            icon: const Icon(Icons.analytics_outlined),
-                            label: Text(loc.viewLastReport), // "Останній звіт"
-                          ),
-                        ),
-
-                      if (_isSessionActive) ...[
-                        // КНОПКА 1: ПРОДОВЖИТИ ТРЕНУВАННЯ (Edit)
-                        SizedBox(
-                          width: double.infinity,
-                          height: 56,
-                          child: PrimaryFilledButton(
-                            // Використовуємо Primary, як ви хотіли
-                            text: loc.continueWorkout,
-                            onPressed: () => _openWorkoutPage(
-                              _activeWorkoutType ?? 'custom',
+                  child: SafeArea(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        // Кнопка "Останній звіт"
+                        if (_lastReport != null && !_isSessionActive)
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 12.0),
+                            child: TextButton.icon(
+                              onPressed: () {
+                                final dSeconds = _lastReport!.durationSeconds;
+                                _showSummaryDialog(
+                                  _lastReport!,
+                                  Duration(seconds: dSeconds),
+                                );
+                              },
+                              icon: const Icon(Icons.analytics_outlined),
+                              label: Text(loc.viewLastReport),
                             ),
                           ),
-                        ),
-                        const SizedBox(height: 12),
-                        // КНОПКА 2: ЗАВЕРШИТИ
-                        SizedBox(
-                          width: double.infinity,
-                          height: 56,
-                          child: ElevatedButton.icon(
-                            onPressed: () => _finishSession(loc),
-                            icon: const Icon(Icons.flag),
-                            label: Text(loc.finishWorkout),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.green,
-                              foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(16),
+
+                        if (_isSessionActive) ...[
+                          SizedBox(
+                            width: double.infinity,
+                            height: 56,
+                            child: PrimaryFilledButton(
+                              text: loc.continueWorkout,
+                              onPressed: () => _openWorkoutPage(
+                                _activeWorkoutType ?? 'custom',
                               ),
                             ),
                           ),
-                        ),
-                      ] else ...[
-                        // СТАРТ / ПРОДОВЖЕННЯ (Коли таймер не йде)
-                        SizedBox(
-                          width: double.infinity,
-                          height: 56,
-                          child: PrimaryFilledButton(
-                            text: hasData
-                                ? loc.continueWorkout
-                                : loc.startWorkout,
-                            onPressed: () {
-                              if (hasData) {
-                                // Якщо вже є дані, але таймер не йшов - просто відкриваємо
-                                _openWorkoutPage(
-                                  _todaysWorkout?.type ?? 'custom',
-                                );
-                              } else {
-                                // Старт нового
-                                _onStartPressed(loc);
-                              }
-                            },
+                          const SizedBox(height: 12),
+                          SizedBox(
+                            width: double.infinity,
+                            height: 56,
+                            child: ElevatedButton.icon(
+                              onPressed: () => _finishSession(loc),
+                              icon: const Icon(Icons.flag),
+                              label: Text(loc.finishWorkout),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.green,
+                                foregroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                              ),
+                            ),
                           ),
-                        ),
+                        ] else if (_lastReport == null) ...[
+                          // Показуємо кнопки старту тільки якщо немає активного звіту
+                          SizedBox(
+                            width: double.infinity,
+                            height: 56,
+                            child: PrimaryFilledButton(
+                              text: hasData
+                                  ? loc.continueWorkout
+                                  : loc.startWorkout,
+                              onPressed: () {
+                                if (hasData) {
+                                  _openWorkoutPage(
+                                    _todaysWorkout?.type ?? 'custom',
+                                  );
+                                } else {
+                                  _onStartPressed(loc);
+                                }
+                              },
+                            ),
+                          ),
+                        ],
                       ],
-                    ],
+                    ),
                   ),
                 ),
               ],

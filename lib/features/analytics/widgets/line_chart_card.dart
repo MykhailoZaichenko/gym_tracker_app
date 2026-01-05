@@ -12,6 +12,7 @@ class ProgressLineChart extends StatelessWidget {
   final Widget Function(double) buildBottomTitle;
   final String Function(double) formatY;
   final void Function(double x)? onPointTap;
+  final Color lineColor;
 
   const ProgressLineChart({
     super.key,
@@ -23,6 +24,7 @@ class ProgressLineChart extends StatelessWidget {
     required this.buildBottomTitle,
     required this.formatY,
     this.onPointTap,
+    required this.lineColor,
   });
 
   Map<String, double> get yBounds => computeYBounds(spots);
@@ -181,7 +183,7 @@ class ProgressLineChart extends StatelessWidget {
               LineChartBarData(
                 spots: spots,
                 isCurved: true,
-                color: Colors.blue,
+                color: lineColor,
                 barWidth: 3,
                 dotData: FlDotData(
                   show: true,
@@ -197,8 +199,7 @@ class ProgressLineChart extends StatelessWidget {
                           context,
                         ).scaffoldBackgroundColor, // fill = background
                         strokeWidth: 2,
-                        strokeColor:
-                            bar.color ?? Colors.blue, // outline = bar color
+                        strokeColor: lineColor, // outline = bar color
                       ),
                 ),
                 belowBarData: BarAreaData(

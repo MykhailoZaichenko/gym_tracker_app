@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/features/workout/models/workout_exercise_model.dart';
+import 'package:gym_tracker_app/features/workout/models/workout_model.dart';
 import 'package:gym_tracker_app/features/workout/pages/workout_page.dart';
 import 'package:gym_tracker_app/features/home/home_exports.dart';
 import 'package:gym_tracker_app/l10n/app_localizations.dart';
@@ -20,6 +21,7 @@ class _HomePageState extends State<HomePage> {
 
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
+  WorkoutModel? _selectedWorkoutModel;
 
   @override
   void initState() {
@@ -27,12 +29,29 @@ class _HomePageState extends State<HomePage> {
     _selectedDay = DateTime.now();
     _loadAllWorkouts();
     _workoutsStream = _firestore.getAllWorkoutsStream();
+    _fetchWorkoutDetails(_selectedDay!);
   }
 
   Future<void> _loadAllWorkouts() async {
     _allWorkouts = await _firestore.getAllWorkouts();
     if (mounted) {
       setState(() => _isLoading = false);
+    }
+  }
+
+  Future<void> _fetchWorkoutDetails(DateTime date) async {
+    // Спочатку скидаємо, щоб UI не показував старий тип
+    if (mounted) {
+      setState(() => _selectedWorkoutModel = null);
+    }
+
+    // Робимо запит до бази
+    final workout = await _firestore.getWorkout(date);
+
+    if (mounted) {
+      setState(() {
+        _selectedWorkoutModel = workout;
+      });
     }
   }
 
@@ -57,6 +76,7 @@ class _HomePageState extends State<HomePage> {
     );
 
     _loadAllWorkouts();
+    _fetchWorkoutDetails(date);
   }
 
   @override
@@ -95,13 +115,14 @@ class _HomePageState extends State<HomePage> {
                 HomeCalendar(
                   selectedDay: _selectedDay,
                   focusedDay: _focusedDay,
-                  allWorkouts: _allWorkouts,
+                  allWorkouts: allWorkouts,
                   onMonthPicked: (picked) {
                     if (picked != null) {
                       setState(() {
                         _focusedDay = picked;
                         _selectedDay = picked;
                       });
+                      _fetchWorkoutDetails(picked);
                     }
                   },
                   onPageChanged: (focusedDay) {
@@ -114,6 +135,7 @@ class _HomePageState extends State<HomePage> {
                       _selectedDay = selected;
                       _focusedDay = focused;
                     });
+                    _fetchWorkoutDetails(selected);
                   },
                 ),
                 const SizedBox(height: 12),
@@ -122,6 +144,7 @@ class _HomePageState extends State<HomePage> {
                     selectedDay: _selectedDay,
                     selectedExercises: selectedExercises,
                     keyOf: _keyOf,
+                    workoutType: _selectedWorkoutModel?.type,
                   ),
                 ),
               ],

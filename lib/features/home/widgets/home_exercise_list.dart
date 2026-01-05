@@ -2,18 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/features/workout/models/workout_exercise_model.dart';
 import 'package:gym_tracker_app/l10n/app_localizations.dart';
 import 'package:gym_tracker_app/data/seed/exercise_catalog.dart';
+import 'package:gym_tracker_app/utils/workout_utils.dart';
 import 'package:gym_tracker_app/widget/common/fading_edge.dart';
 
 class HomeExerciseList extends StatelessWidget {
   final DateTime? selectedDay;
   final List<WorkoutExercise> selectedExercises;
   final String Function(DateTime) keyOf;
+  final String? workoutType;
 
   const HomeExerciseList({
     super.key,
     required this.selectedDay,
     required this.selectedExercises,
     required this.keyOf,
+    this.workoutType,
   });
 
   String _getLocalizedName(WorkoutExercise exercise, AppLocalizations loc) {
@@ -41,13 +44,15 @@ class HomeExerciseList extends StatelessWidget {
       return Center(child: Text(loc.selectDay));
     }
 
+    final typeToShow = workoutType ?? 'custom';
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '${loc.exercisesFor} ${keyOf(selectedDay!)}:',
+            '${WorkoutUtils.getLocalizedType(typeToShow, loc)} ${keyOf(selectedDay!)}:',
             style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),

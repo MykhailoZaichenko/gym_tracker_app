@@ -8,9 +8,11 @@ import 'package:gym_tracker_app/l10n/app_localizations.dart';
 import 'package:gym_tracker_app/services/firestore_service.dart';
 import 'package:gym_tracker_app/features/workout/workout_exports.dart';
 import 'package:gym_tracker_app/utils/utils.dart';
+import 'package:gym_tracker_app/utils/workout_utils.dart';
 import 'package:gym_tracker_app/widget/common/custome_snackbar.dart';
 import 'package:gym_tracker_app/widget/common/pop_save_wideget.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class WorkoutPage extends StatefulWidget {
   final DateTime date;
@@ -64,6 +66,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
       _initControllers();
       _isLoading = false;
       _initialEncoded = _encodeCurrentState();
+      _loadActiveIndex();
     } else {
       _loadPreviousSession();
     }
@@ -110,9 +113,8 @@ class _WorkoutPageState extends State<WorkoutPage> {
 
   // НОВЕ: Метод для перемикання активної вправи і фокусу
   void _setActiveExercise(int index) {
-    setState(() {
-      _activeExerciseIndex = index;
-    });
+    setState(() => _activeExerciseIndex = index);
+    _saveActiveIndex(index);
     _focusOnExercise(index);
   }
 
@@ -125,6 +127,26 @@ class _WorkoutPageState extends State<WorkoutPage> {
         _weightFocusNodes[index][0].requestFocus();
       }
     });
+  }
+
+  // Завантаження збереженого індексу
+  Future<void> _loadActiveIndex() async {
+    final prefs = await SharedPreferences.getInstance();
+    // Ключ унікальний для типу тренування, щоб не плутати Leg Day з Push Day
+    final savedIndex = prefs.getInt('active_index_$_currentType') ?? 0;
+
+    if (mounted && savedIndex < _exercises.length) {
+      setState(() {
+        _activeExerciseIndex = savedIndex;
+      });
+      _focusOnExercise(savedIndex);
+    }
+  }
+
+  // Збереження індексу при зміні
+  Future<void> _saveActiveIndex(int index) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('active_index_$_currentType', index);
   }
 
   // --- CRUD Operations ---
@@ -357,10 +379,6 @@ class _WorkoutPageState extends State<WorkoutPage> {
         setState(() {
           _initialEncoded = _encodeCurrentState();
         });
-        CustomSnackBar.show(
-          context,
-          message: AppLocalizations.of(context)!.saved,
-        );
       }
     } catch (e) {
       if (mounted) {
@@ -636,7 +654,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
                         Flexible(
                           child: Text(
                             loc.copyPreviousWorkout(
-                              _getLocalizedType(_currentType, loc),
+                              WorkoutUtils.getLocalizedType(_currentType, loc),
                             ),
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
@@ -673,28 +691,5 @@ class _WorkoutPageState extends State<WorkoutPage> {
         ),
       ),
     );
-  }
-
-  String _getLocalizedType(String key, AppLocalizations loc) {
-    switch (key) {
-      case 'push':
-        return loc.splitPush;
-      case 'pull':
-        return loc.splitPull;
-      case 'legs':
-        return loc.splitLegs;
-      case 'upper':
-        return loc.splitUpper;
-      case 'lower':
-        return loc.splitLower;
-      case 'full_body':
-        return loc.splitFullBody;
-      case 'cardio':
-        return loc.splitCardio;
-      case 'custom':
-        return loc.splitCustom;
-      default:
-        return key.toUpperCase();
-    }
   }
 }

@@ -428,5 +428,14 @@
   "@copyLastWorkout": {
     "description": "Snackbar message when copying last workout",
     "placeholders": { "type": { "type": "String" } }
-  }
+  },
+
+  "comparisonTitle": "Comparison",
+  "@comparisonTitle": { "description": "Comparison dialog title" },
+  "startValue": "Start Value",
+  "@startValue": { "description": "Start Value" },
+  "currentValue": "Current Value",
+  "@currentValue": { "description": "Current Value" },
+  "difference": "Difference",
+  "@difference": { "description": "Difference" }
 }
