@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gym_tracker_app/features/health/pages/health_page.dart';
 import 'package:gym_tracker_app/l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
 import 'package:gym_tracker_app/core/constants/exersise_meta.dart';
@@ -203,6 +204,46 @@ class _ProfilePageState extends State<ProfilePage> {
                           });
                           _recalculateStats();
                         },
+                      ),
+                      const SizedBox(height: 12),
+                      Card(
+                        margin: const EdgeInsets.symmetric(
+                          horizontal: 24,
+                          vertical: 8,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: ListTile(
+                          leading: Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: Colors.blueAccent.withValues(alpha: 0.1),
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(
+                              Icons.monitor_weight_outlined,
+                              color: Colors.blueAccent,
+                            ),
+                          ),
+                          title: const Text(
+                            "Контроль ваги",
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          subtitle: const Text("Графік ваги та нагадування"),
+                          trailing: const Icon(
+                            Icons.chevron_right,
+                            color: Colors.grey,
+                          ),
+                          onTap: () {
+                            // Перехід на сторінку здоров'я
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => const HealthPage(),
+                              ),
+                            );
+                          },
+                        ),
                       ),
                       const SizedBox(height: 12),
                       Padding(

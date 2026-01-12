@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:gym_tracker_app/features/health/models/body_weight_model.dart';
 import 'package:gym_tracker_app/features/workout/models/workout_exercise_model.dart';
 import 'package:gym_tracker_app/features/profile/models/user_model.dart'
     as app_user;
@@ -236,5 +237,42 @@ class FirestoreService {
       }
     } catch (_) {}
     return null;
+  }
+
+  // Зберегти вагу
+  Future<void> saveBodyWeight(BodyWeightModel model) async {
+    final uid = _auth.currentUser?.uid;
+    if (uid == null) return;
+
+    // Використовуємо дату як ID, щоб був один запис на день
+    final docId = model.date.toIso8601String().split('T').first;
+
+    await _db
+        .collection('users')
+        .doc(uid)
+        .collection('body_weights')
+        .doc(docId)
+        .set(model.toMap());
+  }
+
+  // Отримати історію ваги
+  Stream<List<BodyWeightModel>> getBodyWeightHistory() {
+    final uid = _auth.currentUser?.uid;
+    if (uid == null) return const Stream.empty();
+
+    return _db
+        .collection('users')
+        .doc(uid)
+        .collection('body_weights')
+        .orderBy(
+          'date',
+          descending: false,
+        ) // Для графіка потрібно від старого до нового
+        .snapshots()
+        .map((snapshot) {
+          return snapshot.docs
+              .map((doc) => BodyWeightModel.fromMap(doc.id, doc.data()))
+              .toList();
+        });
   }
 }

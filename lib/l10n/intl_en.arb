@@ -430,12 +430,56 @@
     "placeholders": { "type": { "type": "String" } }
   },
 
-  "comparisonTitle": "Comparison",
+  "comparisonTitle": "Month comparison",
   "@comparisonTitle": { "description": "Comparison dialog title" },
   "startValue": "Start Value",
   "@startValue": { "description": "Start Value" },
   "currentValue": "Current Value",
   "@currentValue": { "description": "Current Value" },
   "difference": "Difference",
-  "@difference": { "description": "Difference" }
+  "@difference": { "description": "Difference" },
+  "notificationsEnabledTitle": "Notifications Enabled! 🔔",
+  "@notificationsEnabledTitle": { "description": "Notifications enabled title" },
+  "notificationsEnabledBody": "You will now receive reminders.",
+  "@notificationsEnabledBody": { "description": "Notifications enabled body" },
+
+  "healthTitle": "Health",
+  "@healthTitle": { "description": "Health page title" },
+  "weightChangeLabel": "Weight Change",
+  "@weightChangeLabel": { "description": "Weight change label" },
+  "gymSessions": "Gym Sessions",
+  "@gymSessions": { "description": "Gym sessions label" },
+  "reminderSettings": "Reminder Settings",
+  "@reminderSettings": { "description": "Reminder settings title" },
+  "frequency": "Frequency",
+  "@frequency": { "description": "Frequency label" },
+  "daily": "Daily",
+  "@daily": { "description": "Daily frequency option" },
+  "weekly": "Weekly",
+  "@weekly": { "description": "Weekly frequency option" },
+  "selectTime": "Select Time",
+  "@selectTime": { "description": "Select time label" },
+  "reminderSet": "Reminder set for: {time}",
+  "@reminderSet": {
+    "description": "Reminder set confirmation",
+    "placeholders": { "time": { "type": "String" } }
+  },
+  "editWeight": "Edit Weight",
+  "@editWeight": { "description": "Edit weight button" },
+  "addWeight": "Add Weight",
+  "@addWeight": { "description": "Add weight button" },
+  "weightDateRange": "Change from {start} to {end}",
+  "@weightDateRange": {
+    "description": "Weight change date range",
+    "placeholders": {
+      "start": { "type": "String" },
+      "end": { "type": "String" }
+    }
+  },
+  "saveSettings": "Save Settings",
+  "@saveSettings": { "description": "Save settings button" },
+  "history": "History",
+  "@history": { "description": "History tab label" },
+  "weightHistory": "Weight History",
+  "@weightHistory": { "description": "Weight history title" }
 }

@@ -207,12 +207,10 @@ class ProgressLineChart extends StatelessWidget {
                   // градієнт з прозорістю
                   gradient: LinearGradient(
                     colors: [
-                      Theme.of(
-                        context,
-                      ).colorScheme.primary.withValues(alpha: 0.4),
-                      Theme.of(
-                        context,
-                      ).colorScheme.primary.withValues(alpha: 0.05),
+                      lineColor.withValues(
+                        alpha: 0.4,
+                      ), // Використовує колір лінії
+                      lineColor.withValues(alpha: 0.05),
                     ],
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,

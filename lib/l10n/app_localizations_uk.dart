@@ -651,7 +651,7 @@ class AppLocalizationsUk extends AppLocalizations {
   }
 
   @override
-  String get comparisonTitle => 'Порівняння';
+  String get comparisonTitle => 'Порівняння за місяць';
 
   @override
   String get startValue => 'Початкове значення';
@@ -661,4 +661,60 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get difference => 'Різниця';
+
+  @override
+  String get notificationsEnabledTitle => 'Сповіщення увімкнено! 🔔';
+
+  @override
+  String get notificationsEnabledBody =>
+      'Тепер ви будете отримувати нагадування.';
+
+  @override
+  String get healthTitle => 'Здоровʼя';
+
+  @override
+  String get weightChangeLabel => 'Зміна ваги';
+
+  @override
+  String get gymSessions => 'Сесії в залі';
+
+  @override
+  String get reminderSettings => 'Налаштування нагадувань';
+
+  @override
+  String get frequency => 'Частота';
+
+  @override
+  String get daily => 'Щодня';
+
+  @override
+  String get weekly => 'Щотижня';
+
+  @override
+  String get selectTime => 'Оберіть час';
+
+  @override
+  String reminderSet(String time) {
+    return 'Нагадування встановлено: $time';
+  }
+
+  @override
+  String get editWeight => 'Редагувати вагу';
+
+  @override
+  String get addWeight => 'Додати вагу';
+
+  @override
+  String weightDateRange(String start, String end) {
+    return 'Зміна з $start по $end';
+  }
+
+  @override
+  String get saveSettings => 'Зберегти налаштування';
+
+  @override
+  String get history => 'Історія';
+
+  @override
+  String get weightHistory => 'Історія ваги';
 }

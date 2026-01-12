@@ -238,11 +238,64 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
   ProgressionData? _calculateProgression(
     List<MapEntry<DateTime, double>> entries,
   ) {
-    if (entries.length < 2)
-      return null; // Потрібно мінімум 2 точки для порівняння
+    if (entries.length < 2) {
+      return null;
+    }
     final first = entries.first.value;
     final last = entries.last.value;
     return ProgressionData(startValue: first, currentValue: last);
+  }
+
+  ProgressionData? _calculateSessionProgression(
+    List<MapEntry<DateTime, double>> currentEntries,
+  ) {
+    if (currentEntries.isEmpty) return null;
+
+    // Рахуємо кількість унікальних днів у поточному періоді
+    final currentCount = currentEntries.length.toDouble();
+
+    // Визначаємо попередній період
+    DateTime prevStart, prevEnd;
+    if (_range == RangeMode.month) {
+      // Якщо зараз Лютий 2025 -> Попередній: Січень 2025
+      prevStart = DateTime(_visibleMonth.year, _visibleMonth.month - 1, 1);
+      prevEnd = DateTime(_visibleMonth.year, _visibleMonth.month, 0);
+    } else {
+      // Якщо зараз 2025 -> Попередній: 2024
+      prevStart = DateTime(_visibleMonth.year - 1, 1, 1);
+      prevEnd = DateTime(_visibleMonth.year - 1, 12, 31);
+    }
+
+    // Рахуємо сесії для попереднього періоду
+    // (Потрібно знову пройтись по _allWorkouts, але з фільтром по попередній даті)
+    final loc = AppLocalizations.of(context)!;
+    final catalog = getExerciseCatalog(loc);
+    String targetId = _selectedExerciseDisplay ?? '';
+    try {
+      targetId = catalog
+          .firstWhere((c) => c.name == _selectedExerciseDisplay)
+          .id;
+    } catch (_) {}
+
+    int prevCount = 0;
+    _allWorkouts.forEach((dateStr, exercises) {
+      final date = DateTime.parse(dateStr);
+      if (date.isAfter(prevStart.subtract(const Duration(seconds: 1))) &&
+          date.isBefore(prevEnd.add(const Duration(seconds: 1)))) {
+        // Перевіряємо чи була ця вправа в цей день
+        final hasExercise = exercises.any((ex) {
+          final exId = _getCanonicalId(ex, catalog);
+          return exId == targetId;
+        });
+
+        if (hasExercise) prevCount++;
+      }
+    });
+
+    return ProgressionData(
+      startValue: prevCount.toDouble(),
+      currentValue: currentCount,
+    );
   }
 
   // ---- UI LOGIC ----
@@ -509,7 +562,7 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
         decoration: BoxDecoration(
-          color: color.withOpacity(0.15),
+          color: color.withValues(alpha: 0.15),
           borderRadius: BorderRadius.circular(6),
         ),
         child: Row(
@@ -577,6 +630,7 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
     final volumeEntries = _filterEntries(volumeDataRaw);
     final volumeSpots = _buildSpots(volumeEntries);
     final volumeProgression = _calculateProgression(volumeEntries);
+    final sessionProgression = _calculateSessionProgression(volumeEntries);
 
     // 2. Отримуємо дані для Max Weight
     final maxWeightDataRaw = _selectedExerciseDisplay != null
@@ -660,7 +714,9 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
                   IconButton(
                     icon: const Icon(Icons.chevron_left),
                     onPressed: _canGoBack ? _prevPeriod : null,
-                    color: _canGoBack ? null : Colors.grey.withOpacity(0.3),
+                    color: _canGoBack
+                        ? null
+                        : Colors.grey.withValues(alpha: 0.3),
                   ),
                   InkWell(
                     borderRadius: BorderRadius.circular(8),
@@ -702,7 +758,9 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
                   IconButton(
                     icon: const Icon(Icons.chevron_right),
                     onPressed: _canGoForward ? _nextPeriod : null,
-                    color: _canGoForward ? null : Colors.grey.withOpacity(0.3),
+                    color: _canGoForward
+                        ? null
+                        : Colors.grey.withValues(alpha: 0.3),
                   ),
                 ],
               ),
@@ -844,10 +902,12 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
                       children: [
                         buildSummaryItem(
                           context: context,
-                          label: loc.pointsCount,
+                          label: loc.gymSessions, // "Сесії в залі"
                           value: volumeEntries.length.toString(),
                         ),
                         const SizedBox(height: 4),
+                        // 🔥 Badge для сесій
+                        _buildPercentBadge(sessionProgression, loc),
                       ],
                     ),
                   ),

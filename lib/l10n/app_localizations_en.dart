@@ -644,7 +644,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get comparisonTitle => 'Comparison';
+  String get comparisonTitle => 'Month comparison';
 
   @override
   String get startValue => 'Start Value';
@@ -654,4 +654,59 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get difference => 'Difference';
+
+  @override
+  String get notificationsEnabledTitle => 'Notifications Enabled! 🔔';
+
+  @override
+  String get notificationsEnabledBody => 'You will now receive reminders.';
+
+  @override
+  String get healthTitle => 'Health';
+
+  @override
+  String get weightChangeLabel => 'Weight Change';
+
+  @override
+  String get gymSessions => 'Gym Sessions';
+
+  @override
+  String get reminderSettings => 'Reminder Settings';
+
+  @override
+  String get frequency => 'Frequency';
+
+  @override
+  String get daily => 'Daily';
+
+  @override
+  String get weekly => 'Weekly';
+
+  @override
+  String get selectTime => 'Select Time';
+
+  @override
+  String reminderSet(String time) {
+    return 'Reminder set for: $time';
+  }
+
+  @override
+  String get editWeight => 'Edit Weight';
+
+  @override
+  String get addWeight => 'Add Weight';
+
+  @override
+  String weightDateRange(String start, String end) {
+    return 'Change from $start to $end';
+  }
+
+  @override
+  String get saveSettings => 'Save Settings';
+
+  @override
+  String get history => 'History';
+
+  @override
+  String get weightHistory => 'Weight History';
 }

@@ -4,6 +4,7 @@ import 'package:gym_tracker_app/core/constants/constants.dart';
 import 'package:gym_tracker_app/core/locale/locale_serviece.dart';
 import 'package:gym_tracker_app/features/welcome/pages/welcome_page.dart';
 import 'package:gym_tracker_app/l10n/app_localizations.dart';
+import 'package:gym_tracker_app/services/notification_service.dart';
 import 'package:gym_tracker_app/widget/common/custome_snackbar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -21,11 +22,13 @@ class _SettingsPageState extends State<SettingsPage> {
   late SharedPreferences _prefs;
   bool _notificationsEnabled = true;
   bool _isLoading = false; // Додано для відображення прогресу видалення
+  final NotificationService _notificationService = NotificationService();
 
   @override
   void initState() {
     super.initState();
     _loadSettings();
+    _notificationService.init();
   }
 
   Future<void> _loadSettings() async {
@@ -44,6 +47,19 @@ class _SettingsPageState extends State<SettingsPage> {
   Future<void> _toggleNotifications(bool value) async {
     setState(() => _notificationsEnabled = value);
     await _prefs.setBool('notifications_enabled', value);
+
+    if (value) {
+      // Якщо увімкнули - надсилаємо тестове повідомлення
+      final loc = AppLocalizations.of(context)!;
+      await _notificationService.showInstantNotification(
+        title: loc.notificationsEnabledTitle, // "Сповіщення увімкнено! 🔔"
+        body: loc
+            .notificationsEnabledBody, // "Тепер ви будете отримувати нагадування."
+      );
+    } else {
+      // Якщо вимкнули - можна скасувати всі заплановані
+      await _notificationService.cancelAll();
+    }
   }
 
   Future<void> _onDeleteAccountPressed() async {

@@ -1301,7 +1301,7 @@ abstract class AppLocalizations {
   /// Comparison dialog title
   ///
   /// In en, this message translates to:
-  /// **'Comparison'**
+  /// **'Month comparison'**
   String get comparisonTitle;
 
   /// Start Value
@@ -1321,6 +1321,108 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Difference'**
   String get difference;
+
+  /// Notifications enabled title
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications Enabled! 🔔'**
+  String get notificationsEnabledTitle;
+
+  /// Notifications enabled body
+  ///
+  /// In en, this message translates to:
+  /// **'You will now receive reminders.'**
+  String get notificationsEnabledBody;
+
+  /// Health page title
+  ///
+  /// In en, this message translates to:
+  /// **'Health'**
+  String get healthTitle;
+
+  /// Weight change label
+  ///
+  /// In en, this message translates to:
+  /// **'Weight Change'**
+  String get weightChangeLabel;
+
+  /// Gym sessions label
+  ///
+  /// In en, this message translates to:
+  /// **'Gym Sessions'**
+  String get gymSessions;
+
+  /// Reminder settings title
+  ///
+  /// In en, this message translates to:
+  /// **'Reminder Settings'**
+  String get reminderSettings;
+
+  /// Frequency label
+  ///
+  /// In en, this message translates to:
+  /// **'Frequency'**
+  String get frequency;
+
+  /// Daily frequency option
+  ///
+  /// In en, this message translates to:
+  /// **'Daily'**
+  String get daily;
+
+  /// Weekly frequency option
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly'**
+  String get weekly;
+
+  /// Select time label
+  ///
+  /// In en, this message translates to:
+  /// **'Select Time'**
+  String get selectTime;
+
+  /// Reminder set confirmation
+  ///
+  /// In en, this message translates to:
+  /// **'Reminder set for: {time}'**
+  String reminderSet(String time);
+
+  /// Edit weight button
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Weight'**
+  String get editWeight;
+
+  /// Add weight button
+  ///
+  /// In en, this message translates to:
+  /// **'Add Weight'**
+  String get addWeight;
+
+  /// Weight change date range
+  ///
+  /// In en, this message translates to:
+  /// **'Change from {start} to {end}'**
+  String weightDateRange(String start, String end);
+
+  /// Save settings button
+  ///
+  /// In en, this message translates to:
+  /// **'Save Settings'**
+  String get saveSettings;
+
+  /// History tab label
+  ///
+  /// In en, this message translates to:
+  /// **'History'**
+  String get history;
+
+  /// Weight history title
+  ///
+  /// In en, this message translates to:
+  /// **'Weight History'**
+  String get weightHistory;
 }
 
 class _AppLocalizationsDelegate
