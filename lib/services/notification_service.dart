@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
@@ -14,11 +15,13 @@ class NotificationService {
     // 🔥 ВАЖЛИВО: Спробуємо встановити локальний час.
     // Без цього tz.local може бути UTC, і сповіщення приходитимуть із запізненням на 2-3 години.
     try {
-      final String timeZoneName = DateTime.now().timeZoneName;
-      // Це простий спосіб, але для надійності краще використовувати пакет flutter_timezone
-      // Якщо на емуляторі час стоїть правильний, то і тут має бути ок.
+      final String timeZoneName =
+          (await FlutterTimezone.getLocalTimezone()) as String;
+      tz.setLocalLocation(tz.getLocation(timeZoneName));
     } catch (e) {
       print("Error setting local timezone: $e");
+      // Фолбек на UTC, якщо не вдалося визначити (краще, ніж нічого)
+      tz.setLocalLocation(tz.UTC);
     }
 
     const androidSettings = AndroidInitializationSettings(

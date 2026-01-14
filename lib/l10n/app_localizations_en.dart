@@ -519,7 +519,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get exSquat => 'Squat';
 
   @override
+  String get exFrontSquat => 'Front Squat';
+
+  @override
+  String get exGobletSquat => 'Goblet Squat';
+
+  @override
   String get exLunge => 'Lunge';
+
+  @override
+  String get exWalkingLunge => 'Walking Lunge';
+
+  @override
+  String get exBulgarianSplitSquat => 'Bulgarian Split Squat';
 
   @override
   String get exLegPress => 'Leg Press';
@@ -537,7 +549,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get exDeadlift => 'Deadlift';
 
   @override
+  String get exSumoDeadlift => 'Sumo Deadlift';
+
+  @override
+  String get exRomanianDeadlift => 'Romanian Deadlift';
+
+  @override
   String get exGoodMorning => 'Good Morning';
+
+  @override
+  String get exHipThrust => 'Hip Thrust';
+
+  @override
+  String get exGluteBridge => 'Glute Bridge';
 
   @override
   String get exStandingCalfRaise => 'Standing Calf Raise';
@@ -546,34 +570,106 @@ class AppLocalizationsEn extends AppLocalizations {
   String get exSeatedCalfRaise => 'Seated Calf Raise';
 
   @override
-  String get exPushUp => 'Push-up';
+  String get exDonkeyCalfRaise => 'Donkey Calf Raise';
 
   @override
-  String get exPullUp => 'Pull-up';
+  String get exAbductorMachine => 'Abductor Machine';
 
   @override
-  String get exDip => 'Dip';
+  String get exAdductorMachine => 'Adductor Machine';
 
   @override
   String get exBenchPress => 'Bench Press';
 
   @override
-  String get exMachineFly => 'Machine Fly';
+  String get exInclineBenchPress => 'Incline Bench Press';
+
+  @override
+  String get exDeclineBenchPress => 'Decline Bench Press';
+
+  @override
+  String get exDumbbellBenchPress => 'Dumbbell Bench Press';
+
+  @override
+  String get exInclineDumbbellPress => 'Incline Dumbbell Press';
+
+  @override
+  String get exPushUp => 'Push-up';
+
+  @override
+  String get exDiamondPushUp => 'Diamond Push-up';
+
+  @override
+  String get exDip => 'Dip';
+
+  @override
+  String get exMachineFly => 'Machine Fly (Pec Deck)';
+
+  @override
+  String get exCableCrossover => 'Cable Crossover';
+
+  @override
+  String get exDumbbellFly => 'Dumbbell Fly';
+
+  @override
+  String get exPullover => 'Pullover';
+
+  @override
+  String get exChestPressMachine => 'Chest Press Machine';
+
+  @override
+  String get exPullUp => 'Pull-up';
+
+  @override
+  String get exChinUp => 'Chin-up';
+
+  @override
+  String get exLatPullDown => 'Lat Pull-Down';
+
+  @override
+  String get exCloseGripLatPullDown => 'Close Grip Lat Pull-Down';
+
+  @override
+  String get exBentOverRow => 'Bent-Over Row';
+
+  @override
+  String get exReverseGripRow => 'Reverse Grip Row';
+
+  @override
+  String get exSingleArmDumbbellRow => 'Single Arm Dumbbell Row';
+
+  @override
+  String get exTBarRow => 'T-Bar Row';
+
+  @override
+  String get exSeatedCableRow => 'Seated Cable Row';
+
+  @override
+  String get exMachineRow => 'Machine Row';
+
+  @override
+  String get exStraightArmPulldown => 'Straight-Arm Pulldown';
+
+  @override
+  String get exHyperextension => 'Hyperextension';
+
+  @override
+  String get exRackPull => 'Rack Pull';
+
+  @override
+  String get exOverheadPress => 'Overhead Press';
+
+  @override
+  String get exSeatedDumbbellPress => 'Seated Dumbbell Press';
+
+  @override
+  String get exArnoldPress => 'Arnold Press';
 
   @override
   String get exLateralRaise => 'Lateral Raise';
 
   @override
-  String get exBentOverRow => 'Bent Over Row';
-
-  @override
-  String get exLatPullDown => 'Lat Pull-down';
-
-  @override
-  String get exShoulderShrug => 'Shoulder Shrug';
-
-  @override
-  String get exOverheadPress => 'Overhead Press';
+  String get exCableLateralRaise => 'Cable Lateral Raise';
 
   @override
   String get exFrontRaise => 'Front Raise';
@@ -582,43 +678,97 @@ class AppLocalizationsEn extends AppLocalizations {
   String get exRearDeltRaise => 'Rear Delt Raise';
 
   @override
-  String get exUprightRow => 'Upright Row';
+  String get exReversePecDeck => 'Reverse Pec Deck';
 
   @override
   String get exFacePull => 'Face Pull';
 
   @override
+  String get exUprightRow => 'Upright Row';
+
+  @override
+  String get exShoulderShrug => 'Shrug';
+
+  @override
   String get exBicepsCurl => 'Biceps Curl';
 
   @override
-  String get exTricepsExtension => 'Triceps Extension';
-
-  @override
-  String get exCrunch => 'Crunch';
-
-  @override
-  String get exSitUp => 'Sit-up';
-
-  @override
-  String get exPlank => 'Plank';
-
-  @override
-  String get exLegRaise => 'Leg Raise';
-
-  @override
-  String get exHyperextension => 'Hyperextension';
+  String get exDumbbellCurl => 'Dumbbell Curl';
 
   @override
   String get exHammerCurl => 'Hammer Curl';
 
   @override
+  String get exPreacherCurl => 'Preacher Curl';
+
+  @override
+  String get exConcentrationCurl => 'Concentration Curl';
+
+  @override
+  String get exCableCurl => 'Cable Curl';
+
+  @override
   String get exZottmanCurl => 'Zottman Curl';
 
   @override
-  String get exMachineRow => 'Machine Row';
+  String get exTricepsExtension => 'Overhead Triceps Extension';
+
+  @override
+  String get exSkullCrusher => 'Skull Crusher';
+
+  @override
+  String get exTricepPushdown => 'Tricep Pushdown';
+
+  @override
+  String get exTricepDipMachine => 'Tricep Dip Machine';
+
+  @override
+  String get exBenchDip => 'Bench Dip';
+
+  @override
+  String get exCrunch => 'Crunch';
+
+  @override
+  String get exCableCrunch => 'Cable Crunch';
+
+  @override
+  String get exSitUp => 'Sit-up';
+
+  @override
+  String get exLegRaise => 'Leg Raise';
 
   @override
   String get exLegRaiseHang => 'Hanging Leg Raise';
+
+  @override
+  String get exRussianTwist => 'Russian Twist';
+
+  @override
+  String get exPlank => 'Plank';
+
+  @override
+  String get exSidePlank => 'Side Plank';
+
+  @override
+  String get exAbWheelRollout => 'Ab Wheel Rollout';
+
+  @override
+  String get exBicycleCrunch => 'Bicycle Crunch';
+
+  @override
+  String get exWoodchopper => 'Cable Woodchopper';
+
+  @override
+  String get exCardioTreadmill => 'Treadmill';
+
+  @override
+  String get exCardioElliptical => 'Elliptical';
+
+  @override
+  String get exCardioRowing => 'Rowing Machine';
+
+  @override
+  String get exFarmerWalk => 'Farmer\'s Walk';
 
   @override
   String get finishWorkout => 'Finish Workout';
@@ -660,6 +810,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get notificationsEnabledBody => 'You will now receive reminders.';
+
+  @override
+  String get weightControl => 'Weight Control';
+
+  @override
+  String get weightChartAndReminders => 'Weight Chart and Reminders';
 
   @override
   String get healthTitle => 'Health';

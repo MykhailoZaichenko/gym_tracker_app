@@ -1046,215 +1046,515 @@ abstract class AppLocalizations {
   /// **'For security reasons, please Log Out and Log In again before deleting your account.'**
   String get reLoginRequiredMsg;
 
-  /// Exercise name
+  /// Barbell squat
   ///
   /// In en, this message translates to:
   /// **'Squat'**
   String get exSquat;
 
-  /// Exercise name
+  /// Barbell front squat
+  ///
+  /// In en, this message translates to:
+  /// **'Front Squat'**
+  String get exFrontSquat;
+
+  /// Squat holding a dumbbell/kettlebell at chest
+  ///
+  /// In en, this message translates to:
+  /// **'Goblet Squat'**
+  String get exGobletSquat;
+
+  /// Static lunge
   ///
   /// In en, this message translates to:
   /// **'Lunge'**
   String get exLunge;
 
-  /// Exercise name
+  /// Lunges while moving forward
+  ///
+  /// In en, this message translates to:
+  /// **'Walking Lunge'**
+  String get exWalkingLunge;
+
+  /// Single leg squat with rear foot elevated
+  ///
+  /// In en, this message translates to:
+  /// **'Bulgarian Split Squat'**
+  String get exBulgarianSplitSquat;
+
+  /// Leg press machine
   ///
   /// In en, this message translates to:
   /// **'Leg Press'**
   String get exLegPress;
 
-  /// Exercise name
+  /// Static wall sit exercise
   ///
   /// In en, this message translates to:
   /// **'Wall Sit'**
   String get exWallSit;
 
-  /// Exercise name
+  /// Leg extension machine
   ///
   /// In en, this message translates to:
   /// **'Leg Extension'**
   String get exLegExtension;
 
-  /// Exercise name
+  /// Leg curl machine (seated or lying)
   ///
   /// In en, this message translates to:
   /// **'Leg Curl'**
   String get exLegCurl;
 
-  /// Exercise name
+  /// Conventional deadlift
   ///
   /// In en, this message translates to:
   /// **'Deadlift'**
   String get exDeadlift;
 
-  /// Exercise name
+  /// Deadlift with wide stance
+  ///
+  /// In en, this message translates to:
+  /// **'Sumo Deadlift'**
+  String get exSumoDeadlift;
+
+  /// RDL - stiff leg deadlift variant
+  ///
+  /// In en, this message translates to:
+  /// **'Romanian Deadlift'**
+  String get exRomanianDeadlift;
+
+  /// Barbell good morning exercise
   ///
   /// In en, this message translates to:
   /// **'Good Morning'**
   String get exGoodMorning;
 
-  /// Exercise name
+  /// Barbell hip thrust
+  ///
+  /// In en, this message translates to:
+  /// **'Hip Thrust'**
+  String get exHipThrust;
+
+  /// Bodyweight or weighted bridge on floor
+  ///
+  /// In en, this message translates to:
+  /// **'Glute Bridge'**
+  String get exGluteBridge;
+
+  /// Calf raise standing
   ///
   /// In en, this message translates to:
   /// **'Standing Calf Raise'**
   String get exStandingCalfRaise;
 
-  /// Exercise name
+  /// Calf raise seated machine
   ///
   /// In en, this message translates to:
   /// **'Seated Calf Raise'**
   String get exSeatedCalfRaise;
 
-  /// Exercise name
+  /// Bent over calf raise
   ///
   /// In en, this message translates to:
-  /// **'Push-up'**
-  String get exPushUp;
+  /// **'Donkey Calf Raise'**
+  String get exDonkeyCalfRaise;
 
-  /// Exercise name
+  /// Legs pushing out machine
   ///
   /// In en, this message translates to:
-  /// **'Pull-up'**
-  String get exPullUp;
+  /// **'Abductor Machine'**
+  String get exAbductorMachine;
 
-  /// Exercise name
+  /// Legs squeezing in machine
   ///
   /// In en, this message translates to:
-  /// **'Dip'**
-  String get exDip;
+  /// **'Adductor Machine'**
+  String get exAdductorMachine;
 
-  /// Exercise name
+  /// Flat barbell bench press
   ///
   /// In en, this message translates to:
   /// **'Bench Press'**
   String get exBenchPress;
 
-  /// Exercise name
+  /// Incline barbell bench press
   ///
   /// In en, this message translates to:
-  /// **'Machine Fly'**
+  /// **'Incline Bench Press'**
+  String get exInclineBenchPress;
+
+  /// Decline barbell bench press
+  ///
+  /// In en, this message translates to:
+  /// **'Decline Bench Press'**
+  String get exDeclineBenchPress;
+
+  /// Flat dumbbell press
+  ///
+  /// In en, this message translates to:
+  /// **'Dumbbell Bench Press'**
+  String get exDumbbellBenchPress;
+
+  /// Incline dumbbell press
+  ///
+  /// In en, this message translates to:
+  /// **'Incline Dumbbell Press'**
+  String get exInclineDumbbellPress;
+
+  /// Standard push-up
+  ///
+  /// In en, this message translates to:
+  /// **'Push-up'**
+  String get exPushUp;
+
+  /// Close grip push-up
+  ///
+  /// In en, this message translates to:
+  /// **'Diamond Push-up'**
+  String get exDiamondPushUp;
+
+  /// Triceps/Chest dip on parallel bars
+  ///
+  /// In en, this message translates to:
+  /// **'Dip'**
+  String get exDip;
+
+  /// Chest fly machine
+  ///
+  /// In en, this message translates to:
+  /// **'Machine Fly (Pec Deck)'**
   String get exMachineFly;
 
-  /// Exercise name
+  /// Standing cable fly
   ///
   /// In en, this message translates to:
-  /// **'Lateral Raise'**
-  String get exLateralRaise;
+  /// **'Cable Crossover'**
+  String get exCableCrossover;
 
-  /// Exercise name
+  /// Chest fly on bench
   ///
   /// In en, this message translates to:
-  /// **'Bent Over Row'**
-  String get exBentOverRow;
+  /// **'Dumbbell Fly'**
+  String get exDumbbellFly;
 
-  /// Exercise name
+  /// Dumbbell pullover on bench
   ///
   /// In en, this message translates to:
-  /// **'Lat Pull-down'**
+  /// **'Pullover'**
+  String get exPullover;
+
+  /// Seated chest press machine
+  ///
+  /// In en, this message translates to:
+  /// **'Chest Press Machine'**
+  String get exChestPressMachine;
+
+  /// Overhand grip pull-up
+  ///
+  /// In en, this message translates to:
+  /// **'Pull-up'**
+  String get exPullUp;
+
+  /// Underhand grip pull-up
+  ///
+  /// In en, this message translates to:
+  /// **'Chin-up'**
+  String get exChinUp;
+
+  /// Cable lat pull-down
+  ///
+  /// In en, this message translates to:
+  /// **'Lat Pull-Down'**
   String get exLatPullDown;
 
-  /// Exercise name
+  /// Narrow grip pull-down
   ///
   /// In en, this message translates to:
-  /// **'Shoulder Shrug'**
-  String get exShoulderShrug;
+  /// **'Close Grip Lat Pull-Down'**
+  String get exCloseGripLatPullDown;
 
-  /// Exercise name
+  /// Barbell row
   ///
   /// In en, this message translates to:
-  /// **'Overhead Press'**
-  String get exOverheadPress;
+  /// **'Bent-Over Row'**
+  String get exBentOverRow;
 
-  /// Exercise name
+  /// Barbell row with underhand grip
   ///
   /// In en, this message translates to:
-  /// **'Front Raise'**
-  String get exFrontRaise;
+  /// **'Reverse Grip Row'**
+  String get exReverseGripRow;
 
-  /// Exercise name
+  /// One arm row on bench
   ///
   /// In en, this message translates to:
-  /// **'Rear Delt Raise'**
-  String get exRearDeltRaise;
+  /// **'Single Arm Dumbbell Row'**
+  String get exSingleArmDumbbellRow;
 
-  /// Exercise name
+  /// T-Bar row machine or landmine
   ///
   /// In en, this message translates to:
-  /// **'Upright Row'**
-  String get exUprightRow;
+  /// **'T-Bar Row'**
+  String get exTBarRow;
 
-  /// Exercise name
+  /// Horizontal cable row
   ///
   /// In en, this message translates to:
-  /// **'Face Pull'**
-  String get exFacePull;
+  /// **'Seated Cable Row'**
+  String get exSeatedCableRow;
 
-  /// Exercise name
-  ///
-  /// In en, this message translates to:
-  /// **'Biceps Curl'**
-  String get exBicepsCurl;
-
-  /// Exercise name
-  ///
-  /// In en, this message translates to:
-  /// **'Triceps Extension'**
-  String get exTricepsExtension;
-
-  /// Exercise name
-  ///
-  /// In en, this message translates to:
-  /// **'Crunch'**
-  String get exCrunch;
-
-  /// Exercise name
-  ///
-  /// In en, this message translates to:
-  /// **'Sit-up'**
-  String get exSitUp;
-
-  /// Exercise name
-  ///
-  /// In en, this message translates to:
-  /// **'Plank'**
-  String get exPlank;
-
-  /// Exercise name
-  ///
-  /// In en, this message translates to:
-  /// **'Leg Raise'**
-  String get exLegRaise;
-
-  /// Exercise name
-  ///
-  /// In en, this message translates to:
-  /// **'Hyperextension'**
-  String get exHyperextension;
-
-  /// Exercise name
-  ///
-  /// In en, this message translates to:
-  /// **'Hammer Curl'**
-  String get exHammerCurl;
-
-  /// Exercise name
-  ///
-  /// In en, this message translates to:
-  /// **'Zottman Curl'**
-  String get exZottmanCurl;
-
-  /// Exercise name
+  /// Seated row machine
   ///
   /// In en, this message translates to:
   /// **'Machine Row'**
   String get exMachineRow;
 
-  /// Exercise name
+  /// Cable pulldown with straight arms
+  ///
+  /// In en, this message translates to:
+  /// **'Straight-Arm Pulldown'**
+  String get exStraightArmPulldown;
+
+  /// Back extension bench
+  ///
+  /// In en, this message translates to:
+  /// **'Hyperextension'**
+  String get exHyperextension;
+
+  /// Partial deadlift from rack
+  ///
+  /// In en, this message translates to:
+  /// **'Rack Pull'**
+  String get exRackPull;
+
+  /// Standing barbell shoulder press (Military)
+  ///
+  /// In en, this message translates to:
+  /// **'Overhead Press'**
+  String get exOverheadPress;
+
+  /// Shoulder press seated
+  ///
+  /// In en, this message translates to:
+  /// **'Seated Dumbbell Press'**
+  String get exSeatedDumbbellPress;
+
+  /// Rotating dumbbell shoulder press
+  ///
+  /// In en, this message translates to:
+  /// **'Arnold Press'**
+  String get exArnoldPress;
+
+  /// Dumbbell side raise
+  ///
+  /// In en, this message translates to:
+  /// **'Lateral Raise'**
+  String get exLateralRaise;
+
+  /// Side raise using cable machine
+  ///
+  /// In en, this message translates to:
+  /// **'Cable Lateral Raise'**
+  String get exCableLateralRaise;
+
+  /// Dumbbell front raise
+  ///
+  /// In en, this message translates to:
+  /// **'Front Raise'**
+  String get exFrontRaise;
+
+  /// Bent over reverse fly
+  ///
+  /// In en, this message translates to:
+  /// **'Rear Delt Raise'**
+  String get exRearDeltRaise;
+
+  /// Rear delt machine fly
+  ///
+  /// In en, this message translates to:
+  /// **'Reverse Pec Deck'**
+  String get exReversePecDeck;
+
+  /// Cable pull towards face
+  ///
+  /// In en, this message translates to:
+  /// **'Face Pull'**
+  String get exFacePull;
+
+  /// Barbell/Dumbbell pull to chin
+  ///
+  /// In en, this message translates to:
+  /// **'Upright Row'**
+  String get exUprightRow;
+
+  /// Shoulder shrugs for traps
+  ///
+  /// In en, this message translates to:
+  /// **'Shrug'**
+  String get exShoulderShrug;
+
+  /// Barbell curl
+  ///
+  /// In en, this message translates to:
+  /// **'Biceps Curl'**
+  String get exBicepsCurl;
+
+  /// Standard dumbbell curl
+  ///
+  /// In en, this message translates to:
+  /// **'Dumbbell Curl'**
+  String get exDumbbellCurl;
+
+  /// Neutral grip curl
+  ///
+  /// In en, this message translates to:
+  /// **'Hammer Curl'**
+  String get exHammerCurl;
+
+  /// Curl on preacher bench
+  ///
+  /// In en, this message translates to:
+  /// **'Preacher Curl'**
+  String get exPreacherCurl;
+
+  /// Seated single arm curl
+  ///
+  /// In en, this message translates to:
+  /// **'Concentration Curl'**
+  String get exConcentrationCurl;
+
+  /// Bicep curl on cable machine
+  ///
+  /// In en, this message translates to:
+  /// **'Cable Curl'**
+  String get exCableCurl;
+
+  /// Curl up, rotate, lower down
+  ///
+  /// In en, this message translates to:
+  /// **'Zottman Curl'**
+  String get exZottmanCurl;
+
+  /// Dumbbell overhead extension
+  ///
+  /// In en, this message translates to:
+  /// **'Overhead Triceps Extension'**
+  String get exTricepsExtension;
+
+  /// Lying triceps extension with barbell
+  ///
+  /// In en, this message translates to:
+  /// **'Skull Crusher'**
+  String get exSkullCrusher;
+
+  /// Cable pushdown
+  ///
+  /// In en, this message translates to:
+  /// **'Tricep Pushdown'**
+  String get exTricepPushdown;
+
+  /// Seated dip machine
+  ///
+  /// In en, this message translates to:
+  /// **'Tricep Dip Machine'**
+  String get exTricepDipMachine;
+
+  /// Dip using a bench
+  ///
+  /// In en, this message translates to:
+  /// **'Bench Dip'**
+  String get exBenchDip;
+
+  /// Standard floor crunch
+  ///
+  /// In en, this message translates to:
+  /// **'Crunch'**
+  String get exCrunch;
+
+  /// Kneeling cable crunch
+  ///
+  /// In en, this message translates to:
+  /// **'Cable Crunch'**
+  String get exCableCrunch;
+
+  /// Full sit-up
+  ///
+  /// In en, this message translates to:
+  /// **'Sit-up'**
+  String get exSitUp;
+
+  /// Lying leg raise
+  ///
+  /// In en, this message translates to:
+  /// **'Leg Raise'**
+  String get exLegRaise;
+
+  /// Leg raise hanging from bar
   ///
   /// In en, this message translates to:
   /// **'Hanging Leg Raise'**
   String get exLegRaiseHang;
+
+  /// Seated torso twist
+  ///
+  /// In en, this message translates to:
+  /// **'Russian Twist'**
+  String get exRussianTwist;
+
+  /// Static plank
+  ///
+  /// In en, this message translates to:
+  /// **'Plank'**
+  String get exPlank;
+
+  /// Static side plank
+  ///
+  /// In en, this message translates to:
+  /// **'Side Plank'**
+  String get exSidePlank;
+
+  /// Rollout with wheel
+  ///
+  /// In en, this message translates to:
+  /// **'Ab Wheel Rollout'**
+  String get exAbWheelRollout;
+
+  /// Elbow to knee crunch
+  ///
+  /// In en, this message translates to:
+  /// **'Bicycle Crunch'**
+  String get exBicycleCrunch;
+
+  /// Diagonal cable twist
+  ///
+  /// In en, this message translates to:
+  /// **'Cable Woodchopper'**
+  String get exWoodchopper;
+
+  /// Running/Walking on treadmill
+  ///
+  /// In en, this message translates to:
+  /// **'Treadmill'**
+  String get exCardioTreadmill;
+
+  /// Elliptical machine
+  ///
+  /// In en, this message translates to:
+  /// **'Elliptical'**
+  String get exCardioElliptical;
+
+  /// Cardio rowing
+  ///
+  /// In en, this message translates to:
+  /// **'Rowing Machine'**
+  String get exCardioRowing;
+
+  /// Walking with heavy weights
+  ///
+  /// In en, this message translates to:
+  /// **'Farmer\'s Walk'**
+  String get exFarmerWalk;
 
   /// Button to finish workout
   ///
@@ -1333,6 +1633,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'You will now receive reminders.'**
   String get notificationsEnabledBody;
+
+  /// Weight control section title
+  ///
+  /// In en, this message translates to:
+  /// **'Weight Control'**
+  String get weightControl;
+
+  /// Weight chart and reminders subtitle
+  ///
+  /// In en, this message translates to:
+  /// **'Weight Chart and Reminders'**
+  String get weightChartAndReminders;
 
   /// Health page title
   ///

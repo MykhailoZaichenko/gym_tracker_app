@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/features/health/pages/health_page.dart';
 import 'package:gym_tracker_app/l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
-import 'package:gym_tracker_app/core/constants/exersise_meta.dart';
+import 'package:gym_tracker_app/core/constants/exercise_meta.dart';
 import 'package:gym_tracker_app/features/profile/models/user_model.dart';
 import 'package:gym_tracker_app/features/profile/profile_exports.dart';
 import 'package:gym_tracker_app/services/firestore_service.dart';
@@ -165,6 +165,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     final locale = AppLocalizations.of(context)!.localeName;
     final monthName = DateFormat.MMMM(locale).format(_visibleMonth);
     final capitalizedMonth = toBeginningOfSentenceCase(monthName);
@@ -226,11 +227,11 @@ class _ProfilePageState extends State<ProfilePage> {
                               color: Colors.blueAccent,
                             ),
                           ),
-                          title: const Text(
-                            "Контроль ваги",
-                            style: TextStyle(fontWeight: FontWeight.bold),
+                          title: Text(
+                            loc.weightControl,
+                            style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
-                          subtitle: const Text("Графік ваги та нагадування"),
+                          subtitle: Text(loc.weightChartAndReminders),
                           trailing: const Icon(
                             Icons.chevron_right,
                             color: Colors.grey,

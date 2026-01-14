@@ -9,6 +9,7 @@ import 'package:gym_tracker_app/features/workout/widgets/workout_type_selection_
 import 'package:gym_tracker_app/l10n/app_localizations.dart';
 import 'package:gym_tracker_app/services/firestore_service.dart';
 import 'package:gym_tracker_app/utils/workout_utils.dart';
+import 'package:gym_tracker_app/widget/common/exercise_icon.dart';
 import 'package:gym_tracker_app/widget/common/fading_edge.dart';
 import 'package:gym_tracker_app/widget/common/primary_filled_button.dart';
 import 'package:gym_tracker_app/widget/common/status_icon_widget.dart';
@@ -372,9 +373,15 @@ class _JournalPageState extends State<JournalPage> {
                                   leading: CircleAvatar(
                                     backgroundColor: theme.primaryColor
                                         .withValues(alpha: 0.1),
-                                    child: Icon(
-                                      exerciseInfo.icon,
+                                    // child: Icon(
+                                    //   exerciseInfo.icon,
+                                    //   color: theme.primaryColor,
+                                    // ),
+                                    child: ExerciseIcon(
+                                      exercise: exerciseInfo,
+                                      size: 24,
                                       color: theme.primaryColor,
+                                      // color: theme.brightness == Brightness.dark ? Colors.white : Colors.black,
                                     ),
                                   ),
                                   title: Text(

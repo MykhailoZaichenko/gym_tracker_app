@@ -48,6 +48,7 @@ class _SettingsPageState extends State<SettingsPage> {
     setState(() => _notificationsEnabled = value);
     await _prefs.setBool('notifications_enabled', value);
 
+    if (!mounted) return;
     if (value) {
       // Якщо увімкнули - надсилаємо тестове повідомлення
       final loc = AppLocalizations.of(context)!;

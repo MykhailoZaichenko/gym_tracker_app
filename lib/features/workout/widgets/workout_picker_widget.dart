@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/data/seed/exercise_catalog.dart';
 import 'package:gym_tracker_app/l10n/app_localizations.dart';
+import 'package:gym_tracker_app/widget/common/exercise_icon.dart';
 
 Future<ExerciseInfo?> showExercisePicker(
   BuildContext context, {
@@ -117,9 +118,23 @@ class _ExercisePickerSheetState extends State<_ExercisePickerSheet> {
                     }
                     final it = filtered[idx - 1];
                     return ListTile(
-                      leading: CircleAvatar(
-                        backgroundColor: Colors.transparent,
-                        child: Icon(it.icon),
+                      leading: Container(
+                        width: 40,
+                        height: 40,
+                        padding: const EdgeInsets.all(
+                          4,
+                        ), // Трохи відступу, щоб іконка не торкалася країв
+                        decoration: BoxDecoration(
+                          color: Colors
+                              .grey[200], // Світлий фон, щоб чорні іконки було видно на темній темі
+                          shape: BoxShape.circle,
+                        ),
+                        child: ExerciseIcon(
+                          exercise: it,
+                          size: 24,
+                          color: Colors
+                              .black, // Примусово чорний колір для стандартних іконок, якщо треба
+                        ),
                       ),
                       title: Text(it.name),
                       onTap: () => Navigator.of(context).pop(it),

@@ -526,13 +526,25 @@ class AppLocalizationsUk extends AppLocalizations {
   String get exSquat => 'Присідання';
 
   @override
+  String get exFrontSquat => 'Фронтальні присідання';
+
+  @override
+  String get exGobletSquat => 'Кубкові присідання';
+
+  @override
   String get exLunge => 'Випади';
+
+  @override
+  String get exWalkingLunge => 'Випади в русі';
+
+  @override
+  String get exBulgarianSplitSquat => 'Болгарські випади';
 
   @override
   String get exLegPress => 'Жим ногами';
 
   @override
-  String get exWallSit => 'Вправа біля стіни';
+  String get exWallSit => 'Стільчик (біля стіни)';
 
   @override
   String get exLegExtension => 'Розгинання ніг';
@@ -544,88 +556,226 @@ class AppLocalizationsUk extends AppLocalizations {
   String get exDeadlift => 'Станова тяга';
 
   @override
-  String get exGoodMorning => 'Нахили зі штангою \\ \"Добрий ранок\"';
+  String get exSumoDeadlift => 'Станова тяга сумо';
 
   @override
-  String get exStandingCalfRaise => 'Підйоми на носки стоячи';
+  String get exRomanianDeadlift => 'Румунська тяга';
 
   @override
-  String get exSeatedCalfRaise => 'Підйоми на носки сидячи';
+  String get exGoodMorning => 'Гуд морнінг (Нахили)';
 
   @override
-  String get exPushUp => 'Відтискання ';
+  String get exHipThrust => 'Сідничний місток (штанга)';
 
   @override
-  String get exPullUp => 'Підтягування';
+  String get exGluteBridge => 'Сідничний місток (підлога)';
 
   @override
-  String get exDip => 'Віджимання на брусах';
+  String get exStandingCalfRaise => 'Підйом на литки стоячи';
+
+  @override
+  String get exSeatedCalfRaise => 'Підйом на литки сидячи';
+
+  @override
+  String get exDonkeyCalfRaise => 'Підйом на литки \"віслюк\"';
+
+  @override
+  String get exAbductorMachine => 'Розведення ніг';
+
+  @override
+  String get exAdductorMachine => 'Зведення ніг';
 
   @override
   String get exBenchPress => 'Жим лежачи';
 
   @override
-  String get exMachineFly => 'Машинні розведення';
+  String get exInclineBenchPress => 'Жим лежачи під кутом';
 
   @override
-  String get exLateralRaise => 'Розведення рук у сторони';
+  String get exDeclineBenchPress => 'Жим лежачи головою вниз';
 
   @override
-  String get exBentOverRow => 'Тяга в нахилі';
+  String get exDumbbellBenchPress => 'Жим гантелей лежачи';
 
   @override
-  String get exLatPullDown => 'Тяга верхнього блока';
+  String get exInclineDumbbellPress => 'Жим гантелей під кутом';
 
   @override
-  String get exShoulderShrug => 'Шраги';
+  String get exPushUp => 'Віджимання';
 
   @override
-  String get exOverheadPress => 'Жим над головою';
+  String get exDiamondPushUp => 'Алмазні віджимання';
 
   @override
-  String get exFrontRaise => 'Передні підйоми рук';
+  String get exDip => 'Віджимання на брусах';
 
   @override
-  String get exRearDeltRaise => 'Задні розведення дельт';
+  String get exMachineFly => 'Метелик (Pec-Deck)';
 
   @override
-  String get exUprightRow => 'Upright row';
+  String get exCableCrossover => 'Кросовер';
 
   @override
-  String get exFacePull => 'Face pull';
+  String get exDumbbellFly => 'Розведення гантелей';
 
   @override
-  String get exBicepsCurl => 'Підйоми на біцепс';
+  String get exPullover => 'Пуловер';
 
   @override
-  String get exTricepsExtension => 'Французький жим';
+  String get exChestPressMachine => 'Жим в тренажері на груди';
 
   @override
-  String get exCrunch => 'Скручування';
+  String get exPullUp => 'Підтягування';
 
   @override
-  String get exSitUp => 'Підйом тулуба';
+  String get exChinUp => 'Підтягування зворотним хватом';
 
   @override
-  String get exPlank => 'Планка';
+  String get exLatPullDown => 'Тяга верхнього блоку';
 
   @override
-  String get exLegRaise => 'Підйоми ніг';
+  String get exCloseGripLatPullDown => 'Тяга блоку вузьким хватом';
+
+  @override
+  String get exBentOverRow => 'Тяга штанги в нахилі';
+
+  @override
+  String get exReverseGripRow => 'Тяга штанги зворотним хватом';
+
+  @override
+  String get exSingleArmDumbbellRow => 'Тяга гантелі однією рукою';
+
+  @override
+  String get exTBarRow => 'Тяга Т-грифа';
+
+  @override
+  String get exSeatedCableRow => 'Горизонтальна тяга блоку';
+
+  @override
+  String get exMachineRow => 'Тяга важеля (в тренажері)';
+
+  @override
+  String get exStraightArmPulldown => 'Пуловер на блоці стоячи';
 
   @override
   String get exHyperextension => 'Гіперекстензія';
 
   @override
-  String get exHammerCurl => 'Молотковий підйом';
+  String get exRackPull => 'Тяга з плінтів';
 
   @override
-  String get exZottmanCurl => 'Сгибания Зоттмана';
+  String get exOverheadPress => 'Армійський жим';
 
   @override
-  String get exMachineRow => 'Тяга в блоці';
+  String get exSeatedDumbbellPress => 'Жим гантелей сидячи';
 
   @override
-  String get exLegRaiseHang => 'Підйоми ніг у висі';
+  String get exArnoldPress => 'Жим Арнольда';
+
+  @override
+  String get exLateralRaise => 'Махи гантелями в сторони';
+
+  @override
+  String get exCableLateralRaise => 'Махи в сторони на блоці';
+
+  @override
+  String get exFrontRaise => 'Підйом рук перед собою';
+
+  @override
+  String get exRearDeltRaise => 'Махи в нахилі (задня дельта)';
+
+  @override
+  String get exReversePecDeck => 'Зворотний метелик';
+
+  @override
+  String get exFacePull => 'Тяга до обличчя';
+
+  @override
+  String get exUprightRow => 'Тяга до підборіддя';
+
+  @override
+  String get exShoulderShrug => 'Шраги';
+
+  @override
+  String get exBicepsCurl => 'Підйом на біцепс';
+
+  @override
+  String get exDumbbellCurl => 'Підйом гантелей на біцепс';
+
+  @override
+  String get exHammerCurl => 'Молотки';
+
+  @override
+  String get exPreacherCurl => 'Згинання на лаві Скотта';
+
+  @override
+  String get exConcentrationCurl => 'Концентрований підйом';
+
+  @override
+  String get exCableCurl => 'Згинання рук на блоці';
+
+  @override
+  String get exZottmanCurl => 'Згинання Зоттмана';
+
+  @override
+  String get exTricepsExtension => 'Розгинання на трицепс (з-за голови)';
+
+  @override
+  String get exSkullCrusher => 'Французький жим лежачи';
+
+  @override
+  String get exTricepPushdown => 'Розгинання на блоці донизу';
+
+  @override
+  String get exTricepDipMachine => 'Віджимання в тренажері на трицепс';
+
+  @override
+  String get exBenchDip => 'Зворотні віджимання від лави';
+
+  @override
+  String get exCrunch => 'Скручування';
+
+  @override
+  String get exCableCrunch => 'Скручування на блоці (молитва)';
+
+  @override
+  String get exSitUp => 'Підйом тулуба';
+
+  @override
+  String get exLegRaise => 'Підйом ніг лежачи';
+
+  @override
+  String get exLegRaiseHang => 'Підйом ніг у висі';
+
+  @override
+  String get exRussianTwist => 'Російський твіст';
+
+  @override
+  String get exPlank => 'Планка';
+
+  @override
+  String get exSidePlank => 'Бокова планка';
+
+  @override
+  String get exAbWheelRollout => 'Ролик для преса';
+
+  @override
+  String get exBicycleCrunch => 'Велосипед';
+
+  @override
+  String get exWoodchopper => 'Лісоруб (на блоці)';
+
+  @override
+  String get exCardioTreadmill => 'Бігова доріжка';
+
+  @override
+  String get exCardioElliptical => 'Орбітрек';
+
+  @override
+  String get exCardioRowing => 'Гребний тренажер';
+
+  @override
+  String get exFarmerWalk => 'Прогулянка фермера';
 
   @override
   String get finishWorkout => 'Завершити тренування';
@@ -668,6 +818,12 @@ class AppLocalizationsUk extends AppLocalizations {
   @override
   String get notificationsEnabledBody =>
       'Тепер ви будете отримувати нагадування.';
+
+  @override
+  String get weightControl => 'Контроль ваги';
+
+  @override
+  String get weightChartAndReminders => 'Графік ваги та нагадування';
 
   @override
   String get healthTitle => 'Здоровʼя';

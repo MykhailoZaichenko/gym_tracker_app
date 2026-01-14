@@ -99,7 +99,7 @@ class _HealthPageState extends State<HealthPage> {
       ),
       builder: (ctx) {
         return StatefulBuilder(
-          builder: (context, setSheetState) {
+          builder: (sheetContext, setSheetState) {
             final timeOfDay = TimeOfDay(
               hour: timeMinutes ~/ 60,
               minute: timeMinutes % 60,
@@ -112,7 +112,7 @@ class _HealthPageState extends State<HealthPage> {
                 children: [
                   Text(
                     loc.reminderSettings,
-                    style: Theme.of(context).textTheme.titleLarge,
+                    style: Theme.of(sheetContext).textTheme.titleLarge,
                   ),
                   const SizedBox(height: 20),
                   Text(
@@ -133,10 +133,11 @@ class _HealthPageState extends State<HealthPage> {
                         selected: isSelected,
                         onSelected: (selected) {
                           setSheetState(() {
-                            if (selected)
+                            if (selected) {
                               selectedDays.add(dayNum);
-                            else
+                            } else {
                               selectedDays.remove(dayNum);
+                            }
                           });
                         },
                       );
@@ -150,7 +151,7 @@ class _HealthPageState extends State<HealthPage> {
                   ListTile(
                     contentPadding: EdgeInsets.zero,
                     title: Text(
-                      timeOfDay.format(context),
+                      timeOfDay.format(sheetContext),
                       style: const TextStyle(
                         fontSize: 32,
                         fontWeight: FontWeight.bold,
@@ -159,7 +160,7 @@ class _HealthPageState extends State<HealthPage> {
                     trailing: const Icon(Icons.access_time),
                     onTap: () async {
                       final newTime = await showTimePicker(
-                        context: context,
+                        context: sheetContext,
                         initialTime: timeOfDay,
                         builder: (BuildContext context, Widget? child) {
                           return MediaQuery(
@@ -182,9 +183,11 @@ class _HealthPageState extends State<HealthPage> {
                     width: double.infinity,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Theme.of(context).colorScheme.primary,
+                        backgroundColor: Theme.of(
+                          sheetContext,
+                        ).colorScheme.primary,
                         foregroundColor: Theme.of(
-                          context,
+                          sheetContext,
                         ).colorScheme.onPrimary,
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         shape: RoundedRectangleBorder(

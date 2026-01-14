@@ -10,6 +10,7 @@ import 'package:gym_tracker_app/features/workout/workout_exports.dart';
 import 'package:gym_tracker_app/utils/utils.dart';
 import 'package:gym_tracker_app/utils/workout_utils.dart';
 import 'package:gym_tracker_app/widget/common/custome_snackbar.dart';
+import 'package:gym_tracker_app/widget/common/exercise_icon.dart';
 import 'package:gym_tracker_app/widget/common/pop_save_wideget.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -454,11 +455,21 @@ class _WorkoutPageState extends State<WorkoutPage> {
                 backgroundColor: Theme.of(
                   context,
                 ).colorScheme.primary.withValues(alpha: 0.1),
-                child: Icon(
-                  info?.icon ?? Icons.fitness_center,
-                  color: Theme.of(context).colorScheme.primary,
-                  size: 18,
-                ),
+                // Перевіряємо: якщо інформація про вправу є, малюємо нашу іконку/картинку
+                child: info != null
+                    ? ExerciseIcon(
+                        exercise: info,
+                        size:
+                            20, // Трохи більше за 18, щоб картинка краще виглядала
+                        color: Theme.of(context)
+                            .colorScheme
+                            .primary, // Фарбуємо чорні лінії в колір теми
+                      )
+                    : Icon(
+                        Icons.fitness_center,
+                        color: Theme.of(context).colorScheme.primary,
+                        size: 18,
+                      ),
               ),
               const SizedBox(width: 16),
               Expanded(
@@ -535,7 +546,12 @@ class _WorkoutPageState extends State<WorkoutPage> {
                 return CircleAvatar(
                   radius: 20,
                   backgroundColor: color.withValues(alpha: 0.12),
-                  child: Icon(found.icon, color: color),
+                  child: ExerciseIcon(
+                    exercise: found, // Ваша змінна з інформацією про вправу
+                    size: 24, // Розмір іконки (трохи менший за діаметр кола 40)
+                    color:
+                        color, // Цей параметр перефарбує чорні лінії PNG у колір теми
+                  ),
                 );
               },
             ),
