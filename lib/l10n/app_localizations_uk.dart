@@ -873,4 +873,38 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get weightHistory => 'Історія ваги';
+
+  @override
+  String get weeklyGoalTitle => 'Тижнева ціль';
+
+  @override
+  String get weeklyGoalQuestion =>
+      'Скільки разів на тиждень ви плануєте тренуватися?';
+
+  @override
+  String get timesPerWeek => 'разів/тиждень';
+
+  @override
+  String streakWeeks(int count) {
+    return '$count-тижнева серія';
+  }
+
+  @override
+  String get streakKeep => 'Чудово! Виконали план на цей тиждень.';
+
+  @override
+  String streakBurn(int count) {
+    return 'Тренуйтесь ще $count р., щоб зберегти серію!';
+  }
+
+  @override
+  String get streakLostMsg => 'Серію втрачено. Почніть нову цього тижня!';
+
+  @override
+  String get weekLabel => 'Тиждень';
+
+  @override
+  String goalLabel(int count) {
+    return 'Ціль змінено на $count разів/тиждень';
+  }
 }

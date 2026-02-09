@@ -17,13 +17,12 @@ class FirestoreService {
   // --- КОРИСТУВАЧ ---
 
   Future<void> saveUser(app_user.UserModel user) async {
-    if (currentUserId == null) return;
-    // Не використовуємо await, щоб UI не блокувався в офлайні
-    _db
+    final uid = _auth.currentUser?.uid;
+    if (uid == null) return;
+    await _db
         .collection('users')
-        .doc(currentUserId)
-        .set(user.toMap(), SetOptions(merge: true))
-        .catchError((e) => print("Offline save error (ignore): $e"));
+        .doc(uid)
+        .set(user.toMap(), SetOptions(merge: true));
   }
 
   Future<app_user.UserModel?> getUser() async {
@@ -274,5 +273,12 @@ class FirestoreService {
               .map((doc) => BodyWeightModel.fromMap(doc.id, doc.data()))
               .toList();
         });
+  }
+
+  Future<void> updateWeeklyGoal(int newGoal) async {
+    final uid = _auth.currentUser?.uid;
+    if (uid == null) return;
+
+    await _db.collection('users').doc(uid).update({'weeklyGoal': newGoal});
   }
 }

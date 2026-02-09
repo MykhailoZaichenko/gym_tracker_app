@@ -51,8 +51,6 @@ class AuthService {
           id: null,
           email: user.email ?? '',
           name: user.displayName ?? 'Google User',
-          passwordHash: '',
-          salt: '',
           weightKg: 0,
           avatarUrl: user.photoURL,
         );
@@ -83,8 +81,6 @@ class AuthService {
       id: null,
       email: email,
       name: name,
-      passwordHash: '',
-      salt: '',
       avatarUrl: null,
       weightKg: null,
     );

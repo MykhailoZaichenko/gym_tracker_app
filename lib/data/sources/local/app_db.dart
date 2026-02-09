@@ -33,8 +33,6 @@ class AppDb {
         id TEXT PRIMARY KEY,
         email TEXT NOT NULL UNIQUE,
         name TEXT NOT NULL,
-        passwordHash TEXT NOT NULL,
-        salt TEXT NOT NULL,
         avatarUrl TEXT,
         weightKg REAL
       );

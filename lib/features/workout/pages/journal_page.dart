@@ -1,6 +1,10 @@
+// ignore_for_file: unused_field, duplicate_ignore
+
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/data/seed/exercise_catalog.dart';
+import 'package:gym_tracker_app/features/analytics/pages/streak_details_page.dart';
+import 'package:gym_tracker_app/features/profile/models/user_model.dart';
 import 'package:gym_tracker_app/features/workout/models/workout_exercise_model.dart';
 import 'package:gym_tracker_app/features/workout/models/workout_model.dart';
 import 'package:gym_tracker_app/features/workout/pages/workout_page.dart';
@@ -13,6 +17,7 @@ import 'package:gym_tracker_app/widget/common/exercise_icon.dart';
 import 'package:gym_tracker_app/widget/common/fading_edge.dart';
 import 'package:gym_tracker_app/widget/common/primary_filled_button.dart';
 import 'package:gym_tracker_app/widget/common/status_icon_widget.dart';
+import 'package:gym_tracker_app/widget/common/weekly_goal_dialog.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -40,17 +45,132 @@ class _JournalPageState extends State<JournalPage> {
   WorkoutModel? _comparisonWorkout;
   WorkoutModel? _lastReport;
 
+  // ignore: unused_field
+  int _streakWeeks = 0;
+  int _weeklyGoal = 3;
+  UserModel? _currentUser;
+  bool _hasCheckedGoal = false;
+
   @override
   void initState() {
     super.initState();
     _restoreSessionState();
     _checkTodayWorkout();
+    _loadUserDataAndStreak();
   }
 
   @override
   void dispose() {
     _timer?.cancel();
     super.dispose();
+  }
+
+  // --- ЛОГІКА ПІДРАХУНКУ ТИЖНЕВОГО СТРІКУ ---
+
+  Future<void> _loadUserDataAndStreak() async {
+    final user = await _firestore.getUser();
+    final workoutsMap = await _firestore.getAllWorkouts();
+
+    if (user != null) {
+      if (mounted) {
+        setState(() {
+          _currentUser = user;
+          _weeklyGoal = user.weeklyGoal > 0 ? user.weeklyGoal : 3;
+          _streakWeeks = _calculateWeeklyStreak(workoutsMap, _weeklyGoal);
+        });
+
+        if (user.weeklyGoal == 0 && !_hasCheckedGoal) {
+          _hasCheckedGoal = true;
+          WidgetsBinding.instance.addPostFrameCallback(
+            (_) => _showGoalDialog(user),
+          );
+        }
+      }
+    }
+  }
+
+  Future<void> _showGoalDialog(UserModel user) async {
+    final newGoal = await showDialog<int>(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => const WeeklyGoalDialog(initialGoal: 3),
+    );
+
+    if (newGoal != null) {
+      // 1. Зберігаємо в базу (важливо!)
+      await _firestore.updateWeeklyGoal(newGoal);
+
+      // 2. Оновлюємо локальний стан
+      final updatedUser = user.copyWith(weeklyGoal: newGoal);
+      setState(() {
+        _weeklyGoal = newGoal;
+        _currentUser = updatedUser;
+        // Перераховуємо стрік з новою ціллю
+      });
+
+      // Оновлюємо стрік (потрібно заново взяти воркаути або використати збережені)
+      final workouts = await _firestore.getAllWorkouts();
+      setState(() {
+        _streakWeeks = _calculateWeeklyStreak(workouts, newGoal);
+      });
+    }
+  }
+
+  int _calculateWeeklyStreak(Map<String, dynamic> workoutsMap, int goal) {
+    if (workoutsMap.isEmpty) return 0;
+
+    // 1. Конвертуємо всі дати тренувань у список
+    final dates = <DateTime>[];
+    workoutsMap.forEach((key, _) {
+      try {
+        dates.add(DateTime.parse(key));
+      } catch (_) {}
+    });
+
+    if (dates.isEmpty) return 0;
+
+    // 2. Групуємо по тижнях (Номер тижня від початку епохи або року)
+    // Використаємо простий ключ: "YYYY-WW"
+    final Map<String, int> workoutsPerWeek = {};
+
+    for (var date in dates) {
+      // Знаходимо понеділок цього тижня, щоб уніфікувати
+      final startOfWeek = date.subtract(Duration(days: date.weekday - 1));
+      final key =
+          "${startOfWeek.year}-${startOfWeek.month}-${startOfWeek.day}"; // Спрощено, тиждень ідентифікуємо по даті понеділка
+      workoutsPerWeek[key] = (workoutsPerWeek[key] ?? 0) + 1;
+    }
+
+    // 3. Ітеруємо назад від поточного тижня
+    final now = DateTime.now();
+    final currentMonday = now.subtract(Duration(days: now.weekday - 1));
+
+    int streak = 0;
+    // Починаємо перевірку з *минулого* тижня.
+    // Поточний тиждень додає до стріку тільки якщо ВЖЕ виконаний.
+
+    // Перевіряємо поточний тиждень
+    final currentKey =
+        "${currentMonday.year}-${currentMonday.month}-${currentMonday.day}";
+    if ((workoutsPerWeek[currentKey] ?? 0) >= goal) {
+      streak++;
+    }
+
+    // Перевіряємо минулі тижні
+    DateTime checkMonday = currentMonday.subtract(const Duration(days: 7));
+    while (true) {
+      final key = "${checkMonday.year}-${checkMonday.month}-${checkMonday.day}";
+      final count = workoutsPerWeek[key] ?? 0;
+
+      if (count >= goal) {
+        streak++;
+        checkMonday = checkMonday.subtract(const Duration(days: 7));
+      } else {
+        break; // Стрік перервався
+      }
+    }
+
+    return streak;
   }
 
   // --- ЛОГІКА ВІДНОВЛЕННЯ СЕСІЇ ---
@@ -268,10 +388,64 @@ class _JournalPageState extends State<JournalPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(loc.navJournal),
-        centerTitle: false,
-        scrolledUnderElevation: 0,
-        backgroundColor: theme.scaffoldBackgroundColor,
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(loc.navJournal),
+            const SizedBox(width: 8),
+            // 🔥 ВІДЖЕТ СТРІКУ В APPBAR
+            if (_currentUser != null)
+              GestureDetector(
+                onTap: () async {
+                  // Відкриваємо детальну сторінку
+                  // Треба завантажити повну мапу тренувань для деталізації
+                  final allWorkouts = await _firestore.getAllWorkouts();
+                  if (!context.mounted) return;
+
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => StreakDetailsPage(
+                        streakWeeks: _streakWeeks,
+                        weeklyGoal: _weeklyGoal,
+                        allWorkouts: allWorkouts,
+                      ),
+                    ),
+                  );
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).cardColor,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: Colors.grey.withValues(alpha: 0.2),
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.local_fire_department,
+                        color: Color(0xFFE91E63),
+                        size: 20,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        "$_streakWeeks",
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+          ],
+        ),
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())

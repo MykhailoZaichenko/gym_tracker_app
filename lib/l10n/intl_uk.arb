@@ -302,5 +302,15 @@
   "weightDateRange": "Зміна з {start} по {end}",
   "saveSettings": "Зберегти налаштування",
   "history": "Історія",
-  "weightHistory": "Історія ваги"
+  "weightHistory": "Історія ваги",
+
+  "weeklyGoalTitle": "Тижнева ціль",
+  "weeklyGoalQuestion": "Скільки разів на тиждень ви плануєте тренуватися?",
+  "timesPerWeek": "разів/тиждень",
+  "streakWeeks": "{count}-тижнева серія",
+  "streakKeep": "Чудово! Виконали план на цей тиждень.",
+  "streakBurn": "Тренуйтесь ще {count} р., щоб зберегти серію!",
+  "streakLostMsg": "Серію втрачено. Почніть нову цього тижня!",
+  "weekLabel": "Тиждень",
+  "goalLabel": "Ціль змінено на {count} разів/тиждень"
 }

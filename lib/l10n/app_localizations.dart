@@ -1735,6 +1735,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Weight History'**
   String get weightHistory;
+
+  /// Weekly goal section title
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly Goal'**
+  String get weeklyGoalTitle;
+
+  /// Weekly goal question
+  ///
+  /// In en, this message translates to:
+  /// **'How many times a week do you plan to workout?'**
+  String get weeklyGoalQuestion;
+
+  /// Times per week label
+  ///
+  /// In en, this message translates to:
+  /// **'times/week'**
+  String get timesPerWeek;
+
+  /// Streak weeks label
+  ///
+  /// In en, this message translates to:
+  /// **'{count}-week streak'**
+  String streakWeeks(int count);
+
+  /// Message when weekly goal is met
+  ///
+  /// In en, this message translates to:
+  /// **'Awesome! Weekly goal met.'**
+  String get streakKeep;
+
+  /// Message when weekly goal is not met
+  ///
+  /// In en, this message translates to:
+  /// **'Workout {count} more times to keep the streak!'**
+  String streakBurn(int count);
+
+  /// Message when streak is lost
+  ///
+  /// In en, this message translates to:
+  /// **'Streak lost. Start a new one this week!'**
+  String get streakLostMsg;
+
+  /// Label for week in streak display
+  ///
+  /// In en, this message translates to:
+  /// **'Week'**
+  String get weekLabel;
+
+  /// Weekly goal label
+  ///
+  /// In en, this message translates to:
+  /// **'Goal {count}x/week'**
+  String goalLabel(int count);
 }
 
 class _AppLocalizationsDelegate

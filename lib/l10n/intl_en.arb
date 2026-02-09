@@ -591,5 +591,27 @@
   "history": "History",
   "@history": { "description": "History tab label" },
   "weightHistory": "Weight History",
-  "@weightHistory": { "description": "Weight history title" }
+  "@weightHistory": { "description": "Weight history title" },
+
+  "weeklyGoalTitle": "Weekly Goal",
+  "@weeklyGoalTitle": { "description": "Weekly goal section title" },
+  "weeklyGoalQuestion": "How many times a week do you plan to workout?",
+  "@weeklyGoalQuestion": { "description": "Weekly goal question" },
+  "timesPerWeek": "times/week",
+  "@timesPerWeek": { "description": "Times per week label" },
+  "streakWeeks": "{count}-week streak",
+  "@streakWeeks": { "description": "Streak weeks label", "placeholders": { "count": { "type": "int" } } },
+  "streakKeep": "Awesome! Weekly goal met.",
+  "@streakKeep": { "description": "Message when weekly goal is met" },
+  "streakBurn": "Workout {count} more times to keep the streak!",
+  "@streakBurn": {
+    "description": "Message when weekly goal is not met",
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "streakLostMsg": "Streak lost. Start a new one this week!",
+  "@streakLostMsg": { "description": "Message when streak is lost" },
+  "weekLabel": "Week",
+  "@weekLabel": { "description": "Label for week in streak display" },
+  "goalLabel": "Goal {count}x/week",
+  "@goalLabel": { "description": "Weekly goal label", "placeholders": { "count": { "type": "int" } } }
 }

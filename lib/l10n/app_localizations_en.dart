@@ -865,4 +865,38 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get weightHistory => 'Weight History';
+
+  @override
+  String get weeklyGoalTitle => 'Weekly Goal';
+
+  @override
+  String get weeklyGoalQuestion =>
+      'How many times a week do you plan to workout?';
+
+  @override
+  String get timesPerWeek => 'times/week';
+
+  @override
+  String streakWeeks(int count) {
+    return '$count-week streak';
+  }
+
+  @override
+  String get streakKeep => 'Awesome! Weekly goal met.';
+
+  @override
+  String streakBurn(int count) {
+    return 'Workout $count more times to keep the streak!';
+  }
+
+  @override
+  String get streakLostMsg => 'Streak lost. Start a new one this week!';
+
+  @override
+  String get weekLabel => 'Week';
+
+  @override
+  String goalLabel(int count) {
+    return 'Goal ${count}x/week';
+  }
 }

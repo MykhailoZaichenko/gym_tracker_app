@@ -4,39 +4,31 @@ class UserModel {
   final String name;
   final String email;
 
-  // Ці поля для Firebase Auth не потрібні (Firebase сам зберігає паролі безпечно),
-  // але я залишив їх, щоб не ламати вашу логіку, якщо вони десь використовуються.
-  final String? passwordHash;
-  final String? salt;
-
   final String? avatarUrl;
   final double? weightKg;
+  final int weeklyGoal;
 
   UserModel({
     required this.id,
     required this.name,
     required this.email,
-    this.passwordHash,
-    this.salt,
     this.avatarUrl,
     this.weightKg,
+    this.weeklyGoal = 0,
   });
 
   UserModel copyWith({
     String? id,
     String? name,
     String? email,
-    String? passwordHash,
-    String? salt,
     String? avatarUrl,
     double? weightKg,
+    int? weeklyGoal,
   }) {
     return UserModel(
       id: id ?? this.id,
       name: name ?? this.name,
       email: email ?? this.email,
-      passwordHash: passwordHash ?? this.passwordHash,
-      salt: salt ?? this.salt,
       avatarUrl: avatarUrl ?? this.avatarUrl,
       weightKg: weightKg ?? this.weightKg,
     );
@@ -47,11 +39,9 @@ class UserModel {
       'id': id,
       'name': name,
       'email': email,
-      // Не зберігайте паролі в Firestore, якщо користуєтесь Firebase Auth!
-      // 'passwordHash': passwordHash,
-      // 'salt': salt,
       'avatarUrl': avatarUrl,
       'weightKg': weightKg,
+      'weeklyGoal': weeklyGoal,
     };
   }
 
@@ -61,10 +51,9 @@ class UserModel {
       id: m['id'] as String? ?? '',
       name: m['name'] as String? ?? '',
       email: m['email'] as String? ?? '',
-      passwordHash: m['passwordHash'] as String?,
-      salt: m['salt'] as String?,
       avatarUrl: m['avatarUrl'] as String?,
       weightKg: (m['weightKg'] as num?)?.toDouble(),
+      weeklyGoal: (m['weeklyGoal'] as num?)?.toInt() ?? 0,
     );
   }
 }
