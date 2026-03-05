@@ -17,12 +17,12 @@ class AuthPageWidget extends StatelessWidget {
     required this.onEmailChanged,
     required this.onEmailSubmitted,
     // Name (тільки для Register)
-    this.nameFieldKey,
-    this.controllerName,
-    this.nameFocus,
-    this.validateName,
-    this.onNameChanged,
-    this.onNameSubmitted,
+    // this.nameFieldKey,
+    // this.controllerName,
+    // this.nameFocus,
+    // this.validateName,
+    // this.onNameChanged,
+    // this.onNameSubmitted,
     // Password
     required this.passwordFieldKey,
     required this.controllerPassword,
@@ -51,12 +51,12 @@ class AuthPageWidget extends StatelessWidget {
   final void Function(String) onEmailSubmitted;
 
   // Name (опціонально для Register)
-  final GlobalKey<FormFieldState<String>>? nameFieldKey;
-  final TextEditingController? controllerName;
-  final FocusNode? nameFocus;
-  final String? Function(String?)? validateName;
-  final void Function(String)? onNameChanged;
-  final void Function(String)? onNameSubmitted;
+  // final GlobalKey<FormFieldState<String>>? nameFieldKey;
+  // final TextEditingController? controllerName;
+  // final FocusNode? nameFocus;
+  // final String? Function(String?)? validateName;
+  // final void Function(String)? onNameChanged;
+  // final void Function(String)? onNameSubmitted;
 
   // Password
   final GlobalKey<FormFieldState<String>> passwordFieldKey;
@@ -79,12 +79,12 @@ class AuthPageWidget extends StatelessWidget {
     final loc = AppLocalizations.of(context)!;
     final isRegister = authFormType == AuthFormType.register;
     if (isRegister) {
-      assert(nameFieldKey != null);
-      assert(controllerName != null);
-      assert(nameFocus != null);
-      assert(validateName != null);
-      assert(onNameChanged != null);
-      assert(nameFieldKey != null);
+      // assert(nameFieldKey != null);
+      // assert(controllerName != null);
+      // assert(nameFocus != null);
+      // assert(validateName != null);
+      // assert(onNameChanged != null);
+      // assert(nameFieldKey != null);
       assert(controllerPasswordConfirm != null);
       assert(passwordConfirmFocus != null);
       assert(validatePasswordConfirm != null);
@@ -98,7 +98,6 @@ class AuthPageWidget extends StatelessWidget {
         children: [
           // --- Email Field ---
           StyledTextField(
-            //Todo think about adding autofocus
             // autofocus: true,
             fieldKey: emailFieldKey,
             focusNode: emailFocus,
@@ -114,20 +113,20 @@ class AuthPageWidget extends StatelessWidget {
           const SizedBox(height: 12),
 
           // --- Name Field (тільки для Register) ---
-          if (isRegister) ...[
-            StyledTextField(
-              fieldKey: nameFieldKey,
-              focusNode: nameFocus,
-              controller: controllerName,
-              hintText: loc.nameHint,
-              labelText: loc.nameLabel,
-              textInputAction: TextInputAction.next,
-              validator: validateName,
-              onFieldSubmitted: onNameSubmitted,
-              onChanged: onNameChanged,
-            ),
-            const SizedBox(height: 12),
-          ],
+          // if (isRegister) ...[
+          //   StyledTextField(
+          //     // fieldKey: nameFieldKey,
+          //     // focusNode: nameFocus,
+          //     // controller: controllerName,
+          //     hintText: loc.nameHint,
+          //     labelText: loc.nameLabel,
+          //     textInputAction: TextInputAction.next,
+          //     // validator: validateName,
+          //     // onFieldSubmitted: onNameSubmitted,
+          //     // onChanged: onNameChanged,
+          //   ),
+          //   const SizedBox(height: 12),
+          // ],
 
           // --- Password Field ---
           StyledTextField(

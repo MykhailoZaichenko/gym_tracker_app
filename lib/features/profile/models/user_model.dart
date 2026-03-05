@@ -1,5 +1,4 @@
 class UserModel {
-  // 1. Змінили тип на String, бо Firebase ID - це рядок
   final String? id;
   final String name;
   final String email;
@@ -8,6 +7,11 @@ class UserModel {
   final double? weightKg;
   final int weeklyGoal;
 
+  final int currentStreak;
+  final Map<String, double> monthlyBestWeights;
+  final DateTime? lastWorkoutDate;
+  final int workoutsThisMonth;
+
   UserModel({
     required this.id,
     required this.name,
@@ -15,6 +19,10 @@ class UserModel {
     this.avatarUrl,
     this.weightKg,
     this.weeklyGoal = 0,
+    this.currentStreak = 0,
+    this.monthlyBestWeights = const {},
+    this.lastWorkoutDate,
+    this.workoutsThisMonth = 0,
   });
 
   UserModel copyWith({
@@ -24,6 +32,9 @@ class UserModel {
     String? avatarUrl,
     double? weightKg,
     int? weeklyGoal,
+    int? currentStreak,
+    Map<String, double>? monthlyBestWeights,
+    DateTime? lastWorkoutDate,
   }) {
     return UserModel(
       id: id ?? this.id,
@@ -31,6 +42,9 @@ class UserModel {
       email: email ?? this.email,
       avatarUrl: avatarUrl ?? this.avatarUrl,
       weightKg: weightKg ?? this.weightKg,
+      currentStreak: currentStreak ?? this.currentStreak,
+      monthlyBestWeights: monthlyBestWeights ?? this.monthlyBestWeights,
+      lastWorkoutDate: lastWorkoutDate ?? this.lastWorkoutDate,
     );
   }
 
@@ -42,18 +56,31 @@ class UserModel {
       'avatarUrl': avatarUrl,
       'weightKg': weightKg,
       'weeklyGoal': weeklyGoal,
+      'currentStreak': currentStreak,
+      'monthlyBestWeights': monthlyBestWeights,
+      'lastWorkoutDate': lastWorkoutDate?.toIso8601String(),
+      'workoutsThisMonth': workoutsThisMonth,
     };
   }
 
-  factory UserModel.fromMap(Map<String, dynamic> m) {
+  factory UserModel.fromMap(Map<String, dynamic> data, String id) {
     return UserModel(
-      // Безпечне приведення типів
-      id: m['id'] as String? ?? '',
-      name: m['name'] as String? ?? '',
-      email: m['email'] as String? ?? '',
-      avatarUrl: m['avatarUrl'] as String?,
-      weightKg: (m['weightKg'] as num?)?.toDouble(),
-      weeklyGoal: (m['weeklyGoal'] as num?)?.toInt() ?? 0,
+      id: id,
+      name: data['name'],
+      email: data['email'] ?? '',
+      avatarUrl: data['avatarUrl'] as String?,
+      weightKg: (data['weightKg'] as num?)?.toDouble(),
+      weeklyGoal: (data['weeklyGoal'] as num?)?.toInt() ?? 0,
+      currentStreak: (data['currentStreak'] as num?)?.toInt() ?? 0,
+      monthlyBestWeights:
+          (data['monthlyBestWeights'] as Map<String, dynamic>?)?.map(
+            (k, v) => MapEntry(k, (v as num).toDouble()),
+          ) ??
+          {},
+      lastWorkoutDate: data['lastWorkoutDate'] != null
+          ? DateTime.tryParse(data['lastWorkoutDate'])
+          : null,
+      workoutsThisMonth: (data['workoutsThisMonth'] as num?)?.toInt() ?? 0,
     );
   }
 }

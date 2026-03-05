@@ -3,7 +3,6 @@ import 'package:gym_tracker_app/l10n/app_localizations.dart';
 import 'package:gym_tracker_app/services/auth_service.dart';
 
 import 'package:gym_tracker_app/features/profile/models/user_model.dart';
-import 'package:gym_tracker_app/features/profile/pages/profile_edit_page.dart';
 import 'package:gym_tracker_app/features/profile/pages/settings_page.dart';
 import 'package:gym_tracker_app/features/welcome/pages/welcome_page.dart';
 
@@ -25,21 +24,21 @@ class ProfileSettingsList extends StatelessWidget {
       elevation: 1,
       child: Column(
         children: [
-          ListTile(
-            leading: const Icon(Icons.edit),
-            title: Text(loc.editProfileTitle),
-            onTap: () async {
-              if (user == null) return;
-              final updated = await Navigator.push<UserModel?>(
-                context,
-                MaterialPageRoute(builder: (_) => EditProfilePage(user: user!)),
-              );
-              if (updated != null) {
-                onProfileUpdated(updated);
-              }
-            },
-          ),
-          const Divider(height: 1),
+          // ListTile(
+          //   leading: const Icon(Icons.edit),
+          //   title: Text(loc.editProfileTitle),
+          //   onTap: () async {
+          //     if (user == null) return;
+          //     final updated = await Navigator.push<UserModel?>(
+          //       context,
+          //       MaterialPageRoute(builder: (_) => EditProfilePage(user: user!)),
+          //     );
+          //     if (updated != null) {
+          //       onProfileUpdated(updated);
+          //     }
+          //   },
+          // ),
+          // const Divider(height: 1),
           ListTile(
             leading: const Icon(Icons.settings),
             title: Text(loc.settingsTitle),

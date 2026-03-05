@@ -26,25 +26,25 @@ class _RegisterPageState extends State<RegisterPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final GlobalKey<FormFieldState<String>> _emailFieldKey =
       GlobalKey<FormFieldState<String>>();
-  final GlobalKey<FormFieldState<String>> _nameFieldKey =
-      GlobalKey<FormFieldState<String>>();
+  // final GlobalKey<FormFieldState<String>> _nameFieldKey =
+  //     GlobalKey<FormFieldState<String>>();
   final GlobalKey<FormFieldState<String>> _passwordFieldKey =
       GlobalKey<FormFieldState<String>>();
   final GlobalKey<FormFieldState<String>> _passwordConfirmFieldKey =
       GlobalKey<FormFieldState<String>>();
 
   final TextEditingController _emailCtrl = TextEditingController();
-  final TextEditingController _nameCtrl = TextEditingController();
+  // final TextEditingController _nameCtrl = TextEditingController();
   final TextEditingController _passwordCtrl = TextEditingController();
   final TextEditingController _passwordConfirmCtrl = TextEditingController();
 
   late final FocusNode emailFocus;
-  late final FocusNode nameFocus;
+  // late final FocusNode nameFocus;
   late final FocusNode passwordFocus;
   late final FocusNode passwordConfirmFocus;
 
   Timer? _emailDebounce;
-  Timer? _nameDebounce;
+  // Timer? _nameDebounce;
   Timer? _passwordDebounce;
   Timer? _passwordConfirmDebounce;
 
@@ -57,7 +57,7 @@ class _RegisterPageState extends State<RegisterPage> {
     super.initState();
     // ... (ініціалізація фокусів без змін) ...
     emailFocus = FocusNode();
-    nameFocus = FocusNode();
+    // nameFocus = FocusNode();
     passwordFocus = FocusNode();
     passwordConfirmFocus = FocusNode();
     // ... listeners ...
@@ -67,15 +67,15 @@ class _RegisterPageState extends State<RegisterPage> {
   void dispose() {
     // ... (dispose без змін) ...
     _emailCtrl.dispose();
-    _nameCtrl.dispose();
+    // _nameCtrl.dispose();
     _passwordCtrl.dispose();
     _passwordConfirmCtrl.dispose();
     emailFocus.dispose();
-    nameFocus.dispose();
+    // nameFocus.dispose();
     passwordFocus.dispose();
     passwordConfirmFocus.dispose();
     _emailDebounce?.cancel();
-    _nameDebounce?.cancel();
+    // _nameDebounce?.cancel();
     _passwordDebounce?.cancel();
     _passwordConfirmDebounce?.cancel();
     super.dispose();
@@ -131,7 +131,7 @@ class _RegisterPageState extends State<RegisterPage> {
     if (!formState.validate()) return;
 
     final email = _emailCtrl.text.trim();
-    final name = _nameCtrl.text.trim();
+    // final name = _nameCtrl.text.trim();
     final password = _passwordCtrl.text;
 
     setState(() => _loading = true);
@@ -141,7 +141,7 @@ class _RegisterPageState extends State<RegisterPage> {
           .createUserWithEmailAndPassword(email: email, password: password);
 
       // 2. Оновлюємо ім'я (displayName) в профілі Auth (щоб не загубити)
-      await userCredential.user?.updateDisplayName(name);
+      // await userCredential.user?.updateDisplayName(name);
 
       // 3. Надсилаємо лист підтвердження
       await userCredential.user?.sendEmailVerification();
@@ -179,13 +179,12 @@ class _RegisterPageState extends State<RegisterPage> {
     return null;
   }
 
-  // ... інші валідатори ...
-  String? _validateName(String? v) {
-    final loc = AppLocalizations.of(context)!;
-    if (v == null || v.trim().isEmpty) return loc.errNameRequired;
-    if (v.trim().length < 2) return loc.errNameShort;
-    return null;
-  }
+  // String? _validateName(String? v) {
+  //   final loc = AppLocalizations.of(context)!;
+  //   if (v == null || v.trim().isEmpty) return loc.errNameRequired;
+  //   if (v.trim().length < 2) return loc.errNameShort;
+  //   return null;
+  // }
 
   String? _validatePassword(String? v) {
     final loc = AppLocalizations.of(context)!;
@@ -209,12 +208,12 @@ class _RegisterPageState extends State<RegisterPage> {
     });
   }
 
-  void _onNameChanged(String value) {
-    _nameDebounce?.cancel();
-    _nameDebounce = Timer(const Duration(milliseconds: 700), () {
-      _nameFieldKey.currentState?.validate();
-    });
-  }
+  // void _onNameChanged(String value) {
+  //   _nameDebounce?.cancel();
+  //   _nameDebounce = Timer(const Duration(milliseconds: 700), () {
+  //     _nameFieldKey.currentState?.validate();
+  //   });
+  // }
 
   void _onPasswordChanged(String value) {
     _passwordDebounce?.cancel();
@@ -230,16 +229,16 @@ class _RegisterPageState extends State<RegisterPage> {
     });
   }
 
-  void _onEmailSubmitted(_) => FocusScope.of(context).requestFocus(nameFocus);
-  void _onNameSubmitted(_) =>
+  void _onEmailSubmitted(_) =>
       FocusScope.of(context).requestFocus(passwordFocus);
+  // void _onNameSubmitted(_) =>
+  //     FocusScope.of(context).requestFocus(passwordFocus);
   void _onPasswordSubmitted(_) =>
       FocusScope.of(context).requestFocus(passwordConfirmFocus);
   void _onPasswordConfirmSubmitted(_) => _onRegisterPressed();
 
   @override
   Widget build(BuildContext context) {
-    // ... твій UI код (без змін) ...
     final widthScreen = MediaQuery.of(context).size.width;
     final loc = AppLocalizations.of(context)!;
 
@@ -272,18 +271,20 @@ class _RegisterPageState extends State<RegisterPage> {
                         validateEmail: _validateEmail,
                         onEmailChanged: _onEmailChanged,
                         onEmailSubmitted: _onEmailSubmitted,
-                        nameFieldKey: _nameFieldKey,
-                        controllerName: _nameCtrl,
-                        nameFocus: nameFocus,
-                        validateName: _validateName,
-                        onNameChanged: _onNameChanged,
-                        onNameSubmitted: _onNameSubmitted,
+
+                        // nameFieldKey: _nameFieldKey,
+                        // controllerName: _nameCtrl,
+                        // nameFocus: nameFocus,
+                        // validateName: _validateName,
+                        // onNameChanged: _onNameChanged,
+                        // onNameSubmitted: _onNameSubmitted,
                         passwordFieldKey: _passwordFieldKey,
                         controllerPassword: _passwordCtrl,
                         paswFocus: passwordFocus,
                         validatePassword: _validatePassword,
                         onPasswordChanged: _onPasswordChanged,
                         onPasswordSubmitted: _onPasswordSubmitted,
+
                         passwordConfirmFieldKey: _passwordConfirmFieldKey,
                         controllerPasswordConfirm: _passwordConfirmCtrl,
                         passwordConfirmFocus: passwordConfirmFocus,
