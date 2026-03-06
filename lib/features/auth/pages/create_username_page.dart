@@ -98,11 +98,12 @@ class _CreateUsernamePageState extends State<CreateUsernamePage> {
     });
 
     _debounce = Timer(const Duration(milliseconds: 600), () async {
-      final user = await _firestore.findUserByUsername(cleanedValue);
+      // 🔥 Викликаємо наш новий легкий метод
+      final isAvailable = await _firestore.isUsernameAvailable(cleanedValue);
 
       if (!mounted) return;
 
-      if (user == null) {
+      if (isAvailable) {
         setState(() {
           _isChecking = false;
           _isAvailable = true;

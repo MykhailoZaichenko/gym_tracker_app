@@ -8,6 +8,7 @@ import 'package:gym_tracker_app/services/notification_service.dart';
 import 'package:gym_tracker_app/widget/common/fading_edge.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:permission_handler/permission_handler.dart'; // 🔥 Додано
 
 class HealthPage extends StatefulWidget {
   const HealthPage({super.key});
@@ -28,6 +29,83 @@ class _HealthPageState extends State<HealthPage> {
 
   bool _isSameDay(DateTime a, DateTime b) {
     return a.year == b.year && a.month == b.month && a.day == b.day;
+  }
+
+  // 🔥 НОВИЙ МЕТОД: Запитує дозволи і пропонує налаштувати сповіщення
+  Future<void> _checkAndPromptForNotifications() async {
+    final prefs = await SharedPreferences.getInstance();
+    final hasPrompted = prefs.getBool('has_prompted_weight_reminders') ?? false;
+
+    if (hasPrompted) return;
+
+    if (!mounted) return;
+
+    final loc = AppLocalizations.of(context)!;
+    final isUk = loc.localeName == 'uk';
+
+    final bool? wantsReminders = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(isUk ? 'Нагадування про вагу ⚖️' : 'Weight Reminders ⚖️'),
+        content: Text(
+          isUk
+              ? 'Регулярний запис ваги допомагає точніше відстежувати прогрес. Хочете налаштувати нагадування, щоб не забувати це робити?'
+              : 'Regular weight tracking helps accurately monitor your progress. Do you want to set up reminders so you don\'t forget?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text(
+              isUk ? 'Ні, дякую' : 'No, thanks',
+              style: const TextStyle(color: Colors.grey),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: Text(isUk ? 'Так, налаштувати' : 'Yes, set up'),
+          ),
+        ],
+      ),
+    );
+
+    await prefs.setBool('has_prompted_weight_reminders', true);
+
+    if (wantsReminders == true) {
+      // 🔥 1. Запитуємо дозвіл на сповіщення
+      PermissionStatus status = await Permission.notification.request();
+
+      // 🔥 2. Якщо дозвіл заблоковано назавжди (або відхилено) — кидаємо в налаштування
+      if (status.isPermanentlyDenied || status.isDenied) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                isUk
+                    ? 'Дозвіл заблоковано. Будь ласка, увімкніть сповіщення в налаштуваннях телефону.'
+                    : 'Permission blocked. Please enable notifications in phone settings.',
+              ),
+              action: SnackBarAction(
+                label: isUk ? 'Налаштування' : 'Settings',
+                onPressed: () =>
+                    openAppSettings(), // Відкриває налаштування додатку
+              ),
+              duration: const Duration(seconds: 5),
+            ),
+          );
+        }
+        // Запитуємо статус ще раз після повернення з налаштувань
+        status = await Permission.notification.status;
+      }
+
+      // Запитуємо дозвіл на точні будильники (для Android 12+)
+      if (await Permission.scheduleExactAlarm.isDenied) {
+        await Permission.scheduleExactAlarm.request();
+      }
+
+      if (status.isGranted && mounted) {
+        _configureReminder();
+      }
+    }
   }
 
   void _handleWeightEntry(List<BodyWeightModel> history) async {
@@ -56,6 +134,11 @@ class _HealthPageState extends State<HealthPage> {
         unit: result['unit'],
       );
       await _firestore.saveBodyWeight(model);
+
+      // 🔥 ВИКЛИКАЄМО ПЕРЕВІРКУ ПІСЛЯ УСПІШНОГО ЗБЕРЕЖЕННЯ ВАГИ
+      if (!isEditing) {
+        await _checkAndPromptForNotifications();
+      }
     }
   }
 
@@ -151,7 +234,7 @@ class _HealthPageState extends State<HealthPage> {
                   ListTile(
                     contentPadding: EdgeInsets.zero,
                     title: Text(
-                      timeOfDay.format(sheetContext),
+                      '${timeOfDay.hour.toString().padLeft(2, '0')}:${timeOfDay.minute.toString().padLeft(2, '0')}',
                       style: const TextStyle(
                         fontSize: 32,
                         fontWeight: FontWeight.bold,

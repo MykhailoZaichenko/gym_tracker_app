@@ -286,6 +286,60 @@ class FirestoreService {
         });
   }
 
+  // 🔥 1. Отримання актуальної ваги ДРУГА
+  Future<double?> getFriendLatestWeight(String friendId) async {
+    try {
+      // Пробуємо отримати останню вагу
+      var snapshot = await _db
+          .collection('users')
+          .doc(friendId)
+          .collection('body_weight')
+          .orderBy('date', descending: true)
+          .limit(1)
+          .get();
+
+      // Якщо пусто (можливо, Firebase не може відсортувати через відсутність поля date)
+      if (snapshot.docs.isEmpty) {
+        snapshot = await _db
+            .collection('users')
+            .doc(friendId)
+            .collection('body_weight')
+            .limit(1)
+            .get();
+      }
+
+      if (snapshot.docs.isNotEmpty) {
+        return (snapshot.docs.first.data()['weight'] as num?)?.toDouble();
+      }
+      return null;
+    } catch (e) {
+      debugPrint("Помилка отримання ваги друга: $e");
+      return null;
+    }
+  }
+
+  // 🔥 2. Отримання всіх тренувань ДРУГА (щоб порахувати рекорди і статистику)
+  Future<List<Map<String, dynamic>>> getFriendWorkoutsList(
+    String friendId,
+  ) async {
+    try {
+      final snapshot = await _db
+          .collection('users')
+          .doc(friendId)
+          .collection('workouts')
+          .get();
+
+      return snapshot.docs.map((doc) {
+        final data = doc.data();
+        data['docId'] = doc.id; // Зберігаємо ID документа на всякий випадок
+        return data;
+      }).toList();
+    } catch (e) {
+      debugPrint("Помилка отримання тренувань друга: $e");
+      return [];
+    }
+  }
+
   Future<void> updateWeeklyGoal(int newGoal) async {
     final uid = _auth.currentUser?.uid;
     if (uid == null) return;
@@ -296,6 +350,36 @@ class FirestoreService {
   // --- СОЦІАЛЬНІ ФУНКЦІЇ ---
 
   // Забронювати нікнейм за поточним користувачем
+  // 🔥 НОВИЙ МЕТОД: Перевіряє тільки існування документа, не парсячи його
+  Future<bool> isUsernameAvailable(String username) async {
+    try {
+      final queryText = username.trim().toLowerCase();
+      final snapshot = await _db
+          .collection('users')
+          .where('name', isEqualTo: queryText)
+          .limit(1)
+          .get();
+
+      // Якщо документів 0 — нік 100% вільний
+      if (snapshot.docs.isEmpty) return true;
+
+      // Якщо документ є, перевіряємо, чи це не наш власний акаунт
+      // (на випадок, якщо ми просто перезберігаємо своє ім'я)
+      final ownerId = snapshot.docs.first.id;
+      if (ownerId == _auth.currentUser?.uid) {
+        return true;
+      }
+
+      // Якщо власник інший — нік зайнятий
+      return false;
+    } catch (e) {
+      debugPrint("Помилка перевірки нікнейму: $e");
+      // Якщо сталася помилка доступу, для безпеки кажемо, що зайнято
+      return false;
+    }
+  }
+
+  // Тепер використовує безпечну перевірку
   Future<bool> claimUsername(String username) async {
     final uid = _auth.currentUser?.uid;
     if (uid == null) return false;
@@ -303,12 +387,12 @@ class FirestoreService {
     try {
       final lowerCaseName = username.trim().toLowerCase();
 
-      final existingUser = await findUserByUsername(lowerCaseName);
-      if (existingUser != null && existingUser.id != uid) {
+      // Використовуємо новий надійний метод
+      final available = await isUsernameAvailable(lowerCaseName);
+      if (!available) {
         return false;
       }
 
-      // Зберігаємо тільки в name
       await _db.collection('users').doc(uid).update({'name': lowerCaseName});
 
       return true;

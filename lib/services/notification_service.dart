@@ -12,17 +12,24 @@ class NotificationService {
   Future<void> init() async {
     tz.initializeTimeZones();
 
-    // 🔥 ВАЖЛИВО: Спробуємо встановити локальний час.
-    // Без цього tz.local може бути UTC, і сповіщення приходитимуть із запізненням на 2-3 години.
     try {
-      final String timeZoneName =
-          (await FlutterTimezone.getLocalTimezone()) as String;
-      tz.setLocalLocation(tz.getLocation(timeZoneName));
-    } catch (e) {
-      print("Error setting local timezone: $e");
-      // Фолбек на UTC, якщо не вдалося визначити (краще, ніж нічого)
-      tz.setLocalLocation(tz.UTC);
-    }
+      final dynamic localZone = await FlutterTimezone.getLocalTimezone();
+      String tzName = (localZone is String)
+          ? localZone
+          : localZone.name.toString();
+      tz.setLocalLocation(tz.getLocation(tzName));
+    } catch (_) {}
+
+    try {
+      final dynamic localZone = await FlutterTimezone.getLocalTimezone();
+      String tzName = localZone.toString();
+
+      if (tzName.contains('TimezoneInfo(')) {
+        tzName = tzName.split(',')[0].replaceAll('TimezoneInfo(', '').trim();
+      }
+
+      tz.setLocalLocation(tz.getLocation(tzName));
+    } catch (_) {}
 
     const androidSettings = AndroidInitializationSettings(
       '@mipmap/launcher_icon',
@@ -46,19 +53,28 @@ class NotificationService {
   }
 
   Future<void> _createNotificationChannel() async {
-    const AndroidNotificationChannel channel = AndroidNotificationChannel(
+    final androidPlugin = _notificationsPlugin
+        .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin
+        >();
+
+    const AndroidNotificationChannel mainChannel = AndroidNotificationChannel(
       'main_channel',
       'General Notifications',
       description: 'Main channel for app notifications',
       importance: Importance.max,
       playSound: true,
     );
+    await androidPlugin?.createNotificationChannel(mainChannel);
 
-    await _notificationsPlugin
-        .resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin
-        >()
-        ?.createNotificationChannel(channel);
+    const AndroidNotificationChannel weightChannel = AndroidNotificationChannel(
+      'weight_channel',
+      'Weight Reminders',
+      description: 'Reminders to record body weight',
+      importance: Importance.high,
+      playSound: true,
+    );
+    await androidPlugin?.createNotificationChannel(weightChannel);
   }
 
   Future<void> showInstantNotification({
@@ -112,9 +128,7 @@ class NotificationService {
         body,
         scheduledDate,
         details,
-        androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
-        // uiLocalNotificationDateInterpretation:
-        //     UILocalNotificationDateInterpretation.absoluteTime,
+        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
         matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime,
       );
     }

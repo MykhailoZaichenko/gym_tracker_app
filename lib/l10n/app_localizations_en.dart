@@ -899,4 +899,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String goalLabel(int count) {
     return 'Goal ${count}x/week';
   }
+
+  @override
+  String get skip => 'Skip';
+
+  @override
+  String get setLater => 'Set later';
+
+  @override
+  String get weightNotSet => 'Not set';
+
+  @override
+  String get weightMissingBanner =>
+      'Enter your weight so we can calculate burned calories!';
 }

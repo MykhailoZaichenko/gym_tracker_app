@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:gym_tracker_app/features/health/models/body_weight_model.dart';
 import 'package:gym_tracker_app/features/profile/models/user_model.dart';
 import 'package:gym_tracker_app/features/welcome/pages/welcome_page.dart';
 import 'package:gym_tracker_app/l10n/app_localizations.dart';
@@ -91,6 +92,17 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
       );
 
       await _firestoreService.saveUser(newUser);
+
+      // 🔥 ДОДАЄМО ЦЕ: Якщо юзер вказав вагу на онбордингу, зберігаємо її в історію
+      if (widget.pendingWeight != null && widget.pendingWeight! > 0) {
+        await _firestoreService.saveBodyWeight(
+          BodyWeightModel(
+            id: '', // Порожній рядок, щоб Firestore сам згенерував ID
+            weight: widget.pendingWeight!,
+            date: DateTime.now(),
+          ),
+        );
+      }
     } catch (e) {
       debugPrint('Error creating user profile: $e');
       if (mounted) {

@@ -1789,6 +1789,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Goal {count}x/week'**
   String goalLabel(int count);
+
+  /// Skip button text
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get skip;
+
+  /// Set later button text
+  ///
+  /// In en, this message translates to:
+  /// **'Set later'**
+  String get setLater;
+
+  /// Text shown when weight is not provided
+  ///
+  /// In en, this message translates to:
+  /// **'Not set'**
+  String get weightNotSet;
+
+  /// Banner text prompting user to enter their weight
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your weight so we can calculate burned calories!'**
+  String get weightMissingBanner;
 }
 
 class _AppLocalizationsDelegate

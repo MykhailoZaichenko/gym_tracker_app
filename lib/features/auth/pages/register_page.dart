@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/features/auth/pages/verify_email_page.dart';
 import 'package:gym_tracker_app/features/auth/widgets/auth_form_widget.dart';
+import 'package:gym_tracker_app/features/health/models/body_weight_model.dart';
 import 'package:gym_tracker_app/l10n/app_localizations.dart';
 import 'package:gym_tracker_app/services/firestore_service.dart';
 import 'package:gym_tracker_app/widget/common/custome_snackbar.dart';
@@ -99,11 +100,18 @@ class _RegisterPageState extends State<RegisterPage> {
 
         // Якщо це новий юзер і є вага з онбордингу
         if (savedWeight != null && savedWeight > 0) {
-          // Оновлюємо або створюємо запис у базі
-          // Важливо: loginWithGoogle зазвичай повертає UserModel.
-          // Переконайся, що він має ID.
           final updatedUser = user.copyWith(weightKg: savedWeight);
           await _firestore.saveUser(updatedUser);
+
+          // 🔥 ДОДАЄМО ВАГУ ЯК ПЕРШИЙ ЗАПИС У ІСТОРІЮ
+          await _firestore.saveBodyWeight(
+            BodyWeightModel(
+              id: '', // Пустий рядок, щоб Firestore згенерував ID автоматично
+              weight: savedWeight,
+              date: DateTime.now(),
+            ),
+          );
+
           await prefs.remove('user_weight');
         }
 

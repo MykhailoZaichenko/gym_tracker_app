@@ -907,4 +907,17 @@ class AppLocalizationsUk extends AppLocalizations {
   String goalLabel(int count) {
     return 'Ціль змінено на $count разів/тиждень';
   }
+
+  @override
+  String get skip => 'Пропустити';
+
+  @override
+  String get setLater => 'Вказати пізніше';
+
+  @override
+  String get weightNotSet => 'Не вказано';
+
+  @override
+  String get weightMissingBanner =>
+      'Вкажіть свою вагу, щоб ми могли розраховувати спалені калорії!';
 }

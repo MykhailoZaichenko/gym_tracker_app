@@ -576,16 +576,6 @@ class _JournalPageState extends State<JournalPage> {
                 // КНОПКИ (завжди знизу)
                 Container(
                   padding: const EdgeInsets.fromLTRB(20, 10, 20, 20),
-                  decoration: BoxDecoration(
-                    color: theme.scaffoldBackgroundColor,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.05),
-                        blurRadius: 10,
-                        offset: const Offset(0, -5),
-                      ),
-                    ],
-                  ),
                   child: SafeArea(
                     child: Column(
                       mainAxisSize: MainAxisSize.min,

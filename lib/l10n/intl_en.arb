@@ -613,5 +613,14 @@
   "weekLabel": "Week",
   "@weekLabel": { "description": "Label for week in streak display" },
   "goalLabel": "Goal {count}x/week",
-  "@goalLabel": { "description": "Weekly goal label", "placeholders": { "count": { "type": "int" } } }
+  "@goalLabel": { "description": "Weekly goal label", "placeholders": { "count": { "type": "int" } } },
+  
+  "skip": "Skip",
+  "@skip": { "description": "Skip button text" },
+  "setLater": "Set later",
+  "@setLater": { "description": "Set later button text" },
+  "weightNotSet": "Not set",
+  "@weightNotSet": { "description": "Text shown when weight is not provided" },
+  "weightMissingBanner": "Enter your weight so we can calculate burned calories!",
+  "@weightMissingBanner": { "description": "Banner text prompting user to enter their weight" }
 }

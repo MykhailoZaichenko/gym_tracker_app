@@ -27,12 +27,18 @@ class _OnboardingPageState extends State<OnboardingPage> {
   Future<void> _goToRegister() async {
     if (!_formKey.currentState!.validate()) return;
 
-    final weight = double.tryParse(_weightCtrl.text.replaceAll(',', '.'));
-    if (weight == null || weight <= 0) return;
-
-    // Зберігаємо вагу локально, щоб підтягнути її при реєстрації
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setDouble('user_weight', weight);
+    // Якщо користувач ввів вагу
+    if (_weightCtrl.text.trim().isNotEmpty) {
+      final weight = double.tryParse(_weightCtrl.text.replaceAll(',', '.'));
+      if (weight != null && weight > 0) {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setDouble('user_weight', weight);
+      }
+    } else {
+      // Якщо поле пусте, просто очищаємо кеш (на випадок якщо там щось було)
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove('user_weight');
+    }
 
     if (!mounted) return;
     Navigator.pushReplacement(
@@ -41,12 +47,36 @@ class _OnboardingPageState extends State<OnboardingPage> {
     );
   }
 
+  Future<void> _skipOnboarding() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('user_weight');
+
+    if (!mounted) return;
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => const RegisterPage()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
 
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        actions: [
+          TextButton(
+            onPressed: _skipOnboarding,
+            child: Text(
+              loc.localeName == 'uk' ? 'Пропустити' : 'Skip',
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.primary,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ],
+      ),
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16),
@@ -59,16 +89,16 @@ class _OnboardingPageState extends State<OnboardingPage> {
                 AppPageTitle(title: loc.onboardingTitle),
                 const SizedBox(height: 20),
                 StyledTextField(
-                  //todo think about autofocus
-                  // autofocus: true,
                   controller: _weightCtrl,
                   labelText: loc.weightLabel,
-                  // Налаштування клавіатури для десяткових чисел
                   keyboardType: const TextInputType.numberWithOptions(
                     decimal: true,
                   ),
                   validator: (value) {
-                    final parsed = double.tryParse(value!.replaceAll(',', '.'));
+                    // 🔥 Тепер поле НЕ обов'язкове. Валідуємо тільки якщо щось введено
+                    if (value == null || value.trim().isEmpty) return null;
+
+                    final parsed = double.tryParse(value.replaceAll(',', '.'));
                     if (parsed == null || parsed <= 0) {
                       return loc.errWeightRequired;
                     }
@@ -80,6 +110,14 @@ class _OnboardingPageState extends State<OnboardingPage> {
                 PrimaryFilledButton(
                   text: loc.continueAction,
                   onPressed: _goToRegister,
+                ),
+                const SizedBox(height: 16),
+                TextButton(
+                  onPressed: _skipOnboarding,
+                  child: Text(
+                    loc.localeName == 'uk' ? 'Вказати пізніше' : 'Set later',
+                    style: const TextStyle(color: Colors.grey),
+                  ),
                 ),
               ],
             ),

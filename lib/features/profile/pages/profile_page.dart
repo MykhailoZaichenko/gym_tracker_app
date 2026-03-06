@@ -315,15 +315,19 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     final locale = AppLocalizations.of(context)!.localeName;
     final monthName = DateFormat.MMMM(locale).format(_visibleMonth);
     final capitalizedMonth = toBeginningOfSentenceCase(monthName);
     final listPadding = MediaQuery.of(context).size.width * 0.05;
-
-    // Визначаємо нікнейм/ім'я для показу
     final name = (_user?.name.isNotEmpty == true)
         ? _user!.name
         : (_user?.email != null ? _user!.email.split('@')[0] : "Користувач");
+    final double? currentWeight = _latestWeight ?? _user?.weightKg;
+    final bool hasWeight = currentWeight != null && currentWeight > 0;
+    final String weightDisplay = hasWeight
+        ? "$currentWeight кг"
+        : loc.weightNotSet;
 
     return SafeArea(
       child: Scaffold(
@@ -403,7 +407,65 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                       ),
 
-                      const SizedBox(height: 24),
+                      if (!hasWeight)
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: listPadding + 3,
+                            vertical: 8,
+                          ),
+                          child: InkWell(
+                            onTap: () {
+                              Navigator.of(context)
+                                  .push(
+                                    MaterialPageRoute(
+                                      builder: (context) => const HealthPage(),
+                                    ),
+                                  )
+                                  .then((_) => _loadData());
+                            },
+                            borderRadius: BorderRadius.circular(12),
+                            child: Container(
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                color: Colors.orangeAccent.withValues(
+                                  alpha: 0.1,
+                                ),
+                                border: Border.all(
+                                  color: Colors.orangeAccent.withValues(
+                                    alpha: 0.4,
+                                  ),
+                                ),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Row(
+                                children: [
+                                  const Icon(
+                                    Icons.info_outline,
+                                    color: Colors.orangeAccent,
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: Text(
+                                      loc.weightMissingBanner, // Використовуємо локалізацію
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.onSurface,
+                                      ),
+                                    ),
+                                  ),
+                                  const Icon(
+                                    Icons.chevron_right,
+                                    color: Colors.orangeAccent,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+
+                      const SizedBox(height: 12),
 
                       // --- КАРТКИ "ВАГА" ТА "ДРУЗІ" ---
                       Padding(
@@ -415,9 +477,11 @@ class _ProfilePageState extends State<ProfilePage> {
                               child: _buildMinimalStatColumn(
                                 context,
                                 title: "Вага",
-                                value: "${_latestWeight ?? '--'} кг",
+                                value: weightDisplay,
                                 icon: Icons.monitor_weight_outlined,
-                                color: Colors.blueAccent,
+                                color: hasWeight
+                                    ? Colors.blueAccent
+                                    : Colors.orangeAccent,
                                 onTap: () {
                                   Navigator.of(context)
                                       .push(
