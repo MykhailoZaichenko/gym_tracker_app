@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart'; // 🔥 Додано для форматування вводу
+import 'package:flutter/services.dart';
+import 'package:gym_tracker_app/l10n/app_localizations.dart';
 import 'package:gym_tracker_app/services/firestore_service.dart';
 
-// 🔥 Спеціальний форматер, який автоматично робить літери малими і прибирає пробіли
 class LowerCaseAndNoSpaceFormatter extends TextInputFormatter {
   @override
   TextEditingValue formatEditUpdate(
@@ -17,6 +17,9 @@ class LowerCaseAndNoSpaceFormatter extends TextInputFormatter {
     );
   }
 }
+
+// 🔥 Enum для безпечної локалізації статусу
+enum UsernameStatus { idle, empty, short, checking, available, taken, error }
 
 class CreateUsernamePage extends StatefulWidget {
   final VoidCallback onUsernameCreated;
@@ -35,8 +38,7 @@ class _CreateUsernamePageState extends State<CreateUsernamePage> {
   bool _isChecking = false;
   bool _isAvailable = false;
   bool _isSaving = false;
-  String _statusMessage = "Введіть нікнейм для пошуку друзів";
-  Color _statusColor = Colors.grey;
+  UsernameStatus _status = UsernameStatus.idle;
 
   @override
   void initState() {
@@ -75,8 +77,7 @@ class _CreateUsernamePageState extends State<CreateUsernamePage> {
       setState(() {
         _isChecking = false;
         _isAvailable = false;
-        _statusMessage = "Нікнейм не може бути порожнім";
-        _statusColor = Colors.red;
+        _status = UsernameStatus.empty;
       });
       return;
     }
@@ -85,39 +86,25 @@ class _CreateUsernamePageState extends State<CreateUsernamePage> {
       setState(() {
         _isChecking = false;
         _isAvailable = false;
-        _statusMessage = "Мінімум 3 символи";
-        _statusColor = Colors.red;
+        _status = UsernameStatus.short;
       });
       return;
     }
 
     setState(() {
       _isChecking = true;
-      _statusMessage = "Перевірка доступності...";
-      _statusColor = Colors.blue;
+      _status = UsernameStatus.checking;
     });
 
     _debounce = Timer(const Duration(milliseconds: 600), () async {
-      // 🔥 Викликаємо наш новий легкий метод
       final isAvailable = await _firestore.isUsernameAvailable(cleanedValue);
-
       if (!mounted) return;
 
-      if (isAvailable) {
-        setState(() {
-          _isChecking = false;
-          _isAvailable = true;
-          _statusMessage = "Нікнейм вільний!";
-          _statusColor = Colors.green;
-        });
-      } else {
-        setState(() {
-          _isChecking = false;
-          _isAvailable = false;
-          _statusMessage = "Цей нікнейм вже зайнятий";
-          _statusColor = Colors.red;
-        });
-      }
+      setState(() {
+        _isChecking = false;
+        _isAvailable = isAvailable;
+        _status = isAvailable ? UsernameStatus.available : UsernameStatus.taken;
+      });
     });
   }
 
@@ -138,17 +125,52 @@ class _CreateUsernamePageState extends State<CreateUsernamePage> {
       setState(() {
         _isSaving = false;
         _isAvailable = false;
-        _statusMessage = "Помилка збереження. Спробуйте інший нікнейм.";
-        _statusColor = Colors.red;
+        _status = UsernameStatus.error;
       });
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+
+    // Конвертація статусу в текст
+    String statusMessage;
+    Color statusColor;
+    switch (_status) {
+      case UsernameStatus.idle:
+        statusMessage = loc.enterUsernameHint;
+        statusColor = Colors.grey;
+        break;
+      case UsernameStatus.empty:
+        statusMessage = loc.usernameEmptyError;
+        statusColor = Colors.red;
+        break;
+      case UsernameStatus.short:
+        statusMessage = loc.usernameTooShortError;
+        statusColor = Colors.red;
+        break;
+      case UsernameStatus.checking:
+        statusMessage = loc.usernameChecking;
+        statusColor = Colors.blue;
+        break;
+      case UsernameStatus.available:
+        statusMessage = loc.usernameAvailable;
+        statusColor = Colors.green;
+        break;
+      case UsernameStatus.taken:
+        statusMessage = loc.usernameTaken;
+        statusColor = Colors.red;
+        break;
+      case UsernameStatus.error:
+        statusMessage = loc.usernameSaveError;
+        statusColor = Colors.red;
+        break;
+    }
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Ваш унікальний нікнейм"),
+        title: Text(loc.uniqueUsernameTitle),
         automaticallyImplyLeading: false,
       ),
       body: Padding(
@@ -163,20 +185,18 @@ class _CreateUsernamePageState extends State<CreateUsernamePage> {
               color: Colors.blueAccent,
             ),
             const SizedBox(height: 24),
-            const Text(
-              "Оберіть собі нікнейм, щоб друзі могли легко знайти вас у спільноті Gym Tracker.",
+            Text(
+              loc.chooseUsernameDesc,
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 16),
+              style: const TextStyle(fontSize: 16),
             ),
             const SizedBox(height: 32),
             TextField(
               controller: _usernameController,
               onChanged: _onUsernameChanged,
-              inputFormatters: [
-                LowerCaseAndNoSpaceFormatter(), // 🔥 Автоматично робить малі літери та видаляє пробіли
-              ],
+              inputFormatters: [LowerCaseAndNoSpaceFormatter()],
               decoration: InputDecoration(
-                labelText: "Нікнейм",
+                labelText: loc.usernameLabel,
                 prefixText: "@ ",
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -190,9 +210,9 @@ class _CreateUsernamePageState extends State<CreateUsernamePage> {
               ),
             ),
             const SizedBox(height: 12),
-            const Text(
-              "Дозволені лише малі літери (без пробілів).\nЦей нікнейм обирається назавжди і його неможливо буде змінити.",
-              style: TextStyle(
+            Text(
+              loc.usernameRulesDesc,
+              style: const TextStyle(
                 color: Colors.redAccent,
                 fontSize: 12,
                 fontWeight: FontWeight.w500,
@@ -201,11 +221,8 @@ class _CreateUsernamePageState extends State<CreateUsernamePage> {
             ),
             const SizedBox(height: 12),
             Text(
-              _statusMessage,
-              style: TextStyle(
-                color: _statusColor,
-                fontWeight: FontWeight.w500,
-              ),
+              statusMessage,
+              style: TextStyle(color: statusColor, fontWeight: FontWeight.w500),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 32),
@@ -226,9 +243,9 @@ class _CreateUsernamePageState extends State<CreateUsernamePage> {
                         color: Colors.white,
                       ),
                     )
-                  : const Text(
-                      "Зберегти та продовжити",
-                      style: TextStyle(fontSize: 16),
+                  : Text(
+                      loc.saveAndContinue,
+                      style: const TextStyle(fontSize: 16),
                     ),
             ),
           ],

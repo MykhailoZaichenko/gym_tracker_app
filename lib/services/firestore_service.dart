@@ -462,7 +462,7 @@ class FirestoreService {
           .where((u) => u.id != currentUid && !myFriends.contains(u.id))
           .toList();
     } catch (e) {
-      print("Помилка живого пошуку: $e");
+      debugPrint("Помилка живого пошуку: $e");
       return [];
     }
   }

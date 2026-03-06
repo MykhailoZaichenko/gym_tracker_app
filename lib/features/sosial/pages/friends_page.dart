@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/features/profile/models/user_model.dart';
 import 'package:gym_tracker_app/features/sosial/pages/frend_profile_page.dart';
+import 'package:gym_tracker_app/l10n/app_localizations.dart';
 import 'package:gym_tracker_app/services/firestore_service.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:share_plus/share_plus.dart';
@@ -41,30 +42,28 @@ class _FriendsPageState extends State<FriendsPage>
     super.dispose();
   }
 
-  Future<void> _showDeleteConfirmation(UserModel friend) async {
+  Future<void> _showDeleteConfirmation(
+    UserModel friend,
+    AppLocalizations loc,
+  ) async {
     final name = friend.name.isNotEmpty == true ? friend.name : friend.email;
 
     final confirm = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text("Видалення з друзів"),
-        content: Text(
-          "Ви впевнені, що хочете видалити $name зі списку друзів?",
-        ),
+        title: Text(loc.deleteFriendTitle),
+        content: Text(loc.deleteFriendConfirmBody(name)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text(
-              "Скасувати",
-              style: TextStyle(color: Colors.grey),
-            ),
+            child: Text(loc.cancel, style: const TextStyle(color: Colors.grey)),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text(
-              "Видалити",
-              style: TextStyle(color: Colors.white),
+            child: Text(
+              loc.delete,
+              style: const TextStyle(color: Colors.white),
             ),
           ),
         ],
@@ -78,15 +77,15 @@ class _FriendsPageState extends State<FriendsPage>
         }
         await _firestore.removeFriend(friend.id!);
         if (mounted) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text("$name видалено з друзів")));
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(loc.friendDeletedSuccess(name))),
+          );
         }
       } catch (e) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text("Помилка видалення: $e"),
+              content: Text(loc.deleteError(e.toString())),
               backgroundColor: Colors.red,
             ),
           );
@@ -97,26 +96,27 @@ class _FriendsPageState extends State<FriendsPage>
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Друзі та Спільнота'),
+        title: Text(loc.friendsAndCommunity),
         bottom: TabBar(
           controller: _tabController,
-          tabs: const [
-            Tab(text: 'Мої друзі'),
-            Tab(text: 'Пошук / Запити'),
+          tabs: [
+            Tab(text: loc.myFriendsTab),
+            Tab(text: loc.searchRequestsTab),
           ],
         ),
       ),
       body: TabBarView(
         controller: _tabController,
-        children: [_buildFriendsList(), _buildAddFriendPage()],
+        children: [_buildFriendsList(loc), _buildAddFriendPage(loc)],
       ),
     );
   }
 
-  // --- ВКЛАДКА 1: МОЇ ДРУЗІ ---
-  Widget _buildFriendsList() {
+  Widget _buildFriendsList(AppLocalizations loc) {
     return StreamBuilder<List<UserModel>>(
       stream: _firestore.getFriendsStream(),
       builder: (context, snapshot) {
@@ -132,7 +132,7 @@ class _FriendsPageState extends State<FriendsPage>
               children: [
                 const Icon(Icons.people_outline, size: 64, color: Colors.grey),
                 const SizedBox(height: 16),
-                const Text("У вас поки немає друзів"),
+                Text(loc.noFriendsYet),
                 TextButton(
                   onPressed: () {
                     _tabController.animateTo(1);
@@ -140,7 +140,7 @@ class _FriendsPageState extends State<FriendsPage>
                       _searchFocus.requestFocus();
                     });
                   },
-                  child: const Text("Знайти друга"),
+                  child: Text(loc.findFriendBtn),
                 ),
               ],
             ),
@@ -152,38 +152,32 @@ class _FriendsPageState extends State<FriendsPage>
           itemCount: friends.length,
           separatorBuilder: (_, __) => const SizedBox(height: 12),
           itemBuilder: (context, index) {
-            final friend = friends[index];
-            return _buildFriendCard(friend);
+            return _buildFriendCard(friends[index], loc);
           },
         );
       },
     );
   }
 
-  Widget _buildFriendCard(UserModel friend) {
+  Widget _buildFriendCard(UserModel friend, AppLocalizations loc) {
     final theme = Theme.of(context);
-    final lastSeen = friend.lastWorkoutDate != null
-        ? timeago.format(
-            friend.lastWorkoutDate!,
-            locale: 'uk',
-          ) // Можна 'uk' або 'en'
-        : 'Давно';
+    final lastSeenDate = friend.lastWorkoutDate != null
+        ? timeago.format(friend.lastWorkoutDate!, locale: loc.localeName)
+        : loc.longTimeAgo;
 
-    String bestStat = "Немає рекордів";
+    String bestStat = loc.noRecords;
     if (friend.monthlyBestWeights.isNotEmpty) {
       final bestEntry = friend.monthlyBestWeights.entries.reduce(
         (a, b) => a.value > b.value ? a : b,
       );
-      bestStat = "${bestEntry.key}: ${bestEntry.value.toInt()} кг";
+      bestStat = "${bestEntry.key}: ${bestEntry.value.toInt()} kg";
     }
 
     final name = (friend.name.isNotEmpty == true)
         ? friend.name
         : friend.email.split('@')[0];
 
-    // Якщо в моделі немає username, залишаємо пустим, або додаємо, якщо є
-    // Припустимо, що в моделі є поле username, інакше виводимо email
-    final displayUsername = friend.email; // Замініть на friend.username якщо є
+    final displayUsername = friend.email;
     final initial = name.isNotEmpty ? name[0].toUpperCase() : '?';
 
     return Card(
@@ -191,7 +185,6 @@ class _FriendsPageState extends State<FriendsPage>
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: InkWell(
         onTap: () {
-          // 🔥 Перехід на сторінку деталей друга
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -221,12 +214,13 @@ class _FriendsPageState extends State<FriendsPage>
                   name,
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
-                subtitle: Text("$displayUsername\nБув у залі: $lastSeen"),
+                subtitle: Text(
+                  "$displayUsername\n${loc.lastSeenInGym(lastSeenDate)}",
+                ),
                 isThreeLine: true,
                 trailing: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    // Блок зі стріком
                     Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 10,
@@ -249,7 +243,7 @@ class _FriendsPageState extends State<FriendsPage>
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            "${friend.currentStreak} т.",
+                            loc.statWorkouts(friend.currentStreak.toString()),
                             style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               color: Colors.deepOrange,
@@ -260,28 +254,27 @@ class _FriendsPageState extends State<FriendsPage>
                     ),
                     const SizedBox(width: 4),
 
-                    // 🔥 Меню з трьома крапками
                     PopupMenuButton<String>(
                       icon: const Icon(Icons.more_vert, color: Colors.grey),
                       onSelected: (value) {
                         if (value == 'delete') {
-                          _showDeleteConfirmation(friend);
+                          _showDeleteConfirmation(friend, loc);
                         }
                       },
                       itemBuilder: (BuildContext context) => [
-                        const PopupMenuItem(
+                        PopupMenuItem(
                           value: 'delete',
                           child: Row(
                             children: [
-                              Icon(
+                              const Icon(
                                 Icons.person_remove,
                                 color: Colors.red,
                                 size: 20,
                               ),
-                              SizedBox(width: 8),
+                              const SizedBox(width: 8),
                               Text(
-                                "Видалити",
-                                style: TextStyle(color: Colors.red),
+                                loc.delete,
+                                style: const TextStyle(color: Colors.red),
                               ),
                             ],
                           ),
@@ -303,7 +296,7 @@ class _FriendsPageState extends State<FriendsPage>
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      "Рекорд місяця: ",
+                      loc.monthlyRecordPrefix,
                       style: TextStyle(color: Colors.grey[600]),
                     ),
                     Expanded(
@@ -323,8 +316,7 @@ class _FriendsPageState extends State<FriendsPage>
     );
   }
 
-  // --- ВКЛАДКА 2: ПОШУК І ЗАПИТИ ---
-  Widget _buildAddFriendPage() {
+  Widget _buildAddFriendPage(AppLocalizations loc) {
     final theme = Theme.of(context);
 
     return SingleChildScrollView(
@@ -332,18 +324,17 @@ class _FriendsPageState extends State<FriendsPage>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Кнопка для поширення посилання
           ElevatedButton.icon(
-            onPressed: _shareFriendLink,
+            onPressed: () => _shareFriendLink(loc),
             icon: const Icon(Icons.ios_share),
-            label: const Text(
-              "Поділитися посиланням на профіль",
-              style: TextStyle(fontSize: 16),
+            label: Text(
+              loc.shareProfileLink,
+              style: const TextStyle(fontSize: 16),
             ),
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 16),
-              backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-              foregroundColor: Theme.of(context).colorScheme.onPrimaryContainer,
+              backgroundColor: theme.colorScheme.primaryContainer,
+              foregroundColor: theme.colorScheme.onPrimaryContainer,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
@@ -351,25 +342,23 @@ class _FriendsPageState extends State<FriendsPage>
           ),
           const SizedBox(height: 24),
 
-          const Text(
-            "Або знайдіть вручну",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          Text(
+            loc.orFindManually,
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 10),
 
-          // ПОЛЕ ПОШУКУ
           TextField(
             focusNode: _searchFocus,
             controller: _searchController,
-            onChanged: _onSearchChanged, // 🔥 Виклик живого пошуку
+            onChanged: _onSearchChanged,
             decoration: InputDecoration(
-              labelText: "Введіть Email або @нікнейм",
-              hintText: "example@gmail.com або @gymbro",
+              labelText: loc.searchFriendHint,
+              hintText: loc.searchFriendHelper,
               prefixIcon: const Icon(Icons.search),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
-              // Динамічна іконка (завантаження, очищення або пошук)
               suffixIcon: _isSearching
                   ? const Padding(
                       padding: EdgeInsets.all(12.0),
@@ -386,13 +375,12 @@ class _FriendsPageState extends State<FriendsPage>
                     )
                   : IconButton(
                       icon: const Icon(Icons.send),
-                      onPressed: _performSearch,
+                      onPressed: () => _performSearch(loc),
                     ),
             ),
-            onSubmitted: (_) => _performSearch(),
+            onSubmitted: (_) => _performSearch(loc),
           ),
 
-          // 🔥 ВИПАДАЮЧИЙ СПИСОК (ЖИВИЙ ПОШУК)
           if (_searchResults.isNotEmpty)
             Container(
               margin: const EdgeInsets.only(top: 8),
@@ -444,8 +432,8 @@ class _FriendsPageState extends State<FriendsPage>
                         padding: const EdgeInsets.symmetric(horizontal: 12),
                         minimumSize: const Size(0, 32),
                       ),
-                      onPressed: () => _sendRequestToUser(user),
-                      child: const Text("Додати"),
+                      onPressed: () => _sendRequestToUser(user, loc),
+                      child: Text(loc.addBtn),
                     ),
                   );
                 },
@@ -454,10 +442,9 @@ class _FriendsPageState extends State<FriendsPage>
 
           const Divider(height: 40),
 
-          // ВХІДНІ ЗАПИТИ
-          const Text(
-            "Вхідні запити",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          Text(
+            loc.incomingRequests,
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 10),
           StreamBuilder<List<Map<String, dynamic>>>(
@@ -465,15 +452,15 @@ class _FriendsPageState extends State<FriendsPage>
             builder: (context, snapshot) {
               if (snapshot.hasError) {
                 return Text(
-                  "Помилка: ${snapshot.error}",
+                  "Error: ${snapshot.error}",
                   style: const TextStyle(color: Colors.red),
                 );
               }
               final requests = snapshot.data ?? [];
               if (requests.isEmpty) {
-                return const Text(
-                  "Немає нових запитів",
-                  style: TextStyle(color: Colors.grey),
+                return Text(
+                  loc.noNewRequests,
+                  style: const TextStyle(color: Colors.grey),
                 );
               }
 
@@ -482,7 +469,7 @@ class _FriendsPageState extends State<FriendsPage>
                   final fromName =
                       req['fromName'] as String? ??
                       req['fromEmail'] as String? ??
-                      'Невідомий';
+                      'Unknown';
                   final fromUid = req['fromUid'] as String?;
                   return Card(
                     child: ListTile(
@@ -504,24 +491,19 @@ class _FriendsPageState extends State<FriendsPage>
     );
   }
 
-  // --- ЛОГІКА ---
-
-  // 1. Поділитися посиланням
-  Future<void> _shareFriendLink() async {
-    // Якщо у вас немає цього методу, створіть його у FirestoreService
-    // або використовуйте просто базове посилання
+  Future<void> _shareFriendLink(AppLocalizations loc) async {
     final link =
         "gymtracker://addfriend/${FirebaseAuth.instance.currentUser?.uid}";
 
+    // ignore: deprecated_member_use
     await Share.share(
-      'Привіт! Додавай мене в друзі у Gym Tracker, щоб слідкувати за моїми тренуваннями: $link',
-      subject: 'Запит у друзі Gym Tracker',
+      loc.shareFriendText(link),
+      subject: loc.shareFriendSubject,
     );
   }
 
-  // 2. Логіка відкладеного (живого) пошуку (Debounce)
   void _onSearchChanged(String query) {
-    setState(() {}); // Оновлюємо UI, щоб з'явився хрестик
+    setState(() {});
     if (_debounce?.isActive ?? false) _debounce!.cancel();
 
     _debounce = Timer(const Duration(milliseconds: 500), () async {
@@ -533,7 +515,6 @@ class _FriendsPageState extends State<FriendsPage>
       setState(() => _isSearching = true);
 
       try {
-        // Виклик методу живого пошуку (переконайтеся, що ви додали його в FirestoreService)
         final results = await _firestore.searchUsersLive(query);
         if (mounted) {
           setState(() {
@@ -541,7 +522,7 @@ class _FriendsPageState extends State<FriendsPage>
           });
         }
       } catch (e) {
-        // Ігноруємо помилку тихо для живого пошуку
+        // Ignore silent error
       } finally {
         if (mounted) {
           setState(() => _isSearching = false);
@@ -550,8 +531,7 @@ class _FriendsPageState extends State<FriendsPage>
     });
   }
 
-  // 3. Відправка запиту конкретному користувачу (з випадаючого списку)
-  Future<void> _sendRequestToUser(UserModel user) async {
+  Future<void> _sendRequestToUser(UserModel user, AppLocalizations loc) async {
     FocusScope.of(context).unfocus();
     try {
       if (user.id!.isEmpty) return;
@@ -560,7 +540,7 @@ class _FriendsPageState extends State<FriendsPage>
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text("Запит надіслано до ${user.email}!"),
+            content: Text(loc.requestSentTo(user.email)),
             backgroundColor: Colors.green,
           ),
         );
@@ -570,14 +550,13 @@ class _FriendsPageState extends State<FriendsPage>
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Помилка: $e"), backgroundColor: Colors.red),
+          SnackBar(content: Text("Error: $e"), backgroundColor: Colors.red),
         );
       }
     }
   }
 
-  // 4. Ручний пошук при натисканні "Enter" або кнопки Send
-  Future<void> _performSearch() async {
+  Future<void> _performSearch(AppLocalizations loc) async {
     String query = _searchController.text.trim().toLowerCase();
     if (query.isEmpty) return;
 
@@ -587,16 +566,12 @@ class _FriendsPageState extends State<FriendsPage>
     try {
       UserModel? user;
 
-      // Розпізнаємо тип пошуку
       if (query.contains('@') && query.indexOf('@') > 0) {
         user = await _firestore.findUserByEmail(query);
       } else {
         if (query.startsWith('@')) {
           query = query.substring(1);
         }
-        // Переконайтеся, що метод findUserByUsername існує у FirestoreService
-        // user = await _firestore.findUserByUsername(query);
-        // Тимчасово шукаємо тільки по email для надійності:
         user = await _firestore.findUserByEmail(query);
       }
 
@@ -606,8 +581,8 @@ class _FriendsPageState extends State<FriendsPage>
 
       if (user == null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("Користувача не знайдено"),
+          SnackBar(
+            content: Text(loc.userNotFound),
             backgroundColor: Colors.red,
           ),
         );
@@ -616,15 +591,9 @@ class _FriendsPageState extends State<FriendsPage>
 
         if (userId == currentUserUid) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text("Ви не можете додати самого себе"),
+            SnackBar(
+              content: Text(loc.cannotAddSelf),
               backgroundColor: Colors.orange,
-            ),
-          );
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text("Помилка даних користувача"),
-              backgroundColor: Colors.red,
             ),
           );
         } else {
@@ -634,8 +603,8 @@ class _FriendsPageState extends State<FriendsPage>
 
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text("Запит надіслано!"),
+              SnackBar(
+                content: Text(loc.requestSentSuccess),
                 backgroundColor: Colors.green,
               ),
             );
@@ -645,7 +614,7 @@ class _FriendsPageState extends State<FriendsPage>
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Помилка: $e"), backgroundColor: Colors.red),
+          SnackBar(content: Text("Error: $e"), backgroundColor: Colors.red),
         );
       }
     } finally {

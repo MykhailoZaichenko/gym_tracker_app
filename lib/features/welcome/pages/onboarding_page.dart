@@ -68,7 +68,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
           TextButton(
             onPressed: _skipOnboarding,
             child: Text(
-              loc.localeName == 'uk' ? 'Пропустити' : 'Skip',
+              loc.skip,
               style: TextStyle(
                 color: Theme.of(context).colorScheme.primary,
                 fontWeight: FontWeight.bold,
@@ -115,7 +115,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                 TextButton(
                   onPressed: _skipOnboarding,
                   child: Text(
-                    loc.localeName == 'uk' ? 'Вказати пізніше' : 'Set later',
+                    loc.setLater,
                     style: const TextStyle(color: Colors.grey),
                   ),
                 ),

@@ -24,21 +24,6 @@ class ProfileSettingsList extends StatelessWidget {
       elevation: 1,
       child: Column(
         children: [
-          // ListTile(
-          //   leading: const Icon(Icons.edit),
-          //   title: Text(loc.editProfileTitle),
-          //   onTap: () async {
-          //     if (user == null) return;
-          //     final updated = await Navigator.push<UserModel?>(
-          //       context,
-          //       MaterialPageRoute(builder: (_) => EditProfilePage(user: user!)),
-          //     );
-          //     if (updated != null) {
-          //       onProfileUpdated(updated);
-          //     }
-          //   },
-          // ),
-          // const Divider(height: 1),
           ListTile(
             leading: const Icon(Icons.settings),
             title: Text(loc.settingsTitle),

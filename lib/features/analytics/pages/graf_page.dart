@@ -538,8 +538,8 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
   }
 
   String _formatPeriodName(DateTime? date, RangeMode range, String locale) {
-    if (date == null)
-      return locale == 'uk' ? 'Минулий період' : 'Previous period';
+    final loc = AppLocalizations.of(context)!;
+    if (date == null) return loc.previousPeriod;
     if (range == RangeMode.month) {
       final m = DateFormat.MMMM(locale).format(date);
       return "${toBeginningOfSentenceCase(m)} ${date.year}";

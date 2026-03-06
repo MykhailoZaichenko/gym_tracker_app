@@ -15,9 +15,6 @@ class AppLocalizationsUk extends AppLocalizations {
   String get ok => 'ОК';
 
   @override
-  String get cancel => 'Скасувати';
-
-  @override
   String get save => 'Зберегти';
 
   @override
@@ -31,9 +28,6 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get edit => 'Редагувати';
-
-  @override
-  String get delete => 'Видалити';
 
   @override
   String get yes => 'Так';
@@ -920,4 +914,206 @@ class AppLocalizationsUk extends AppLocalizations {
   @override
   String get weightMissingBanner =>
       'Вкажіть свою вагу, щоб ми могли розраховувати спалені калорії!';
+
+  @override
+  String get nextExercise => 'Наступна вправа';
+
+  @override
+  String get friendRequestSent =>
+      'Запит у друзі через посилання успішно надіслано!';
+
+  @override
+  String additionError(String error) {
+    return 'Помилка додавання: $error';
+  }
+
+  @override
+  String get enterUsernameHint => 'Введіть нікнейм для пошуку друзів';
+
+  @override
+  String get usernameEmptyError => 'Нікнейм не може бути порожнім';
+
+  @override
+  String get usernameTooShortError => 'Мінімум 3 символи';
+
+  @override
+  String get usernameChecking => 'Перевірка доступності...';
+
+  @override
+  String get usernameAvailable => 'Нікнейм вільний!';
+
+  @override
+  String get usernameTaken => 'Цей нікнейм вже зайнятий';
+
+  @override
+  String get usernameSaveError =>
+      'Помилка збереження. Спробуйте інший нікнейм.';
+
+  @override
+  String get uniqueUsernameTitle => 'Ваш унікальний нікнейм';
+
+  @override
+  String get chooseUsernameDesc =>
+      'Оберіть собі нікнейм, щоб друзі могли легко знайти вас у спільноті Gym Tracker.';
+
+  @override
+  String get usernameLabel => 'Нікнейм';
+
+  @override
+  String get usernameRulesDesc =>
+      'Дозволені лише малі літери (без пробілів).\nЦей нікнейм обирається назавжди і його неможливо буде змінити.';
+
+  @override
+  String get saveAndContinue => 'Зберегти та продовжити';
+
+  @override
+  String get weightReminderTitle => 'Нагадування про вагу ⚖️';
+
+  @override
+  String get weightReminderBody =>
+      'Регулярний запис ваги допомагає точніше відстежувати прогрес. Хочете налаштувати нагадування, щоб не забувати це робити?';
+
+  @override
+  String get noThanks => 'Ні, дякую';
+
+  @override
+  String get yesSetUp => 'Так, налаштувати';
+
+  @override
+  String get permissionBlocked =>
+      'Дозвіл заблоковано. Будь ласка, увімкніть сповіщення в налаштуваннях телефону.';
+
+  @override
+  String get settingsAction => 'Налаштування';
+
+  @override
+  String get unknownStatus => 'Невідомо';
+
+  @override
+  String lastSeenInGym(String date) {
+    return 'Був(ла) у залі: $date';
+  }
+
+  @override
+  String get statWeight => 'Вага';
+
+  @override
+  String get statStreak => 'Серія';
+
+  @override
+  String statWeeks(String count) {
+    return '$count тиж.';
+  }
+
+  @override
+  String get statPerMonth => 'За місяць';
+
+  @override
+  String statWorkouts(String count) {
+    return '$count тр.';
+  }
+
+  @override
+  String get recordsThisMonth => '🏆 Рекорди цього місяця';
+
+  @override
+  String get noRecordsThisMonth =>
+      'Поки немає записів про рекорди цього місяця 😔';
+
+  @override
+  String get deleteFriendTitle => 'Видалення з друзів';
+
+  @override
+  String deleteFriendConfirmBody(String name) {
+    return 'Ви впевнені, що хочете видалити $name зі списку друзів?';
+  }
+
+  @override
+  String get cancel => 'Скасувати';
+
+  @override
+  String get delete => 'Видалити';
+
+  @override
+  String friendDeletedSuccess(String name) {
+    return '$name видалено з друзів';
+  }
+
+  @override
+  String deleteError(String error) {
+    return 'Помилка видалення: $error';
+  }
+
+  @override
+  String get friendsAndCommunity => 'Друзі та Спільнота';
+
+  @override
+  String get myFriendsTab => 'Мої друзі';
+
+  @override
+  String get searchRequestsTab => 'Пошук / Запити';
+
+  @override
+  String get noFriendsYet => 'У вас поки немає друзів';
+
+  @override
+  String get findFriendBtn => 'Знайти друга';
+
+  @override
+  String get longTimeAgo => 'Давно';
+
+  @override
+  String get noRecords => 'Немає рекордів';
+
+  @override
+  String get monthlyRecordPrefix => 'Рекорд місяця: ';
+
+  @override
+  String get shareProfileLink => 'Поділитися посиланням на профіль';
+
+  @override
+  String get orFindManually => 'Або знайдіть вручну';
+
+  @override
+  String get searchFriendHint => 'Введіть Email або @нікнейм';
+
+  @override
+  String get searchFriendHelper => 'example@gmail.com або @gymbro';
+
+  @override
+  String get addBtn => 'Додати';
+
+  @override
+  String get incomingRequests => 'Вхідні запити';
+
+  @override
+  String get noNewRequests => 'Немає нових запитів';
+
+  @override
+  String shareFriendText(String link) {
+    return 'Привіт! Додавай мене в друзі у Gym Tracker, щоб слідкувати за моїми тренуваннями: $link';
+  }
+
+  @override
+  String get shareFriendSubject => 'Запит у друзі Gym Tracker';
+
+  @override
+  String requestSentTo(String email) {
+    return 'Запит надіслано до $email!';
+  }
+
+  @override
+  String get userNotFound => 'Користувача не знайдено';
+
+  @override
+  String get cannotAddSelf => 'Ви не можете додати самого себе';
+
+  @override
+  String get userDataError => 'Помилка даних користувача';
+
+  @override
+  String get requestSentSuccess => 'Запит надіслано!';
+
+  @override
+  String get previousPeriod => 'Минулий період';
 }

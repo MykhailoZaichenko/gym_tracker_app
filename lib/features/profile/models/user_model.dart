@@ -4,7 +4,6 @@ class UserModel {
   final String email;
 
   final String? avatarUrl;
-  final double? weightKg;
   final int weeklyGoal;
 
   final int currentStreak;
@@ -17,7 +16,6 @@ class UserModel {
     required this.name,
     required this.email,
     this.avatarUrl,
-    this.weightKg,
     this.weeklyGoal = 0,
     this.currentStreak = 0,
     this.monthlyBestWeights = const {},
@@ -30,7 +28,6 @@ class UserModel {
     String? name,
     String? email,
     String? avatarUrl,
-    double? weightKg,
     int? weeklyGoal,
     int? currentStreak,
     Map<String, double>? monthlyBestWeights,
@@ -41,7 +38,6 @@ class UserModel {
       name: name ?? this.name,
       email: email ?? this.email,
       avatarUrl: avatarUrl ?? this.avatarUrl,
-      weightKg: weightKg ?? this.weightKg,
       currentStreak: currentStreak ?? this.currentStreak,
       monthlyBestWeights: monthlyBestWeights ?? this.monthlyBestWeights,
       lastWorkoutDate: lastWorkoutDate ?? this.lastWorkoutDate,
@@ -54,7 +50,6 @@ class UserModel {
       'name': name,
       'email': email,
       'avatarUrl': avatarUrl,
-      'weightKg': weightKg,
       'weeklyGoal': weeklyGoal,
       'currentStreak': currentStreak,
       'monthlyBestWeights': monthlyBestWeights,
@@ -69,7 +64,6 @@ class UserModel {
       name: data['name'],
       email: data['email'] ?? '',
       avatarUrl: data['avatarUrl'] as String?,
-      weightKg: (data['weightKg'] as num?)?.toDouble(),
       weeklyGoal: (data['weeklyGoal'] as num?)?.toInt() ?? 0,
       currentStreak: (data['currentStreak'] as num?)?.toInt() ?? 0,
       monthlyBestWeights:

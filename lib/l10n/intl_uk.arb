@@ -317,5 +317,103 @@
   "skip": "Пропустити",
   "setLater": "Вказати пізніше",
   "weightNotSet": "Не вказано",
-  "weightMissingBanner": "Вкажіть свою вагу, щоб ми могли розраховувати спалені калорії!"
+  "weightMissingBanner": "Вкажіть свою вагу, щоб ми могли розраховувати спалені калорії!",
+  "nextExercise": "Наступна вправа",
+  "friendRequestSent": "Запит у друзі через посилання успішно надіслано!",
+  "additionError": "Помилка додавання: {error}",
+
+  "enterUsernameHint": "Введіть нікнейм для пошуку друзів",
+  "usernameEmptyError": "Нікнейм не може бути порожнім",
+  "usernameTooShortError": "Мінімум 3 символи",
+  "usernameChecking": "Перевірка доступності...",
+  "usernameAvailable": "Нікнейм вільний!",
+  "usernameTaken": "Цей нікнейм вже зайнятий",
+  "usernameSaveError": "Помилка збереження. Спробуйте інший нікнейм.",
+  "uniqueUsernameTitle": "Ваш унікальний нікнейм",
+  "chooseUsernameDesc": "Оберіть собі нікнейм, щоб друзі могли легко знайти вас у спільноті Gym Tracker.",
+  "usernameLabel": "Нікнейм",
+  "usernameRulesDesc": "Дозволені лише малі літери (без пробілів).\nЦей нікнейм обирається назавжди і його неможливо буде змінити.",
+  "saveAndContinue": "Зберегти та продовжити",
+  "weightReminderTitle": "Нагадування про вагу ⚖️",
+  "weightReminderBody": "Регулярний запис ваги допомагає точніше відстежувати прогрес. Хочете налаштувати нагадування, щоб не забувати це робити?",
+  "noThanks": "Ні, дякую",
+  "yesSetUp": "Так, налаштувати",
+  "permissionBlocked": "Дозвіл заблоковано. Будь ласка, увімкніть сповіщення в налаштуваннях телефону.",
+  "settingsAction": "Налаштування",
+  "unknownStatus": "Невідомо",
+  "lastSeenInGym": "Був(ла) у залі: {date}",
+  "@lastSeenInGym": {
+    "placeholders": {
+      "date": { "type": "String" }
+    }
+  },
+  "statWeight": "Вага",
+  "statStreak": "Серія",
+  "statWeeks": "{count} тиж.",
+  "@statWeeks": {
+    "placeholders": {
+      "count": { "type": "String" }
+    }
+  },
+  "statPerMonth": "За місяць",
+  "statWorkouts": "{count} тр.",
+  "@statWorkouts": {
+    "placeholders": {
+      "count": { "type": "String" }
+    }
+  },
+  "recordsThisMonth": "🏆 Рекорди цього місяця",
+  "noRecordsThisMonth": "Поки немає записів про рекорди цього місяця 😔",
+  "deleteFriendTitle": "Видалення з друзів",
+  "deleteFriendConfirmBody": "Ви впевнені, що хочете видалити {name} зі списку друзів?",
+  "@deleteFriendConfirmBody": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "friendDeletedSuccess": "{name} видалено з друзів",
+  "@friendDeletedSuccess": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "deleteError": "Помилка видалення: {error}",
+  "@deleteError": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "friendsAndCommunity": "Друзі та Спільнота",
+  "myFriendsTab": "Мої друзі",
+  "searchRequestsTab": "Пошук / Запити",
+  "noFriendsYet": "У вас поки немає друзів",
+  "findFriendBtn": "Знайти друга",
+  "longTimeAgo": "Давно",
+  "noRecords": "Немає рекордів",
+  "monthlyRecordPrefix": "Рекорд місяця: ",
+  "shareProfileLink": "Поділитися посиланням на профіль",
+  "orFindManually": "Або знайдіть вручну",
+  "searchFriendHint": "Введіть Email або @нікнейм",
+  "searchFriendHelper": "example@gmail.com або @gymbro",
+  "addBtn": "Додати",
+  "incomingRequests": "Вхідні запити",
+  "noNewRequests": "Немає нових запитів",
+  "shareFriendText": "Привіт! Додавай мене в друзі у Gym Tracker, щоб слідкувати за моїми тренуваннями: {link}",
+  "@shareFriendText": {
+    "placeholders": {
+      "link": { "type": "String" }
+    }
+  },
+  "shareFriendSubject": "Запит у друзі Gym Tracker",
+  "requestSentTo": "Запит надіслано до {email}!",
+  "@requestSentTo": {
+    "placeholders": {
+      "email": { "type": "String" }
+    }
+  },
+  "userNotFound": "Користувача не знайдено",
+  "cannotAddSelf": "Ви не можете додати самого себе",
+  "userDataError": "Помилка даних користувача",
+  "requestSentSuccess": "Запит надіслано!",
+  "previousPeriod": "Минулий період"
 }

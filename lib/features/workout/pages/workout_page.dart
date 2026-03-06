@@ -575,7 +575,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
                   child: TextButton.icon(
                     onPressed: () => _setActiveExercise(index + 1),
                     icon: const Icon(Icons.arrow_downward, size: 16),
-                    label: const Text("Next Exercise"),
+                    label: Text(loc.nextExercise),
                     style: TextButton.styleFrom(foregroundColor: Colors.grey),
                   ),
                 ),

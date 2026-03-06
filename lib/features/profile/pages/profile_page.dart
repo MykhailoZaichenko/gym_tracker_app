@@ -128,7 +128,7 @@ class _ProfilePageState extends State<ProfilePage> {
     final user = await _firestore.getUser();
     final workouts = await _firestore.getAllWorkouts();
 
-    double? latestWeight = user?.weightKg;
+    double? latestWeight;
 
     // 🔥 Дістаємо АКТУАЛЬНУ вагу з історії (щоб не показувало ту, що була при реєстрації)
     if (user != null) {
@@ -176,7 +176,7 @@ class _ProfilePageState extends State<ProfilePage> {
     double totalCalories = 0.0;
 
     const double secondsPerRep = 4.0;
-    final double? userWeight = _latestWeight ?? _user?.weightKg;
+    final double? userWeight = _latestWeight;
     final canComputeCalories = userWeight != null;
 
     _allWorkouts.forEach((dateStr, exercises) {
@@ -187,8 +187,9 @@ class _ProfilePageState extends State<ProfilePage> {
         return;
       }
 
-      if (date.isBefore(firstDayOfMonth) || date.isAfter(lastDayOfMonth))
+      if (date.isBefore(firstDayOfMonth) || date.isAfter(lastDayOfMonth)) {
         return;
+      }
 
       for (final ex in exercises) {
         final exId = ex.exerciseId;
@@ -323,7 +324,7 @@ class _ProfilePageState extends State<ProfilePage> {
     final name = (_user?.name.isNotEmpty == true)
         ? _user!.name
         : (_user?.email != null ? _user!.email.split('@')[0] : "Користувач");
-    final double? currentWeight = _latestWeight ?? _user?.weightKg;
+    final double? currentWeight = _latestWeight;
     final bool hasWeight = currentWeight != null && currentWeight > 0;
     final String weightDisplay = hasWeight
         ? "$currentWeight кг"

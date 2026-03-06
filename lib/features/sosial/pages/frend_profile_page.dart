@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/features/profile/models/user_model.dart';
 import 'package:gym_tracker_app/features/workout/models/workout_exercise_model.dart';
+import 'package:gym_tracker_app/l10n/app_localizations.dart';
 import 'package:gym_tracker_app/services/firestore_service.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -50,7 +51,6 @@ class _FriendProfilePageState extends State<FriendProfilePage> {
 
     // 1. Отримуємо ВАГУ
     double? weight = await _firestore.getFriendLatestWeight(friendId);
-    weight ??= widget.friend.weightKg;
     if (weight == 0) weight = null;
 
     // 2. Отримуємо ТРЕНУВАННЯ
@@ -64,7 +64,6 @@ class _FriendProfilePageState extends State<FriendProfilePage> {
       try {
         DateTime? date;
 
-        // 🔥 РОЗУМНИЙ ПАРСИНГ ДАТИ
         if (wData['date'] != null) {
           if (wData['date'] is Timestamp) {
             date = (wData['date'] as Timestamp)
@@ -116,6 +115,7 @@ class _FriendProfilePageState extends State<FriendProfilePage> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final friend = widget.friend;
+    final loc = AppLocalizations.of(context)!;
 
     final name = (friend.name.isNotEmpty == true)
         ? friend.name
@@ -124,8 +124,8 @@ class _FriendProfilePageState extends State<FriendProfilePage> {
               : friend.email.split('@')[0]);
 
     final lastSeen = friend.lastWorkoutDate != null
-        ? timeago.format(friend.lastWorkoutDate!, locale: 'uk')
-        : 'Невідомо';
+        ? timeago.format(friend.lastWorkoutDate!, locale: loc.localeName)
+        : loc.unknownStatus;
 
     return Scaffold(
       appBar: AppBar(title: Text(name), centerTitle: true),
@@ -158,7 +158,7 @@ class _FriendProfilePageState extends State<FriendProfilePage> {
                     ),
                   ),
                   Text(
-                    "Був(ла) у залі: $lastSeen",
+                    loc.lastSeenInGym(lastSeen),
                     style: const TextStyle(color: Colors.grey),
                   ),
                   const SizedBox(height: 30),
@@ -170,23 +170,23 @@ class _FriendProfilePageState extends State<FriendProfilePage> {
                       // 🔥 Використовуємо реальну вагу з історії
                       _buildStatItem(
                         context,
-                        "Вага",
+                        loc.statWeight,
                         _latestWeight != null ? "$_latestWeight кг" : "--",
                         Icons.monitor_weight_outlined,
                         Colors.blueAccent,
                       ),
                       _buildStatItem(
                         context,
-                        "Серія",
-                        "${friend.currentStreak} тиж.",
+                        loc.statStreak,
+                        loc.statWeeks(friend.currentStreak.toString()),
                         Icons.local_fire_department,
                         Colors.deepOrange,
                       ),
                       // 🔥 Використовуємо підраховану кількість тренувань
                       _buildStatItem(
                         context,
-                        "За місяць",
-                        "$_workoutsThisMonth тр.",
+                        loc.statPerMonth,
+                        loc.statWorkouts(_workoutsThisMonth.toString()),
                         Icons.calendar_month,
                         Colors.green,
                       ),
@@ -195,11 +195,11 @@ class _FriendProfilePageState extends State<FriendProfilePage> {
                   const SizedBox(height: 40),
 
                   // Блок Рекордів Місяця
-                  const Align(
+                  Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      "🏆 Рекорди цього місяця",
-                      style: TextStyle(
+                      loc.recordsThisMonth,
+                      style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
@@ -207,13 +207,13 @@ class _FriendProfilePageState extends State<FriendProfilePage> {
                   ),
                   const SizedBox(height: 12),
 
-                  // 🔥 Використовуємо підраховані рекорди
+                  // Використовуємо підраховані рекорди
                   if (_monthlyRecords.isEmpty)
-                    const Padding(
-                      padding: EdgeInsets.all(20.0),
+                    Padding(
+                      padding: const EdgeInsets.all(20.0),
                       child: Text(
-                        "Поки немає записів про рекорди цього місяця 😔",
-                        style: TextStyle(color: Colors.grey),
+                        loc.noRecordsThisMonth,
+                        style: const TextStyle(color: Colors.grey),
                       ),
                     )
                   else
@@ -231,7 +231,6 @@ class _FriendProfilePageState extends State<FriendProfilePage> {
                         itemCount: _monthlyRecords.length,
                         separatorBuilder: (_, __) => const Divider(height: 1),
                         itemBuilder: (context, index) {
-                          // Сортуємо рекорди, щоб було гарно (опціонально, зараз просто беремо як є)
                           final entry = _monthlyRecords.entries.elementAt(
                             index,
                           );
@@ -256,7 +255,7 @@ class _FriendProfilePageState extends State<FriendProfilePage> {
                               ),
                             ),
                             trailing: Text(
-                              "${entry.value.toStringAsFixed(1).replaceAll('.0', '')} кг",
+                              "${entry.value.toStringAsFixed(1).replaceAll('.0', '')} kg",
                               style: const TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,

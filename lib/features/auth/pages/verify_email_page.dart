@@ -88,7 +88,6 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
         id: user.uid,
         email: user.email ?? '',
         name: user.displayName ?? 'User',
-        weightKg: widget.pendingWeight,
       );
 
       await _firestoreService.saveUser(newUser);

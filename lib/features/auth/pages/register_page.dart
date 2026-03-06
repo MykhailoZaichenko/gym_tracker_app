@@ -100,8 +100,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
         // Якщо це новий юзер і є вага з онбордингу
         if (savedWeight != null && savedWeight > 0) {
-          final updatedUser = user.copyWith(weightKg: savedWeight);
-          await _firestore.saveUser(updatedUser);
+          await _firestore.saveUser(user);
 
           // 🔥 ДОДАЄМО ВАГУ ЯК ПЕРШИЙ ЗАПИС У ІСТОРІЮ
           await _firestore.saveBodyWeight(

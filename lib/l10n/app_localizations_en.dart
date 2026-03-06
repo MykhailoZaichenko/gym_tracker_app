@@ -15,9 +15,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ok => 'OK';
 
   @override
-  String get cancel => 'Cancel';
-
-  @override
   String get save => 'Save';
 
   @override
@@ -31,9 +28,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get edit => 'Edit';
-
-  @override
-  String get delete => 'Delete';
 
   @override
   String get yes => 'Yes';
@@ -912,4 +906,203 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get weightMissingBanner =>
       'Enter your weight so we can calculate burned calories!';
+
+  @override
+  String get nextExercise => 'Next Exercise';
+
+  @override
+  String get friendRequestSent => 'Friend request via link successfully sent!';
+
+  @override
+  String additionError(String error) {
+    return 'Addition error: $error';
+  }
+
+  @override
+  String get enterUsernameHint => 'Enter a nickname to find friends';
+
+  @override
+  String get usernameEmptyError => 'Nickname cannot be empty';
+
+  @override
+  String get usernameTooShortError => 'Minimum 3 characters';
+
+  @override
+  String get usernameChecking => 'Checking availability...';
+
+  @override
+  String get usernameAvailable => 'Nickname is available!';
+
+  @override
+  String get usernameTaken => 'This nickname is already taken';
+
+  @override
+  String get usernameSaveError => 'Error saving. Try another nickname.';
+
+  @override
+  String get uniqueUsernameTitle => 'Your Unique Nickname';
+
+  @override
+  String get chooseUsernameDesc =>
+      'Choose a nickname so friends can easily find you in the Gym Tracker community.';
+
+  @override
+  String get usernameLabel => 'Nickname';
+
+  @override
+  String get usernameRulesDesc =>
+      'Only lowercase letters allowed (no spaces).\nThis nickname is permanent and cannot be changed.';
+
+  @override
+  String get saveAndContinue => 'Save and Continue';
+
+  @override
+  String get weightReminderTitle => 'Weight Reminders ⚖️';
+
+  @override
+  String get weightReminderBody =>
+      'Regular weight tracking helps accurately monitor your progress. Do you want to set up reminders so you don\'t forget?';
+
+  @override
+  String get noThanks => 'No, thanks';
+
+  @override
+  String get yesSetUp => 'Yes, set up';
+
+  @override
+  String get permissionBlocked =>
+      'Permission blocked. Please enable notifications in phone settings.';
+
+  @override
+  String get settingsAction => 'Settings';
+
+  @override
+  String get unknownStatus => 'Unknown';
+
+  @override
+  String lastSeenInGym(String date) {
+    return 'Last seen in gym: $date';
+  }
+
+  @override
+  String get statWeight => 'Weight';
+
+  @override
+  String get statStreak => 'Streak';
+
+  @override
+  String statWeeks(String count) {
+    return '$count w.';
+  }
+
+  @override
+  String get statPerMonth => 'This month';
+
+  @override
+  String statWorkouts(String count) {
+    return '$count w.';
+  }
+
+  @override
+  String get recordsThisMonth => '🏆 Records this month';
+
+  @override
+  String get noRecordsThisMonth => 'No records for this month yet 😔';
+
+  @override
+  String get deleteFriendTitle => 'Remove Friend';
+
+  @override
+  String deleteFriendConfirmBody(String name) {
+    return 'Are you sure you want to remove $name from your friends?';
+  }
+
+  @override
+  String get cancel => 'Cancel';
+
+  @override
+  String get delete => 'Delete';
+
+  @override
+  String friendDeletedSuccess(String name) {
+    return '$name removed from friends';
+  }
+
+  @override
+  String deleteError(String error) {
+    return 'Delete error: $error';
+  }
+
+  @override
+  String get friendsAndCommunity => 'Friends & Community';
+
+  @override
+  String get myFriendsTab => 'My Friends';
+
+  @override
+  String get searchRequestsTab => 'Search / Requests';
+
+  @override
+  String get noFriendsYet => 'You don\'t have any friends yet';
+
+  @override
+  String get findFriendBtn => 'Find a friend';
+
+  @override
+  String get longTimeAgo => 'A long time ago';
+
+  @override
+  String get noRecords => 'No records';
+
+  @override
+  String get monthlyRecordPrefix => 'Month record: ';
+
+  @override
+  String get shareProfileLink => 'Share profile link';
+
+  @override
+  String get orFindManually => 'Or find manually';
+
+  @override
+  String get searchFriendHint => 'Enter Email or @username';
+
+  @override
+  String get searchFriendHelper => 'example@gmail.com or @gymbro';
+
+  @override
+  String get addBtn => 'Add';
+
+  @override
+  String get incomingRequests => 'Incoming requests';
+
+  @override
+  String get noNewRequests => 'No new requests';
+
+  @override
+  String shareFriendText(String link) {
+    return 'Hi! Add me as a friend in Gym Tracker to follow my workouts: $link';
+  }
+
+  @override
+  String get shareFriendSubject => 'Gym Tracker friend request';
+
+  @override
+  String requestSentTo(String email) {
+    return 'Request sent to $email!';
+  }
+
+  @override
+  String get userNotFound => 'User not found';
+
+  @override
+  String get cannotAddSelf => 'You cannot add yourself';
+
+  @override
+  String get userDataError => 'User data error';
+
+  @override
+  String get requestSentSuccess => 'Request sent!';
+
+  @override
+  String get previousPeriod => 'Previous period';
 }

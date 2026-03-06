@@ -6,8 +6,6 @@
 
   "ok": "OK",
   "@ok": { "description": "OK button" },
-  "cancel": "Cancel",
-  "@cancel": { "description": "Cancel button" },
   "save": "Save",
   "@save": { "description": "Save button" },
   "saved": "Saved",
@@ -18,8 +16,6 @@
   "@discard": { "description": "Discard button" },
   "edit": "Edit",
   "@edit": { "description": "Edit button" },
-  "delete": "Delete",
-  "@delete": { "description": "Delete button" },
   "yes": "Yes",
   "@yes": { "description": "Yes button" },
   "no": "No",
@@ -622,5 +618,284 @@
   "weightNotSet": "Not set",
   "@weightNotSet": { "description": "Text shown when weight is not provided" },
   "weightMissingBanner": "Enter your weight so we can calculate burned calories!",
-  "@weightMissingBanner": { "description": "Banner text prompting user to enter their weight" }
+  "@weightMissingBanner": { "description": "Banner text prompting user to enter their weight" },
+  "nextExercise": "Next Exercise",
+  "@nextExercise": { "description": "Button to move to the next exercise during workout" },
+  "friendRequestSent": "Friend request via link successfully sent!",
+  "@friendRequestSent": { "description": "Confirmation message for sent friend request" },
+  "additionError": "Addition error: {error}",
+  "@additionError": { "description": "Error message for addition errors", "placeholders": { "error": { "type": "String" } } },
+
+  "enterUsernameHint": "Enter a nickname to find friends",
+  "@enterUsernameHint": {
+    "description": "Hint text shown when entering a username"
+  },
+  "usernameEmptyError": "Nickname cannot be empty",
+  "@usernameEmptyError": {
+    "description": "Error message when the username field is empty"
+  },
+  "usernameTooShortError": "Minimum 3 characters",
+  "@usernameTooShortError": {
+    "description": "Error message when the username is less than 3 characters"
+  },
+  "usernameChecking": "Checking availability...",
+  "@usernameChecking": {
+    "description": "Status message while checking if the username is taken"
+  },
+  "usernameAvailable": "Nickname is available!",
+  "@usernameAvailable": {
+    "description": "Status message when the username is free to use"
+  },
+  "usernameTaken": "This nickname is already taken",
+  "@usernameTaken": {
+    "description": "Status message when the username is already registered"
+  },
+  "usernameSaveError": "Error saving. Try another nickname.",
+  "@usernameSaveError": {
+    "description": "Error message if saving the username fails"
+  },
+  "uniqueUsernameTitle": "Your Unique Nickname",
+  "@uniqueUsernameTitle": {
+    "description": "Title of the create username page"
+  },
+  "chooseUsernameDesc": "Choose a nickname so friends can easily find you in the Gym Tracker community.",
+  "@chooseUsernameDesc": {
+    "description": "Description explaining why a username is needed"
+  },
+  "usernameLabel": "Nickname",
+  "@usernameLabel": {
+    "description": "Label for the username text field"
+  },
+  "usernameRulesDesc": "Only lowercase letters allowed (no spaces).\nThis nickname is permanent and cannot be changed.",
+  "@usernameRulesDesc": {
+    "description": "Rules for creating a username"
+  },
+  "saveAndContinue": "Save and Continue",
+  "@saveAndContinue": {
+    "description": "Button text to save the username and proceed"
+  },
+  "weightReminderTitle": "Weight Reminders ⚖️",
+  "@weightReminderTitle": {
+    "description": "Title for the weight reminder dialog"
+  },
+  "weightReminderBody": "Regular weight tracking helps accurately monitor your progress. Do you want to set up reminders so you don't forget?",
+  "@weightReminderBody": {
+    "description": "Body text for the weight reminder dialog"
+  },
+  "noThanks": "No, thanks",
+  "@noThanks": {
+    "description": "Button text to decline setting up reminders"
+  },
+  "yesSetUp": "Yes, set up",
+  "@yesSetUp": {
+    "description": "Button text to accept setting up reminders"
+  },
+  "permissionBlocked": "Permission blocked. Please enable notifications in phone settings.",
+  "@permissionBlocked": {
+    "description": "Message shown when notification permissions are blocked"
+  },
+  "settingsAction": "Settings",
+  "@settingsAction": {
+    "description": "Button text to open app settings"
+  },
+  "unknownStatus": "Unknown",
+  "@unknownStatus": {
+    "description": "Text shown when the user's last seen status is unknown"
+  },
+  "lastSeenInGym": "Last seen in gym: {date}",
+  "@lastSeenInGym": {
+    "description": "Shows the date when the friend was last active",
+    "placeholders": {
+      "date": {
+        "type": "String",
+        "example": "2 hours ago"
+      }
+    }
+  },
+  "statWeight": "Weight",
+  "@statWeight": {
+    "description": "Label for the weight statistic"
+  },
+  "statStreak": "Streak",
+  "@statStreak": {
+    "description": "Label for the workout streak statistic"
+  },
+  "statWeeks": "{count} w.",
+  "@statWeeks": {
+    "description": "Shows the number of weeks for a streak",
+    "placeholders": {
+      "count": {
+        "type": "String",
+        "example": "3"
+      }
+    }
+  },
+  "statPerMonth": "This month",
+  "@statPerMonth": {
+    "description": "Label for the monthly workouts statistic"
+  },
+  "statWorkouts": "{count} w.",
+  "@statWorkouts": {
+    "description": "Shows the number of workouts",
+    "placeholders": {
+      "count": {
+        "type": "String",
+        "example": "12"
+      }
+    }
+  },
+  "recordsThisMonth": "🏆 Records this month",
+  "@recordsThisMonth": {
+    "description": "Title for the monthly records section"
+  },
+  "noRecordsThisMonth": "No records for this month yet 😔",
+  "@noRecordsThisMonth": {
+    "description": "Message shown when there are no records for the current month"
+  },
+  "deleteFriendTitle": "Remove Friend",
+  "@deleteFriendTitle": {
+    "description": "Title for the delete friend confirmation dialog"
+  },
+  "deleteFriendConfirmBody": "Are you sure you want to remove {name} from your friends?",
+  "@deleteFriendConfirmBody": {
+    "description": "Confirmation message for removing a friend",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "John Doe"
+      }
+    }
+  },
+  "cancel": "Cancel",
+  "@cancel": {
+    "description": "Generic cancel button text"
+  },
+  "delete": "Delete",
+  "@delete": {
+    "description": "Generic delete button text"
+  },
+  "friendDeletedSuccess": "{name} removed from friends",
+  "@friendDeletedSuccess": {
+    "description": "Success message after removing a friend",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "John Doe"
+      }
+    }
+  },
+  "deleteError": "Delete error: {error}",
+  "@deleteError": {
+    "description": "Error message when deleting a friend fails",
+    "placeholders": {
+      "error": {
+        "type": "String",
+        "example": "Network error"
+      }
+    }
+  },
+  "friendsAndCommunity": "Friends & Community",
+  "@friendsAndCommunity": {
+    "description": "Title for the friends page"
+  },
+  "myFriendsTab": "My Friends",
+  "@myFriendsTab": {
+    "description": "Tab title for the user's friends list"
+  },
+  "searchRequestsTab": "Search / Requests",
+  "@searchRequestsTab": {
+    "description": "Tab title for finding friends and managing requests"
+  },
+  "noFriendsYet": "You don't have any friends yet",
+  "@noFriendsYet": {
+    "description": "Message shown when the friends list is empty"
+  },
+  "findFriendBtn": "Find a friend",
+  "@findFriendBtn": {
+    "description": "Button text to navigate to the find friends tab"
+  },
+  "longTimeAgo": "A long time ago",
+  "@longTimeAgo": {
+    "description": "Text shown when the friend's last workout was very long ago"
+  },
+  "noRecords": "No records",
+  "@noRecords": {
+    "description": "Text shown when a friend has no workout records"
+  },
+  "monthlyRecordPrefix": "Month record: ",
+  "@monthlyRecordPrefix": {
+    "description": "Prefix for showing the best monthly record"
+  },
+  "shareProfileLink": "Share profile link",
+  "@shareProfileLink": {
+    "description": "Button text to share the user's profile link"
+  },
+  "orFindManually": "Or find manually",
+  "@orFindManually": {
+    "description": "Text indicating the manual search option"
+  },
+  "searchFriendHint": "Enter Email or @username",
+  "@searchFriendHint": {
+    "description": "Hint text for the friend search input"
+  },
+  "searchFriendHelper": "example@gmail.com or @gymbro",
+  "@searchFriendHelper": {
+    "description": "Helper text for the friend search input"
+  },
+  "addBtn": "Add",
+  "@addBtn": {
+    "description": "Button text to send a friend request"
+  },
+  "incomingRequests": "Incoming requests",
+  "@incomingRequests": {
+    "description": "Title for the incoming friend requests section"
+  },
+  "noNewRequests": "No new requests",
+  "@noNewRequests": {
+    "description": "Message shown when there are no incoming friend requests"
+  },
+  "shareFriendText": "Hi! Add me as a friend in Gym Tracker to follow my workouts: {link}",
+  "@shareFriendText": {
+    "description": "Text used when sharing the profile link",
+    "placeholders": {
+      "link": {
+        "type": "String",
+        "example": "gymtracker://addfriend/123"
+      }
+    }
+  },
+  "shareFriendSubject": "Gym Tracker friend request",
+  "@shareFriendSubject": {
+    "description": "Subject line when sharing the profile link via email"
+  },
+  "requestSentTo": "Request sent to {email}!",
+  "@requestSentTo": {
+    "description": "Success message when a friend request is sent",
+    "placeholders": {
+      "email": {
+        "type": "String",
+        "example": "test@test.com"
+      }
+    }
+  },
+  "userNotFound": "User not found",
+  "@userNotFound": {
+    "description": "Error message when a searched user is not found"
+  },
+  "cannotAddSelf": "You cannot add yourself",
+  "@cannotAddSelf": {
+    "description": "Error message when trying to add oneself as a friend"
+  },
+  "userDataError": "User data error",
+  "@userDataError": {
+    "description": "Error message for invalid user data"
+  },
+  "requestSentSuccess": "Request sent!",
+  "@requestSentSuccess": {
+    "description": "Generic success message for a sent friend request"
+  },
+  "previousPeriod": "Previous period",
+  "@previousPeriod": {
+    "description": "Text for the previous period option"
+  }
 }

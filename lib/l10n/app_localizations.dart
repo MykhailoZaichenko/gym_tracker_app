@@ -110,12 +110,6 @@ abstract class AppLocalizations {
   /// **'OK'**
   String get ok;
 
-  /// Cancel button
-  ///
-  /// In en, this message translates to:
-  /// **'Cancel'**
-  String get cancel;
-
   /// Save button
   ///
   /// In en, this message translates to:
@@ -145,12 +139,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Edit'**
   String get edit;
-
-  /// Delete button
-  ///
-  /// In en, this message translates to:
-  /// **'Delete'**
-  String get delete;
 
   /// Yes button
   ///
@@ -1813,6 +1801,360 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Enter your weight so we can calculate burned calories!'**
   String get weightMissingBanner;
+
+  /// Button to move to the next exercise during workout
+  ///
+  /// In en, this message translates to:
+  /// **'Next Exercise'**
+  String get nextExercise;
+
+  /// Confirmation message for sent friend request
+  ///
+  /// In en, this message translates to:
+  /// **'Friend request via link successfully sent!'**
+  String get friendRequestSent;
+
+  /// Error message for addition errors
+  ///
+  /// In en, this message translates to:
+  /// **'Addition error: {error}'**
+  String additionError(String error);
+
+  /// Hint text shown when entering a username
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a nickname to find friends'**
+  String get enterUsernameHint;
+
+  /// Error message when the username field is empty
+  ///
+  /// In en, this message translates to:
+  /// **'Nickname cannot be empty'**
+  String get usernameEmptyError;
+
+  /// Error message when the username is less than 3 characters
+  ///
+  /// In en, this message translates to:
+  /// **'Minimum 3 characters'**
+  String get usernameTooShortError;
+
+  /// Status message while checking if the username is taken
+  ///
+  /// In en, this message translates to:
+  /// **'Checking availability...'**
+  String get usernameChecking;
+
+  /// Status message when the username is free to use
+  ///
+  /// In en, this message translates to:
+  /// **'Nickname is available!'**
+  String get usernameAvailable;
+
+  /// Status message when the username is already registered
+  ///
+  /// In en, this message translates to:
+  /// **'This nickname is already taken'**
+  String get usernameTaken;
+
+  /// Error message if saving the username fails
+  ///
+  /// In en, this message translates to:
+  /// **'Error saving. Try another nickname.'**
+  String get usernameSaveError;
+
+  /// Title of the create username page
+  ///
+  /// In en, this message translates to:
+  /// **'Your Unique Nickname'**
+  String get uniqueUsernameTitle;
+
+  /// Description explaining why a username is needed
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a nickname so friends can easily find you in the Gym Tracker community.'**
+  String get chooseUsernameDesc;
+
+  /// Label for the username text field
+  ///
+  /// In en, this message translates to:
+  /// **'Nickname'**
+  String get usernameLabel;
+
+  /// Rules for creating a username
+  ///
+  /// In en, this message translates to:
+  /// **'Only lowercase letters allowed (no spaces).\nThis nickname is permanent and cannot be changed.'**
+  String get usernameRulesDesc;
+
+  /// Button text to save the username and proceed
+  ///
+  /// In en, this message translates to:
+  /// **'Save and Continue'**
+  String get saveAndContinue;
+
+  /// Title for the weight reminder dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Weight Reminders ⚖️'**
+  String get weightReminderTitle;
+
+  /// Body text for the weight reminder dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Regular weight tracking helps accurately monitor your progress. Do you want to set up reminders so you don\'t forget?'**
+  String get weightReminderBody;
+
+  /// Button text to decline setting up reminders
+  ///
+  /// In en, this message translates to:
+  /// **'No, thanks'**
+  String get noThanks;
+
+  /// Button text to accept setting up reminders
+  ///
+  /// In en, this message translates to:
+  /// **'Yes, set up'**
+  String get yesSetUp;
+
+  /// Message shown when notification permissions are blocked
+  ///
+  /// In en, this message translates to:
+  /// **'Permission blocked. Please enable notifications in phone settings.'**
+  String get permissionBlocked;
+
+  /// Button text to open app settings
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get settingsAction;
+
+  /// Text shown when the user's last seen status is unknown
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown'**
+  String get unknownStatus;
+
+  /// Shows the date when the friend was last active
+  ///
+  /// In en, this message translates to:
+  /// **'Last seen in gym: {date}'**
+  String lastSeenInGym(String date);
+
+  /// Label for the weight statistic
+  ///
+  /// In en, this message translates to:
+  /// **'Weight'**
+  String get statWeight;
+
+  /// Label for the workout streak statistic
+  ///
+  /// In en, this message translates to:
+  /// **'Streak'**
+  String get statStreak;
+
+  /// Shows the number of weeks for a streak
+  ///
+  /// In en, this message translates to:
+  /// **'{count} w.'**
+  String statWeeks(String count);
+
+  /// Label for the monthly workouts statistic
+  ///
+  /// In en, this message translates to:
+  /// **'This month'**
+  String get statPerMonth;
+
+  /// Shows the number of workouts
+  ///
+  /// In en, this message translates to:
+  /// **'{count} w.'**
+  String statWorkouts(String count);
+
+  /// Title for the monthly records section
+  ///
+  /// In en, this message translates to:
+  /// **'🏆 Records this month'**
+  String get recordsThisMonth;
+
+  /// Message shown when there are no records for the current month
+  ///
+  /// In en, this message translates to:
+  /// **'No records for this month yet 😔'**
+  String get noRecordsThisMonth;
+
+  /// Title for the delete friend confirmation dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Remove Friend'**
+  String get deleteFriendTitle;
+
+  /// Confirmation message for removing a friend
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to remove {name} from your friends?'**
+  String deleteFriendConfirmBody(String name);
+
+  /// Generic cancel button text
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
+
+  /// Generic delete button text
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get delete;
+
+  /// Success message after removing a friend
+  ///
+  /// In en, this message translates to:
+  /// **'{name} removed from friends'**
+  String friendDeletedSuccess(String name);
+
+  /// Error message when deleting a friend fails
+  ///
+  /// In en, this message translates to:
+  /// **'Delete error: {error}'**
+  String deleteError(String error);
+
+  /// Title for the friends page
+  ///
+  /// In en, this message translates to:
+  /// **'Friends & Community'**
+  String get friendsAndCommunity;
+
+  /// Tab title for the user's friends list
+  ///
+  /// In en, this message translates to:
+  /// **'My Friends'**
+  String get myFriendsTab;
+
+  /// Tab title for finding friends and managing requests
+  ///
+  /// In en, this message translates to:
+  /// **'Search / Requests'**
+  String get searchRequestsTab;
+
+  /// Message shown when the friends list is empty
+  ///
+  /// In en, this message translates to:
+  /// **'You don\'t have any friends yet'**
+  String get noFriendsYet;
+
+  /// Button text to navigate to the find friends tab
+  ///
+  /// In en, this message translates to:
+  /// **'Find a friend'**
+  String get findFriendBtn;
+
+  /// Text shown when the friend's last workout was very long ago
+  ///
+  /// In en, this message translates to:
+  /// **'A long time ago'**
+  String get longTimeAgo;
+
+  /// Text shown when a friend has no workout records
+  ///
+  /// In en, this message translates to:
+  /// **'No records'**
+  String get noRecords;
+
+  /// Prefix for showing the best monthly record
+  ///
+  /// In en, this message translates to:
+  /// **'Month record: '**
+  String get monthlyRecordPrefix;
+
+  /// Button text to share the user's profile link
+  ///
+  /// In en, this message translates to:
+  /// **'Share profile link'**
+  String get shareProfileLink;
+
+  /// Text indicating the manual search option
+  ///
+  /// In en, this message translates to:
+  /// **'Or find manually'**
+  String get orFindManually;
+
+  /// Hint text for the friend search input
+  ///
+  /// In en, this message translates to:
+  /// **'Enter Email or @username'**
+  String get searchFriendHint;
+
+  /// Helper text for the friend search input
+  ///
+  /// In en, this message translates to:
+  /// **'example@gmail.com or @gymbro'**
+  String get searchFriendHelper;
+
+  /// Button text to send a friend request
+  ///
+  /// In en, this message translates to:
+  /// **'Add'**
+  String get addBtn;
+
+  /// Title for the incoming friend requests section
+  ///
+  /// In en, this message translates to:
+  /// **'Incoming requests'**
+  String get incomingRequests;
+
+  /// Message shown when there are no incoming friend requests
+  ///
+  /// In en, this message translates to:
+  /// **'No new requests'**
+  String get noNewRequests;
+
+  /// Text used when sharing the profile link
+  ///
+  /// In en, this message translates to:
+  /// **'Hi! Add me as a friend in Gym Tracker to follow my workouts: {link}'**
+  String shareFriendText(String link);
+
+  /// Subject line when sharing the profile link via email
+  ///
+  /// In en, this message translates to:
+  /// **'Gym Tracker friend request'**
+  String get shareFriendSubject;
+
+  /// Success message when a friend request is sent
+  ///
+  /// In en, this message translates to:
+  /// **'Request sent to {email}!'**
+  String requestSentTo(String email);
+
+  /// Error message when a searched user is not found
+  ///
+  /// In en, this message translates to:
+  /// **'User not found'**
+  String get userNotFound;
+
+  /// Error message when trying to add oneself as a friend
+  ///
+  /// In en, this message translates to:
+  /// **'You cannot add yourself'**
+  String get cannotAddSelf;
+
+  /// Error message for invalid user data
+  ///
+  /// In en, this message translates to:
+  /// **'User data error'**
+  String get userDataError;
+
+  /// Generic success message for a sent friend request
+  ///
+  /// In en, this message translates to:
+  /// **'Request sent!'**
+  String get requestSentSuccess;
+
+  /// Text for the previous period option
+  ///
+  /// In en, this message translates to:
+  /// **'Previous period'**
+  String get previousPeriod;
 }
 
 class _AppLocalizationsDelegate

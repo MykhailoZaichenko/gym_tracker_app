@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import '../../../features/profile/models/user_model.dart';
@@ -34,25 +35,17 @@ class AppDb {
         email TEXT NOT NULL UNIQUE,
         name TEXT NOT NULL,
         avatarUrl TEXT,
-        weightKg REAL
       );
     ''');
   }
 
   FutureOr<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
-    if (oldVersion < 2 && newVersion >= 2) {
-      try {
-        await db.execute('ALTER TABLE users ADD COLUMN weightKg REAL;');
-      } catch (e) {
-        print('Migration to v2: $e');
-      }
-    }
     // Міграція для версії 3 (додавання username)
     if (oldVersion < 3 && newVersion >= 3) {
       try {
         await db.execute('ALTER TABLE users ADD COLUMN username TEXT;');
       } catch (e) {
-        print('Migration to v3: $e');
+        debugPrint('Migration to v3: $e');
       }
     }
   }

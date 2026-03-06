@@ -51,7 +51,6 @@ class AuthService {
           id: null,
           email: user.email ?? '',
           name: user.displayName ?? 'Google User',
-          weightKg: 0,
           avatarUrl: user.photoURL,
         );
         await _firestoreService.saveUser(appUser);
@@ -82,7 +81,6 @@ class AuthService {
       email: email,
       name: name,
       avatarUrl: null,
-      weightKg: null,
     );
 
     await _firestoreService.saveUser(newUser);
