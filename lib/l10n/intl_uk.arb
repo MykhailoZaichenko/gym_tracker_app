@@ -151,8 +151,10 @@
 
   "settingsTitle": "Налаштування",
   "editProfileTitle": "Редагувати профіль",
+  "themeSelectionTitle" : "Тема додатку",
   "darkMode": "Темний режим",
   "lightMode": "Світлий режим",
+  "systemMode": "Системний режим",
   "notifications": "Сповіщення",
   "appLanguage": "Мова додатку",
   "selectLanguage": "Виберіть мову",
@@ -415,5 +417,8 @@
   "cannotAddSelf": "Ви не можете додати самого себе",
   "userDataError": "Помилка даних користувача",
   "requestSentSuccess": "Запит надіслано!",
-  "previousPeriod": "Минулий період"
+  "previousPeriod": "Минулий період",
+  
+  "enableNotificationsTitle": "Увімкнути сповіщення? 🔔",
+  "enableNotificationsBody": "Це дозволить нам надсилати тобі нагадування про тренування та відстеження ваги, щоб ти не втрачав прогрес."
 }

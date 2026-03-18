@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/features/profile/models/user_model.dart';
+import 'package:gym_tracker_app/features/sosial/widgets/friend_stat_item.dart';
 import 'package:gym_tracker_app/features/workout/models/workout_exercise_model.dart';
 import 'package:gym_tracker_app/l10n/app_localizations.dart';
 import 'package:gym_tracker_app/services/firestore_service.dart';
-import 'package:timeago/timeago.dart' as timeago;
+import 'package:gym_tracker_app/utils/time_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class FriendProfilePage extends StatefulWidget {
@@ -123,9 +124,12 @@ class _FriendProfilePageState extends State<FriendProfilePage> {
               ? friend.name
               : friend.email.split('@')[0]);
 
-    final lastSeen = friend.lastWorkoutDate != null
-        ? timeago.format(friend.lastWorkoutDate!, locale: loc.localeName)
-        : loc.unknownStatus;
+    final lastSeen = TimeUtils.formatRelativeTime(
+      friend.lastWorkoutDate,
+      loc.localeName,
+    );
+
+    final hasPhoto = friend.avatarUrl != null && friend.avatarUrl!.isNotEmpty;
 
     return Scaffold(
       appBar: AppBar(title: Text(name), centerTitle: true),
@@ -141,17 +145,22 @@ class _FriendProfilePageState extends State<FriendProfilePage> {
                     backgroundColor: theme.colorScheme.primary.withValues(
                       alpha: 0.1,
                     ),
-                    child: Text(
-                      name[0].toUpperCase(),
-                      style: TextStyle(
-                        fontSize: 40,
-                        color: theme.colorScheme.primary,
-                      ),
-                    ),
+                    backgroundImage: hasPhoto
+                        ? NetworkImage(friend.avatarUrl!)
+                        : null,
+                    child: hasPhoto
+                        ? null
+                        : Text(
+                            name[0].toUpperCase(),
+                            style: TextStyle(
+                              fontSize: 40,
+                              color: theme.colorScheme.primary,
+                            ),
+                          ),
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    "@${friend.name.isNotEmpty == true ? friend.name : friend.email.split('@')[0]}",
+                    "@$name",
                     style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -167,28 +176,25 @@ class _FriendProfilePageState extends State<FriendProfilePage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      // 🔥 Використовуємо реальну вагу з історії
-                      _buildStatItem(
-                        context,
-                        loc.statWeight,
-                        _latestWeight != null ? "$_latestWeight кг" : "--",
-                        Icons.monitor_weight_outlined,
-                        Colors.blueAccent,
+                      FriendStatItem(
+                        title: loc.statWeight,
+                        value: _latestWeight != null
+                            ? "$_latestWeight кг"
+                            : "--",
+                        icon: Icons.monitor_weight_outlined,
+                        color: Colors.blueAccent,
                       ),
-                      _buildStatItem(
-                        context,
-                        loc.statStreak,
-                        loc.statWeeks(friend.currentStreak.toString()),
-                        Icons.local_fire_department,
-                        Colors.deepOrange,
+                      FriendStatItem(
+                        title: loc.statStreak,
+                        value: loc.statWeeks(friend.currentStreak.toString()),
+                        icon: Icons.local_fire_department,
+                        color: Colors.deepOrange,
                       ),
-                      // 🔥 Використовуємо підраховану кількість тренувань
-                      _buildStatItem(
-                        context,
-                        loc.statPerMonth,
-                        loc.statWorkouts(_workoutsThisMonth.toString()),
-                        Icons.calendar_month,
-                        Colors.green,
+                      FriendStatItem(
+                        title: loc.statPerMonth,
+                        value: loc.statWorkouts(_workoutsThisMonth.toString()),
+                        icon: Icons.calendar_month,
+                        color: Colors.green,
                       ),
                     ],
                   ),
@@ -268,33 +274,6 @@ class _FriendProfilePageState extends State<FriendProfilePage> {
                 ],
               ),
             ),
-    );
-  }
-
-  Widget _buildStatItem(
-    BuildContext context,
-    String title,
-    String value,
-    IconData icon,
-    Color color,
-  ) {
-    return Column(
-      children: [
-        Container(
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: color.withValues(alpha: 0.1),
-            shape: BoxShape.circle,
-          ),
-          child: Icon(icon, color: color, size: 28),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          value,
-          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-        ),
-        Text(title, style: const TextStyle(color: Colors.grey)),
-      ],
     );
   }
 }

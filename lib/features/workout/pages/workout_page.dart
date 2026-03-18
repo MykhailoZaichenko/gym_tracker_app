@@ -364,7 +364,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
         final weightText = _weightCtrls[i][j].text.replaceAll(',', '.');
         final repsText = _repsCtrls[i][j].text;
         _exercises[i].sets[j].weight = double.tryParse(weightText);
-        _exercises[i].sets[j].reps = int.tryParse(repsText);
+        _exercises[i].sets[j].reps = double.tryParse(repsText);
       }
     }
     final String idToSave = widget.date.toIso8601String().split('T').first;
@@ -520,8 +520,22 @@ class _WorkoutPageState extends State<WorkoutPage> {
             ExerciseHeader(
               exercise: exercise,
               nameController: _nameCtrls[index],
-              onPickExercise: (ctx, {initialQuery}) =>
-                  showExercisePicker(ctx, initialQuery: initialQuery),
+              onPickExercise: (ctx, {initialQuery}) async {
+                final selected = await showExercisePicker(
+                  ctx,
+                  initialQuery: initialQuery,
+                );
+                if (selected != null) {
+                  setState(() {
+                    _exercises[index].name = selected.name;
+                    _exercises[index].exerciseId = selected.id == '__custom__'
+                        ? null
+                        : selected.id;
+                    _nameCtrls[index].text = selected.name;
+                  });
+                }
+                return null;
+              },
               onRemoveExercise: () => _removeExercise(index),
               buildIconForName: (nameOrId) {
                 final catalog = getExerciseCatalog(loc);
@@ -694,9 +708,17 @@ class _WorkoutPageState extends State<WorkoutPage> {
                 duration: const Duration(milliseconds: 300),
                 transitionBuilder: (child, animation) =>
                     SizeTransition(sizeFactor: animation, child: child),
+
+                // ОСЬ ТУТ ДОДАЄМО КЛЮЧІ (ValueKey)
                 child: isActive
-                    ? _buildExpandedCard(i, loc)
-                    : _buildCompactCard(i, loc),
+                    ? SizedBox(
+                        key: ValueKey('expanded_$i'),
+                        child: _buildExpandedCard(i, loc),
+                      )
+                    : SizedBox(
+                        key: ValueKey('compact_$i'),
+                        child: _buildCompactCard(i, loc),
+                      ),
               );
             }),
           ],

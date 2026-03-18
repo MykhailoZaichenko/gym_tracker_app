@@ -41,7 +41,7 @@ class WorkoutExercise {
 
 class SetData {
   double? weight;
-  int? reps;
+  double? reps;
   bool isCompleted; // Для чекбоксів (галочок)
 
   SetData({this.weight, this.reps, this.isCompleted = false});
@@ -53,13 +53,13 @@ class SetData {
   factory SetData.fromMap(Map<String, dynamic> map) {
     return SetData(
       weight: (map['weight'] as num?)?.toDouble(),
-      reps: map['reps'] as int?,
+      reps: (map['reps'] as num?)?.toDouble(),
       isCompleted: map['isCompleted'] ?? false,
     );
   }
 
   // ДОДАНО: метод copyWith для сету (саме він викликає помилку)
-  SetData copyWith({double? weight, int? reps, bool? isCompleted}) {
+  SetData copyWith({double? weight, double? reps, bool? isCompleted}) {
     return SetData(
       weight: weight ?? this.weight,
       reps: reps ?? this.reps,

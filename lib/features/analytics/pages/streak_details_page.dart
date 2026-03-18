@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:gym_tracker_app/core/theme/theme_service.dart';
 import 'package:gym_tracker_app/features/workout/models/workout_exercise_model.dart';
 import 'package:gym_tracker_app/l10n/app_localizations.dart';
 import 'package:gym_tracker_app/services/firestore_service.dart'; // Для збереження
@@ -72,7 +71,7 @@ class _StreakDetailsPageState extends State<StreakDetailsPage> {
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
 
-    final isDark = ThemeService.isDarkModeNotifier.value;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final backgroundColor = isDark ? Colors.black : Colors.white;
     final contentColor = isDark ? Colors.white : Colors.black;
 

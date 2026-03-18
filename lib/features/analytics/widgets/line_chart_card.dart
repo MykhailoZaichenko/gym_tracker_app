@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:gym_tracker_app/core/constants/constants.dart';
-import 'package:gym_tracker_app/core/theme/theme_service.dart';
 
 class ProgressLineChart extends StatelessWidget {
   final List<FlSpot> spots;
@@ -231,10 +230,9 @@ class ProgressLineChart extends StatelessWidget {
                     return LineTooltipItem(
                       '${touchedSpot.y}', // the text you want to show
                       TextStyle(
-                        color: ThemeService.isDarkModeNotifier.value == true
+                        color: Theme.of(context).brightness == Brightness.dark
                             ? Colors.white
-                            : Colors
-                                  .black, // <-- change tooltip text color here
+                            : Colors.black,
                         fontWeight: FontWeight.bold,
                         fontSize: 14,
                       ),

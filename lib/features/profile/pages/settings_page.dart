@@ -1,16 +1,14 @@
-import 'package:firebase_auth/firebase_auth.dart'; // Додано для обробки помилок
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:gym_tracker_app/core/constants/constants.dart';
 import 'package:gym_tracker_app/core/locale/locale_serviece.dart';
 import 'package:gym_tracker_app/features/welcome/pages/welcome_page.dart';
 import 'package:gym_tracker_app/l10n/app_localizations.dart';
 import 'package:gym_tracker_app/services/notification_service.dart';
 import 'package:gym_tracker_app/widget/common/custome_snackbar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'package:gym_tracker_app/core/theme/theme_service.dart';
-import 'package:gym_tracker_app/services/auth_service.dart'; // Додано
-import 'package:gym_tracker_app/services/firestore_service.dart'; // Додано
+import 'package:gym_tracker_app/services/auth_service.dart';
+import 'package:gym_tracker_app/services/firestore_service.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -21,55 +19,75 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
   late SharedPreferences _prefs;
   bool _notificationsEnabled = true;
-  bool _isLoading = false; // Додано для відображення прогресу видалення
+  bool _isLoading = false;
   final NotificationService _notificationService = NotificationService();
 
   @override
   void initState() {
     super.initState();
     _loadSettings();
-    _notificationService.init();
   }
 
   Future<void> _loadSettings() async {
     _prefs = await SharedPreferences.getInstance();
-    final savedDark = _prefs.getBool(KCOnstats.themeModeKey) ?? false;
-    ThemeService.isDarkModeNotifier.value = savedDark;
     _notificationsEnabled = _prefs.getBool('notifications_enabled') ?? true;
     if (mounted) setState(() {});
   }
 
-  Future<void> _toggleDarkMode(bool value) async {
-    ThemeService.isDarkModeNotifier.value = value;
-    await _prefs.setBool(KCOnstats.themeModeKey, value);
-  }
-
   Future<void> _toggleNotifications(bool value) async {
-    setState(() => _notificationsEnabled = value);
-    await _prefs.setBool('notifications_enabled', value);
+    final loc = AppLocalizations.of(context)!;
 
-    if (!mounted) return;
     if (value) {
-      // Якщо увімкнули - надсилаємо тестове повідомлення
-      final loc = AppLocalizations.of(context)!;
+      // 1. Показуємо красиве локалізоване діалогове вікно
+      final bool? confirm = await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text(loc.enableNotificationsTitle),
+          content: Text(loc.enableNotificationsBody),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: Text(loc.noThanks),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: Text(loc.yesSetUp),
+            ),
+          ],
+        ),
+      );
+
+      // Якщо користувач передумав і натиснув "Ні" або закрив вікно
+      if (confirm != true) {
+        setState(() => _notificationsEnabled = false);
+        return;
+      }
+
+      // 2. Ініціалізуємо сервіс (який викличе системне вікно дозволу)
+      await _notificationService.init();
+
+      // Зберігаємо стан
+      setState(() => _notificationsEnabled = true);
+      await _prefs.setBool('notifications_enabled', true);
+
+      // Тестове сповіщення
       await _notificationService.showInstantNotification(
-        title: loc.notificationsEnabledTitle, // "Сповіщення увімкнено! 🔔"
-        body: loc
-            .notificationsEnabledBody, // "Тепер ви будете отримувати нагадування."
+        title: loc.notificationsEnabledTitle,
+        body: loc.notificationsEnabledBody,
       );
     } else {
-      // Якщо вимкнули - можна скасувати всі заплановані
+      // Якщо користувач вимикає сповіщення
+      setState(() => _notificationsEnabled = false);
+      await _prefs.setBool('notifications_enabled', false);
       await _notificationService.cancelAll();
     }
   }
 
   Future<void> _onDeleteAccountPressed() async {
-    // 1. Отримуємо локалізацію
     final loc = AppLocalizations.of(context)!;
     final authService = AuthService();
     final firestoreService = FirestoreService();
 
-    // 2. Показуємо діалог
     final confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -89,21 +107,16 @@ class _SettingsPageState extends State<SettingsPage> {
       ),
     );
 
-    // Якщо натиснули "Відміна" або закрили вікно — нічого не робимо
     if (confirm != true) return;
 
-    // Починаємо завантаження
     setState(() => _isLoading = true);
 
     try {
-      // 3. Видаляємо дані з бази та самого юзера
       await firestoreService.deleteUserData();
       await authService.deleteAccount();
 
       if (!mounted) return;
 
-      // 4. ПРАВИЛЬНА НАВІГАЦІЯ:
-      // Переходимо на WelcomePage і видаляємо всю історію навігації
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(builder: (_) => const WelcomePage()),
         (route) => false,
@@ -111,7 +124,6 @@ class _SettingsPageState extends State<SettingsPage> {
     } on FirebaseAuthException catch (e) {
       if (mounted) {
         setState(() => _isLoading = false);
-        // Обробка помилки, якщо треба перелогінитись
         if (e.code == 'requires-recent-login') {
           showDialog(
             context: context,
@@ -196,6 +208,70 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
+  void _showThemeSelector() {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        final loc = AppLocalizations.of(context)!;
+        return SafeArea(
+          child: ValueListenableBuilder<ThemeMode>(
+            valueListenable: ThemeService.themeModeNotifier,
+            builder: (context, currentMode, child) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const SizedBox(height: 16),
+                  Text(
+                    loc.themeSelectionTitle,
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                  const SizedBox(height: 16),
+                  ListTile(
+                    leading: const Icon(Icons.brightness_auto),
+                    title: Text(loc.systemMode),
+                    trailing: currentMode == ThemeMode.system
+                        ? const Icon(Icons.check, color: Colors.green)
+                        : null,
+                    onTap: () {
+                      ThemeService.changeTheme(ThemeMode.system);
+                      Navigator.pop(context);
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.light_mode),
+                    title: Text(loc.lightMode),
+                    trailing: currentMode == ThemeMode.light
+                        ? const Icon(Icons.check, color: Colors.green)
+                        : null,
+                    onTap: () {
+                      ThemeService.changeTheme(ThemeMode.light);
+                      Navigator.pop(context);
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.dark_mode),
+                    title: Text(loc.darkMode),
+                    trailing: currentMode == ThemeMode.dark
+                        ? const Icon(Icons.check, color: Colors.green)
+                        : null,
+                    onTap: () {
+                      ThemeService.changeTheme(ThemeMode.dark);
+                      Navigator.pop(context);
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                ],
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
+
   void _confirmClearData() {
     final loc = AppLocalizations.of(context)!;
     showDialog(
@@ -211,9 +287,9 @@ class _SettingsPageState extends State<SettingsPage> {
           TextButton(
             onPressed: () async {
               await _prefs.clear();
+              ThemeService.changeTheme(ThemeMode.system);
               if (!mounted) return;
               setState(() {
-                ThemeService.isDarkModeNotifier.value = false;
                 _notificationsEnabled = true;
               });
               Navigator.of(context).pop();
@@ -229,10 +305,8 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isDark = ThemeService.isDarkModeNotifier.value;
     final loc = AppLocalizations.of(context)!;
 
-    // Якщо йде процес видалення, показуємо лоадер на весь екран
     if (_isLoading) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
@@ -243,14 +317,23 @@ class _SettingsPageState extends State<SettingsPage> {
         child: ListView(
           padding: const EdgeInsets.all(20),
           children: [
-            SwitchListTile(
-              secondary: Icon(
-                Icons.brightness_6,
-                color: isDark ? Colors.white : theme.primaryColor,
-              ),
-              title: isDark ? Text(loc.darkMode) : Text(loc.lightMode),
-              value: isDark,
-              onChanged: _toggleDarkMode,
+            ValueListenableBuilder<ThemeMode>(
+              valueListenable: ThemeService.themeModeNotifier,
+              builder: (context, currentMode, child) {
+                String themeName = loc.systemMode;
+                if (currentMode == ThemeMode.light) themeName = loc.lightMode;
+                if (currentMode == ThemeMode.dark) themeName = loc.darkMode;
+
+                return ListTile(
+                  leading: Icon(
+                    Icons.brightness_6,
+                    color: theme.colorScheme.onSurface,
+                  ),
+                  title: Text(loc.themeSelectionTitle),
+                  subtitle: Text(themeName),
+                  onTap: _showThemeSelector,
+                );
+              },
             ),
             const Divider(),
 
@@ -260,7 +343,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 return ListTile(
                   leading: Icon(
                     Icons.language,
-                    color: isDark ? Colors.white : theme.primaryColor,
+                    color: theme.colorScheme.onSurface,
                   ),
                   title: Text(loc.appLanguage),
                   subtitle: Text(
@@ -275,7 +358,7 @@ class _SettingsPageState extends State<SettingsPage> {
             SwitchListTile(
               secondary: Icon(
                 Icons.notifications,
-                color: isDark ? Colors.white : theme.primaryColor,
+                color: theme.colorScheme.onSurface,
               ),
               title: Text(loc.notifications),
               value: _notificationsEnabled,
@@ -283,11 +366,9 @@ class _SettingsPageState extends State<SettingsPage> {
             ),
             const Divider(),
 
-            // Очищення локальних даних
             ListTile(
               leading: Icon(
-                Icons
-                    .cleaning_services_outlined, // Змінив іконку, щоб не плутати з видаленням акаунту
+                Icons.cleaning_services_outlined,
                 color: theme.colorScheme.onSurface,
               ),
               title: Text(loc.clearData),
@@ -295,11 +376,10 @@ class _SettingsPageState extends State<SettingsPage> {
             ),
             const Divider(),
 
-            // === КНОПКА ВИДАЛЕННЯ АКАУНТУ ===
             ListTile(
               leading: const Icon(Icons.delete_forever, color: Colors.red),
               title: Text(
-                loc.deleteAccount, // "Видалити акаунт"
+                loc.deleteAccount,
                 style: const TextStyle(
                   color: Colors.red,
                   fontWeight: FontWeight.bold,
@@ -308,13 +388,12 @@ class _SettingsPageState extends State<SettingsPage> {
               onTap: _onDeleteAccountPressed,
             ),
 
-            // =================================
             const Divider(),
 
             ListTile(
               leading: Icon(
                 Icons.info_outline,
-                color: isDark ? Colors.white : theme.primaryColor,
+                color: theme.colorScheme.onSurface,
               ),
               title: Text(loc.aboutApp),
               onTap: () {

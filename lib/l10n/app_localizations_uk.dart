@@ -442,10 +442,16 @@ class AppLocalizationsUk extends AppLocalizations {
   String get editProfileTitle => 'Редагувати профіль';
 
   @override
+  String get themeSelectionTitle => 'Тема додатку';
+
+  @override
   String get darkMode => 'Темний режим';
 
   @override
   String get lightMode => 'Світлий режим';
+
+  @override
+  String get systemMode => 'Системний режим';
 
   @override
   String get notifications => 'Сповіщення';
@@ -1116,4 +1122,11 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get previousPeriod => 'Минулий період';
+
+  @override
+  String get enableNotificationsTitle => 'Увімкнути сповіщення? 🔔';
+
+  @override
+  String get enableNotificationsBody =>
+      'Це дозволить нам надсилати тобі нагадування про тренування та відстеження ваги, щоб ти не втрачав прогрес.';
 }

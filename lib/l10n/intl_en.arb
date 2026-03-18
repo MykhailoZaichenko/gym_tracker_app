@@ -284,10 +284,14 @@
   "@settingsTitle": { "description": "Settings page title" },
   "editProfileTitle": "Edit Profile",
   "@editProfileTitle": { "description": "Edit profile page title" },
+  "themeSelectionTitle" : "App theme",
+  "@themeSelectionTitle": { "description": "Theme selection section title" },
   "darkMode": "Dark Mode",
   "@darkMode": { "description": "Dark mode switch" },
   "lightMode": "Light Mode",
   "@lightMode": { "description": "Light mode switch" },
+  "systemMode": "System Mode",
+  "@systemMode": { "description": "System mode switch" },
   "notifications": "Notifications",
   "@notifications": { "description": "Notifications switch" },
   "appLanguage": "App Language",
@@ -897,5 +901,13 @@
   "previousPeriod": "Previous period",
   "@previousPeriod": {
     "description": "Text for the previous period option"
+  },
+  "enableNotificationsTitle": "Enable Notifications? 🔔",
+  "@enableNotificationsTitle": {
+    "description": "Title for the enable notifications dialog"
+  },
+  "enableNotificationsBody": "This will allow us to send you reminders about your workouts and weight tracking so you don't lose your progress.",
+  "@enableNotificationsBody": {
+    "description": "Body text for the enable notifications dialog"
   }
 }

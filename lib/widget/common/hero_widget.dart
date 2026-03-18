@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:gym_tracker_app/core/theme/theme_service.dart';
 import 'package:lottie/lottie.dart';
 
 // HeroWidget тепер є StatefulWidget для керування контролером анімації.
@@ -63,7 +62,9 @@ class _HeroWidgetState extends State<HeroWidget>
       tag: widget.tag,
       // ValueListenableBuilder використовується для реакції на зміни теми
       child: ValueListenableBuilder<bool>(
-        valueListenable: ThemeService.isDarkModeNotifier,
+        valueListenable: Theme.of(context).brightness == Brightness.dark
+            ? ValueNotifier(true)
+            : ValueNotifier(false),
         builder: (context, isDarkMode, child) {
           // Створюємо Lottie-віджет, прив'язаний до нашого контролера
           final lottieWidget = Lottie.asset(

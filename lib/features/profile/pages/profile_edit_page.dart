@@ -194,7 +194,7 @@
 //                 : Text(
 //                     loc.save,
 //                     style: TextStyle(
-//                       color: ThemeService.isDarkModeNotifier.value
+//                       color: ThemeService.themeModeNotifier.value
 //                           ? Colors.white
 //                           : Colors.black,
 //                     ),

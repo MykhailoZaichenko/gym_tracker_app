@@ -890,6 +890,12 @@ abstract class AppLocalizations {
   /// **'Edit Profile'**
   String get editProfileTitle;
 
+  /// Theme selection section title
+  ///
+  /// In en, this message translates to:
+  /// **'App theme'**
+  String get themeSelectionTitle;
+
   /// Dark mode switch
   ///
   /// In en, this message translates to:
@@ -901,6 +907,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Light Mode'**
   String get lightMode;
+
+  /// System mode switch
+  ///
+  /// In en, this message translates to:
+  /// **'System Mode'**
+  String get systemMode;
 
   /// Notifications switch
   ///
@@ -2155,6 +2167,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Previous period'**
   String get previousPeriod;
+
+  /// Title for the enable notifications dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Enable Notifications? 🔔'**
+  String get enableNotificationsTitle;
+
+  /// Body text for the enable notifications dialog
+  ///
+  /// In en, this message translates to:
+  /// **'This will allow us to send you reminders about your workouts and weight tracking so you don\'t lose your progress.'**
+  String get enableNotificationsBody;
 }
 
 class _AppLocalizationsDelegate

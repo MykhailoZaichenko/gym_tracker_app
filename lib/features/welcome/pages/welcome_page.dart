@@ -43,6 +43,7 @@ class WelcomePage extends StatelessWidget {
                   );
                 },
               ),
+              SizedBox(height: 8.0),
               TextButton(
                 onPressed: () {
                   Navigator.pushAndRemoveUntil(
@@ -55,6 +56,12 @@ class WelcomePage extends StatelessWidget {
                     (route) => false,
                   );
                 },
+                style: TextButton.styleFrom(
+                  minimumSize: const Size(double.infinity, 50.0),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15.0),
+                  ),
+                ),
                 child: Text(loc.loginAction),
               ),
             ],

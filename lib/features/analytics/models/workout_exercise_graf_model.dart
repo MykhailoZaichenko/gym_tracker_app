@@ -28,14 +28,14 @@ class WorkoutExerciseGraf {
 
 class SetData {
   double? weight;
-  int? reps;
+  double? reps;
 
   SetData({this.weight, this.reps});
 
   factory SetData.fromMap(Map<String, dynamic> m) {
     return SetData(
       weight: (m['weight'] as num?)?.toDouble(),
-      reps: m['reps'] as int?,
+      reps: (m['reps'] as num?)?.toDouble(),
     );
   }
 

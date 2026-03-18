@@ -1,10 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/features/profile/models/user_model.dart';
-import 'package:gym_tracker_app/features/sosial/pages/frend_profile_page.dart';
+import 'package:gym_tracker_app/features/sosial/widgets/friends_card.dart';
 import 'package:gym_tracker_app/l10n/app_localizations.dart';
 import 'package:gym_tracker_app/services/firestore_service.dart';
-import 'package:timeago/timeago.dart' as timeago;
 import 'package:share_plus/share_plus.dart';
 import 'dart:async';
 
@@ -152,167 +151,13 @@ class _FriendsPageState extends State<FriendsPage>
           itemCount: friends.length,
           separatorBuilder: (_, __) => const SizedBox(height: 12),
           itemBuilder: (context, index) {
-            return _buildFriendCard(friends[index], loc);
+            return FriendCard(
+              friend: friends[index],
+              onDelete: () => _showDeleteConfirmation(friends[index], loc),
+            );
           },
         );
       },
-    );
-  }
-
-  Widget _buildFriendCard(UserModel friend, AppLocalizations loc) {
-    final theme = Theme.of(context);
-    final lastSeenDate = friend.lastWorkoutDate != null
-        ? timeago.format(friend.lastWorkoutDate!, locale: loc.localeName)
-        : loc.longTimeAgo;
-
-    String bestStat = loc.noRecords;
-    if (friend.monthlyBestWeights.isNotEmpty) {
-      final bestEntry = friend.monthlyBestWeights.entries.reduce(
-        (a, b) => a.value > b.value ? a : b,
-      );
-      bestStat = "${bestEntry.key}: ${bestEntry.value.toInt()} kg";
-    }
-
-    final name = (friend.name.isNotEmpty == true)
-        ? friend.name
-        : friend.email.split('@')[0];
-
-    final displayUsername = friend.email;
-    final initial = name.isNotEmpty ? name[0].toUpperCase() : '?';
-
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: InkWell(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => FriendProfilePage(friend: friend),
-            ),
-          );
-        },
-        borderRadius: BorderRadius.circular(16),
-        child: Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: Column(
-            children: [
-              ListTile(
-                contentPadding: EdgeInsets.zero,
-                leading: CircleAvatar(
-                  radius: 24,
-                  backgroundColor: theme.colorScheme.primary,
-                  child: Text(
-                    initial,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                title: Text(
-                  name,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
-                subtitle: Text(
-                  "$displayUsername\n${loc.lastSeenInGym(lastSeenDate)}",
-                ),
-                isThreeLine: true,
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 6,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.orange.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: Colors.orange.withValues(alpha: 0.5),
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Icon(
-                            Icons.local_fire_department,
-                            color: Colors.deepOrange,
-                            size: 18,
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            loc.statWorkouts(friend.currentStreak.toString()),
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.deepOrange,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 4),
-
-                    PopupMenuButton<String>(
-                      icon: const Icon(Icons.more_vert, color: Colors.grey),
-                      onSelected: (value) {
-                        if (value == 'delete') {
-                          _showDeleteConfirmation(friend, loc);
-                        }
-                      },
-                      itemBuilder: (BuildContext context) => [
-                        PopupMenuItem(
-                          value: 'delete',
-                          child: Row(
-                            children: [
-                              const Icon(
-                                Icons.person_remove,
-                                color: Colors.red,
-                                size: 20,
-                              ),
-                              const SizedBox(width: 8),
-                              Text(
-                                loc.delete,
-                                style: const TextStyle(color: Colors.red),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              const Divider(),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4.0),
-                child: Row(
-                  children: [
-                    const Icon(
-                      Icons.emoji_events_outlined,
-                      size: 18,
-                      color: Colors.amber,
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      loc.monthlyRecordPrefix,
-                      style: TextStyle(color: Colors.grey[600]),
-                    ),
-                    Expanded(
-                      child: Text(
-                        bestStat,
-                        style: const TextStyle(fontWeight: FontWeight.bold),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 

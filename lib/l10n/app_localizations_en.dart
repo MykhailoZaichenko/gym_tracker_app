@@ -435,10 +435,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get editProfileTitle => 'Edit Profile';
 
   @override
+  String get themeSelectionTitle => 'App theme';
+
+  @override
   String get darkMode => 'Dark Mode';
 
   @override
   String get lightMode => 'Light Mode';
+
+  @override
+  String get systemMode => 'System Mode';
 
   @override
   String get notifications => 'Notifications';
@@ -1105,4 +1111,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get previousPeriod => 'Previous period';
+
+  @override
+  String get enableNotificationsTitle => 'Enable Notifications? 🔔';
+
+  @override
+  String get enableNotificationsBody =>
+      'This will allow us to send you reminders about your workouts and weight tracking so you don\'t lose your progress.';
 }

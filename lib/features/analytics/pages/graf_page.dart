@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:gym_tracker_app/core/constants/constants.dart';
 import 'package:gym_tracker_app/core/constants/date_constants.dart';
-import 'package:gym_tracker_app/core/theme/theme_service.dart';
 import 'package:gym_tracker_app/features/analytics/models/progression_data_model.dart';
 import 'package:gym_tracker_app/features/analytics/models/workout_exercise_graf_model.dart';
 import 'package:gym_tracker_app/utils/utils.dart';
@@ -470,7 +469,7 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
       builder: (_) => AlertDialog(
         title: Text(
           '$_selectedExerciseDisplay — $key',
-          style: ThemeService.isDarkModeNotifier.value
+          style: Theme.of(context).brightness == Brightness.dark
               ? const TextStyle(color: Colors.white)
               : const TextStyle(color: Colors.black),
         ),

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/core/constants/date_constants.dart';
-import 'package:gym_tracker_app/core/theme/theme_service.dart';
 import 'package:gym_tracker_app/utils/utils.dart';
 import 'package:gym_tracker_app/l10n/app_localizations.dart';
 import 'package:gym_tracker_app/widget/common/month_picker_dialog.dart';
@@ -144,7 +143,7 @@ class _ProfileStatsCardState extends State<ProfileStatsCard> {
                 vertical: 8,
               ), // Відступи між картками
               decoration: BoxDecoration(
-                color: ThemeService.isDarkModeNotifier.value
+                color: Theme.of(context).brightness == Brightness.dark
                     ? theme.colorScheme.surfaceContainer
                     : Colors.white,
                 borderRadius: BorderRadius.circular(10),

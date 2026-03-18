@@ -1,19 +1,34 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:gym_tracker_app/core/constants/constants.dart';
 
 class ThemeService {
-  static final ValueNotifier<bool> isDarkModeNotifier = ValueNotifier(true);
+  static final ValueNotifier<ThemeMode> themeModeNotifier = ValueNotifier(
+    ThemeMode.system,
+  );
 
   static Future<void> init() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final bool? isDarkMode = prefs.getBool(KCOnstats.themeModeKey);
-    isDarkModeNotifier.value = isDarkMode ?? false;
+    final prefs = await SharedPreferences.getInstance();
+    final savedTheme = prefs.getString(KCOnstats.themeModeKey) ?? 'system';
+
+    if (savedTheme == 'light') {
+      themeModeNotifier.value = ThemeMode.light;
+    } else if (savedTheme == 'dark') {
+      themeModeNotifier.value = ThemeMode.dark;
+    } else {
+      themeModeNotifier.value = ThemeMode.system;
+    }
   }
 
-  static Future<void> setDarkMode(bool isDark) async {
+  static Future<void> changeTheme(ThemeMode mode) async {
+    themeModeNotifier.value = mode;
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(KCOnstats.themeModeKey, isDark);
-    isDarkModeNotifier.value = isDark;
+    if (mode == ThemeMode.light) {
+      await prefs.setString(KCOnstats.themeModeKey, 'light');
+    } else if (mode == ThemeMode.dark) {
+      await prefs.setString(KCOnstats.themeModeKey, 'dark');
+    } else {
+      await prefs.setString(KCOnstats.themeModeKey, 'system');
+    }
   }
 }

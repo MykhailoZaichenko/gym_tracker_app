@@ -113,15 +113,14 @@ class FirestoreService {
 
   Future<void> saveWorkout(WorkoutModel workout) async {
     if (currentUserId == null) return;
-
-    // Fire-and-forget: Запускаємо запис, але не чекаємо відповіді сервера
-    // Це дозволяє UI миттєво реагувати (закрити вікно), а Firestore синхронізує дані фоном.
-    _db
+    await _db
         .collection('users')
         .doc(currentUserId)
         .collection('workouts')
         .doc(workout.id)
         .set(workout.toMap(), SetOptions(merge: true));
+
+    await updateUserStats();
   }
 
   // Отримати останнє тренування певного типу (Push, Pull...)
