@@ -13,6 +13,7 @@ class FriendCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final textTheme = Theme.of(context).textTheme;
     final loc = AppLocalizations.of(context)!;
     final lastSeenDate = TimeUtils.formatRelativeTime(
       friend.lastWorkoutDate,
@@ -72,12 +73,10 @@ class FriendCard extends StatelessWidget {
                           ),
                         ),
                 ),
-                title: Text(
-                  name,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
+                title: Text(name, style: textTheme.titleMedium),
                 subtitle: Text(
                   "$displayUsername\n${loc.lastSeenInGym(lastSeenDate)}",
+                  style: textTheme.bodyMedium,
                 ),
                 isThreeLine: true,
                 trailing: Row(
@@ -106,8 +105,7 @@ class FriendCard extends StatelessWidget {
                           const SizedBox(width: 4),
                           Text(
                             loc.statWorkouts(friend.currentStreak.toString()),
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
+                            style: textTheme.labelLarge?.copyWith(
                               color: Colors.deepOrange,
                             ),
                           ),
@@ -115,7 +113,6 @@ class FriendCard extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 4),
-
                     PopupMenuButton<String>(
                       icon: const Icon(Icons.more_vert, color: Colors.grey),
                       onSelected: (value) {
@@ -155,14 +152,11 @@ class FriendCard extends StatelessWidget {
                       color: Colors.amber,
                     ),
                     const SizedBox(width: 8),
-                    Text(
-                      loc.monthlyRecordPrefix,
-                      style: TextStyle(color: Colors.grey[600]),
-                    ),
+                    Text(loc.monthlyRecordPrefix, style: textTheme.bodySmall),
                     Expanded(
                       child: Text(
                         bestStat,
-                        style: const TextStyle(fontWeight: FontWeight.bold),
+                        style: textTheme.labelLarge,
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),

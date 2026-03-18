@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/features/workout/models/workout_exercise_model.dart';
 import 'package:gym_tracker_app/l10n/app_localizations.dart';
-import 'package:gym_tracker_app/services/firestore_service.dart'; // Для збереження
+import 'package:gym_tracker_app/services/firestore_service.dart';
 import 'package:gym_tracker_app/widget/common/custome_snackbar.dart';
 import 'package:gym_tracker_app/widget/common/weekly_goal_dialog.dart';
 import 'package:intl/intl.dart';
 
 class StreakDetailsPage extends StatefulWidget {
   final int streakWeeks;
-  final int weeklyGoal; // Початкова ціль
+  final int weeklyGoal;
   final Map<String, List<WorkoutExercise>> allWorkouts;
 
   const StreakDetailsPage({
@@ -44,17 +44,14 @@ class _StreakDetailsPageState extends State<StreakDetailsPage> {
 
   Future<void> _changeGoal() async {
     final loc = AppLocalizations.of(context)!;
-    // Відкриваємо той самий діалог, що і на JournalPage
     final newGoal = await showDialog<int>(
       context: context,
       builder: (_) => WeeklyGoalDialog(initialGoal: _currentGoal),
     );
 
     if (newGoal != null && newGoal != _currentGoal) {
-      // 1. Зберігаємо в базу
       await _firestore.updateWeeklyGoal(newGoal);
 
-      // 2. Оновлюємо UI миттєво
       if (mounted) {
         setState(() {
           _currentGoal = newGoal;
@@ -70,6 +67,7 @@ class _StreakDetailsPageState extends State<StreakDetailsPage> {
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
+    final textTheme = Theme.of(context).textTheme;
 
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final backgroundColor = isDark ? Colors.black : Colors.white;
@@ -85,29 +83,21 @@ class _StreakDetailsPageState extends State<StreakDetailsPage> {
       if (_hasWorkout(day)) workoutsThisWeek++;
     }
 
-    // Використовуємо _currentGoal замість widget.weeklyGoal
     final int needed = _currentGoal - workoutsThisWeek;
     final int stillNeeded = needed > 0 ? needed : 0;
     final int daysRemainingInWeek = 7 - currentWeekday;
 
-    // Логіка провалу з урахуванням НОВОЇ цілі
     final bool isWeekFailed = daysRemainingInWeek < stillNeeded;
     final isGoalMet = workoutsThisWeek >= _currentGoal;
 
     return Scaffold(
       backgroundColor: backgroundColor,
       appBar: AppBar(
-        title: Text(loc.weekLabel),
+        title: Text(loc.weekLabel, style: textTheme.titleLarge),
         backgroundColor: Colors.transparent,
         elevation: 0,
         iconTheme: IconThemeData(color: contentColor),
-        titleTextStyle: TextStyle(
-          color: contentColor,
-          fontSize: 20,
-          fontWeight: FontWeight.bold,
-        ),
         actions: [
-          // 🔥 ТРИ КРАПОЧКИ
           PopupMenuButton<String>(
             onSelected: (value) {
               if (value == 'edit') {
@@ -122,10 +112,11 @@ class _StreakDetailsPageState extends State<StreakDetailsPage> {
                     children: [
                       Icon(Icons.edit, color: contentColor, size: 20),
                       const SizedBox(width: 8),
-                      // Можна додати localized string "Змінити ціль"
                       Text(
                         loc.weeklyGoalTitle,
-                        style: TextStyle(color: contentColor),
+                        style: textTheme.bodyLarge?.copyWith(
+                          color: contentColor,
+                        ),
                       ),
                     ],
                   ),
@@ -146,21 +137,15 @@ class _StreakDetailsPageState extends State<StreakDetailsPage> {
           const SizedBox(height: 16),
           Text(
             loc.streakWeeks(widget.streakWeeks),
-            style: TextStyle(
-              color: contentColor,
-              fontSize: 28,
-              fontWeight: FontWeight.bold,
-            ),
+            style: textTheme.displaySmall?.copyWith(color: contentColor),
           ),
           const SizedBox(height: 32),
-
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: List.generate(7, (index) {
                 final date = startOfWeek.add(Duration(days: index));
-
                 final shortName = DateFormat.E(loc.localeName).format(date);
                 final dayName = shortName.length >= 2
                     ? shortName.substring(0, 2).toUpperCase()
@@ -198,13 +183,7 @@ class _StreakDetailsPageState extends State<StreakDetailsPage> {
 
                 return Column(
                   children: [
-                    Text(
-                      dayName,
-                      style: const TextStyle(
-                        color: Colors.grey,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                    Text(dayName, style: textTheme.bodySmall),
                     const SizedBox(height: 12),
                     Container(
                       width: 40,
@@ -221,9 +200,7 @@ class _StreakDetailsPageState extends State<StreakDetailsPage> {
               }),
             ),
           ),
-
           const SizedBox(height: 40),
-
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 32),
             child: Text(
@@ -233,9 +210,8 @@ class _StreakDetailsPageState extends State<StreakDetailsPage> {
                         ? loc.streakLostMsg
                         : loc.streakBurn(stillNeeded)),
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: textTheme.bodyLarge?.copyWith(
                 color: contentColor.withValues(alpha: 0.7),
-                fontSize: 16,
               ),
             ),
           ),

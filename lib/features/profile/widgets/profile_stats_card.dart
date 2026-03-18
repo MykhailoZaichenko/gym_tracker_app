@@ -95,6 +95,7 @@ class _ProfileStatsCardState extends State<ProfileStatsCard> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final textTheme = Theme.of(context).textTheme;
     final loc = AppLocalizations.of(context)!;
 
     return SizedBox(
@@ -141,7 +142,7 @@ class _ProfileStatsCardState extends State<ProfileStatsCard> {
               margin: const EdgeInsets.symmetric(
                 horizontal: 6,
                 vertical: 8,
-              ), // Відступи між картками
+              ),
               decoration: BoxDecoration(
                 color: Theme.of(context).brightness == Brightness.dark
                     ? theme.colorScheme.surfaceContainer
@@ -168,7 +169,6 @@ class _ProfileStatsCardState extends State<ProfileStatsCard> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    // 🔽 Заголовок з вибором місяця
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 4.0),
                       child: InkWell(
@@ -181,7 +181,6 @@ class _ProfileStatsCardState extends State<ProfileStatsCard> {
                                   lastDate: DateConstants.appMaxDate,
                                 );
                                 if (result != null) {
-                                  // Переходимо на вибраний місяць
                                   final newIndex = _calculateIndex(result);
                                   _pageController.jumpToPage(newIndex);
                                 }
@@ -192,7 +191,7 @@ class _ProfileStatsCardState extends State<ProfileStatsCard> {
                           children: [
                             Text(
                               '${loc.yourProgressFor} $monthLabel ${date.year}',
-                              style: theme.textTheme.titleMedium?.copyWith(
+                              style: textTheme.titleMedium?.copyWith(
                                 color: isCurrent ? null : Colors.grey,
                               ),
                             ),
@@ -205,18 +204,14 @@ class _ProfileStatsCardState extends State<ProfileStatsCard> {
                       ),
                     ),
 
-                    // const Divider(height: 20, thickness: 0.5),
                     const SizedBox(height: 10),
 
-                    // 📊 Статистика
                     Expanded(
                       child: Row(
-                        // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           StatTile(
                             icon: Icons.fitness_center,
-                            // Якщо це не активна картка, показуємо прочерк, бо даних ще немає
                             value: isCurrent
                                 ? widget.totalSets.toString()
                                 : '-',
@@ -245,7 +240,7 @@ class _ProfileStatsCardState extends State<ProfileStatsCard> {
                                       .replaceAll(
                                         RegExp(r'[^0-9]'),
                                         '',
-                                      ) // Тільки число
+                                      )
                                 : '-',
                             label: loc.calories,
                           ),

@@ -22,6 +22,7 @@ class ExerciseSetTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
+    final textTheme = Theme.of(context).textTheme;
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -38,7 +39,7 @@ class ExerciseSetTile extends StatelessWidget {
             width: 45,
             child: Text(
               loc.setNumber(index + 1),
-              style: const TextStyle(fontWeight: FontWeight.bold),
+              style: textTheme.labelLarge,
             ),
           ),
           const SizedBox(width: 8),
@@ -59,8 +60,10 @@ class ExerciseSetTile extends StatelessWidget {
                   decimal: true,
                 ),
                 textInputAction: TextInputAction.next,
+                style: textTheme.bodyMedium,
                 decoration: InputDecoration(
                   hintText: loc.weightUnitHint,
+                  hintStyle: textTheme.bodySmall,
                   border: InputBorder.none,
                   isDense: true,
                   contentPadding: const EdgeInsets.symmetric(vertical: 10),
@@ -73,7 +76,7 @@ class ExerciseSetTile extends StatelessWidget {
           ),
           const SizedBox(width: 12),
 
-          // Поле для повторень (зробили double для половинчастих повторень!)
+          // Поле для повторень
           Expanded(
             child: Container(
               decoration: BoxDecoration(
@@ -89,8 +92,10 @@ class ExerciseSetTile extends StatelessWidget {
                   decimal: true,
                 ),
                 textInputAction: TextInputAction.done,
+                style: textTheme.bodyMedium,
                 decoration: InputDecoration(
                   hintText: loc.repsUnitHint,
+                  hintStyle: textTheme.bodySmall,
                   border: InputBorder.none,
                   isDense: true,
                   contentPadding: const EdgeInsets.symmetric(vertical: 10),
@@ -100,11 +105,11 @@ class ExerciseSetTile extends StatelessWidget {
           ),
           const SizedBox(width: 8),
 
-          // Кнопка видалення (простий хрестик замість складного меню)
+          // Кнопка видалення
           IconButton(
             icon: const Icon(Icons.close, color: Colors.grey, size: 20),
             onPressed: onRemoveSetTile,
-            tooltip: loc.deleteSet(index + 1), // Якщо такий переклад є
+            tooltip: loc.deleteSet(index + 1),
             padding: EdgeInsets.zero,
             constraints: const BoxConstraints(),
           ),

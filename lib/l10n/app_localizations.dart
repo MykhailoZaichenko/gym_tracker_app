@@ -101,7 +101,7 @@ abstract class AppLocalizations {
   /// App name
   ///
   /// In en, this message translates to:
-  /// **'Gym Tracker App'**
+  /// **'Gym Tracker'**
   String get appName;
 
   /// OK button

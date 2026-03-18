@@ -1,7 +1,7 @@
 {
   "@@locale": "en",
 
-  "appName": "Gym Tracker App",
+  "appName": "Gym Tracker",
   "@appName": { "description": "App name" },
 
   "ok": "OK",

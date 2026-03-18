@@ -61,7 +61,7 @@ class ProgressLineChart extends StatelessWidget {
     final minWithPad = rawMin - (rawMax - rawMin) * paddingRel;
     final maxWithPad = rawMax + (rawMax - rawMin) * paddingRel;
 
-    final minY = minWithPad < 0 ? 0 : minWithPad; // prevent negatives
+    final minY = minWithPad < 0 ? 0 : minWithPad;
     final maxY = maxWithPad;
 
     if (minY >= maxY) {
@@ -72,7 +72,6 @@ class ProgressLineChart extends StatelessWidget {
     return {'min': minY.toDouble(), 'max': maxY.toDouble()};
   }
 
-  // New: compute dynamic X bounds from spots (clamped to typical month range 1..31)
   Map<String, double> computeXBounds(List<FlSpot> spots) {
     if (spots.isEmpty) return {'min': 1.0, 'max': 31.0};
 
@@ -80,7 +79,6 @@ class ProgressLineChart extends StatelessWidget {
     final rawMin = xs.first;
     final rawMax = xs.last;
 
-    // If all x equal, give a small neighborhood
     if ((rawMax - rawMin).abs() < 1e-9) {
       final v = rawMax;
       final min = (v - 1.0).clamp(1.0, 31.0);
@@ -88,7 +86,6 @@ class ProgressLineChart extends StatelessWidget {
       return {'min': min, 'max': max};
     }
 
-    // Small absolute padding (half a day) and small relative padding (5%)
     final pad = (rawMax - rawMin) * 0.05;
     final padAbs = 0.5;
     final usedPad = pad > padAbs ? pad : padAbs;
@@ -107,6 +104,8 @@ class ProgressLineChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+
     return Expanded(
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 500),
@@ -118,23 +117,15 @@ class ProgressLineChart extends StatelessWidget {
             maxX: xBounds['max']!,
             minY: yBounds['min']!,
             maxY: yBounds['max']!,
-
             gridData: FlGridData(show: true),
             borderData: FlBorderData(show: true),
             titlesData: FlTitlesData(
               leftTitles: AxisTitles(
                 sideTitles: SideTitles(
                   showTitles: true,
-                  // interval: yInterval,
                   getTitlesWidget: (val, meta) => Transform.rotate(
                     angle: -0.5,
-                    child: Text(
-                      formatY(val),
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Theme.of(context).colorScheme.onSurface,
-                      ),
-                    ),
+                    child: Text(formatY(val), style: textTheme.bodySmall),
                   ),
                   reservedSize: 40,
                   maxIncluded: range == RangeMode.month ? true : false,
@@ -150,10 +141,7 @@ class ProgressLineChart extends StatelessWidget {
                   getTitlesWidget: (val, meta) => Transform.rotate(
                     angle: -0.5,
                     child: DefaultTextStyle.merge(
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.onSurface,
-                        fontSize: 12,
-                      ),
+                      style: textTheme.bodySmall,
                       child: buildBottomTitle(val),
                     ),
                   ),
@@ -165,12 +153,9 @@ class ProgressLineChart extends StatelessWidget {
                   showTitles: true,
                   interval: bottomInterval(),
                   getTitlesWidget: (val, meta) => Transform.rotate(
-                    angle: -0.5, // Adjust the angle (in radians) as needed
+                    angle: -0.5,
                     child: DefaultTextStyle.merge(
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.onSurface,
-                        fontSize: 12,
-                      ),
+                      style: textTheme.bodySmall,
                       child: buildBottomTitle(val),
                     ),
                   ),
@@ -194,28 +179,21 @@ class ProgressLineChart extends StatelessWidget {
                         int index,
                       ) => FlDotCirclePainter(
                         radius: 4,
-                        color: Theme.of(
-                          context,
-                        ).scaffoldBackgroundColor, // fill = background
+                        color: Theme.of(context).scaffoldBackgroundColor,
                         strokeWidth: 2,
-                        strokeColor: lineColor, // outline = bar color
+                        strokeColor: lineColor,
                       ),
                 ),
                 belowBarData: BarAreaData(
                   show: true,
-                  // градієнт з прозорістю
                   gradient: LinearGradient(
                     colors: [
-                      lineColor.withValues(
-                        alpha: 0.4,
-                      ), // Використовує колір лінії
+                      lineColor.withValues(alpha: 0.4),
                       lineColor.withValues(alpha: 0.05),
                     ],
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                   ),
-
-                  // або однотонний колір:
                 ),
               ),
             ],
@@ -228,13 +206,11 @@ class ProgressLineChart extends StatelessWidget {
                 getTooltipItems: (touchedSpots) {
                   return touchedSpots.map((touchedSpot) {
                     return LineTooltipItem(
-                      '${touchedSpot.y}', // the text you want to show
-                      TextStyle(
+                      '${touchedSpot.y}',
+                      textTheme.labelLarge!.copyWith(
                         color: Theme.of(context).brightness == Brightness.dark
                             ? Colors.white
                             : Colors.black,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
                       ),
                     );
                   }).toList();

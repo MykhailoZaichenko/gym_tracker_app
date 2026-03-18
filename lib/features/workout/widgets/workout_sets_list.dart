@@ -28,6 +28,8 @@ class ExerciseSetsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
+    final textTheme = Theme.of(context).textTheme;
+    
     return Column(
       children: [
         // Тепер це звичайний вертикальний список
@@ -48,7 +50,10 @@ class ExerciseSetsList extends StatelessWidget {
           width: double.infinity,
           child: TextButton.icon(
             icon: const Icon(Icons.add),
-            label: Text(loc.addSetBtn),
+            label: Text(
+              loc.addSetBtn,
+              style: textTheme.labelLarge,
+            ),
             onPressed: () => onAddSet(),
             style: TextButton.styleFrom(
               foregroundColor: Theme.of(context).colorScheme.primary,

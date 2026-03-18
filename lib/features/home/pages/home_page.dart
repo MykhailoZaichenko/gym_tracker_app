@@ -86,6 +86,7 @@ class _HomePageState extends State<HomePage> {
     }
 
     final loc = AppLocalizations.of(context)!;
+    final textTheme = Theme.of(context).textTheme;
     final now = DateTime.now();
 
     final isCurrentMonth =
@@ -167,17 +168,14 @@ class _HomePageState extends State<HomePage> {
                     },
                     icon: const Icon(
                       Icons.calendar_today,
-                    ), // Або arrow_forward_ios
+                    ),
                     label: Row(
                       mainAxisSize: MainAxisSize.min,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
                           loc.backToToday,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 14,
-                          ),
+                          style: textTheme.labelLarge,
                         ),
                         const SizedBox(width: 8),
                         const Icon(Icons.double_arrow_rounded, size: 18),
@@ -186,7 +184,7 @@ class _HomePageState extends State<HomePage> {
                     backgroundColor: Theme.of(context).colorScheme.primary,
                     foregroundColor: Theme.of(context).colorScheme.onPrimary,
                   ),
-                  const SizedBox(height: 16), // Відступ між кнопками
+                  const SizedBox(height: 16),
                 ],
 
                 // Стандартна кнопка редагування (якщо день вибрано)

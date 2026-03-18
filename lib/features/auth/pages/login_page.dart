@@ -92,7 +92,7 @@ class _LoginPageState extends State<LoginPage> {
       final user = await _auth.loginWithGoogle();
       if (user != null) {
         if (!mounted) return;
-        _goToApp(); // Перехід на головну
+        _goToApp();
       }
     } catch (e) {
       _showMessage('${loc.errGoogleSignIn}: $e');
@@ -225,8 +225,6 @@ class _LoginPageState extends State<LoginPage> {
                         width: double.infinity,
                         child: OutlinedButton.icon(
                           onPressed: _loading ? null : _onGoogleLoginPressed,
-                          // Якщо у вас немає картинки, використовуйте Icon(Icons.login) тимчасово
-                          // Краще: Image.asset('assets/images/google_logo.png', height: 24),
                           icon: const Icon(Icons.g_mobiledata, size: 32),
                           label: Text(loc.googleButton),
                           style: OutlinedButton.styleFrom(

@@ -376,6 +376,7 @@ class _JournalPageState extends State<JournalPage> {
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
     final dateStr = DateFormat.MMMMEEEEd(loc.localeName).format(_today);
+    final textTheme = Theme.of(context).textTheme;
     final theme = Theme.of(context);
 
     final bool hasData =
@@ -433,13 +434,7 @@ class _JournalPageState extends State<JournalPage> {
                         size: 20,
                       ),
                       const SizedBox(width: 4),
-                      Text(
-                        "$_streakWeeks",
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
-                      ),
+                      Text("$_streakWeeks", style: textTheme.labelLarge),
                     ],
                   ),
                 ),
@@ -455,7 +450,7 @@ class _JournalPageState extends State<JournalPage> {
                 Center(
                   child: Text(
                     dateStr.toUpperCase(),
-                    style: theme.textTheme.labelLarge?.copyWith(
+                    style: textTheme.labelLarge?.copyWith(
                       color: Colors.grey,
                       letterSpacing: 1.2,
                     ),
@@ -467,8 +462,7 @@ class _JournalPageState extends State<JournalPage> {
                     padding: const EdgeInsets.symmetric(vertical: 20),
                     child: Text(
                       _elapsedTime,
-                      style: theme.textTheme.displayMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
+                      style: textTheme.displaySmall?.copyWith(
                         color: theme.colorScheme.primary,
                         fontFeatures: [const FontFeature.tabularFigures()],
                       ),
@@ -495,15 +489,13 @@ class _JournalPageState extends State<JournalPage> {
                           children: [
                             Text(
                               localizedType.toUpperCase(),
-                              style: theme.textTheme.titleLarge?.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
+                              style: textTheme.titleLarge,
                             ),
                             Text(
                               loc.exercisesCount(
                                 _todaysWorkout!.exercises.length,
                               ),
-                              style: theme.textTheme.bodyMedium?.copyWith(
+                              style: textTheme.bodyMedium?.copyWith(
                                 color: Colors.grey,
                               ),
                             ),
@@ -523,9 +515,7 @@ class _JournalPageState extends State<JournalPage> {
                             const SizedBox(height: 20),
                             Text(
                               loc.noWorkoutToday,
-                              style: theme.textTheme.headlineSmall?.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
+                              style: textTheme.displaySmall,
                             ),
                           ],
                         )
@@ -547,24 +537,22 @@ class _JournalPageState extends State<JournalPage> {
                                   leading: CircleAvatar(
                                     backgroundColor: theme.primaryColor
                                         .withValues(alpha: 0.1),
-                                    // child: Icon(
-                                    //   exerciseInfo.icon,
-                                    //   color: theme.primaryColor,
-                                    // ),
                                     child: ExerciseIcon(
                                       exercise: exerciseInfo,
                                       size: 24,
                                       color: theme.primaryColor,
-                                      // color: theme.brightness == Brightness.dark ? Colors.white : Colors.black,
                                     ),
                                   ),
                                   title: Text(
                                     ex.name,
-                                    style: const TextStyle(
+                                    style: textTheme.bodyLarge?.copyWith(
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                  subtitle: Text(loc.setsCount(ex.sets.length)),
+                                  subtitle: Text(
+                                    loc.setsCount(ex.sets.length),
+                                    style: textTheme.bodyMedium,
+                                  ),
                                 ),
                               );
                             },

@@ -133,6 +133,7 @@ class _CreateUsernamePageState extends State<CreateUsernamePage> {
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
+    final textTheme = Theme.of(context).textTheme;
 
     // Конвертація статусу в текст
     String statusMessage;
@@ -188,7 +189,7 @@ class _CreateUsernamePageState extends State<CreateUsernamePage> {
             Text(
               loc.chooseUsernameDesc,
               textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 16),
+              style: textTheme.bodyLarge,
             ),
             const SizedBox(height: 32),
             TextField(
@@ -212,17 +213,16 @@ class _CreateUsernamePageState extends State<CreateUsernamePage> {
             const SizedBox(height: 12),
             Text(
               loc.usernameRulesDesc,
-              style: const TextStyle(
-                color: Colors.redAccent,
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-              ),
+              style: textTheme.bodySmall?.copyWith(color: Colors.redAccent),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 12),
             Text(
               statusMessage,
-              style: TextStyle(color: statusColor, fontWeight: FontWeight.w500),
+              style: TextStyle(
+                color: statusColor,
+                fontWeight: FontWeight.w500,
+              ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 32),
@@ -245,7 +245,7 @@ class _CreateUsernamePageState extends State<CreateUsernamePage> {
                     )
                   : Text(
                       loc.saveAndContinue,
-                      style: const TextStyle(fontSize: 16),
+                      style: textTheme.labelLarge,
                     ),
             ),
           ],

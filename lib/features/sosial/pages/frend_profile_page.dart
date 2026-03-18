@@ -115,6 +115,7 @@ class _FriendProfilePageState extends State<FriendProfilePage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
     final friend = widget.friend;
     final loc = AppLocalizations.of(context)!;
 
@@ -159,17 +160,8 @@ class _FriendProfilePageState extends State<FriendProfilePage> {
                           ),
                   ),
                   const SizedBox(height: 16),
-                  Text(
-                    "@$name",
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Text(
-                    loc.lastSeenInGym(lastSeen),
-                    style: const TextStyle(color: Colors.grey),
-                  ),
+                  Text("@$name", style: textTheme.titleLarge),
+                  Text(loc.lastSeenInGym(lastSeen), style: textTheme.bodySmall),
                   const SizedBox(height: 30),
 
                   // Блок загальної статистики
@@ -205,10 +197,7 @@ class _FriendProfilePageState extends State<FriendProfilePage> {
                     alignment: Alignment.centerLeft,
                     child: Text(
                       loc.recordsThisMonth,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: textTheme.titleMedium,
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -219,7 +208,7 @@ class _FriendProfilePageState extends State<FriendProfilePage> {
                       padding: const EdgeInsets.all(20.0),
                       child: Text(
                         loc.noRecordsThisMonth,
-                        style: const TextStyle(color: Colors.grey),
+                        style: textTheme.bodySmall,
                       ),
                     )
                   else
@@ -254,18 +243,10 @@ class _FriendProfilePageState extends State<FriendProfilePage> {
                                 size: 20,
                               ),
                             ),
-                            title: Text(
-                              entry.key,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
+                            title: Text(entry.key, style: textTheme.labelLarge),
                             trailing: Text(
                               "${entry.value.toStringAsFixed(1).replaceAll('.0', '')} kg",
-                              style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
+                              style: textTheme.titleMedium,
                             ),
                           );
                         },

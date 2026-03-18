@@ -43,7 +43,6 @@ class _ExercisePickerSheetState extends State<_ExercisePickerSheet> {
         setState(() => _query = v);
       }
     });
-    // Request focus after first frame to ensure keyboard opens reliably
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _focusNode.requestFocus();
     });
@@ -59,6 +58,7 @@ class _ExercisePickerSheetState extends State<_ExercisePickerSheet> {
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
+    final textTheme = Theme.of(context).textTheme;
     final catalog = getExerciseCatalog(loc);
     final filtered = _query.isEmpty
         ? catalog
@@ -99,7 +99,6 @@ class _ExercisePickerSheetState extends State<_ExercisePickerSheet> {
             ),
             const Divider(height: 1),
             Flexible(
-              // Flexible дає ListView займати доступний простір, скрол працює природно
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxHeight: 360),
                 child: ListView.separated(
@@ -110,7 +109,10 @@ class _ExercisePickerSheetState extends State<_ExercisePickerSheet> {
                     if (idx == 0) {
                       return ListTile(
                         leading: const Icon(Icons.edit),
-                        title: Text(loc.enterCustomName),
+                        title: Text(
+                          loc.enterCustomName,
+                          style: textTheme.bodyLarge,
+                        ),
                         onTap: () => Navigator.of(
                           context,
                         ).pop(ExerciseInfo.getEnterCustom(loc)),
@@ -121,22 +123,21 @@ class _ExercisePickerSheetState extends State<_ExercisePickerSheet> {
                       leading: Container(
                         width: 40,
                         height: 40,
-                        padding: const EdgeInsets.all(
-                          4,
-                        ), // Трохи відступу, щоб іконка не торкалася країв
+                        padding: const EdgeInsets.all(4),
                         decoration: BoxDecoration(
-                          color: Colors
-                              .grey[200], // Світлий фон, щоб чорні іконки було видно на темній темі
+                          color: Colors.grey[200],
                           shape: BoxShape.circle,
                         ),
                         child: ExerciseIcon(
                           exercise: it,
                           size: 24,
-                          color: Colors
-                              .black, // Примусово чорний колір для стандартних іконок, якщо треба
+                          color: Colors.black,
                         ),
                       ),
-                      title: Text(it.name),
+                      title: Text(
+                        it.name,
+                        style: textTheme.bodyLarge,
+                      ),
                       onTap: () => Navigator.of(context).pop(it),
                     );
                   },

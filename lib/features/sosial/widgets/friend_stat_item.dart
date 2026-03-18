@@ -16,6 +16,8 @@ class FriendStatItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    
     return Column(
       children: [
         Container(
@@ -29,9 +31,12 @@ class FriendStatItem extends StatelessWidget {
         const SizedBox(height: 8),
         Text(
           value,
-          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          style: textTheme.titleLarge,
         ),
-        Text(title, style: const TextStyle(color: Colors.grey)),
+        Text(
+          title,
+          style: textTheme.bodySmall,
+        ),
       ],
     );
   }

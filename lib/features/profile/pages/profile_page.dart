@@ -32,6 +32,7 @@ Widget _buildMinimalStatColumn(
   bool hasBadge = false,
 }) {
   final theme = Theme.of(context);
+  final textTheme = theme.textTheme;
 
   return InkWell(
     onTap: onTap,
@@ -78,8 +79,7 @@ Widget _buildMinimalStatColumn(
           const SizedBox(height: 12),
           Text(
             title,
-            style: TextStyle(
-              fontSize: 14,
+            style: textTheme.bodyMedium?.copyWith(
               color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
               fontWeight: FontWeight.w600,
             ),
@@ -87,7 +87,7 @@ Widget _buildMinimalStatColumn(
           const SizedBox(height: 4),
           Text(
             value,
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            style: textTheme.titleMedium,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
@@ -330,6 +330,9 @@ class _ProfilePageState extends State<ProfilePage> {
         ? "$currentWeight кг"
         : loc.weightNotSet;
 
+    final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
+
     return SafeArea(
       child: Scaffold(
         body: _isLoading
@@ -399,10 +402,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             // Нікнейм під фото
                             Text(
                               "@$name",
-                              style: const TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
-                              ),
+                              style: textTheme.titleLarge,
                             ),
                           ],
                         ),
@@ -448,8 +448,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   Expanded(
                                     child: Text(
                                       loc.weightMissingBanner, // Використовуємо локалізацію
-                                      style: TextStyle(
-                                        fontSize: 13,
+                                      style: textTheme.bodyMedium?.copyWith(
                                         color: Theme.of(
                                           context,
                                         ).colorScheme.onSurface,

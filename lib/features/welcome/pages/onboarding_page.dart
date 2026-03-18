@@ -27,7 +27,6 @@ class _OnboardingPageState extends State<OnboardingPage> {
   Future<void> _goToRegister() async {
     if (!_formKey.currentState!.validate()) return;
 
-    // Якщо користувач ввів вагу
     if (_weightCtrl.text.trim().isNotEmpty) {
       final weight = double.tryParse(_weightCtrl.text.replaceAll(',', '.'));
       if (weight != null && weight > 0) {
@@ -35,7 +34,6 @@ class _OnboardingPageState extends State<OnboardingPage> {
         await prefs.setDouble('user_weight', weight);
       }
     } else {
-      // Якщо поле пусте, просто очищаємо кеш (на випадок якщо там щось було)
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove('user_weight');
     }
@@ -61,6 +59,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
+    final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
       appBar: AppBar(
@@ -69,9 +68,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
             onPressed: _skipOnboarding,
             child: Text(
               loc.skip,
-              style: TextStyle(
+              style: textTheme.labelLarge?.copyWith(
                 color: Theme.of(context).colorScheme.primary,
-                fontWeight: FontWeight.bold,
               ),
             ),
           ),
@@ -95,7 +93,6 @@ class _OnboardingPageState extends State<OnboardingPage> {
                     decimal: true,
                   ),
                   validator: (value) {
-                    // 🔥 Тепер поле НЕ обов'язкове. Валідуємо тільки якщо щось введено
                     if (value == null || value.trim().isEmpty) return null;
 
                     final parsed = double.tryParse(value.replaceAll(',', '.'));
@@ -116,7 +113,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                   onPressed: _skipOnboarding,
                   child: Text(
                     loc.setLater,
-                    style: const TextStyle(color: Colors.grey),
+                    style: textTheme.bodyMedium?.copyWith(color: Colors.grey),
                   ),
                 ),
               ],

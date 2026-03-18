@@ -32,6 +32,7 @@ class HomeCalendar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final locale = AppLocalizations.of(context)!.localeName;
+    final textTheme = Theme.of(context).textTheme;
 
     final firstAllowedDay = DateConstants.appStartDate;
     final lastAllowedDay = DateConstants.appMaxDate;
@@ -85,12 +86,7 @@ class HomeCalendar extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
-                    '$capitalized $year',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                  Text('$capitalized $year', style: textTheme.titleMedium),
                   const SizedBox(width: 4),
                   const Icon(Icons.arrow_drop_down, size: 20),
                 ],

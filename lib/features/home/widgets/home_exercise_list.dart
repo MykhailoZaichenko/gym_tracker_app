@@ -39,9 +39,10 @@ class HomeExerciseList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
+    final textTheme = Theme.of(context).textTheme;
 
     if (selectedDay == null) {
-      return Center(child: Text(loc.selectDay));
+      return Center(child: Text(loc.selectDay, style: textTheme.bodyLarge));
     }
 
     final typeToShow = workoutType ?? 'custom';
@@ -53,13 +54,13 @@ class HomeExerciseList extends StatelessWidget {
         children: [
           Text(
             '${WorkoutUtils.getLocalizedType(typeToShow, loc)} ${keyOf(selectedDay!)}:',
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            style: textTheme.titleMedium,
           ),
           const SizedBox(height: 8),
           if (selectedExercises.isEmpty)
             Text(
               loc.noExercisesToday,
-              style: const TextStyle(color: Colors.grey),
+              style: textTheme.bodySmall,
             )
           else
             Expanded(
@@ -83,18 +84,18 @@ class HomeExerciseList extends StatelessWidget {
                       ),
                       child: ListTile(
                         isThreeLine: ex.sets.length > 1,
-                        title: Text(titleText),
+                        title: Text(titleText, style: textTheme.bodyLarge),
                         subtitle: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(loc.setsCount(ex.sets.length)),
+                            Text(loc.setsCount(ex.sets.length), style: textTheme.bodyMedium),
                             const SizedBox(height: 4),
                             for (var j = 0; j < ex.sets.length; j++)
                               Text(
                                 '${loc.setLabelCompact} ${j + 1}: '
                                 '${ex.sets[j].weight?.toStringAsFixed(1) ?? '-'} ${loc.weightUnit} '
                                 'x ${ex.sets[j].reps ?? '-'} ${loc.repsUnit}',
-                                style: const TextStyle(fontSize: 13),
+                                style: textTheme.bodySmall,
                               ),
                           ],
                         ),

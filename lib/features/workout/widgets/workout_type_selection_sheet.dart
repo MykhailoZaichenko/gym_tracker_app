@@ -72,6 +72,8 @@ class WorkoutTypeSelectionSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
+    final textTheme = Theme.of(context).textTheme;
+    
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.fromLTRB(16, 20, 16, 20),
@@ -80,7 +82,7 @@ class WorkoutTypeSelectionSheet extends StatelessWidget {
           children: [
             Text(
               loc.selectWorkoutType,
-              style: Theme.of(context).textTheme.titleLarge,
+              style: textTheme.titleLarge,
             ),
             const SizedBox(height: 20),
 
@@ -122,7 +124,7 @@ class WorkoutTypeSelectionSheet extends StatelessWidget {
                         Expanded(
                           child: Text(
                             getLocalizedTemplateName(type, loc),
-                            style: const TextStyle(fontWeight: FontWeight.w500),
+                            style: textTheme.labelLarge,
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),

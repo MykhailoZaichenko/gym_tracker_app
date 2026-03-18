@@ -9,7 +9,7 @@ class AppLocalizationsUk extends AppLocalizations {
   AppLocalizationsUk([String locale = 'uk']) : super(locale);
 
   @override
-  String get appName => 'Gym Tracker App';
+  String get appName => 'Gym Tracker';
 
   @override
   String get ok => 'ОК';

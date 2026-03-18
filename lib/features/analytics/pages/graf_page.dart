@@ -443,6 +443,7 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
 
   void _onPointTapped(DateTime day) {
     final loc = AppLocalizations.of(context)!;
+    final textTheme = Theme.of(context).textTheme;
     if (_range == RangeMode.year) return;
 
     final key =
@@ -469,9 +470,7 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
       builder: (_) => AlertDialog(
         title: Text(
           '$_selectedExerciseDisplay — $key',
-          style: Theme.of(context).brightness == Brightness.dark
-              ? const TextStyle(color: Colors.white)
-              : const TextStyle(color: Colors.black),
+          style: textTheme.titleMedium,
         ),
         content: SizedBox(
           width: double.maxFinite,
@@ -482,9 +481,13 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
             itemBuilder: (_, i) {
               final s = ex.sets[i];
               return ListTile(
-                title: Text('${loc.setLabelCompact} ${i + 1}'),
+                title: Text(
+                  '${loc.setLabelCompact} ${i + 1}',
+                  style: textTheme.bodyMedium,
+                ),
                 subtitle: Text(
                   '${loc.weightLabel}: ${s.weight ?? '-'}  •  ${loc.repsUnit}: ${s.reps ?? '-'}',
+                  style: textTheme.bodySmall,
                 ),
               );
             },
@@ -512,10 +515,11 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
   }
 
   Widget _buildBottomTitle(double value) {
+    final textTheme = Theme.of(context).textTheme;
     final locale = AppLocalizations.of(context)!.localeName;
     switch (_range) {
       case RangeMode.month:
-        return Text('${value.round()}', style: const TextStyle(fontSize: 11));
+        return Text('${value.round()}', style: textTheme.bodySmall);
       case RangeMode.year:
         final month = value.round();
         if (month < 1 || month > 12) return const SizedBox();
@@ -523,7 +527,7 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
         final monthShort = DateFormat.MMM(locale).format(date);
         return Text(
           toBeginningOfSentenceCase(monthShort) ?? '',
-          style: const TextStyle(fontSize: 11),
+          style: textTheme.bodySmall,
         );
     }
   }
@@ -562,6 +566,7 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
     String? currentSubtext,
     String? prevSubtext,
   }) {
+    final textTheme = Theme.of(context).textTheme;
     if (data == null) return const SizedBox();
 
     final bool isBothZero = data.startValue == 0 && data.currentValue == 0;
@@ -608,7 +613,7 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
         showDialog(
           context: context,
           builder: (ctx) => AlertDialog(
-            title: Text(loc.comparisonTitle),
+            title: Text(loc.comparisonTitle, style: textTheme.titleMedium),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -680,6 +685,7 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
     bool isBold = false,
     String? dateSubtext,
   }) {
+    final textTheme = Theme.of(context).textTheme;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4.0),
       child: Row(
@@ -690,21 +696,21 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(label, style: const TextStyle(color: Colors.grey)),
+                Text(label, style: textTheme.bodySmall),
                 if (dateSubtext != null && dateSubtext.isNotEmpty)
                   Text(
                     dateSubtext,
-                    style: const TextStyle(fontSize: 11, color: Colors.grey),
+                    style: textTheme.bodySmall?.copyWith(fontSize: 10),
                   ),
               ],
             ),
           ),
           Text(
             '$value $unit'.trim(),
-            style: TextStyle(
-              fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
-              color: color ?? Theme.of(context).colorScheme.onSurface,
-            ),
+            style: (isBold ? textTheme.labelLarge : textTheme.bodyMedium)
+                ?.copyWith(
+                  color: color ?? Theme.of(context).colorScheme.onSurface,
+                ),
           ),
         ],
       ),
@@ -725,6 +731,7 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
     final GlobalKey<TooltipState> tooltipKey = GlobalKey<TooltipState>();
     final loc = AppLocalizations.of(context)!;
     final locale = loc.localeName;
+    final textTheme = Theme.of(context).textTheme;
 
     _prepareExerciseList(loc);
 
@@ -801,14 +808,17 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
     String dateLabel = _formatPeriodName(_visibleMonth, _range, locale);
 
     return Scaffold(
-      appBar: AppBar(title: Text(loc.chartsTitle), centerTitle: true),
+      appBar: AppBar(
+        title: Text(loc.chartsTitle, style: textTheme.titleLarge),
+        centerTitle: true,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(12),
         child: Column(
           children: [
             Row(
               children: [
-                Text(loc.exerciseLabel),
+                Text(loc.exerciseLabel, style: textTheme.bodyLarge),
                 const SizedBox(width: 8),
                 Expanded(
                   child: DropdownButton<String>(
@@ -874,11 +884,7 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
                       ),
                       child: Row(
                         children: [
-                          Text(
-                            dateLabel,
-                            style: Theme.of(context).textTheme.titleMedium
-                                ?.copyWith(fontWeight: FontWeight.bold),
-                          ),
+                          Text(dateLabel, style: textTheme.titleMedium),
                           if (_range == RangeMode.month) ...[
                             const SizedBox(width: 4),
                             const Icon(Icons.arrow_drop_down, size: 20),
@@ -905,14 +911,18 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
                   ? Center(
                       child: Text(
                         loc.addExercisesHint,
-                        style: TextStyle(color: Colors.grey[700]),
+                        style: textTheme.bodyMedium?.copyWith(
+                          color: Colors.grey[700],
+                        ),
                       ),
                     )
                   : volumeSpots.isEmpty
                   ? Center(
                       child: Text(
                         loc.noDataRange,
-                        style: TextStyle(color: Colors.grey[700]),
+                        style: textTheme.bodyMedium?.copyWith(
+                          color: Colors.grey[700],
+                        ),
                       ),
                     )
                   : Card(
@@ -945,7 +955,10 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
                                   color: chartColor,
                                 ),
                                 const SizedBox(width: 6),
-                                Text(loc.liftedWeight),
+                                Text(
+                                  loc.liftedWeight,
+                                  style: textTheme.bodyMedium,
+                                ),
                                 IconButton(
                                   onPressed: () {
                                     tooltipKey.currentState

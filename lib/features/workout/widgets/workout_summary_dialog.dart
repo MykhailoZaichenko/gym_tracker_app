@@ -32,7 +32,6 @@ class _WorkoutSummaryDialogState extends State<WorkoutSummaryDialog> {
   final GlobalKey _shareKey = GlobalKey();
   bool _isSharing = false;
 
-  // 🔥 Функція, яка робить фото і викликає меню "Поділитися"
   Future<void> _shareWorkout() async {
     if (_isSharing) return;
     setState(() => _isSharing = true);
@@ -68,19 +67,19 @@ class _WorkoutSummaryDialogState extends State<WorkoutSummaryDialog> {
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
 
     String twoDigits(int n) => n.toString().padLeft(2, '0');
     final String durationStr =
         "${twoDigits(widget.duration.inHours)}:${twoDigits(widget.duration.inMinutes.remainder(60))}:${twoDigits(widget.duration.inSeconds.remainder(60))}";
 
     return Dialog(
-      backgroundColor: Colors.transparent, // Прозорий фон
+      backgroundColor: Colors.transparent,
       elevation: 0,
       insetPadding: const EdgeInsets.all(16),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // 🔥 ОБГОРТАЄМО У REPAINT BOUNDARY ТЕ, ЩО БУДЕ НА ФОТО
           RepaintBoundary(
             key: _shareKey,
             child: Container(
@@ -93,18 +92,11 @@ class _WorkoutSummaryDialogState extends State<WorkoutSummaryDialog> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
-                    loc.greatJob,
-                    style: theme.textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                  Text(loc.greatJob, style: textTheme.titleLarge),
                   const SizedBox(height: 8),
                   Text(
                     "${loc.durationLabel}: $durationStr",
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      color: Colors.grey,
-                    ),
+                    style: textTheme.bodyMedium?.copyWith(color: Colors.grey),
                   ),
                   const SizedBox(height: 16),
 
@@ -142,10 +134,9 @@ class _WorkoutSummaryDialogState extends State<WorkoutSummaryDialog> {
                       ),
                       const SizedBox(width: 6),
                       Text(
-                        'Gym Tracker App',
-                        style: TextStyle(
+                        'Gym Tracker',
+                        style: textTheme.labelLarge?.copyWith(
                           color: Colors.green.shade700,
-                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ],
@@ -157,7 +148,6 @@ class _WorkoutSummaryDialogState extends State<WorkoutSummaryDialog> {
 
           const SizedBox(height: 16),
 
-          // 🔥 КНОПКИ (Знаходяться поза межами скріншоту)
           Row(
             children: [
               Expanded(
@@ -173,8 +163,8 @@ class _WorkoutSummaryDialogState extends State<WorkoutSummaryDialog> {
                   ),
                   child: Text(
                     loc.close,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
+                    style: textTheme.labelLarge?.copyWith(
+                      color: theme.colorScheme.onPrimary,
                       fontSize: 16,
                     ),
                   ),
@@ -209,8 +199,6 @@ class _WorkoutSummaryDialogState extends State<WorkoutSummaryDialog> {
       ),
     );
   }
-
-  // --- ВІДНОВЛЕНІ ДОПОМІЖНІ МЕТОДИ ---
 
   bool _isSameExercise(WorkoutExercise a, WorkoutExercise b) {
     if (a.exerciseId != null && b.exerciseId != null) {
@@ -251,6 +239,7 @@ class _WorkoutSummaryDialogState extends State<WorkoutSummaryDialog> {
   ) {
     final bool hasHistory = previous != null && previous.name.isNotEmpty;
     final borderColor = _getBorderColor(current, previous);
+    final textTheme = Theme.of(context).textTheme;
 
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 6),
@@ -262,17 +251,11 @@ class _WorkoutSummaryDialogState extends State<WorkoutSummaryDialog> {
       child: Theme(
         data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
         child: ExpansionTile(
-          title: Text(
-            current.name,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-          ),
+          title: Text(current.name, style: textTheme.titleMedium),
           childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
           children: [
             if (!hasHistory)
-              Text(
-                loc.noPreviousData,
-                style: const TextStyle(color: Colors.grey),
-              )
+              Text(loc.noPreviousData, style: textTheme.bodySmall)
             else
               _buildComparisonTable(context, current.sets, previous.sets, loc),
           ],
@@ -287,6 +270,8 @@ class _WorkoutSummaryDialogState extends State<WorkoutSummaryDialog> {
     List<SetData> prevSets,
     AppLocalizations loc,
   ) {
+    final textTheme = Theme.of(context).textTheme;
+
     return Column(
       children: [
         Padding(
@@ -324,9 +309,8 @@ class _WorkoutSummaryDialogState extends State<WorkoutSummaryDialog> {
                   width: 24,
                   child: Text(
                     "${i + 1}",
-                    style: const TextStyle(
+                    style: textTheme.bodySmall?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: Colors.grey,
                     ),
                   ),
                 ),
@@ -353,11 +337,10 @@ class _WorkoutSummaryDialogState extends State<WorkoutSummaryDialog> {
     );
   }
 
-  TextStyle _headerStyle(BuildContext context) => TextStyle(
-    fontSize: 12,
-    fontWeight: FontWeight.bold,
-    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
-  );
+  TextStyle _headerStyle(BuildContext context) =>
+      Theme.of(context).textTheme.bodySmall!.copyWith(
+        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+      );
 
   Widget _buildMetricComparison({
     num? current,

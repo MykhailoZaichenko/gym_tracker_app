@@ -41,7 +41,9 @@ class _MyAppState extends State<MyApp> {
               theme: ThemeData(
                 useMaterial3: true,
                 colorScheme: ColorScheme.fromSeed(
-                  seedColor: Colors.teal,
+                  seedColor: currentThemeMode == ThemeMode.dark
+                      ? Colors.indigo
+                      : Colors.teal,
                   brightness: Brightness.light,
                 ),
                 appBarTheme: const AppBarTheme(
@@ -49,8 +51,63 @@ class _MyAppState extends State<MyApp> {
                   backgroundColor: Colors.transparent,
                   surfaceTintColor: Colors.transparent,
                 ),
+                textTheme: const TextTheme(
+                  displaySmall: TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  titleLarge: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  titleMedium: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  bodyLarge: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.normal,
+                  ),
+                  bodyMedium: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.normal,
+                  ),
+                  bodySmall: TextStyle(fontSize: 12, color: Colors.grey),
+                  labelLarge: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
-              darkTheme: ThemeData.dark(),
+              darkTheme: ThemeData.dark().copyWith(
+                textTheme: const TextTheme(
+                  displaySmall: TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  titleLarge: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  titleMedium: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  bodyLarge: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.normal,
+                  ),
+                  bodyMedium: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.normal,
+                  ),
+                  bodySmall: TextStyle(fontSize: 12, color: Colors.grey),
+                  labelLarge: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
               themeMode: currentThemeMode,
               home: StreamBuilder<fb_auth.User?>(
                 stream: fb_auth.FirebaseAuth.instance.userChanges(),

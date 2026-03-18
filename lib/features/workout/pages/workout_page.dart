@@ -428,7 +428,6 @@ class _WorkoutPageState extends State<WorkoutPage> {
         ? loc.exerciseDefaultName
         : exercise.name;
 
-    // Знаходимо іконку
     final catalog = getExerciseCatalog(loc);
     ExerciseInfo? info;
     try {
@@ -439,12 +438,14 @@ class _WorkoutPageState extends State<WorkoutPage> {
       }
     } catch (_) {}
 
+    final textTheme = Theme.of(context).textTheme;
+
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
       elevation: 1,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: InkWell(
-        onTap: () => _setActiveExercise(index), // Клік розгортає
+        onTap: () => _setActiveExercise(index),
         borderRadius: BorderRadius.circular(12),
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
@@ -455,15 +456,11 @@ class _WorkoutPageState extends State<WorkoutPage> {
                 backgroundColor: Theme.of(
                   context,
                 ).colorScheme.primary.withValues(alpha: 0.1),
-                // Перевіряємо: якщо інформація про вправу є, малюємо нашу іконку/картинку
                 child: info != null
                     ? ExerciseIcon(
                         exercise: info,
-                        size:
-                            20, // Трохи більше за 18, щоб картинка краще виглядала
-                        color: Theme.of(context)
-                            .colorScheme
-                            .primary, // Фарбуємо чорні лінії в колір теми
+                        size: 20,
+                        color: Theme.of(context).colorScheme.primary,
                       )
                     : Icon(
                         Icons.fitness_center,
@@ -475,18 +472,14 @@ class _WorkoutPageState extends State<WorkoutPage> {
               Expanded(
                 child: Text(
                   titleText,
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: Colors
-                        .grey[700], // Трохи сіріший, щоб показати неактивність
+                  style: textTheme.titleMedium?.copyWith(
+                    color: Colors.grey[700],
                   ),
                 ),
               ),
               Text(
                 loc.setsCount(exercise.sets.length),
-                style: Theme.of(
-                  context,
-                ).textTheme.bodySmall?.copyWith(color: Colors.grey),
+                style: textTheme.bodySmall,
               ),
               const SizedBox(width: 8),
               const Icon(Icons.keyboard_arrow_down, color: Colors.grey),
@@ -606,6 +599,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
     final loc = AppLocalizations.of(context)!;
+    final textTheme = Theme.of(context).textTheme;
 
     return PopScope(
       canPop: false,
@@ -633,10 +627,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
               ),
               Text(
                 DateFormat.MMMMEEEEd(loc.localeName).format(widget.date),
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Colors.grey,
-                  fontSize: 12,
-                ),
+                style: textTheme.bodySmall?.copyWith(fontSize: 12),
               ),
             ],
           ),
@@ -653,7 +644,6 @@ class _WorkoutPageState extends State<WorkoutPage> {
         body: ListView(
           padding: const EdgeInsets.fromLTRB(8, 8, 8, 80),
           children: [
-            // COPY BUTTON
             if (_exercises.isEmpty && _lastMatchingWorkout != null)
               Padding(
                 padding: const EdgeInsets.only(bottom: 16.0),
@@ -686,12 +676,10 @@ class _WorkoutPageState extends State<WorkoutPage> {
                             loc.copyPreviousWorkout(
                               WorkoutUtils.getLocalizedType(_currentType, loc),
                             ),
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
+                            style: textTheme.labelLarge?.copyWith(
                               color: Theme.of(
                                 context,
                               ).colorScheme.onPrimaryContainer,
-                              fontSize: 16,
                             ),
                           ),
                         ),
@@ -700,16 +688,12 @@ class _WorkoutPageState extends State<WorkoutPage> {
                   ),
                 ),
               ),
-
-            // СПИСОК ВПРАВ (ГІБРИДНИЙ ВИГЛЯД)
             ...List.generate(_exercises.length, (i) {
               final isActive = i == _activeExerciseIndex;
               return AnimatedSwitcher(
                 duration: const Duration(milliseconds: 300),
                 transitionBuilder: (child, animation) =>
                     SizeTransition(sizeFactor: animation, child: child),
-
-                // ОСЬ ТУТ ДОДАЄМО КЛЮЧІ (ValueKey)
                 child: isActive
                     ? SizedBox(
                         key: ValueKey('expanded_$i'),

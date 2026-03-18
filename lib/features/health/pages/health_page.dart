@@ -8,7 +8,7 @@ import 'package:gym_tracker_app/services/notification_service.dart';
 import 'package:gym_tracker_app/widget/common/fading_edge.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:permission_handler/permission_handler.dart'; // 🔥 Додано
+import 'package:permission_handler/permission_handler.dart';
 
 class HealthPage extends StatefulWidget {
   const HealthPage({super.key});
@@ -31,7 +31,6 @@ class _HealthPageState extends State<HealthPage> {
     return a.year == b.year && a.month == b.month && a.day == b.day;
   }
 
-  // Запитує дозволи і пропонує налаштувати сповіщення
   Future<void> _checkAndPromptForNotifications() async {
     final prefs = await SharedPreferences.getInstance();
     final hasPrompted = prefs.getBool('has_prompted_weight_reminders') ?? false;
@@ -121,7 +120,6 @@ class _HealthPageState extends State<HealthPage> {
       );
       await _firestore.saveBodyWeight(model);
 
-      // 🔥 ВИКЛИКАЄМО ПЕРЕВІРКУ ПІСЛЯ УСПІШНОГО ЗБЕРЕЖЕННЯ ВАГИ
       if (!isEditing) {
         await _checkAndPromptForNotifications();
       }
@@ -169,6 +167,7 @@ class _HealthPageState extends State<HealthPage> {
       builder: (ctx) {
         return StatefulBuilder(
           builder: (sheetContext, setSheetState) {
+            final textTheme = Theme.of(sheetContext).textTheme;
             final timeOfDay = TimeOfDay(
               hour: timeMinutes ~/ 60,
               minute: timeMinutes % 60,
@@ -181,12 +180,12 @@ class _HealthPageState extends State<HealthPage> {
                 children: [
                   Text(
                     loc.reminderSettings,
-                    style: Theme.of(sheetContext).textTheme.titleLarge,
+                    style: textTheme.titleLarge,
                   ),
                   const SizedBox(height: 20),
                   Text(
                     loc.selectDay,
-                    style: const TextStyle(color: Colors.grey),
+                    style: textTheme.bodySmall,
                   ),
                   const SizedBox(height: 12),
                   Wrap(
@@ -215,16 +214,13 @@ class _HealthPageState extends State<HealthPage> {
                   const SizedBox(height: 20),
                   Text(
                     loc.selectTime,
-                    style: const TextStyle(color: Colors.grey),
+                    style: textTheme.bodySmall,
                   ),
                   ListTile(
                     contentPadding: EdgeInsets.zero,
                     title: Text(
                       '${timeOfDay.hour.toString().padLeft(2, '0')}:${timeOfDay.minute.toString().padLeft(2, '0')}',
-                      style: const TextStyle(
-                        fontSize: 32,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: textTheme.displaySmall,
                     ),
                     trailing: const Icon(Icons.access_time),
                     onTap: () async {
@@ -303,6 +299,7 @@ class _HealthPageState extends State<HealthPage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
     final loc = AppLocalizations.of(context)!;
 
     return Scaffold(
@@ -326,7 +323,6 @@ class _HealthPageState extends State<HealthPage> {
           final data = snapshot.data ?? [];
           final currentWeight = data.isNotEmpty ? data.last.weight : 0.0;
 
-          // --- ЛОГІКА СТАТИСТИКИ ---
           String diffText = "--";
           double percentChange = 0.0;
           Color statusColor = Colors.grey;
@@ -349,10 +345,10 @@ class _HealthPageState extends State<HealthPage> {
 
             if (diff > 0) {
               diffText = "+${diff.toStringAsFixed(1)}";
-              statusColor = Colors.green; // Ріст
+              statusColor = Colors.green;
             } else if (diff < 0) {
               diffText = diff.toStringAsFixed(1);
-              statusColor = Colors.red; // Спад
+              statusColor = Colors.red;
             } else {
               diffText = "0.0";
               statusColor = Colors.orange;
@@ -366,7 +362,6 @@ class _HealthPageState extends State<HealthPage> {
 
           return Column(
             children: [
-              //ВЕРХНЯ ЧАСТИНА (НЕ СКРОЛИТЬСЯ)
               Padding(
                 padding: const EdgeInsets.all(16),
                 child: Container(
@@ -376,17 +371,14 @@ class _HealthPageState extends State<HealthPage> {
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Column(
-                    mainAxisSize: MainAxisSize.min, // Стискаємо
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
                             loc.weightLabel,
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
+                            style: textTheme.titleMedium,
                           ),
                           TextButton(
                             onPressed: () => _handleWeightEntry(data),
@@ -412,7 +404,7 @@ class _HealthPageState extends State<HealthPage> {
                             children: [
                               Text(
                                 loc.currentValue,
-                                style: TextStyle(
+                                style: textTheme.bodyMedium?.copyWith(
                                   color: theme.colorScheme.onSurface.withValues(
                                     alpha: 0.6,
                                   ),
@@ -424,22 +416,17 @@ class _HealthPageState extends State<HealthPage> {
                                 children: [
                                   Text(
                                     currentWeight.toStringAsFixed(1),
-                                    style: const TextStyle(
-                                      fontSize: 32,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                    style: textTheme.displaySmall,
                                   ),
                                   const SizedBox(width: 4),
                                   Text(
                                     loc.weightUnit,
-                                    style: const TextStyle(fontSize: 16),
+                                    style: textTheme.bodyLarge,
                                   ),
                                 ],
                               ),
                             ],
                           ),
-
-                          // ПРАВА ЧАСТИНА
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
@@ -448,9 +435,7 @@ class _HealthPageState extends State<HealthPage> {
                                   padding: const EdgeInsets.only(bottom: 6.0),
                                   child: Text(
                                     dateRangeText,
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.bold,
+                                    style: textTheme.labelLarge?.copyWith(
                                       color: theme.colorScheme.primary,
                                     ),
                                   ),
@@ -491,7 +476,6 @@ class _HealthPageState extends State<HealthPage> {
                                         ],
                                       ),
                                     ),
-
                                   Container(
                                     padding: const EdgeInsets.symmetric(
                                       horizontal: 12,
@@ -516,7 +500,6 @@ class _HealthPageState extends State<HealthPage> {
                         ],
                       ),
                       const SizedBox(height: 20),
-
                       SizedBox(
                         height: 200,
                         child: data.isEmpty
@@ -527,24 +510,17 @@ class _HealthPageState extends State<HealthPage> {
                   ),
                 ),
               ),
-
-              // 🔥 ЗАГОЛОВОК ІСТОРІЇ
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24.0),
                 child: Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
                     loc.history,
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
-                    ),
+                    style: textTheme.titleMedium,
                   ),
                 ),
               ),
               const SizedBox(height: 8),
-
-              // 🔥 СПИСОК ІСТОРІЇ (СКРОЛИТЬСЯ ОКРЕМО)
               Expanded(
                 child: data.isEmpty
                     ? const SizedBox()
@@ -581,16 +557,13 @@ class _HealthPageState extends State<HealthPage> {
                                 ),
                                 title: Text(
                                   "${entry.weight} ${loc.weightUnit}",
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16,
-                                  ),
+                                  style: textTheme.labelLarge,
                                 ),
                                 subtitle: Text(
                                   DateFormat.yMMMMd(
                                     loc.localeName,
                                   ).format(entry.date),
-                                  style: TextStyle(color: Colors.grey[600]),
+                                  style: textTheme.bodySmall,
                                 ),
                                 trailing: const Icon(
                                   Icons.edit_outlined,
@@ -615,6 +588,7 @@ class _HealthPageState extends State<HealthPage> {
     ThemeData theme,
     Color lineColor,
   ) {
+    final textTheme = theme.textTheme;
     List<FlSpot> spots = [];
     for (int i = 0; i < data.length; i++) {
       spots.add(FlSpot(i.toDouble(), data[i].weight));
@@ -622,8 +596,6 @@ class _HealthPageState extends State<HealthPage> {
 
     double minY = data.map((e) => e.weight).reduce((a, b) => a < b ? a : b) - 1;
     double maxY = data.map((e) => e.weight).reduce((a, b) => a > b ? a : b) + 1;
-
-    // Розумний інтервал для осі X
     double xInterval = data.length > 5 ? (data.length / 5).ceilToDouble() : 1.0;
 
     return LineChart(
@@ -649,12 +621,10 @@ class _HealthPageState extends State<HealthPage> {
                     padding: const EdgeInsets.only(top: 8.0),
                     child: Text(
                       DateFormat('d MMM', 'uk').format(data[index].date),
-                      style: TextStyle(
-                        fontSize: 10,
+                      style: textTheme.bodySmall?.copyWith(
                         color: theme.colorScheme.onSurface.withValues(
                           alpha: 0.5,
                         ),
-                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   );

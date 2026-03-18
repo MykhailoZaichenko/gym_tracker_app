@@ -38,7 +38,6 @@ class _SettingsPageState extends State<SettingsPage> {
     final loc = AppLocalizations.of(context)!;
 
     if (value) {
-      // 1. Показуємо красиве локалізоване діалогове вікно
       final bool? confirm = await showDialog<bool>(
         context: context,
         builder: (context) => AlertDialog(
@@ -57,26 +56,20 @@ class _SettingsPageState extends State<SettingsPage> {
         ),
       );
 
-      // Якщо користувач передумав і натиснув "Ні" або закрив вікно
       if (confirm != true) {
         setState(() => _notificationsEnabled = false);
         return;
       }
 
-      // 2. Ініціалізуємо сервіс (який викличе системне вікно дозволу)
       await _notificationService.init();
-
-      // Зберігаємо стан
       setState(() => _notificationsEnabled = true);
       await _prefs.setBool('notifications_enabled', true);
 
-      // Тестове сповіщення
       await _notificationService.showInstantNotification(
         title: loc.notificationsEnabledTitle,
         body: loc.notificationsEnabledBody,
       );
     } else {
-      // Якщо користувач вимикає сповіщення
       setState(() => _notificationsEnabled = false);
       await _prefs.setBool('notifications_enabled', false);
       await _notificationService.cancelAll();
@@ -108,7 +101,6 @@ class _SettingsPageState extends State<SettingsPage> {
     );
 
     if (confirm != true) return;
-
     setState(() => _isLoading = true);
 
     try {
@@ -159,6 +151,7 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   void _showLanguageSelector() {
+    final textTheme = Theme.of(context).textTheme;
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
@@ -171,10 +164,7 @@ class _SettingsPageState extends State<SettingsPage> {
             mainAxisSize: MainAxisSize.min,
             children: [
               const SizedBox(height: 16),
-              Text(
-                loc.appLanguage,
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
+              Text(loc.appLanguage, style: textTheme.titleLarge),
               const SizedBox(height: 16),
               ListTile(
                 leading: const Text('🇺🇦', style: TextStyle(fontSize: 24)),
@@ -209,6 +199,7 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   void _showThemeSelector() {
+    final textTheme = Theme.of(context).textTheme;
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
@@ -224,10 +215,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   const SizedBox(height: 16),
-                  Text(
-                    loc.themeSelectionTitle,
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
+                  Text(loc.themeSelectionTitle, style: textTheme.titleLarge),
                   const SizedBox(height: 16),
                   ListTile(
                     leading: const Icon(Icons.brightness_auto),
@@ -305,6 +293,7 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final textTheme = Theme.of(context).textTheme;
     final loc = AppLocalizations.of(context)!;
 
     if (_isLoading) {
@@ -312,7 +301,10 @@ class _SettingsPageState extends State<SettingsPage> {
     }
 
     return Scaffold(
-      appBar: AppBar(title: Text(loc.settingsTitle), centerTitle: true),
+      appBar: AppBar(
+        title: Text(loc.settingsTitle, style: textTheme.titleLarge),
+        centerTitle: true,
+      ),
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.all(20),
@@ -329,14 +321,16 @@ class _SettingsPageState extends State<SettingsPage> {
                     Icons.brightness_6,
                     color: theme.colorScheme.onSurface,
                   ),
-                  title: Text(loc.themeSelectionTitle),
-                  subtitle: Text(themeName),
+                  title: Text(
+                    loc.themeSelectionTitle,
+                    style: textTheme.bodyLarge,
+                  ),
+                  subtitle: Text(themeName, style: textTheme.bodyMedium),
                   onTap: _showThemeSelector,
                 );
               },
             ),
             const Divider(),
-
             ValueListenableBuilder<Locale>(
               valueListenable: LocaleService.localeNotifier,
               builder: (context, locale, child) {
@@ -345,57 +339,53 @@ class _SettingsPageState extends State<SettingsPage> {
                     Icons.language,
                     color: theme.colorScheme.onSurface,
                   ),
-                  title: Text(loc.appLanguage),
+                  title: Text(loc.appLanguage, style: textTheme.bodyLarge),
                   subtitle: Text(
                     locale.languageCode == 'uk' ? 'Українська' : 'English',
+                    style: textTheme.bodyMedium,
                   ),
                   onTap: _showLanguageSelector,
                 );
               },
             ),
             const Divider(),
-
             SwitchListTile(
               secondary: Icon(
                 Icons.notifications,
                 color: theme.colorScheme.onSurface,
               ),
-              title: Text(loc.notifications),
+              title: Text(loc.notifications, style: textTheme.bodyLarge),
               value: _notificationsEnabled,
               onChanged: _toggleNotifications,
             ),
             const Divider(),
-
             ListTile(
               leading: Icon(
                 Icons.cleaning_services_outlined,
                 color: theme.colorScheme.onSurface,
               ),
-              title: Text(loc.clearData),
+              title: Text(loc.clearData, style: textTheme.bodyLarge),
               onTap: _confirmClearData,
             ),
             const Divider(),
-
             ListTile(
               leading: const Icon(Icons.delete_forever, color: Colors.red),
               title: Text(
                 loc.deleteAccount,
-                style: const TextStyle(
+                style: textTheme.bodyLarge?.copyWith(
                   color: Colors.red,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               onTap: _onDeleteAccountPressed,
             ),
-
             const Divider(),
-
             ListTile(
               leading: Icon(
                 Icons.info_outline,
                 color: theme.colorScheme.onSurface,
               ),
-              title: Text(loc.aboutApp),
+              title: Text(loc.aboutApp, style: textTheme.bodyLarge),
               onTap: () {
                 showAboutDialog(
                   context: context,

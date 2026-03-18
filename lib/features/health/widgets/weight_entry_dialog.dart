@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gym_tracker_app/core/constants/date_constants.dart'; // 🔥 IMPORT
+import 'package:gym_tracker_app/core/constants/date_constants.dart';
 import 'package:gym_tracker_app/l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
 
@@ -36,7 +36,6 @@ class _WeightEntryDialogState extends State<WeightEntryDialog> {
     final picked = await showDatePicker(
       context: context,
       initialDate: _selectedDate,
-      // 🔥 Використовуємо константу як у всьому додатку (або -1 місяць якщо треба динамічно)
       firstDate: DateConstants.appStartDate,
       lastDate: DateTime.now(),
       builder: (context, child) {
@@ -59,6 +58,7 @@ class _WeightEntryDialogState extends State<WeightEntryDialog> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final textTheme = Theme.of(context).textTheme;
     final loc = AppLocalizations.of(context)!;
     final dateStr = DateFormat.yMMMMd(loc.localeName).format(_selectedDate);
 
@@ -72,9 +72,7 @@ class _WeightEntryDialogState extends State<WeightEntryDialog> {
           children: [
             Text(
               widget.isEditing ? loc.editWeight : loc.addWeight,
-              style: theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+              style: textTheme.titleLarge,
             ),
             const SizedBox(height: 20),
 
@@ -97,10 +95,7 @@ class _WeightEntryDialogState extends State<WeightEntryDialog> {
                   children: [
                     const Icon(Icons.calendar_today, size: 18),
                     const SizedBox(width: 8),
-                    Text(
-                      dateStr,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
+                    Text(dateStr, style: textTheme.labelLarge),
                   ],
                 ),
               ),
@@ -119,28 +114,16 @@ class _WeightEntryDialogState extends State<WeightEntryDialog> {
                       decimal: true,
                     ),
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontSize: 48,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: textTheme.displaySmall,
                     decoration: InputDecoration(
                       hintText: '0.0',
                       border: InputBorder.none,
-                      hintStyle: TextStyle(
-                        color: Colors.grey.withValues(alpha: 0.3),
-                      ),
+                      hintStyle: textTheme.bodySmall,
                     ),
                   ),
                 ),
                 const SizedBox(width: 8),
-                Text(
-                  loc.weightUnit,
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.grey,
-                  ),
-                ),
+                Text(loc.weightUnit, style: textTheme.titleMedium),
               ],
             ),
             const SizedBox(height: 30),
@@ -152,7 +135,7 @@ class _WeightEntryDialogState extends State<WeightEntryDialog> {
                   onPressed: () => Navigator.pop(context),
                   child: Text(
                     loc.cancel.toUpperCase(),
-                    style: const TextStyle(color: Colors.grey),
+                    style: textTheme.bodyMedium?.copyWith(color: Colors.grey),
                   ),
                 ),
                 ElevatedButton(
@@ -177,7 +160,7 @@ class _WeightEntryDialogState extends State<WeightEntryDialog> {
                   },
                   child: Text(
                     loc.save.toUpperCase(),
-                    style: const TextStyle(fontWeight: FontWeight.bold),
+                    style: textTheme.labelLarge,
                   ),
                 ),
               ],

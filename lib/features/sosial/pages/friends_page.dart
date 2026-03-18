@@ -46,23 +46,24 @@ class _FriendsPageState extends State<FriendsPage>
     AppLocalizations loc,
   ) async {
     final name = friend.name.isNotEmpty == true ? friend.name : friend.email;
+    final textTheme = Theme.of(context).textTheme;
 
     final confirm = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text(loc.deleteFriendTitle),
-        content: Text(loc.deleteFriendConfirmBody(name)),
+        title: Text(loc.deleteFriendTitle, style: textTheme.titleLarge),
+        content: Text(loc.deleteFriendConfirmBody(name), style: textTheme.bodyLarge),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: Text(loc.cancel, style: const TextStyle(color: Colors.grey)),
+            child: Text(loc.cancel, style: textTheme.labelLarge?.copyWith(color: Colors.grey)),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
             onPressed: () => Navigator.pop(ctx, true),
             child: Text(
               loc.delete,
-              style: const TextStyle(color: Colors.white),
+              style: textTheme.labelLarge?.copyWith(color: Colors.white),
             ),
           ),
         ],
@@ -77,14 +78,14 @@ class _FriendsPageState extends State<FriendsPage>
         await _firestore.removeFriend(friend.id!);
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(loc.friendDeletedSuccess(name))),
+            SnackBar(content: Text(loc.friendDeletedSuccess(name), style: textTheme.bodyMedium)),
           );
         }
       } catch (e) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(loc.deleteError(e.toString())),
+              content: Text(loc.deleteError(e.toString()), style: textTheme.bodyMedium),
               backgroundColor: Colors.red,
             ),
           );
@@ -96,10 +97,11 @@ class _FriendsPageState extends State<FriendsPage>
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
+    final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(loc.friendsAndCommunity),
+        title: Text(loc.friendsAndCommunity, style: textTheme.titleLarge),
         bottom: TabBar(
           controller: _tabController,
           tabs: [
@@ -116,6 +118,8 @@ class _FriendsPageState extends State<FriendsPage>
   }
 
   Widget _buildFriendsList(AppLocalizations loc) {
+    final textTheme = Theme.of(context).textTheme;
+
     return StreamBuilder<List<UserModel>>(
       stream: _firestore.getFriendsStream(),
       builder: (context, snapshot) {
@@ -131,7 +135,7 @@ class _FriendsPageState extends State<FriendsPage>
               children: [
                 const Icon(Icons.people_outline, size: 64, color: Colors.grey),
                 const SizedBox(height: 16),
-                Text(loc.noFriendsYet),
+                Text(loc.noFriendsYet, style: textTheme.bodyLarge),
                 TextButton(
                   onPressed: () {
                     _tabController.animateTo(1);
@@ -139,7 +143,7 @@ class _FriendsPageState extends State<FriendsPage>
                       _searchFocus.requestFocus();
                     });
                   },
-                  child: Text(loc.findFriendBtn),
+                  child: Text(loc.findFriendBtn, style: textTheme.labelLarge),
                 ),
               ],
             ),
@@ -163,6 +167,7 @@ class _FriendsPageState extends State<FriendsPage>
 
   Widget _buildAddFriendPage(AppLocalizations loc) {
     final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
@@ -174,7 +179,7 @@ class _FriendsPageState extends State<FriendsPage>
             icon: const Icon(Icons.ios_share),
             label: Text(
               loc.shareProfileLink,
-              style: const TextStyle(fontSize: 16),
+              style: textTheme.bodyLarge,
             ),
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 16),
@@ -189,7 +194,7 @@ class _FriendsPageState extends State<FriendsPage>
 
           Text(
             loc.orFindManually,
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            style: textTheme.titleMedium,
           ),
           const SizedBox(height: 10),
 
@@ -266,11 +271,11 @@ class _FriendsPageState extends State<FriendsPage>
                     ),
                     title: Text(
                       name,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
+                      style: textTheme.labelLarge,
                     ),
                     subtitle: Text(
                       user.email,
-                      style: const TextStyle(fontSize: 12),
+                      style: textTheme.bodySmall,
                     ),
                     trailing: ElevatedButton(
                       style: ElevatedButton.styleFrom(
@@ -278,7 +283,7 @@ class _FriendsPageState extends State<FriendsPage>
                         minimumSize: const Size(0, 32),
                       ),
                       onPressed: () => _sendRequestToUser(user, loc),
-                      child: Text(loc.addBtn),
+                      child: Text(loc.addBtn, style: textTheme.labelLarge),
                     ),
                   );
                 },
@@ -289,7 +294,7 @@ class _FriendsPageState extends State<FriendsPage>
 
           Text(
             loc.incomingRequests,
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            style: textTheme.titleMedium,
           ),
           const SizedBox(height: 10),
           StreamBuilder<List<Map<String, dynamic>>>(
@@ -298,14 +303,14 @@ class _FriendsPageState extends State<FriendsPage>
               if (snapshot.hasError) {
                 return Text(
                   "Error: ${snapshot.error}",
-                  style: const TextStyle(color: Colors.red),
+                  style: textTheme.bodyMedium?.copyWith(color: Colors.red),
                 );
               }
               final requests = snapshot.data ?? [];
               if (requests.isEmpty) {
                 return Text(
                   loc.noNewRequests,
-                  style: const TextStyle(color: Colors.grey),
+                  style: textTheme.bodyMedium?.copyWith(color: Colors.grey),
                 );
               }
 
@@ -318,7 +323,7 @@ class _FriendsPageState extends State<FriendsPage>
                   final fromUid = req['fromUid'] as String?;
                   return Card(
                     child: ListTile(
-                      title: Text(fromName),
+                      title: Text(fromName, style: textTheme.bodyLarge),
                       trailing: IconButton(
                         icon: const Icon(Icons.check, color: Colors.green),
                         onPressed: fromUid != null
@@ -377,6 +382,8 @@ class _FriendsPageState extends State<FriendsPage>
   }
 
   Future<void> _sendRequestToUser(UserModel user, AppLocalizations loc) async {
+    final textTheme = Theme.of(context).textTheme;
+
     FocusScope.of(context).unfocus();
     try {
       if (user.id!.isEmpty) return;
@@ -385,7 +392,7 @@ class _FriendsPageState extends State<FriendsPage>
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(loc.requestSentTo(user.email)),
+            content: Text(loc.requestSentTo(user.email), style: textTheme.bodyMedium),
             backgroundColor: Colors.green,
           ),
         );
@@ -395,13 +402,17 @@ class _FriendsPageState extends State<FriendsPage>
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Error: $e"), backgroundColor: Colors.red),
+          SnackBar(
+            content: Text("Error: $e", style: textTheme.bodyMedium),
+            backgroundColor: Colors.red,
+          ),
         );
       }
     }
   }
 
   Future<void> _performSearch(AppLocalizations loc) async {
+    final textTheme = Theme.of(context).textTheme;
     String query = _searchController.text.trim().toLowerCase();
     if (query.isEmpty) return;
 
@@ -427,7 +438,7 @@ class _FriendsPageState extends State<FriendsPage>
       if (user == null) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(loc.userNotFound),
+            content: Text(loc.userNotFound, style: textTheme.bodyMedium),
             backgroundColor: Colors.red,
           ),
         );
@@ -437,7 +448,7 @@ class _FriendsPageState extends State<FriendsPage>
         if (userId == currentUserUid) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(loc.cannotAddSelf),
+              content: Text(loc.cannotAddSelf, style: textTheme.bodyMedium),
               backgroundColor: Colors.orange,
             ),
           );
@@ -449,7 +460,7 @@ class _FriendsPageState extends State<FriendsPage>
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text(loc.requestSentSuccess),
+                content: Text(loc.requestSentSuccess, style: textTheme.bodyMedium),
                 backgroundColor: Colors.green,
               ),
             );
@@ -459,7 +470,10 @@ class _FriendsPageState extends State<FriendsPage>
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Error: $e"), backgroundColor: Colors.red),
+          SnackBar(
+            content: Text("Error: $e", style: textTheme.bodyMedium),
+            backgroundColor: Colors.red,
+          ),
         );
       }
     } finally {

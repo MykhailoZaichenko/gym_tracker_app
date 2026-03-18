@@ -29,6 +29,7 @@ class WorkoutTypeSelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
+    final textTheme = Theme.of(context).textTheme;
 
     // ГОЛОВНИЙ ФІКС: Нормалізація
     // Перетворюємо вхідне значення в нижній регістр.
@@ -47,8 +48,7 @@ class WorkoutTypeSelector extends StatelessWidget {
           size: 20,
           color: color ?? Theme.of(context).colorScheme.onSurface,
         ),
-        style: Theme.of(context).textTheme.titleLarge?.copyWith(
-          fontWeight: FontWeight.bold,
+        style: textTheme.titleLarge?.copyWith(
           color: color ?? Theme.of(context).colorScheme.onSurface,
         ),
         // Колір випадаючого меню (щоб було видно на темному фоні)
