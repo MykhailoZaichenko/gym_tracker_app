@@ -9,13 +9,14 @@
     <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
-        android:label="gym_tracker_app"
+        android:label="Gym Tracker"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon"
         android:enableOnBackInvokedCallback="true">
         
         <activity
             android:name=".MainActivity"
+            android:label="Gym Tracker"
             android:exported="true"
             android:launchMode="singleTop"
             android:theme="@style/LaunchTheme"

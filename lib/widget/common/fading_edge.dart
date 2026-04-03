@@ -15,26 +15,26 @@ class FadingEdge extends StatelessWidget {
   });
 
   @override
-  @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
+    if (isDarkMode || (startFadeSize == 0.0 && endFadeSize == 0.0)) {
+      return child;
+    }
+
     return ShaderMask(
-      shaderCallback: (Rect bounds) {
+      shaderCallback: (Rect rect) {
         return LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: const [
-            Colors.transparent, // Start transparent (top)
-            Colors.black, // Become solid
-            Colors.black, // Stay solid
-            Colors.transparent, // End transparent (bottom)
+            Colors.transparent,
+            Colors.white,
+            Colors.white,
+            Colors.transparent,
           ],
-          stops: [
-            0.0,
-            startFadeSize, // e.g. 0.05
-            1.0 - endFadeSize, // e.g. 0.95
-            1.0,
-          ],
-        ).createShader(bounds);
+          stops: [0.0, startFadeSize, 1.0 - endFadeSize, 1.0],
+        ).createShader(rect);
       },
       blendMode: BlendMode.dstIn,
       child: child,

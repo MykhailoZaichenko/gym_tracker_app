@@ -808,10 +808,9 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
     String dateLabel = _formatPeriodName(_visibleMonth, _range, locale);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(loc.chartsTitle, style: textTheme.titleLarge),
-        centerTitle: true,
-      ),
+      // appBar: AppBar(
+      //   title: Text(loc.chartsTitle, style: textTheme.titleLarge),
+      // ),
       body: Padding(
         padding: const EdgeInsets.all(12),
         child: Column(

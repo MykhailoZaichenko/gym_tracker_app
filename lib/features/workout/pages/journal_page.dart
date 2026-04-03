@@ -12,6 +12,7 @@ import 'package:gym_tracker_app/features/workout/widgets/workout_summary_dialog.
 import 'package:gym_tracker_app/features/workout/widgets/workout_type_selection_sheet.dart';
 import 'package:gym_tracker_app/l10n/app_localizations.dart';
 import 'package:gym_tracker_app/services/firestore_service.dart';
+import 'package:gym_tracker_app/utils/pr_herlper.dart';
 import 'package:gym_tracker_app/utils/workout_utils.dart';
 import 'package:gym_tracker_app/widget/common/exercise_icon.dart';
 import 'package:gym_tracker_app/widget/common/fading_edge.dart';
@@ -28,7 +29,9 @@ class JournalPage extends StatefulWidget {
   State<JournalPage> createState() => _JournalPageState();
 }
 
-class _JournalPageState extends State<JournalPage> {
+class _JournalPageState extends State<JournalPage>
+    with AutomaticKeepAliveClientMixin {
+  Map<String, List<WorkoutExercise>> _allWorkouts = {};
   final FirestoreService _firestore = FirestoreService();
   bool _isLoading = true;
   WorkoutModel? _todaysWorkout;
@@ -50,6 +53,9 @@ class _JournalPageState extends State<JournalPage> {
   int _weeklyGoal = 3;
   UserModel? _currentUser;
   bool _hasCheckedGoal = false;
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
@@ -77,6 +83,7 @@ class _JournalPageState extends State<JournalPage> {
           _currentUser = user;
           _weeklyGoal = user.weeklyGoal > 0 ? user.weeklyGoal : 3;
           _streakWeeks = _calculateWeeklyStreak(workoutsMap, _weeklyGoal);
+          _allWorkouts = workoutsMap;
         });
 
         if (user.weeklyGoal == 0 && !_hasCheckedGoal) {
@@ -254,7 +261,8 @@ class _JournalPageState extends State<JournalPage> {
         _isLoading = false;
 
         // 3. Відновлюємо звіт
-        if (workout != null && workout.id == lastFinishedId) {
+        if (workout != null &&
+            (workout.durationSeconds > 0 || workout.id == lastFinishedId)) {
           _lastReport = workout;
 
           // 4. ВІДНОВЛЮЄМО ПОРІВНЯННЯ ПО ДАТІ
@@ -348,6 +356,7 @@ class _JournalPageState extends State<JournalPage> {
         previousWorkout: _comparisonWorkout,
         duration: duration,
         onClose: () => Navigator.of(ctx).pop(),
+        allWorkouts: _allWorkouts,
       ),
     );
   }
@@ -374,6 +383,7 @@ class _JournalPageState extends State<JournalPage> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final loc = AppLocalizations.of(context)!;
     final dateStr = DateFormat.MMMMEEEEd(loc.localeName).format(_today);
     final textTheme = Theme.of(context).textTheme;
@@ -389,20 +399,16 @@ class _JournalPageState extends State<JournalPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(loc.navJournal),
-            const SizedBox(width: 8),
-            // 🔥 ВІДЖЕТ СТРІКУ В APPBAR
-            if (_currentUser != null)
-              GestureDetector(
+        // Прибрали title повністю
+        actions: [
+          // Перенесли стрік у правий кут
+          if (_currentUser != null)
+            Padding(
+              padding: const EdgeInsets.only(right: 16.0),
+              child: GestureDetector(
                 onTap: () async {
-                  // Відкриваємо детальну сторінку
-                  // Треба завантажити повну мапу тренувань для деталізації
                   final allWorkouts = await _firestore.getAllWorkouts();
                   if (!context.mounted) return;
-
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -431,7 +437,7 @@ class _JournalPageState extends State<JournalPage> {
                       const Icon(
                         Icons.local_fire_department,
                         color: Color(0xFFE91E63),
-                        size: 20,
+                        size: 25,
                       ),
                       const SizedBox(width: 4),
                       Text("$_streakWeeks", style: textTheme.labelLarge),
@@ -439,8 +445,8 @@ class _JournalPageState extends State<JournalPage> {
                   ),
                 ),
               ),
-          ],
-        ),
+            ),
+        ],
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
@@ -543,11 +549,38 @@ class _JournalPageState extends State<JournalPage> {
                                       color: theme.primaryColor,
                                     ),
                                   ),
-                                  title: Text(
-                                    ex.name,
-                                    style: textTheme.bodyLarge?.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                  title: Builder(
+                                    builder: (context) {
+                                      final bool hasPR =
+                                          PRHelper.hasAnyRecordInExercise(
+                                            exercise: ex,
+                                            targetDate: _today,
+                                            allWorkouts: _allWorkouts,
+                                          );
+                                      return Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Flexible(
+                                            child: Text(
+                                              ex.name,
+                                              style: textTheme.bodyLarge
+                                                  ?.copyWith(
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ),
+                                          if (hasPR) ...[
+                                            const SizedBox(width: 8),
+                                            const Icon(
+                                              Icons.emoji_events,
+                                              color: Colors.amber,
+                                              size: 20,
+                                            ),
+                                          ],
+                                        ],
+                                      );
+                                    },
                                   ),
                                   subtitle: Text(
                                     loc.setsCount(ex.sets.length),

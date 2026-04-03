@@ -91,22 +91,38 @@ class _WorkoutPageState extends State<WorkoutPage> {
     _initialEncoded = _encodeCurrentState();
   }
 
-  void _copyFromLastSession() {
+  void _copyFromLastSession(AppLocalizations loc) {
+    // ДОДАЛИ ПАРАМЕТР
     if (_lastMatchingWorkout == null) return;
+    final catalog = getExerciseCatalog(
+      loc,
+    ); // Отримуємо каталог для поточної мови
 
     setState(() {
       _exercises = _lastMatchingWorkout!.exercises.map((e) {
+        // ПЕРЕКЛАДАЄМО НАЗВУ
+        String localizedName = e.name;
+        if (e.exerciseId != null && e.exerciseId!.isNotEmpty) {
+          final found = catalog.firstWhere(
+            (info) => info.id == e.exerciseId,
+            orElse: () => ExerciseInfo(id: '', name: e.name, icon: Icons.error),
+          );
+          if (found.id.isNotEmpty) {
+            localizedName = found.name;
+          }
+        }
+
         return e.copyWith(
+          name: localizedName, // Підставляємо перекладену назву
           sets: e.sets.map((s) => s.copyWith(isCompleted: false)).toList(),
         );
       }).toList();
       _lastMatchingWorkout = null;
-      _activeExerciseIndex = 0; // Скидаємо на першу вправу
+      _activeExerciseIndex = 0;
     });
 
     _initControllers();
 
-    // Ставимо фокус на першу вправу після копіювання
     if (_exercises.isNotEmpty) {
       _focusOnExercise(0);
     }
@@ -208,9 +224,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
       final weightCtrl = TextEditingController(
         text: formatDouble(lastSet?.weight),
       );
-      final repsCtrl = TextEditingController(
-        text: lastSet?.reps?.toString() ?? '',
-      );
+      final repsCtrl = TextEditingController(text: formatDouble(lastSet?.reps));
       final wNode = FocusNode();
       final rNode = FocusNode();
       _addFocusListener(wNode, weightCtrl);
@@ -294,7 +308,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
 
       for (var set in ex.sets) {
         final wCtrl = TextEditingController(text: formatDouble(set.weight));
-        final rCtrl = TextEditingController(text: set.reps?.toString() ?? '');
+        final rCtrl = TextEditingController(text: formatDouble(set.reps));
         final wNode = FocusNode();
         final rNode = FocusNode();
         _addFocusListener(wNode, wCtrl);
@@ -648,7 +662,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
               Padding(
                 padding: const EdgeInsets.only(bottom: 16.0),
                 child: InkWell(
-                  onTap: _copyFromLastSession,
+                  onTap: () => _copyFromLastSession(loc),
                   borderRadius: BorderRadius.circular(12),
                   child: Container(
                     padding: const EdgeInsets.all(16),

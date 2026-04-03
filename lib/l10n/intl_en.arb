@@ -253,8 +253,8 @@
 
   "chartsTitle": "Progress — Charts",
   "@chartsTitle": { "description": "Graf page title" },
-  "yourProgressFor": "Your progress for",
-  "@yourProgressFor": { "description": "Header for stats card" },
+  "yourProgressFor": "Your activity for",
+"@yourProgressFor": { "description": "Header for stats card" },
   "progressTooltip": "Progress",
   "@progressTooltip": { "description": "Analytics button tooltip" },
   "exerciseLabel": "Exercise:",
@@ -518,6 +518,45 @@
   "exFarmerWalk": "Farmer's Walk",
   "@exFarmerWalk": { "description": "Walking with heavy weights" },
 
+  "exSmithMachineSquat": "Smith Machine Squat",
+  "@exSmithMachineSquat": { "description": "Squat using the Smith machine" },
+  "exHackSquat": "Hack Squat",
+  "@exHackSquat": { "description": "Hack squat machine" },
+  "exReverseLunge": "Reverse Lunge",
+  "@exReverseLunge": { "description": "Stepping backward into a lunge" },
+  "exSeatedLegCurl": "Seated Leg Curl",
+  "@exSeatedLegCurl": { "description": "Leg curl on seated machine" },
+  "exCablePullThrough": "Cable Pull Through",
+  "@exCablePullThrough": { "description": "Glute exercise using low cable" },
+
+  "exCloseGripBenchPress": "Close Grip Bench Press",
+  "@exCloseGripBenchPress": { "description": "Bench press with hands close together" },
+  "exSmithMachineBenchPress": "Smith Machine Bench Press",
+  "@exSmithMachineBenchPress": { "description": "Bench press using Smith machine" },
+  "exWeightedPushUp": "Weighted Push-up",
+  "@exWeightedPushUp": { "description": "Push-ups with added weight" },
+  "exLowCableCrossover": "Low Cable Crossover",
+  "@exLowCableCrossover": { "description": "Cable fly from low pulleys" },
+  "exInclineDumbbellFly": "Incline Dumbbell Fly",
+  "@exInclineDumbbellFly": { "description": "Chest fly on incline bench" },
+
+  "exVBarPullDown": "V-Bar Pull-Down",
+  "@exVBarPullDown": { "description": "Lat pulldown using V-bar attachment" },
+  "exSmithMachineShoulderPress": "Smith Machine Shoulder Press",
+  "@exSmithMachineShoulderPress": { "description": "Overhead press using Smith machine" },
+  "exMachineLateralRaise": "Machine Lateral Raise",
+  "@exMachineLateralRaise": { "description": "Side delts on lateral raise machine" },
+  "exCableFrontRaise": "Cable Front Raise",
+  "@exCableFrontRaise": { "description": "Front delt raise using low cable" },
+
+  "exRopePushdown": "Rope Pushdown",
+  "@exRopePushdown": { "description": "Triceps pushdown using rope attachment" },
+  "exOverheadCableExtension": "Overhead Cable Extension",
+  "@exOverheadCableExtension": { "description": "Triceps extension overhead using cable" },
+  
+  "exKettlebellSwing": "Kettlebell Swing",
+  "@exKettlebellSwing": { "description": "Explosive kettlebell swing" },
+
   "finishWorkout": "Finish Workout",
   "@finishWorkout": { "description": "Button to finish workout" },
   "workoutSummary": "Workout Summary",
@@ -597,7 +636,7 @@
   "@weeklyGoalTitle": { "description": "Weekly goal section title" },
   "weeklyGoalQuestion": "How many times a week do you plan to workout?",
   "@weeklyGoalQuestion": { "description": "Weekly goal question" },
-  "timesPerWeek": "times/week",
+  "timesPerWeek": "Times/Week",
   "@timesPerWeek": { "description": "Times per week label" },
   "streakWeeks": "{count}-week streak",
   "@streakWeeks": { "description": "Streak weeks label", "placeholders": { "count": { "type": "int" } } },
@@ -909,5 +948,56 @@
   "enableNotificationsBody": "This will allow us to send you reminders about your workouts and weight tracking so you don't lose your progress.",
   "@enableNotificationsBody": {
     "description": "Body text for the enable notifications dialog"
+  },
+
+  "errorPickingPhoto": "Error picking photo: {error}",
+  "@errorPickingPhoto": {
+    "description": "Error message when picking an avatar fails",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "defaultUser": "User",
+  "@defaultUser": {
+    "description": "Default fallback username when none is set"
+  },
+  "friendsLabel": "Friends",
+  "@friendsLabel": {
+    "description": "Label for the friends stat card"
+  },
+  "communityLabel": "Community",
+  "@communityLabel": {
+    "description": "Label for the community stat card value"
+  },
+
+  "inGymLabel": "In Gym",
+  "@inGymLabel": {
+    "description": "Label for the total time spent in the gym"
+  },
+  "hoursShort": "h",
+  "@hoursShort": {
+    "description": "Short abbreviation for hours"
+  },
+  "minutesShort": "m",
+  "@minutesShort": {
+    "description": "Short abbreviation for minutes"
+  },
+  "avarageTimeLabel": "Average Time",
+  "@avarageTimeLabel": {
+    "description": "Label for the average workout duration"
+  },
+  "personalRecordsTitle": "Personal Records",
+  "@personalRecordsTitle": {
+    "description": "Button to open the personal records page"
+  },
+  "oneRepMaxShort": "1RM",
+  "@oneRepMaxShort": {
+    "description": "Short abbreviation for one rep max"
+  },
+  "oneRepMaxTooltip": "Estimated maximum weight you can lift for one repetition based on your workout history.",
+  "@oneRepMaxTooltip": {
+    "description": "Tooltip explaining what the one rep max stat means"
   }
 }

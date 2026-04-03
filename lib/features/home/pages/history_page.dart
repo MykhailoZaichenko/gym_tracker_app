@@ -2,18 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/features/workout/models/workout_exercise_model.dart';
 import 'package:gym_tracker_app/features/workout/models/workout_model.dart';
 import 'package:gym_tracker_app/features/workout/pages/workout_page.dart';
-import 'package:gym_tracker_app/features/home/home_exports.dart';
+import 'package:gym_tracker_app/features/home/history_exports.dart';
 import 'package:gym_tracker_app/l10n/app_localizations.dart';
 import 'package:gym_tracker_app/services/firestore_service.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+class HistoryPage extends StatefulWidget {
+  const HistoryPage({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<HistoryPage> createState() => _HistoryPageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HistoryPageState extends State<HistoryPage> {
   late Stream<Map<String, List<WorkoutExercise>>> _workoutsStream;
   late Map<String, List<WorkoutExercise>> _allWorkouts;
   bool _isLoading = true;
@@ -146,6 +146,7 @@ class _HomePageState extends State<HomePage> {
                     selectedExercises: selectedExercises,
                     keyOf: _keyOf,
                     workoutType: _selectedWorkoutModel?.type,
+                    allWorkouts: allWorkouts,
                   ),
                 ),
               ],
@@ -166,17 +167,12 @@ class _HomePageState extends State<HomePage> {
                         _selectedDay = today;
                       });
                     },
-                    icon: const Icon(
-                      Icons.calendar_today,
-                    ),
+                    icon: const Icon(Icons.calendar_today),
                     label: Row(
                       mainAxisSize: MainAxisSize.min,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          loc.backToToday,
-                          style: textTheme.labelLarge,
-                        ),
+                        Text(loc.backToToday, style: textTheme.labelLarge),
                         const SizedBox(width: 8),
                         const Icon(Icons.double_arrow_rounded, size: 18),
                       ],

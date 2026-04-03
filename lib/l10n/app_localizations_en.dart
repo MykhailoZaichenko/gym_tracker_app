@@ -390,7 +390,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get chartsTitle => 'Progress — Charts';
 
   @override
-  String get yourProgressFor => 'Your progress for';
+  String get yourProgressFor => 'Your activity for';
 
   @override
   String get progressTooltip => 'Progress';
@@ -771,6 +771,57 @@ class AppLocalizationsEn extends AppLocalizations {
   String get exFarmerWalk => 'Farmer\'s Walk';
 
   @override
+  String get exSmithMachineSquat => 'Smith Machine Squat';
+
+  @override
+  String get exHackSquat => 'Hack Squat';
+
+  @override
+  String get exReverseLunge => 'Reverse Lunge';
+
+  @override
+  String get exSeatedLegCurl => 'Seated Leg Curl';
+
+  @override
+  String get exCablePullThrough => 'Cable Pull Through';
+
+  @override
+  String get exCloseGripBenchPress => 'Close Grip Bench Press';
+
+  @override
+  String get exSmithMachineBenchPress => 'Smith Machine Bench Press';
+
+  @override
+  String get exWeightedPushUp => 'Weighted Push-up';
+
+  @override
+  String get exLowCableCrossover => 'Low Cable Crossover';
+
+  @override
+  String get exInclineDumbbellFly => 'Incline Dumbbell Fly';
+
+  @override
+  String get exVBarPullDown => 'V-Bar Pull-Down';
+
+  @override
+  String get exSmithMachineShoulderPress => 'Smith Machine Shoulder Press';
+
+  @override
+  String get exMachineLateralRaise => 'Machine Lateral Raise';
+
+  @override
+  String get exCableFrontRaise => 'Cable Front Raise';
+
+  @override
+  String get exRopePushdown => 'Rope Pushdown';
+
+  @override
+  String get exOverheadCableExtension => 'Overhead Cable Extension';
+
+  @override
+  String get exKettlebellSwing => 'Kettlebell Swing';
+
+  @override
   String get finishWorkout => 'Finish Workout';
 
   @override
@@ -874,7 +925,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'How many times a week do you plan to workout?';
 
   @override
-  String get timesPerWeek => 'times/week';
+  String get timesPerWeek => 'Times/Week';
 
   @override
   String streakWeeks(int count) {
@@ -1118,4 +1169,40 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get enableNotificationsBody =>
       'This will allow us to send you reminders about your workouts and weight tracking so you don\'t lose your progress.';
+
+  @override
+  String errorPickingPhoto(String error) {
+    return 'Error picking photo: $error';
+  }
+
+  @override
+  String get defaultUser => 'User';
+
+  @override
+  String get friendsLabel => 'Friends';
+
+  @override
+  String get communityLabel => 'Community';
+
+  @override
+  String get inGymLabel => 'In Gym';
+
+  @override
+  String get hoursShort => 'h';
+
+  @override
+  String get minutesShort => 'm';
+
+  @override
+  String get avarageTimeLabel => 'Average Time';
+
+  @override
+  String get personalRecordsTitle => 'Personal Records';
+
+  @override
+  String get oneRepMaxShort => '1RM';
+
+  @override
+  String get oneRepMaxTooltip =>
+      'Estimated maximum weight you can lift for one repetition based on your workout history.';
 }

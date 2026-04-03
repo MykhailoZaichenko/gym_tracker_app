@@ -26,6 +26,7 @@ class _MyAppState extends State<MyApp> {
           valueListenable: LocaleService.localeNotifier,
           builder: (context, currentLocale, child) {
             return MaterialApp(
+              title: 'Gym Tracker',
               locale: currentLocale,
               localizationsDelegates: const [
                 AppLocalizations.delegate,
@@ -47,7 +48,8 @@ class _MyAppState extends State<MyApp> {
                   brightness: Brightness.light,
                 ),
                 appBarTheme: const AppBarTheme(
-                  scrolledUnderElevation: 0,
+                  centerTitle: false,
+                  scrolledUnderElevation: 0.0,
                   backgroundColor: Colors.transparent,
                   surfaceTintColor: Colors.transparent,
                 ),
@@ -80,6 +82,11 @@ class _MyAppState extends State<MyApp> {
                 ),
               ),
               darkTheme: ThemeData.dark().copyWith(
+                appBarTheme: const AppBarTheme(
+                  scrolledUnderElevation: 0.0,
+                  backgroundColor: Colors.transparent,
+                  surfaceTintColor: Colors.transparent,
+                ),
                 textTheme: const TextTheme(
                   displaySmall: TextStyle(
                     fontSize: 32,

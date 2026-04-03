@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/features/workout/models/workout_exercise_model.dart';
 import 'package:gym_tracker_app/l10n/app_localizations.dart';
 import 'package:gym_tracker_app/data/seed/exercise_catalog.dart';
+import 'package:gym_tracker_app/utils/pr_herlper.dart';
+import 'package:gym_tracker_app/utils/utils.dart';
 import 'package:gym_tracker_app/utils/workout_utils.dart';
 import 'package:gym_tracker_app/widget/common/fading_edge.dart';
 
@@ -10,6 +12,7 @@ class HomeExerciseList extends StatelessWidget {
   final List<WorkoutExercise> selectedExercises;
   final String Function(DateTime) keyOf;
   final String? workoutType;
+  final Map<String, List<WorkoutExercise>> allWorkouts;
 
   const HomeExerciseList({
     super.key,
@@ -17,6 +20,7 @@ class HomeExerciseList extends StatelessWidget {
     required this.selectedExercises,
     required this.keyOf,
     this.workoutType,
+    required this.allWorkouts,
   });
 
   String _getLocalizedName(WorkoutExercise exercise, AppLocalizations loc) {
@@ -58,10 +62,7 @@ class HomeExerciseList extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           if (selectedExercises.isEmpty)
-            Text(
-              loc.noExercisesToday,
-              style: textTheme.bodySmall,
-            )
+            Text(loc.noExercisesToday, style: textTheme.bodySmall)
           else
             Expanded(
               child: FadingEdge(
@@ -88,15 +89,45 @@ class HomeExerciseList extends StatelessWidget {
                         subtitle: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(loc.setsCount(ex.sets.length), style: textTheme.bodyMedium),
+                            Text(
+                              loc.setsCount(ex.sets.length),
+                              style: textTheme.bodyMedium,
+                            ),
                             const SizedBox(height: 4),
-                            for (var j = 0; j < ex.sets.length; j++)
-                              Text(
-                                '${loc.setLabelCompact} ${j + 1}: '
-                                '${ex.sets[j].weight?.toStringAsFixed(1) ?? '-'} ${loc.weightUnit} '
-                                'x ${ex.sets[j].reps ?? '-'} ${loc.repsUnit}',
-                                style: textTheme.bodySmall,
+                            for (var j = 0; j < ex.sets.length; j++) ...[
+                              Builder(
+                                builder: (context) {
+                                  final set = ex.sets[j];
+                                  final bool isPR = PRHelper.isSetRecord(
+                                    exerciseId: ex.exerciseId ?? '',
+                                    currentWeight: set.weight ?? 0.0,
+                                    currentReps: set.reps ?? 0.0,
+                                    targetDate: selectedDay!,
+                                    allWorkouts: allWorkouts,
+                                  );
+
+                                  return Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        '${loc.setLabelCompact} ${j + 1}: '
+                                        '${set.weight?.toStringAsFixed(1) ?? '-'} ${loc.weightUnit} '
+                                        'x ${formatDouble(set.reps)} ${loc.repsUnit}',
+                                        style: textTheme.bodySmall,
+                                      ),
+                                      if (isPR) ...[
+                                        const SizedBox(width: 4),
+                                        const Icon(
+                                          Icons.emoji_events,
+                                          color: Colors.amber,
+                                          size: 14,
+                                        ),
+                                      ],
+                                    ],
+                                  );
+                                },
                               ),
+                            ],
                           ],
                         ),
                       ),

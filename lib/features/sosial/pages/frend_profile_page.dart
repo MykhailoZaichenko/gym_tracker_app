@@ -133,7 +133,7 @@ class _FriendProfilePageState extends State<FriendProfilePage> {
     final hasPhoto = friend.avatarUrl != null && friend.avatarUrl!.isNotEmpty;
 
     return Scaffold(
-      appBar: AppBar(title: Text(name), centerTitle: true),
+      appBar: AppBar(),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(

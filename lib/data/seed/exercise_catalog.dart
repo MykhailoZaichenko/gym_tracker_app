@@ -4,8 +4,8 @@ import 'package:gym_tracker_app/l10n/app_localizations.dart';
 class ExerciseInfo {
   final String id;
   final String name;
-  final IconData icon; // Використовується як заглушка, якщо немає картинки
-  final String? assetPath; // Шлях до вашого PNG файлу
+  final IconData icon;
+  final String? assetPath;
 
   const ExerciseInfo({
     required this.id,
@@ -14,7 +14,6 @@ class ExerciseInfo {
     this.assetPath,
   });
 
-  // Допоміжний метод, щоб перевірити, чи є кастомна іконка
   bool get hasCustomIcon => assetPath != null;
 
   static ExerciseInfo getEnterCustom(AppLocalizations loc) {
@@ -28,7 +27,6 @@ class ExerciseInfo {
 
 List<ExerciseInfo> getExerciseCatalog(AppLocalizations loc) {
   return [
-    // --- LEGS ---
     ExerciseInfo(
       id: 'squat',
       name: loc.exSquat,
@@ -46,6 +44,16 @@ List<ExerciseInfo> getExerciseCatalog(AppLocalizations loc) {
       icon: Icons.sports_mma,
     ),
     ExerciseInfo(
+      id: 'smith_machine_squat',
+      name: loc.exSmithMachineSquat,
+      icon: Icons.straighten,
+    ),
+    ExerciseInfo(
+      id: 'hack_squat',
+      name: loc.exHackSquat,
+      icon: Icons.airline_seat_recline_extra,
+    ),
+    ExerciseInfo(
       id: 'lunge',
       name: loc.exLunge,
       icon: Icons.directions_walk,
@@ -55,6 +63,11 @@ List<ExerciseInfo> getExerciseCatalog(AppLocalizations loc) {
       id: 'walking_lunge',
       name: loc.exWalkingLunge,
       icon: Icons.directions_run,
+    ),
+    ExerciseInfo(
+      id: 'reverse_lunge',
+      name: loc.exReverseLunge,
+      icon: Icons.transfer_within_a_station,
     ),
     ExerciseInfo(
       id: 'bulgarian_split_squat',
@@ -84,6 +97,11 @@ List<ExerciseInfo> getExerciseCatalog(AppLocalizations loc) {
       name: loc.exLegCurl,
       icon: Icons.rotate_left,
       assetPath: 'assets/icons/leg_curl-removebg-preview.png',
+    ),
+    ExerciseInfo(
+      id: 'seated_leg_curl',
+      name: loc.exSeatedLegCurl,
+      icon: Icons.event_seat,
     ),
     ExerciseInfo(
       id: 'deadlift',
@@ -118,6 +136,11 @@ List<ExerciseInfo> getExerciseCatalog(AppLocalizations loc) {
       icon: Icons.airline_seat_flat_angled,
     ),
     ExerciseInfo(
+      id: 'cable_pull_through',
+      name: loc.exCablePullThrough,
+      icon: Icons.keyboard_double_arrow_down,
+    ),
+    ExerciseInfo(
       id: 'standing_calf_raise',
       name: loc.exStandingCalfRaise,
       icon: Icons.trending_flat,
@@ -144,8 +167,6 @@ List<ExerciseInfo> getExerciseCatalog(AppLocalizations loc) {
       name: loc.exAdductorMachine,
       icon: Icons.compress,
     ),
-
-    // --- CHEST ---
     ExerciseInfo(
       id: 'bench_press',
       name: loc.exBenchPress,
@@ -163,6 +184,16 @@ List<ExerciseInfo> getExerciseCatalog(AppLocalizations loc) {
       icon: Icons.trending_down,
     ),
     ExerciseInfo(
+      id: 'close_grip_bench_press',
+      name: loc.exCloseGripBenchPress,
+      icon: Icons.compress,
+    ),
+    ExerciseInfo(
+      id: 'smith_machine_bench_press',
+      name: loc.exSmithMachineBenchPress,
+      icon: Icons.straighten,
+    ),
+    ExerciseInfo(
       id: 'dumbbell_bench_press',
       name: loc.exDumbbellBenchPress,
       icon: Icons.circle,
@@ -172,18 +203,16 @@ List<ExerciseInfo> getExerciseCatalog(AppLocalizations loc) {
       name: loc.exInclineDumbbellPress,
       icon: Icons.north_east,
     ),
-    ExerciseInfo(
-      id: 'push_up',
-      name: loc.exPushUp,
-      icon: Icons.push_pin,
-      // Я не бачив push_up у списку файлів на скріншоті, але він був у сітці.
-      // Якщо файл є, розкоментуйте рядок нижче:
-      // assetPath: 'assets/icons/push_up-removebg-preview.png',
-    ),
+    ExerciseInfo(id: 'push_up', name: loc.exPushUp, icon: Icons.push_pin),
     ExerciseInfo(
       id: 'diamond_push_up',
       name: loc.exDiamondPushUp,
       icon: Icons.diamond,
+    ),
+    ExerciseInfo(
+      id: 'weighted_push_up',
+      name: loc.exWeightedPushUp,
+      icon: Icons.archive,
     ),
     ExerciseInfo(
       id: 'dip',
@@ -203,9 +232,19 @@ List<ExerciseInfo> getExerciseCatalog(AppLocalizations loc) {
       icon: Icons.cable,
     ),
     ExerciseInfo(
+      id: 'low_cable_crossover',
+      name: loc.exLowCableCrossover,
+      icon: Icons.keyboard_double_arrow_up,
+    ),
+    ExerciseInfo(
       id: 'dumbbell_fly',
       name: loc.exDumbbellFly,
       icon: Icons.flight,
+    ),
+    ExerciseInfo(
+      id: 'incline_dumbbell_fly',
+      name: loc.exInclineDumbbellFly,
+      icon: Icons.flight_takeoff,
     ),
     ExerciseInfo(
       id: 'pullover',
@@ -217,8 +256,6 @@ List<ExerciseInfo> getExerciseCatalog(AppLocalizations loc) {
       name: loc.exChestPressMachine,
       icon: Icons.smart_button,
     ),
-
-    // --- BACK ---
     ExerciseInfo(
       id: 'pull_up',
       name: loc.exPullUp,
@@ -236,6 +273,11 @@ List<ExerciseInfo> getExerciseCatalog(AppLocalizations loc) {
       id: 'close_grip_lat_pull_down',
       name: loc.exCloseGripLatPullDown,
       icon: Icons.vertical_align_bottom,
+    ),
+    ExerciseInfo(
+      id: 'v_bar_pull_down',
+      name: loc.exVBarPullDown,
+      icon: Icons.keyboard_arrow_down,
     ),
     ExerciseInfo(
       id: 'bent_over_row',
@@ -281,8 +323,6 @@ List<ExerciseInfo> getExerciseCatalog(AppLocalizations loc) {
       name: loc.exRackPull,
       icon: Icons.align_vertical_bottom,
     ),
-
-    // --- SHOULDERS ---
     ExerciseInfo(
       id: 'overhead_press',
       name: loc.exOverheadPress,
@@ -295,6 +335,11 @@ List<ExerciseInfo> getExerciseCatalog(AppLocalizations loc) {
       icon: Icons.weekend,
     ),
     ExerciseInfo(
+      id: 'smith_machine_shoulder_press',
+      name: loc.exSmithMachineShoulderPress,
+      icon: Icons.straighten,
+    ),
+    ExerciseInfo(
       id: 'arnold_press',
       name: loc.exArnoldPress,
       icon: Icons.autorenew,
@@ -303,8 +348,6 @@ List<ExerciseInfo> getExerciseCatalog(AppLocalizations loc) {
       id: 'lateral_raise',
       name: loc.exLateralRaise,
       icon: Icons.open_with,
-      // Якщо lateral_raise є у папці (його не видно на скріншоті), розкоментуйте:
-      // assetPath: 'assets/icons/lateral_raise-removebg-preview.png',
     ),
     ExerciseInfo(
       id: 'cable_lateral_raise',
@@ -312,10 +355,20 @@ List<ExerciseInfo> getExerciseCatalog(AppLocalizations loc) {
       icon: Icons.usb,
     ),
     ExerciseInfo(
+      id: 'machine_lateral_raise',
+      name: loc.exMachineLateralRaise,
+      icon: Icons.settings_ethernet,
+    ),
+    ExerciseInfo(
       id: 'front_raise',
       name: loc.exFrontRaise,
       icon: Icons.arrow_forward,
       assetPath: 'assets/icons/front_raise-removebg-preview.png',
+    ),
+    ExerciseInfo(
+      id: 'cable_front_raise',
+      name: loc.exCableFrontRaise,
+      icon: Icons.arrow_upward_outlined,
     ),
     ExerciseInfo(
       id: 'rear_delt_raise',
@@ -346,8 +399,6 @@ List<ExerciseInfo> getExerciseCatalog(AppLocalizations loc) {
       icon: Icons.arrow_upward_outlined,
       assetPath: 'assets/icons/shoulder_shrug-removebg-preview.png',
     ),
-
-    // --- ARMS ---
     ExerciseInfo(
       id: 'biceps_curl',
       name: loc.exBicepsCurl,
@@ -403,6 +454,16 @@ List<ExerciseInfo> getExerciseCatalog(AppLocalizations loc) {
       icon: Icons.arrow_downward_sharp,
     ),
     ExerciseInfo(
+      id: 'rope_pushdown',
+      name: loc.exRopePushdown,
+      icon: Icons.waves,
+    ),
+    ExerciseInfo(
+      id: 'overhead_cable_extension',
+      name: loc.exOverheadCableExtension,
+      icon: Icons.keyboard_capslock,
+    ),
+    ExerciseInfo(
       id: 'tricep_dip_machine',
       name: loc.exTricepDipMachine,
       icon: Icons.event_seat_outlined,
@@ -412,8 +473,6 @@ List<ExerciseInfo> getExerciseCatalog(AppLocalizations loc) {
       name: loc.exBenchDip,
       icon: Icons.airline_seat_legroom_reduced,
     ),
-
-    // --- ABS/CORE ---
     ExerciseInfo(
       id: 'crunch',
       name: loc.exCrunch,
@@ -471,8 +530,6 @@ List<ExerciseInfo> getExerciseCatalog(AppLocalizations loc) {
       icon: Icons.pedal_bike,
     ),
     ExerciseInfo(id: 'woodchopper', name: loc.exWoodchopper, icon: Icons.cut),
-
-    // --- CARDIO/OTHER ---
     ExerciseInfo(
       id: 'cardio_treadmill',
       name: loc.exCardioTreadmill,
@@ -492,6 +549,11 @@ List<ExerciseInfo> getExerciseCatalog(AppLocalizations loc) {
       id: 'farmer_walk',
       name: loc.exFarmerWalk,
       icon: Icons.shopping_bag,
+    ),
+    ExerciseInfo(
+      id: 'kettlebell_swing',
+      name: loc.exKettlebellSwing,
+      icon: Icons.sports_gymnastics,
     ),
   ];
 }

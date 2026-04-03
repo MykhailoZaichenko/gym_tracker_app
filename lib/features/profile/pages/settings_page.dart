@@ -303,7 +303,6 @@ class _SettingsPageState extends State<SettingsPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(loc.settingsTitle, style: textTheme.titleLarge),
-        centerTitle: true,
       ),
       body: SafeArea(
         child: ListView(

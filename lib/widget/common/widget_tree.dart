@@ -4,13 +4,13 @@ import 'package:gym_tracker_app/features/workout/pages/journal_page.dart';
 import 'package:gym_tracker_app/services/firestore_service.dart';
 import 'package:gym_tracker_app/widget/layout/navbar_widget.dart';
 import 'package:gym_tracker_app/widget/layout/navigation_state.dart';
-import 'package:gym_tracker_app/features/home/pages/home_page.dart';
+import 'package:gym_tracker_app/features/home/pages/history_page.dart';
 import 'package:gym_tracker_app/features/profile/pages/profile_page.dart';
 import 'package:gym_tracker_app/features/auth/pages/create_username_page.dart';
 
 String? title = 'Gym Tracker';
 
-List<Widget> pages = [JournalPage(), HomePage(), GrafPage(), ProfilePage()];
+List<Widget> pages = [JournalPage(), HistoryPage(), GrafPage(), ProfilePage()];
 
 class WidgetTree extends StatefulWidget {
   const WidgetTree({super.key});
@@ -76,11 +76,14 @@ class _WidgetTreeState extends State<WidgetTree> {
     }
 
     return Scaffold(
-      body: ValueListenableBuilder(
+      body: ValueListenableBuilder<int>(
         valueListenable: selectedPageNotifier,
-        builder: (BuildContext context, dynamic selectedPage, Widget? child) {
-          if (selectedPage >= pages.length) return pages[0];
-          return pages.elementAt(selectedPage);
+        builder: (BuildContext context, int selectedPage, Widget? child) {
+          // Захист від виходу за межі масиву
+          final safeIndex = selectedPage >= pages.length ? 0 : selectedPage;
+
+          // IndexedStack тримає всі сторінки живими у пам'яті
+          return IndexedStack(index: safeIndex, children: pages);
         },
       ),
       bottomNavigationBar: const NavbarWidget(),

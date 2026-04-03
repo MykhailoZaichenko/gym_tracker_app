@@ -2,10 +2,10 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/features/health/pages/health_page.dart';
+import 'package:gym_tracker_app/features/profile/pages/records_page.dart';
 import 'package:gym_tracker_app/features/sosial/pages/friends_page.dart';
 import 'package:gym_tracker_app/l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
-import 'package:gym_tracker_app/core/constants/exercise_meta.dart';
 import 'package:gym_tracker_app/features/profile/models/user_model.dart';
 import 'package:gym_tracker_app/features/profile/profile_exports.dart';
 import 'package:gym_tracker_app/services/firestore_service.dart';
@@ -107,9 +107,9 @@ class _ProfilePageState extends State<ProfilePage> {
 
   DateTime _visibleMonth = DateTime.now();
 
-  int _totalSets = 0;
-  double _totalWeight = 0.0;
-  double _calories = 0.0;
+  double _avgWorkoutsPerWeek = 0.0;
+  int _totalMinutes = 0;
+  int _avgMinutes = 0;
   // ignore: unused_field
   bool _slideToLeft = true;
 
@@ -171,13 +171,8 @@ class _ProfilePageState extends State<ProfilePage> {
       0,
     );
 
+    int workoutsCount = 0;
     int totalSets = 0;
-    double totalWeight = 0.0;
-    double totalCalories = 0.0;
-
-    const double secondsPerRep = 4.0;
-    final double? userWeight = _latestWeight;
-    final canComputeCalories = userWeight != null;
 
     _allWorkouts.forEach((dateStr, exercises) {
       DateTime date;
@@ -191,34 +186,29 @@ class _ProfilePageState extends State<ProfilePage> {
         return;
       }
 
-      for (final ex in exercises) {
-        final exId = ex.exerciseId;
-        final met = (exId != null && kExerciseMet.containsKey(exId))
-            ? kExerciseMet[exId]!
-            : 4.0;
-
-        for (final s in ex.sets) {
-          final reps = s.reps ?? 0;
-          final weight = s.weight ?? 0.0;
-          if (reps <= 0) continue;
-
-          totalSets += 1;
-          totalWeight += weight * reps;
-
-          if (canComputeCalories) {
-            final secondsThisSet = reps * secondsPerRep;
-            final minutesThisSet = secondsThisSet / 60.0;
-            final kcalPerMin = met * userWeight / 60.0;
-            totalCalories += kcalPerMin * minutesThisSet;
-          }
+      if (exercises.isNotEmpty) {
+        workoutsCount++;
+        for (final ex in exercises) {
+          totalSets += ex.sets.length;
         }
       }
     });
 
+    // 1. Середня кількість тренувань на тиждень
+    final daysInMonth = lastDayOfMonth.day;
+    final weeksInMonth = daysInMonth / 7.0;
+    final avgWorkoutsPerWeek = workoutsCount / weeksInMonth;
+
+    // 2. Час (якщо таймер ще не підключений напряму з БД, рахуємо 3 хв на підхід)
+    final totalMinutes = totalSets * 3;
+
+    // 3. Середній час одного тренування
+    final avgMinutes = workoutsCount > 0 ? totalMinutes ~/ workoutsCount : 0;
+
     setState(() {
-      _totalSets = totalSets;
-      _totalWeight = totalWeight;
-      _calories = totalCalories;
+      _avgWorkoutsPerWeek = avgWorkoutsPerWeek;
+      _totalMinutes = totalMinutes;
+      _avgMinutes = avgMinutes;
     });
   }
 
@@ -289,7 +279,9 @@ class _ProfilePageState extends State<ProfilePage> {
       if (mounted) {
         CustomSnackBar.show(
           context,
-          message: 'Помилка вибору фото: $e',
+          message: AppLocalizations.of(
+            context,
+          )!.errorPickingPhoto(e.toString()),
           isError: true,
         );
       }
@@ -323,11 +315,11 @@ class _ProfilePageState extends State<ProfilePage> {
     final listPadding = MediaQuery.of(context).size.width * 0.05;
     final name = (_user?.name.isNotEmpty == true)
         ? _user!.name
-        : (_user?.email != null ? _user!.email.split('@')[0] : "Користувач");
+        : (_user?.email != null ? _user!.email.split('@')[0] : loc.defaultUser);
     final double? currentWeight = _latestWeight;
     final bool hasWeight = currentWeight != null && currentWeight > 0;
     final String weightDisplay = hasWeight
-        ? "$currentWeight кг"
+        ? "$currentWeight ${loc.weightUnit}"
         : loc.weightNotSet;
 
     final theme = Theme.of(context);
@@ -340,148 +332,86 @@ class _ProfilePageState extends State<ProfilePage> {
             : Padding(
                 padding: const EdgeInsets.symmetric(vertical: 20),
                 child: Center(
-                  child: ListView(
-                    shrinkWrap: true,
-                    children: [
-                      // --- HEADER ПРОФІЛЮ ---
-                      Center(
-                        child: Column(
-                          children: [
-                            Stack(
-                              alignment: Alignment.bottomRight,
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.topCenter,
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        maxWidth: MediaQuery.of(context).size.width,
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          // --- HEADER ПРОФІЛЮ ---
+                          Center(
+                            child: Column(
                               children: [
-                                // Аватарка
-                                CircleAvatar(
-                                  radius: 65,
-                                  backgroundColor: Theme.of(
-                                    context,
-                                  ).colorScheme.primary.withValues(alpha: 0.1),
-                                  backgroundImage: _getAvatarProvider(
-                                    _user?.avatarUrl,
-                                  ),
-                                  child:
-                                      (_user?.avatarUrl == null ||
-                                          _user!.avatarUrl!.isEmpty)
-                                      ? Icon(
-                                          Icons.person,
-                                          size: 65,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .primary
-                                              .withValues(alpha: 0.5),
-                                        )
-                                      : null,
-                                ),
-                                // Іконка редагування (ручка)
-                                GestureDetector(
-                                  onTap: _pickAvatar,
-                                  child: Container(
-                                    padding: const EdgeInsets.all(8),
-                                    decoration: BoxDecoration(
-                                      color: const Color(
-                                        0xFF006D5B,
-                                      ), // Темно зелений як на фото
-                                      shape: BoxShape.circle,
-                                      border: Border.all(
-                                        color: Theme.of(
-                                          context,
-                                        ).scaffoldBackgroundColor,
-                                        width: 4,
+                                Stack(
+                                  alignment: Alignment.bottomRight,
+                                  children: [
+                                    // Аватарка
+                                    CircleAvatar(
+                                      radius: 65,
+                                      backgroundColor: Theme.of(context)
+                                          .colorScheme
+                                          .primary
+                                          .withValues(alpha: 0.1),
+                                      backgroundImage: _getAvatarProvider(
+                                        _user?.avatarUrl,
+                                      ),
+                                      child:
+                                          (_user?.avatarUrl == null ||
+                                              _user!.avatarUrl!.isEmpty)
+                                          ? Icon(
+                                              Icons.person,
+                                              size: 65,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .primary
+                                                  .withValues(alpha: 0.5),
+                                            )
+                                          : null,
+                                    ),
+                                    // Іконка редагування (ручка)
+                                    GestureDetector(
+                                      onTap: _pickAvatar,
+                                      child: Container(
+                                        padding: const EdgeInsets.all(8),
+                                        decoration: BoxDecoration(
+                                          color: const Color(
+                                            0xFF006D5B,
+                                          ), // Темно зелений як на фото
+                                          shape: BoxShape.circle,
+                                          border: Border.all(
+                                            color: Theme.of(
+                                              context,
+                                            ).scaffoldBackgroundColor,
+                                            width: 4,
+                                          ),
+                                        ),
+                                        child: const Icon(
+                                          Icons.edit,
+                                          size: 20,
+                                          color: Colors.white,
+                                        ),
                                       ),
                                     ),
-                                    child: const Icon(
-                                      Icons.edit,
-                                      size: 20,
-                                      color: Colors.white,
-                                    ),
-                                  ),
+                                  ],
                                 ),
+                                const SizedBox(height: 12),
+                                // Нікнейм під фото
+                                Text("@$name", style: textTheme.titleLarge),
                               ],
                             ),
-                            const SizedBox(height: 16),
-                            // Нікнейм під фото
-                            Text(
-                              "@$name",
-                              style: textTheme.titleLarge,
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      if (!hasWeight)
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: listPadding + 3,
-                            vertical: 8,
                           ),
-                          child: InkWell(
-                            onTap: () {
-                              Navigator.of(context)
-                                  .push(
-                                    MaterialPageRoute(
-                                      builder: (context) => const HealthPage(),
-                                    ),
-                                  )
-                                  .then((_) => _loadData());
-                            },
-                            borderRadius: BorderRadius.circular(12),
-                            child: Container(
-                              padding: const EdgeInsets.all(16),
-                              decoration: BoxDecoration(
-                                color: Colors.orangeAccent.withValues(
-                                  alpha: 0.1,
-                                ),
-                                border: Border.all(
-                                  color: Colors.orangeAccent.withValues(
-                                    alpha: 0.4,
-                                  ),
-                                ),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Row(
-                                children: [
-                                  const Icon(
-                                    Icons.info_outline,
-                                    color: Colors.orangeAccent,
-                                  ),
-                                  const SizedBox(width: 12),
-                                  Expanded(
-                                    child: Text(
-                                      loc.weightMissingBanner, // Використовуємо локалізацію
-                                      style: textTheme.bodyMedium?.copyWith(
-                                        color: Theme.of(
-                                          context,
-                                        ).colorScheme.onSurface,
-                                      ),
-                                    ),
-                                  ),
-                                  const Icon(
-                                    Icons.chevron_right,
-                                    color: Colors.orangeAccent,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
 
-                      const SizedBox(height: 12),
-
-                      // --- КАРТКИ "ВАГА" ТА "ДРУЗІ" ---
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              // 🔥 Займає рівно 50% ширини
-                              child: _buildMinimalStatColumn(
-                                context,
-                                title: "Вага",
-                                value: weightDisplay,
-                                icon: Icons.monitor_weight_outlined,
-                                color: hasWeight
-                                    ? Colors.blueAccent
-                                    : Colors.orangeAccent,
+                          if (!hasWeight)
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: listPadding + 3,
+                                vertical: 8,
+                              ),
+                              child: InkWell(
                                 onTap: () {
                                   Navigator.of(context)
                                       .push(
@@ -492,74 +422,209 @@ class _ProfilePageState extends State<ProfilePage> {
                                       )
                                       .then((_) => _loadData());
                                 },
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: StreamBuilder<List<Map<String, dynamic>>>(
-                                stream: _firestore.getFriendRequests(),
-                                builder: (context, snapshot) {
-                                  // Перевіряємо чи є хоч один запит
-                                  final hasRequests =
-                                      snapshot.hasData &&
-                                      snapshot.data!.isNotEmpty;
-
-                                  return _buildMinimalStatColumn(
-                                    context,
-                                    title: "Друзі",
-                                    value: "Спільнота",
-                                    icon: Icons.group_outlined,
-                                    color: Colors.purpleAccent,
-                                    hasBadge: hasRequests,
-                                    onTap: () {
-                                      Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              const FriendsPage(),
+                                borderRadius: BorderRadius.circular(12),
+                                child: Container(
+                                  padding: const EdgeInsets.all(16),
+                                  decoration: BoxDecoration(
+                                    color: Colors.orangeAccent.withValues(
+                                      alpha: 0.1,
+                                    ),
+                                    border: Border.all(
+                                      color: Colors.orangeAccent.withValues(
+                                        alpha: 0.4,
+                                      ),
+                                    ),
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      const Icon(
+                                        Icons.info_outline,
+                                        color: Colors.orangeAccent,
+                                      ),
+                                      const SizedBox(width: 12),
+                                      Expanded(
+                                        child: Text(
+                                          loc.weightMissingBanner, // Використовуємо локалізацію
+                                          style: textTheme.bodyMedium?.copyWith(
+                                            color: Theme.of(
+                                              context,
+                                            ).colorScheme.onSurface,
+                                          ),
                                         ),
-                                      );
-                                    },
-                                  );
-                                },
+                                      ),
+                                      const Icon(
+                                        Icons.chevron_right,
+                                        color: Colors.orangeAccent,
+                                      ),
+                                    ],
+                                  ),
+                                ),
                               ),
                             ),
-                          ],
-                        ),
+
+                          const SizedBox(height: 12),
+
+                          // --- КАРТКИ "ВАГА" ТА "ДРУЗІ" ---
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16.0,
+                            ),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  // 🔥 Займає рівно 50% ширини
+                                  child: _buildMinimalStatColumn(
+                                    context,
+                                    title: loc.statWeight,
+                                    value: weightDisplay,
+                                    icon: Icons.monitor_weight_outlined,
+                                    color: hasWeight
+                                        ? Colors.blueAccent
+                                        : Colors.orangeAccent,
+                                    onTap: () {
+                                      Navigator.of(context)
+                                          .push(
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const HealthPage(),
+                                            ),
+                                          )
+                                          .then((_) => _loadData());
+                                    },
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child:
+                                      StreamBuilder<List<Map<String, dynamic>>>(
+                                        stream: _firestore.getFriendRequests(),
+                                        builder: (context, snapshot) {
+                                          final hasRequests =
+                                              snapshot.hasData &&
+                                              snapshot.data!.isNotEmpty;
+
+                                          return _buildMinimalStatColumn(
+                                            context,
+                                            title: loc.friendsLabel,
+                                            value: loc.communityLabel,
+                                            icon: Icons.group_outlined,
+                                            color: Colors.purpleAccent,
+                                            hasBadge: hasRequests,
+                                            onTap: () {
+                                              Navigator.of(context).push(
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      const FriendsPage(),
+                                                ),
+                                              );
+                                            },
+                                          );
+                                        },
+                                      ),
+                                ),
+                              ],
+                            ),
+                          ),
+
+                          const SizedBox(height: 12),
+
+                          // --- ПРОГРЕС ТА СТАТИСТИКА ---
+                          ProfileStatsCard(
+                            visibleMonth: _visibleMonth,
+                            ukMonthLabel: capitalizedMonth,
+                            avgWorkoutsPerWeek: _avgWorkoutsPerWeek,
+                            totalMinutes: _totalMinutes,
+                            avgMinutes: _avgMinutes,
+                            onPrevMonth: _prevMonth,
+                            onNextMonth: _nextMonth,
+                            onPickMonth: (newMonth) {
+                              setState(() {
+                                _visibleMonth = newMonth;
+                              });
+                              _recalculateStats();
+                            },
+                          ),
+
+                          const SizedBox(height: 12),
+
+                          // --- КНОПКА "ОСОБИСТІ РЕКОРДИ" ---
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: listPadding + 3,
+                            ),
+                            child: InkWell(
+                              onTap: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        RecordsPage(allWorkouts: _allWorkouts),
+                                  ),
+                                );
+                              },
+                              borderRadius: BorderRadius.circular(16),
+                              child: Container(
+                                padding: const EdgeInsets.all(16),
+                                decoration: BoxDecoration(
+                                  color: theme.colorScheme.surfaceContainer,
+                                  borderRadius: BorderRadius.circular(16),
+                                  border: Border.all(
+                                    color: Colors.amber.withValues(alpha: 0.3),
+                                    width: 1,
+                                  ),
+                                ),
+                                child: Row(
+                                  children: [
+                                    Container(
+                                      padding: const EdgeInsets.all(10),
+                                      decoration: BoxDecoration(
+                                        color: Colors.amber.withValues(
+                                          alpha: 0.1,
+                                        ),
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: const Icon(
+                                        Icons.emoji_events,
+                                        color: Colors.amber,
+                                        size: 24,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 16),
+                                    Expanded(
+                                      child: Text(
+                                        loc.personalRecordsTitle,
+                                        style: textTheme.titleMedium?.copyWith(
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ),
+                                    Icon(
+                                      Icons.chevron_right,
+                                      color: theme.colorScheme.onSurface
+                                          .withValues(alpha: 0.5),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+
+                          const SizedBox(height: 12),
+
+                          // --- НАЛАШТУВАННЯ ТА ВИХІД ---
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: listPadding + 3,
+                            ),
+                            child: ProfileSettingsList(
+                              user: _user,
+                              onProfileUpdated: _onProfileUpdated,
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                        ],
                       ),
-
-                      const SizedBox(height: 16),
-
-                      // --- ПРОГРЕС ТА СТАТИСТИКА ---
-                      ProfileStatsCard(
-                        visibleMonth: _visibleMonth,
-                        ukMonthLabel: capitalizedMonth,
-                        totalSets: _totalSets,
-                        totalWeight: _totalWeight,
-                        totalCalories: _calories,
-                        onPrevMonth: _prevMonth,
-                        onNextMonth: _nextMonth,
-                        onPickMonth: (newMonth) {
-                          setState(() {
-                            _visibleMonth = newMonth;
-                          });
-                          _recalculateStats();
-                        },
-                      ),
-
-                      const SizedBox(height: 12),
-
-                      // --- НАЛАШТУВАННЯ ТА ВИХІД ---
-                      Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: listPadding + 3,
-                        ),
-                        child: ProfileSettingsList(
-                          user: _user,
-                          onProfileUpdated: _onProfileUpdated,
-                        ),
-                      ),
-                      const SizedBox(height: 30),
-                    ],
+                    ),
                   ),
                 ),
               ),

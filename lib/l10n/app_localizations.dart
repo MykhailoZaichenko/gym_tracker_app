@@ -803,7 +803,7 @@ abstract class AppLocalizations {
   /// Header for stats card
   ///
   /// In en, this message translates to:
-  /// **'Your progress for'**
+  /// **'Your activity for'**
   String get yourProgressFor;
 
   /// Analytics button tooltip
@@ -1556,6 +1556,108 @@ abstract class AppLocalizations {
   /// **'Farmer\'s Walk'**
   String get exFarmerWalk;
 
+  /// Squat using the Smith machine
+  ///
+  /// In en, this message translates to:
+  /// **'Smith Machine Squat'**
+  String get exSmithMachineSquat;
+
+  /// Hack squat machine
+  ///
+  /// In en, this message translates to:
+  /// **'Hack Squat'**
+  String get exHackSquat;
+
+  /// Stepping backward into a lunge
+  ///
+  /// In en, this message translates to:
+  /// **'Reverse Lunge'**
+  String get exReverseLunge;
+
+  /// Leg curl on seated machine
+  ///
+  /// In en, this message translates to:
+  /// **'Seated Leg Curl'**
+  String get exSeatedLegCurl;
+
+  /// Glute exercise using low cable
+  ///
+  /// In en, this message translates to:
+  /// **'Cable Pull Through'**
+  String get exCablePullThrough;
+
+  /// Bench press with hands close together
+  ///
+  /// In en, this message translates to:
+  /// **'Close Grip Bench Press'**
+  String get exCloseGripBenchPress;
+
+  /// Bench press using Smith machine
+  ///
+  /// In en, this message translates to:
+  /// **'Smith Machine Bench Press'**
+  String get exSmithMachineBenchPress;
+
+  /// Push-ups with added weight
+  ///
+  /// In en, this message translates to:
+  /// **'Weighted Push-up'**
+  String get exWeightedPushUp;
+
+  /// Cable fly from low pulleys
+  ///
+  /// In en, this message translates to:
+  /// **'Low Cable Crossover'**
+  String get exLowCableCrossover;
+
+  /// Chest fly on incline bench
+  ///
+  /// In en, this message translates to:
+  /// **'Incline Dumbbell Fly'**
+  String get exInclineDumbbellFly;
+
+  /// Lat pulldown using V-bar attachment
+  ///
+  /// In en, this message translates to:
+  /// **'V-Bar Pull-Down'**
+  String get exVBarPullDown;
+
+  /// Overhead press using Smith machine
+  ///
+  /// In en, this message translates to:
+  /// **'Smith Machine Shoulder Press'**
+  String get exSmithMachineShoulderPress;
+
+  /// Side delts on lateral raise machine
+  ///
+  /// In en, this message translates to:
+  /// **'Machine Lateral Raise'**
+  String get exMachineLateralRaise;
+
+  /// Front delt raise using low cable
+  ///
+  /// In en, this message translates to:
+  /// **'Cable Front Raise'**
+  String get exCableFrontRaise;
+
+  /// Triceps pushdown using rope attachment
+  ///
+  /// In en, this message translates to:
+  /// **'Rope Pushdown'**
+  String get exRopePushdown;
+
+  /// Triceps extension overhead using cable
+  ///
+  /// In en, this message translates to:
+  /// **'Overhead Cable Extension'**
+  String get exOverheadCableExtension;
+
+  /// Explosive kettlebell swing
+  ///
+  /// In en, this message translates to:
+  /// **'Kettlebell Swing'**
+  String get exKettlebellSwing;
+
   /// Button to finish workout
   ///
   /// In en, this message translates to:
@@ -1751,7 +1853,7 @@ abstract class AppLocalizations {
   /// Times per week label
   ///
   /// In en, this message translates to:
-  /// **'times/week'**
+  /// **'Times/Week'**
   String get timesPerWeek;
 
   /// Streak weeks label
@@ -2179,6 +2281,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'This will allow us to send you reminders about your workouts and weight tracking so you don\'t lose your progress.'**
   String get enableNotificationsBody;
+
+  /// Error message when picking an avatar fails
+  ///
+  /// In en, this message translates to:
+  /// **'Error picking photo: {error}'**
+  String errorPickingPhoto(String error);
+
+  /// Default fallback username when none is set
+  ///
+  /// In en, this message translates to:
+  /// **'User'**
+  String get defaultUser;
+
+  /// Label for the friends stat card
+  ///
+  /// In en, this message translates to:
+  /// **'Friends'**
+  String get friendsLabel;
+
+  /// Label for the community stat card value
+  ///
+  /// In en, this message translates to:
+  /// **'Community'**
+  String get communityLabel;
+
+  /// Label for the total time spent in the gym
+  ///
+  /// In en, this message translates to:
+  /// **'In Gym'**
+  String get inGymLabel;
+
+  /// Short abbreviation for hours
+  ///
+  /// In en, this message translates to:
+  /// **'h'**
+  String get hoursShort;
+
+  /// Short abbreviation for minutes
+  ///
+  /// In en, this message translates to:
+  /// **'m'**
+  String get minutesShort;
+
+  /// Label for the average workout duration
+  ///
+  /// In en, this message translates to:
+  /// **'Average Time'**
+  String get avarageTimeLabel;
+
+  /// Button to open the personal records page
+  ///
+  /// In en, this message translates to:
+  /// **'Personal Records'**
+  String get personalRecordsTitle;
+
+  /// Short abbreviation for one rep max
+  ///
+  /// In en, this message translates to:
+  /// **'1RM'**
+  String get oneRepMaxShort;
+
+  /// Tooltip explaining what the one rep max stat means
+  ///
+  /// In en, this message translates to:
+  /// **'Estimated maximum weight you can lift for one repetition based on your workout history.'**
+  String get oneRepMaxTooltip;
 }
 
 class _AppLocalizationsDelegate

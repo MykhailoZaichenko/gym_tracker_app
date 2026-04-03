@@ -135,7 +135,7 @@
   "editExercisesTooltip": "Редагувати вправи",
 
   "chartsTitle": "Прогрес — графіки",
-  "yourProgressFor": "Ваш прогрес за",
+  "yourProgressFor": "Ваша активність за",
   "progressTooltip": "Прогрес",
   "exerciseLabel": "Вправа:",
   "chooseExercise": "Оберіть вправу",
@@ -273,6 +273,29 @@
   "exCardioElliptical": "Орбітрек",
   "exCardioRowing": "Гребний тренажер",
   "exFarmerWalk": "Прогулянка фермера",
+
+"exSmithMachineSquat": "Присідання в Сміті",
+  "exHackSquat": "Гакк-присідання",
+  "exReverseLunge": "Зворотні випади",
+  "exSeatedLegCurl": "Згинання ніг сидячи",
+  "exCablePullThrough": "Тяга блоку між ногами",
+
+  "exCloseGripBenchPress": "Жим вузьким хватом",
+  "exSmithMachineBenchPress": "Жим лежачи в Сміті",
+  "exWeightedPushUp": "Віджимання з вагою",
+  "exLowCableCrossover": "Кросовер з нижнього блоку",
+  "exInclineDumbbellFly": "Розведення гантелей під кутом",
+
+  "exVBarPullDown": "Тяга верхнього блоку (V-руків'я)",
+  "exSmithMachineShoulderPress": "Жим сидячи в Сміті",
+  "exMachineLateralRaise": "Махи в сторони (тренажер)",
+  "exCableFrontRaise": "Підйом рук перед собою на блоці",
+
+  "exRopePushdown": "Розгинання з канатом донизу",
+  "exOverheadCableExtension": "Розгинання з-за голови на блоці",
+
+  "exKettlebellSwing": "Махи гирею",
+
   "finishWorkout": "Завершити тренування",
   "workoutSummary": "Підсумок тренування",
   "durationLabel": "Тривалість",
@@ -308,7 +331,7 @@
 
   "weeklyGoalTitle": "Тижнева ціль",
   "weeklyGoalQuestion": "Скільки разів на тиждень ви плануєте тренуватися?",
-  "timesPerWeek": "разів/тиждень",
+  "timesPerWeek": "Разів/Тиждень",
   "streakWeeks": "{count}-тижнева серія",
   "streakKeep": "Чудово! Виконали план на цей тиждень.",
   "streakBurn": "Тренуйтесь ще {count} р., щоб зберегти серію!",
@@ -420,5 +443,18 @@
   "previousPeriod": "Минулий період",
   
   "enableNotificationsTitle": "Увімкнути сповіщення? 🔔",
-  "enableNotificationsBody": "Це дозволить нам надсилати тобі нагадування про тренування та відстеження ваги, щоб ти не втрачав прогрес."
+  "enableNotificationsBody": "Це дозволить нам надсилати тобі нагадування про тренування та відстеження ваги, щоб ти не втрачав прогрес.",
+
+  "errorPickingPhoto": "Помилка вибору фото: {error}",
+  "defaultUser": "Користувач",
+  "friendsLabel": "Друзі",
+  "communityLabel": "Спільнота",
+
+  "inGymLabel": "У залі",
+  "hoursShort": "г",
+  "minutesShort": "хв",
+  "avarageTimeLabel": "Середній час",
+  "personalRecordsTitle": "Особисті рекорди",
+  "oneRepMaxShort": "1ПМ",
+  "oneRepMaxTooltip": "Оцінка максимальної ваги, яку ви можете підняти за одну повторювання, базуючись на вашому історії тренувань."
 }

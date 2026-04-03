@@ -397,7 +397,7 @@ class AppLocalizationsUk extends AppLocalizations {
   String get chartsTitle => 'Прогрес — графіки';
 
   @override
-  String get yourProgressFor => 'Ваш прогрес за';
+  String get yourProgressFor => 'Ваша активність за';
 
   @override
   String get progressTooltip => 'Прогрес';
@@ -778,6 +778,57 @@ class AppLocalizationsUk extends AppLocalizations {
   String get exFarmerWalk => 'Прогулянка фермера';
 
   @override
+  String get exSmithMachineSquat => 'Присідання в Сміті';
+
+  @override
+  String get exHackSquat => 'Гакк-присідання';
+
+  @override
+  String get exReverseLunge => 'Зворотні випади';
+
+  @override
+  String get exSeatedLegCurl => 'Згинання ніг сидячи';
+
+  @override
+  String get exCablePullThrough => 'Тяга блоку між ногами';
+
+  @override
+  String get exCloseGripBenchPress => 'Жим вузьким хватом';
+
+  @override
+  String get exSmithMachineBenchPress => 'Жим лежачи в Сміті';
+
+  @override
+  String get exWeightedPushUp => 'Віджимання з вагою';
+
+  @override
+  String get exLowCableCrossover => 'Кросовер з нижнього блоку';
+
+  @override
+  String get exInclineDumbbellFly => 'Розведення гантелей під кутом';
+
+  @override
+  String get exVBarPullDown => 'Тяга верхнього блоку (V-руків\'я)';
+
+  @override
+  String get exSmithMachineShoulderPress => 'Жим сидячи в Сміті';
+
+  @override
+  String get exMachineLateralRaise => 'Махи в сторони (тренажер)';
+
+  @override
+  String get exCableFrontRaise => 'Підйом рук перед собою на блоці';
+
+  @override
+  String get exRopePushdown => 'Розгинання з канатом донизу';
+
+  @override
+  String get exOverheadCableExtension => 'Розгинання з-за голови на блоці';
+
+  @override
+  String get exKettlebellSwing => 'Махи гирею';
+
+  @override
   String get finishWorkout => 'Завершити тренування';
 
   @override
@@ -882,7 +933,7 @@ class AppLocalizationsUk extends AppLocalizations {
       'Скільки разів на тиждень ви плануєте тренуватися?';
 
   @override
-  String get timesPerWeek => 'разів/тиждень';
+  String get timesPerWeek => 'Разів/Тиждень';
 
   @override
   String streakWeeks(int count) {
@@ -1129,4 +1180,40 @@ class AppLocalizationsUk extends AppLocalizations {
   @override
   String get enableNotificationsBody =>
       'Це дозволить нам надсилати тобі нагадування про тренування та відстеження ваги, щоб ти не втрачав прогрес.';
+
+  @override
+  String errorPickingPhoto(String error) {
+    return 'Помилка вибору фото: $error';
+  }
+
+  @override
+  String get defaultUser => 'Користувач';
+
+  @override
+  String get friendsLabel => 'Друзі';
+
+  @override
+  String get communityLabel => 'Спільнота';
+
+  @override
+  String get inGymLabel => 'У залі';
+
+  @override
+  String get hoursShort => 'г';
+
+  @override
+  String get minutesShort => 'хв';
+
+  @override
+  String get avarageTimeLabel => 'Середній час';
+
+  @override
+  String get personalRecordsTitle => 'Особисті рекорди';
+
+  @override
+  String get oneRepMaxShort => '1ПМ';
+
+  @override
+  String get oneRepMaxTooltip =>
+      'Оцінка максимальної ваги, яку ви можете підняти за одну повторювання, базуючись на вашому історії тренувань.';
 }

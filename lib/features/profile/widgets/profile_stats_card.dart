@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/core/constants/date_constants.dart';
-import 'package:gym_tracker_app/utils/utils.dart';
 import 'package:gym_tracker_app/l10n/app_localizations.dart';
 import 'package:gym_tracker_app/widget/common/month_picker_dialog.dart';
 import 'package:gym_tracker_app/widget/common/stat_tile_widget.dart';
@@ -11,9 +10,9 @@ class ProfileStatsCard extends StatefulWidget {
     super.key,
     required this.visibleMonth,
     required this.ukMonthLabel,
-    required this.totalSets,
-    required this.totalWeight,
-    required this.totalCalories,
+    required this.avgWorkoutsPerWeek,
+    required this.totalMinutes,
+    required this.avgMinutes,
     required this.onPrevMonth,
     required this.onNextMonth,
     required this.onPickMonth,
@@ -21,9 +20,9 @@ class ProfileStatsCard extends StatefulWidget {
 
   final DateTime visibleMonth;
   final String ukMonthLabel;
-  final int totalSets;
-  final double totalWeight;
-  final double totalCalories;
+  final double avgWorkoutsPerWeek;
+  final int totalMinutes;
+  final int avgMinutes;
   final VoidCallback onPrevMonth;
   final VoidCallback onNextMonth;
   final void Function(DateTime newMonth) onPickMonth;
@@ -34,8 +33,6 @@ class ProfileStatsCard extends StatefulWidget {
 
 class _ProfileStatsCardState extends State<ProfileStatsCard> {
   late PageController _pageController;
-
-  // Базова дата для розрахунку індексу (січень 2024)
   late final DateTime _baseDate;
   late int _maxPageCount;
 
@@ -92,6 +89,16 @@ class _ProfileStatsCardState extends State<ProfileStatsCard> {
     return DateTime(_baseDate.year, _baseDate.month + index);
   }
 
+  String _formatTotalTime(int minutes, AppLocalizations loc) {
+    if (minutes == 0) return '-';
+    final hours = minutes ~/ 60;
+    final mins = minutes % 60;
+    if (hours > 0) {
+      return '$hours${loc.hoursShort} $mins${loc.minutesShort}';
+    }
+    return '$mins ${loc.minutesShort}';
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -99,7 +106,7 @@ class _ProfileStatsCardState extends State<ProfileStatsCard> {
     final loc = AppLocalizations.of(context)!;
 
     return SizedBox(
-      height: 270,
+      height: 230,
       child: PageView.builder(
         controller: _pageController,
         itemCount: _maxPageCount,
@@ -132,17 +139,14 @@ class _ProfileStatsCardState extends State<ProfileStatsCard> {
               }
               return Center(
                 child: SizedBox(
-                  height: Curves.easeOut.transform(value) * 270,
+                  height: Curves.easeOut.transform(value) * 230,
                   width: Curves.easeOut.transform(value) * 400,
                   child: child,
                 ),
               );
             },
             child: Container(
-              margin: const EdgeInsets.symmetric(
-                horizontal: 6,
-                vertical: 8,
-              ),
+              margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 8),
               decoration: BoxDecoration(
                 color: Theme.of(context).brightness == Brightness.dark
                     ? theme.colorScheme.surfaceContainer
@@ -186,20 +190,23 @@ class _ProfileStatsCardState extends State<ProfileStatsCard> {
                                 }
                               }
                             : null,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              '${loc.yourProgressFor} $monthLabel ${date.year}',
-                              style: textTheme.titleMedium?.copyWith(
-                                color: isCurrent ? null : Colors.grey,
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                '${loc.yourProgressFor} $monthLabel ${date.year}',
+                                style: textTheme.titleMedium?.copyWith(
+                                  color: isCurrent ? null : Colors.grey,
+                                ),
                               ),
-                            ),
-                            if (isCurrent) ...[
-                              const SizedBox(width: 4),
-                              const Icon(Icons.arrow_drop_down),
+                              if (isCurrent) ...[
+                                const SizedBox(width: 4),
+                                const Icon(Icons.arrow_drop_down),
+                              ],
                             ],
-                          ],
+                          ),
                         ),
                       ),
                     ),
@@ -211,38 +218,27 @@ class _ProfileStatsCardState extends State<ProfileStatsCard> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           StatTile(
-                            icon: Icons.fitness_center,
+                            icon: Icons.calendar_month_outlined,
                             value: isCurrent
-                                ? widget.totalSets.toString()
+                                ? widget.avgWorkoutsPerWeek.toStringAsFixed(1)
                                 : '-',
-                            label: isCurrent
-                                ? loc.setsCount(widget.totalSets)
-                                : loc.setsCount(0).replaceAll('0', ''),
+                            label: loc.timesPerWeek, // "разів/тиждень"
                           ),
                           const SizedBox(width: 8),
                           StatTile(
-                            icon: Icons.square_foot,
+                            icon: Icons.timer_outlined,
                             value: isCurrent
-                                ? formatNumberCompact(widget.totalWeight)
+                                ? '${widget.avgMinutes} ${loc.minutesShort}'
                                 : '-',
-                            label: '${loc.weightLabel} (${loc.weightUnit})',
+                            label: loc.avarageTimeLabel, // "Середній час"
                           ),
                           const SizedBox(width: 8),
                           StatTile(
-                            icon: Icons.local_fire_department,
+                            icon: Icons.access_time,
                             value: isCurrent
-                                ? loc
-                                      .caloriesCount(
-                                        formatNumberCompact(
-                                          widget.totalCalories,
-                                        ),
-                                      )
-                                      .replaceAll(
-                                        RegExp(r'[^0-9]'),
-                                        '',
-                                      )
+                                ? _formatTotalTime(widget.totalMinutes, loc)
                                 : '-',
-                            label: loc.calories,
+                            label: loc.inGymLabel,
                           ),
                         ],
                       ),

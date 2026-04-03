@@ -2,6 +2,7 @@ import 'dart:ui' as ui;
 import 'dart:io';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
+import 'package:gym_tracker_app/utils/pr_herlper.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +16,7 @@ class WorkoutSummaryDialog extends StatefulWidget {
   final WorkoutModel? previousWorkout;
   final Duration duration;
   final VoidCallback onClose;
+  final Map<String, List<WorkoutExercise>> allWorkouts;
 
   const WorkoutSummaryDialog({
     super.key,
@@ -22,6 +24,7 @@ class WorkoutSummaryDialog extends StatefulWidget {
     this.previousWorkout,
     required this.duration,
     required this.onClose,
+    required this.allWorkouts,
   });
 
   @override
@@ -257,7 +260,7 @@ class _WorkoutSummaryDialogState extends State<WorkoutSummaryDialog> {
             if (!hasHistory)
               Text(loc.noPreviousData, style: textTheme.bodySmall)
             else
-              _buildComparisonTable(context, current.sets, previous.sets, loc),
+              _buildComparisonTable(context, current, previous.sets, loc),
           ],
         ),
       ),
@@ -266,17 +269,19 @@ class _WorkoutSummaryDialogState extends State<WorkoutSummaryDialog> {
 
   Widget _buildComparisonTable(
     BuildContext context,
-    List<SetData> currentSets,
+    WorkoutExercise currentExercise, // ЗМІНИЛИ ЦЕЙ ПАРАМЕТР
     List<SetData> prevSets,
     AppLocalizations loc,
   ) {
     final textTheme = Theme.of(context).textTheme;
+    final currentSets = currentExercise.sets; // Дістаємо підходи тут
 
     return Column(
       children: [
         Padding(
           padding: const EdgeInsets.only(bottom: 8.0),
           child: Row(
+            // ... тут твій існуючий код заголовків "Повт" та "Вага"
             children: [
               const SizedBox(width: 24),
               Expanded(
@@ -301,17 +306,39 @@ class _WorkoutSummaryDialogState extends State<WorkoutSummaryDialog> {
           final currSet = currentSets[i];
           final prevSet = (i < prevSets.length) ? prevSets[i] : null;
 
+          // ДОДАЛИ ПЕРЕВІРКУ НА РЕКОРД
+          final bool isPR = PRHelper.isSetRecord(
+            exerciseId: currentExercise.exerciseId ?? '',
+            currentWeight: currSet.weight ?? 0.0,
+            currentReps: currSet.reps ?? 0,
+            targetDate: widget.currentWorkout.date,
+            allWorkouts: widget.allWorkouts,
+          );
+
           return Padding(
             padding: const EdgeInsets.symmetric(vertical: 4.0),
             child: Row(
               children: [
+                // ЗМІНИЛИ ЦЕЙ БЛОК ДЛЯ ВІДОБРАЖЕННЯ КУБКА
                 SizedBox(
-                  width: 24,
-                  child: Text(
-                    "${i + 1}",
-                    style: textTheme.bodySmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                  width: 32, // Трохи розширили для іконки
+                  child: Row(
+                    children: [
+                      Text(
+                        "${i + 1}",
+                        style: textTheme.bodySmall?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      if (isPR) ...[
+                        const SizedBox(width: 2),
+                        const Icon(
+                          Icons.emoji_events,
+                          color: Colors.amber,
+                          size: 12,
+                        ),
+                      ],
+                    ],
                   ),
                 ),
                 Expanded(
@@ -375,7 +402,9 @@ class _WorkoutSummaryDialogState extends State<WorkoutSummaryDialog> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            isWeight ? formatDouble(current.toDouble()) : "$current",
+            isWeight
+                ? formatDouble(current.toDouble())
+                : formatDouble(current.toDouble()),
             style: TextStyle(fontWeight: FontWeight.bold, color: textColor),
           ),
           if (previous != null) ...[
@@ -383,7 +412,7 @@ class _WorkoutSummaryDialogState extends State<WorkoutSummaryDialog> {
             Text(
               isWeight
                   ? "(${formatDouble(previous.toDouble())})"
-                  : "($previous)",
+                  : "(${formatDouble(previous.toDouble())})",
               style: TextStyle(
                 fontSize: 10,
                 color: textColor.withValues(alpha: 0.7),
