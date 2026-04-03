@@ -150,12 +150,12 @@ class _LoginPageState extends State<LoginPage> {
                                       (route) => false,
                                     );
                                   },
-                            child: const Text('Register'),
+                            child: const Text('Зареєструватися'),
                           ),
                           const SizedBox(width: 8),
                           TextButton(
                             onPressed: _loading ? null : _onForgotPressed,
-                            child: const Text('Forgot password'),
+                            child: const Text('Забули пароль'),
                           ),
                         ],
                       ),
@@ -200,7 +200,7 @@ class _LoginPageState extends State<LoginPage> {
       context: context,
       builder: (ctx) {
         return AlertDialog(
-          title: const Text('Reset password (local)'),
+          title: const Text('Повторне встановлення пароля'),
           content: TextField(
             controller: emailCtrl,
             decoration: const InputDecoration(labelText: 'Email'),
@@ -208,7 +208,7 @@ class _LoginPageState extends State<LoginPage> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(ctx).pop(),
-              child: const Text('Cancel'),
+              child: const Text('Скасувати'),
             ),
             TextButton(
               onPressed: () async {
@@ -239,7 +239,7 @@ class _LoginPageState extends State<LoginPage> {
                         actions: [
                           TextButton(
                             onPressed: () => Navigator.of(ctx2).pop(),
-                            child: const Text('Cancel'),
+                            child: const Text('Скасувати'),
                           ),
                           TextButton(
                             onPressed: () async {
@@ -260,7 +260,7 @@ class _LoginPageState extends State<LoginPage> {
                   );
                 }
               },
-              child: const Text('Reset'),
+              child: const Text('Відновити пароль'),
             ),
           ],
         );

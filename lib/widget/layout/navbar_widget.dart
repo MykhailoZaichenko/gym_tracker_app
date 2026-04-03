@@ -11,8 +11,12 @@ class NavbarWidget extends StatelessWidget {
       builder: (BuildContext context, dynamic selectedPage, Widget? child) {
         return NavigationBar(
           destinations: [
-            NavigationDestination(icon: Icon(Icons.home), label: 'Home'),
-            NavigationDestination(icon: Icon(Icons.person), label: 'Profile'),
+            NavigationDestination(icon: Icon(Icons.home), label: 'Головна'),
+            NavigationDestination(
+              icon: Icon(Icons.bar_chart),
+              label: 'Статистика',
+            ),
+            NavigationDestination(icon: Icon(Icons.person), label: 'Профіль'),
           ],
           onDestinationSelected: (int value) {
             selectedPageNotifier.value = value;

@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/core/constants/constants.dart';
 import 'package:gym_tracker_app/features/workout/models/workout_exercise_model.dart';
-import 'package:gym_tracker_app/features/analytics/pages/graf_page.dart';
 import 'package:gym_tracker_app/features/workout/pages/workout_page.dart';
 import 'package:gym_tracker_app/widget/common/month_picker_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -95,17 +94,6 @@ class _HomeCalendarPageState extends State<HomeCalendarPage> {
         appBar: AppBar(
           title: const Text('Календар тренувань'),
           centerTitle: true,
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.bar_chart),
-              tooltip: 'Прогрес',
-              onPressed: () {
-                Navigator.of(
-                  context,
-                ).push(MaterialPageRoute(builder: (_) => GrafPage()));
-              },
-            ),
-          ],
         ),
         body: Column(
           children: [

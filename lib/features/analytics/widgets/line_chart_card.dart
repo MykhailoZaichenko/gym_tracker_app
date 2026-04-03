@@ -31,7 +31,6 @@ class ProgressLineChart extends StatelessWidget {
     if (spots.isEmpty) return 0.0;
 
     final ys = spots.map((s) => s.y).toList()..sort();
-    // відкидаємо зовсім малі виброси: беремо 5-й перцентиль як нижню межу
     final lowIndex = (ys.length * 0.05).floor().clamp(0, ys.length - 1);
     return ys[lowIndex];
   }
@@ -40,7 +39,6 @@ class ProgressLineChart extends StatelessWidget {
     if (spots.isEmpty) return 1.0;
 
     final ys = spots.map((s) => s.y).toList()..sort();
-    // верхній перцентиль (95%)
     final highIndex = (ys.length * 0.95).floor().clamp(0, ys.length - 1);
     return ys[highIndex];
   }
@@ -51,44 +49,27 @@ class ProgressLineChart extends StatelessWidget {
     final rawMin = computeMinY(spots);
     final rawMax = computeMaxY(spots);
 
-    // Якщо весь набір однаковий — задаємо невеликий діапазон навколо значення
     if ((rawMax - rawMin).abs() < 1e-9) {
       final v = rawMax;
-      final delta = (v.abs() < 1e-6)
-          ? 1.0
-          : v.abs() * 0.05; // 5% або 1 якщо нуль
+      final delta = (v.abs() < 1e-6) ? 1.0 : v.abs() * 0.05;
       return {'min': v - delta, 'max': v + delta};
     }
 
-    // Відносний паддінг (5%) і абсолютний мін/макс паддінг
-    final paddingRel = 0.05;
+    final paddingRel = 0.1;
     final minWithPad = rawMin - (rawMax - rawMin) * paddingRel;
     final maxWithPad = rawMax + (rawMax - rawMin) * paddingRel;
 
-    // Захист від занадто малого / великого
-    final minClamp = rawMin - 1000.0; // за потреби зменшити
-    final maxClamp = rawMax + 1000.0;
+    final minY = minWithPad < 0 ? 0 : minWithPad;
+    final maxY = maxWithPad;
 
-    // Остаточні межі
-    final minY = minWithPad.clamp(
-      minClamp,
-      rawMin,
-    ); // не даємо стрибнути нижче занадто сильно
-    final maxY = maxWithPad.clamp(
-      rawMax,
-      maxClamp,
-    ); // і не даємо стрибнути вище занадто сильно
-
-    // Додатково переконаємось, що minY < maxY
     if (minY >= maxY) {
       final mid = (rawMin + rawMax) / 2.0;
-      return {'min': mid - 1.0, 'max': mid + 1.0};
+      return {'min': (mid - 1.0).toDouble(), 'max': (mid + 1.0).toDouble()};
     }
 
-    return {'min': minY, 'max': maxY};
+    return {'min': minY.toDouble(), 'max': maxY.toDouble()};
   }
 
-  // New: compute dynamic X bounds from spots (clamped to typical month range 1..31)
   Map<String, double> computeXBounds(List<FlSpot> spots) {
     if (spots.isEmpty) return {'min': 1.0, 'max': 31.0};
 
@@ -96,7 +77,6 @@ class ProgressLineChart extends StatelessWidget {
     final rawMin = xs.first;
     final rawMax = xs.last;
 
-    // If all x equal, give a small neighborhood
     if ((rawMax - rawMin).abs() < 1e-9) {
       final v = rawMax;
       final min = (v - 1.0).clamp(1.0, 31.0);
@@ -104,7 +84,6 @@ class ProgressLineChart extends StatelessWidget {
       return {'min': min, 'max': max};
     }
 
-    // Small absolute padding (half a day) and small relative padding (5%)
     final pad = (rawMax - rawMin) * 0.05;
     final padAbs = 0.5;
     final usedPad = pad > padAbs ? pad : padAbs;
@@ -122,80 +101,121 @@ class ProgressLineChart extends StatelessWidget {
   }
 
   @override
+  @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+
     return Expanded(
-      child: LineChart(
-        LineChartData(
-          minX: xBounds['min']!,
-          maxX: xBounds['max']!,
-
-          minY: yBounds['min']!,
-          maxY: yBounds['max']!,
-
-          gridData: FlGridData(show: true),
-          borderData: FlBorderData(show: true),
-          titlesData: FlTitlesData(
-            leftTitles: AxisTitles(
-              sideTitles: SideTitles(
-                showTitles: true,
-                // interval: yInterval,
-                getTitlesWidget: (val, meta) => Transform.rotate(
-                  angle: -0.5,
-                  child: Text(
-                    formatY(val),
-                    style: const TextStyle(fontSize: 12),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.easeOutExpo,
+        height: maxY + 50,
+        child: LineChart(
+          LineChartData(
+            minX: xBounds['min']!,
+            maxX: xBounds['max']!,
+            minY: yBounds['min']!,
+            maxY: yBounds['max']!,
+            gridData: FlGridData(show: true),
+            borderData: FlBorderData(show: true),
+            titlesData: FlTitlesData(
+              leftTitles: AxisTitles(
+                sideTitles: SideTitles(
+                  showTitles: true,
+                  getTitlesWidget: (val, meta) => Transform.rotate(
+                    angle: -0.5,
+                    child: Text(formatY(val), style: textTheme.bodySmall),
                   ),
+                  reservedSize: 40,
+                  maxIncluded: range == RangeMode.month ? true : false,
                 ),
-                reservedSize: 40,
-                minIncluded: false,
               ),
-            ),
-            rightTitles: AxisTitles(
-              sideTitles: SideTitles(showTitles: false, reservedSize: 40),
-            ),
-            topTitles: AxisTitles(
-              sideTitles: SideTitles(
-                showTitles: true,
-                interval: bottomInterval(),
-                getTitlesWidget: (val, meta) =>
-                    Transform.rotate(angle: -0.5, child: buildBottomTitle(val)),
-                reservedSize: 32,
+              rightTitles: AxisTitles(
+                sideTitles: SideTitles(showTitles: false, reservedSize: 40),
               ),
-            ),
-            bottomTitles: AxisTitles(
-              sideTitles: SideTitles(
-                showTitles: true,
-                interval: bottomInterval(),
-                getTitlesWidget: (val, meta) => Transform.rotate(
-                  angle: -0.5, // Adjust the angle (in radians) as needed
-                  child: buildBottomTitle(val),
+              topTitles: AxisTitles(
+                sideTitles: SideTitles(
+                  showTitles: true,
+                  interval: bottomInterval(),
+                  getTitlesWidget: (val, meta) => Transform.rotate(
+                    angle: -0.5,
+                    child: DefaultTextStyle.merge(
+                      style: textTheme.bodySmall,
+                      child: buildBottomTitle(val),
+                    ),
+                  ),
+                  reservedSize: 32,
                 ),
-                reservedSize: 32,
               ),
+              bottomTitles: AxisTitles(
+                sideTitles: SideTitles(
+                  showTitles: true,
+                  interval: bottomInterval(),
+                  getTitlesWidget: (val, meta) => Transform.rotate(
+                    angle: -0.5,
+                    child: DefaultTextStyle.merge(
+                      style: textTheme.bodySmall,
+                      child: buildBottomTitle(val),
+                    ),
+                  ),
+                  reservedSize: 32,
+                ),
+              ),
+            ),
+            lineBarsData: [
+              LineChartBarData(
+                spots: spots,
+                isCurved: true,
+                barWidth: 3,
+                dotData: FlDotData(
+                  show: true,
+                  getDotPainter:
+                      (
+                        FlSpot spot,
+                        double percent,
+                        LineChartBarData bar,
+                        int index,
+                      ) => FlDotCirclePainter(
+                        radius: 4,
+                        color: Theme.of(context).scaffoldBackgroundColor,
+                        strokeWidth: 2,
+                      ),
+                ),
+              ),
+            ],
+            lineTouchData: LineTouchData(
+              handleBuiltInTouches: true,
+              touchTooltipData: LineTouchTooltipData(
+                getTooltipColor: (touchedSpot) => Theme.of(
+                  context,
+                ).colorScheme.surfaceContainerHighest.withValues(alpha: 0.9),
+                getTooltipItems: (touchedSpots) {
+                  return touchedSpots.map((touchedSpot) {
+                    return LineTooltipItem(
+                      '${touchedSpot.y}',
+                      textTheme.labelLarge!.copyWith(
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? Colors.white
+                            : Colors.black,
+                      ),
+                    );
+                  }).toList();
+                },
+              ),
+              touchCallback: (event, response) {
+                if (event is FlTapUpEvent &&
+                    response != null &&
+                    response.lineBarSpots != null &&
+                    response.lineBarSpots!.isNotEmpty) {
+                  final touched = response.lineBarSpots!.first;
+                  final x = touched.x;
+                  if (onPointTap != null) onPointTap!(x);
+                }
+              },
             ),
           ),
-          lineBarsData: [
-            LineChartBarData(
-              spots: spots,
-              isCurved: true,
-              color: Colors.blue,
-              barWidth: 3,
-              dotData: FlDotData(show: true),
-            ),
-          ],
-          lineTouchData: LineTouchData(
-            touchCallback: (event, response) {
-              if (event is FlTapUpEvent &&
-                  response != null &&
-                  response.lineBarSpots != null &&
-                  response.lineBarSpots!.isNotEmpty) {
-                final touched = response.lineBarSpots!.first;
-                final x = touched.x;
-                if (onPointTap != null) onPointTap!(x);
-              }
-            },
-            handleBuiltInTouches: true,
-          ),
+          duration: const Duration(milliseconds: 800),
+          curve: Curves.easeInOut,
         ),
       ),
     );

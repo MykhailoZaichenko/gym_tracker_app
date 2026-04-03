@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gym_tracker_app/features/welcome/pages/welcome_page.dart';
 import 'package:gym_tracker_app/widget/common/widget_tree.dart';
 import 'core/theme/theme_service.dart';
 
@@ -30,7 +31,7 @@ class _MyAppState extends State<MyApp> {
           ),
           darkTheme: ThemeData.dark(),
           themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
-          home: WidgetTree(),
+          home: WelcomePage(),
         );
       },
     );

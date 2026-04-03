@@ -56,7 +56,7 @@ class WelcomePage extends StatelessWidget {
                   style: FilledButton.styleFrom(
                     minimumSize: Size(double.infinity, 50.0),
                   ),
-                  child: const Text("Get Started"),
+                  child: const Text("Розпочати"),
                 ),
                 TextButton(
                   onPressed: () {
@@ -64,13 +64,13 @@ class WelcomePage extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                         builder: (context) {
-                          return const LoginPage(title: 'Log in');
+                          return const LoginPage(title: 'Вхід');
                         },
                       ),
                       (route) => false,
                     );
                   },
-                  child: const Text("Log In"),
+                  child: const Text("Вхід"),
                 ),
               ],
             ),
