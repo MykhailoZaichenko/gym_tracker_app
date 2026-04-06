@@ -187,63 +187,77 @@ class _MonthPickerDialogState extends State<MonthPickerDialog>
             ),
             const SizedBox(height: 20),
 
-            // Month chips
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              alignment: WrapAlignment.center,
-              children: List.generate(12, (i) {
-                final month = i + 1;
-                final selected = month == _selectedMonth;
-                final enabled = _isMonthSelectable(_year, month);
-                final monthName = DateFormat.MMMM(
-                  loc.localeName,
-                ).format(DateTime(2024, month));
-                final label = toBeginningOfSentenceCase(monthName);
+            // Month Grid
+            // Використовуємо SizedBox, щоб обмежити висоту GridView всередині Column
+            SizedBox(
+              height: 240, // Висота підібрана під 4 рядки
+              width: 300, // Ширина для стабільності на планшетах
+              child: GridView.builder(
+                physics:
+                    const NeverScrollableScrollPhysics(), // Вимикаємо скрол
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3, // 3 колонки
+                  mainAxisSpacing: 10,
+                  crossAxisSpacing: 10,
+                  childAspectRatio:
+                      1.9, // Співвідношення сторін кнопки (ширше ніж вище)
+                ),
+                itemCount: 12,
+                itemBuilder: (context, index) {
+                  final month = index + 1;
+                  final selected = month == _selectedMonth;
+                  final enabled = _isMonthSelectable(_year, month);
+                  final monthName = DateFormat.MMMM(
+                    loc.localeName,
+                  ).format(DateTime(2024, month));
+                  // Робимо першу літеру великою
+                  final label = toBeginningOfSentenceCase(monthName);
 
-                return IntrinsicWidth(
-                  child: ChoiceChip(
-                    labelPadding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 4,
-                    ),
-                    pressElevation: 0,
-                    side: BorderSide(
-                      color: selected
-                          ? theme.colorScheme.primary.withValues(alpha: 0.5)
-                          : theme.dividerColor.withValues(alpha: 0.3),
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    label: Text(
-                      label,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontWeight: FontWeight
-                            .w500, // fixed weight to avoid width change
-                        color: enabled
-                            ? (selected
-                                  ? theme.colorScheme.primary
-                                  : theme.colorScheme.onSurface)
-                            : theme.colorScheme.onSurface.withValues(
-                                alpha: 0.3,
-                              ),
+                  return IntrinsicWidth(
+                    child: ChoiceChip(
+                      labelPadding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
                       ),
+                      pressElevation: 0,
+                      side: BorderSide(
+                        color: selected
+                            ? theme.colorScheme.primary.withValues(alpha: 0.5)
+                            : theme.dividerColor.withValues(alpha: 0.3),
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      label: Text(
+                        label,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontWeight: FontWeight
+                              .w500, // fixed weight to avoid width change
+                          color: enabled
+                              ? (selected
+                                    ? theme.colorScheme.primary
+                                    : theme.colorScheme.onSurface)
+                              : theme.colorScheme.onSurface.withValues(
+                                  alpha: 0.3,
+                                ),
+                        ),
+                      ),
+                      selected: selected,
+                      onSelected: enabled
+                          ? (_) => setState(() => _selectedMonth = month)
+                          : null,
+                      selectedColor: theme.colorScheme.primary.withValues(
+                        alpha: 0.15,
+                      ),
+                      backgroundColor:
+                          theme.colorScheme.surfaceContainerHighest,
+                      showCheckmark: false,
+                      // onSelected: (_) => setState(() => _selectedMonth = month),
                     ),
-                    selected: selected,
-                    onSelected: enabled
-                        ? (_) => setState(() => _selectedMonth = month)
-                        : null,
-                    selectedColor: theme.colorScheme.primary.withValues(
-                      alpha: 0.15,
-                    ),
-                    backgroundColor: theme.colorScheme.surfaceContainerHighest,
-                    showCheckmark: false,
-                    // onSelected: (_) => setState(() => _selectedMonth = month),
-                  ),
-                );
-              }),
+                  );
+                },
+              ),
             ),
           ],
         ),

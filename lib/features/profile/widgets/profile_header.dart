@@ -18,6 +18,7 @@ class ProfileHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
+    final textTheme = Theme.of(context).textTheme;
     final name = user?.name ?? loc.guest;
     final avatarPath = user?.avatarUrl;
 
@@ -25,7 +26,7 @@ class ProfileHeader extends StatelessWidget {
       children: [
         AvatarWidget(name: name, avatarPath: avatarPath, radius: 80),
         const SizedBox(height: 12),
-        Text(name, style: Theme.of(context).textTheme.titleLarge),
+        Text(name, style: textTheme.titleLarge),
         const SizedBox(height: 4),
       ],
     );

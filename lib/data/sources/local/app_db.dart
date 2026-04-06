@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import '../../../features/profile/models/user_model.dart';
@@ -21,7 +22,7 @@ class AppDb {
     final path = join(dbPath, 'app.db');
     return openDatabase(
       path,
-      version: 2,
+      version: 3,
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
     );
@@ -33,23 +34,20 @@ class AppDb {
         id TEXT PRIMARY KEY,
         email TEXT NOT NULL UNIQUE,
         name TEXT NOT NULL,
-        passwordHash TEXT NOT NULL,
-        salt TEXT NOT NULL,
         avatarUrl TEXT,
-        weightKg REAL
       );
     ''');
   }
 
   FutureOr<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
-    if (oldVersion < 2 && newVersion >= 2) {
+    // Міграція для версії 3 (додавання username)
+    if (oldVersion < 3 && newVersion >= 3) {
       try {
-        await db.execute('ALTER TABLE users ADD COLUMN weightKg REAL;');
+        await db.execute('ALTER TABLE users ADD COLUMN username TEXT;');
       } catch (e) {
-        print('Migration to v2: $e');
+        debugPrint('Migration to v3: $e');
       }
     }
-    // Майбутні міграції додавай тут
   }
 
   // DAO: create user
@@ -68,7 +66,7 @@ class AppDb {
     final db = await database;
     final rows = await db.query('users', where: 'id = ?', whereArgs: [id]);
     if (rows.isEmpty) return null;
-    return UserModel.fromMap(rows.first);
+    return UserModel.fromMap(rows.first, rows.first['id'] as String);
   }
 
   // DAO: get user by email
@@ -80,7 +78,7 @@ class AppDb {
       whereArgs: [email],
     );
     if (rows.isEmpty) return null;
-    return UserModel.fromMap(rows.first);
+    return UserModel.fromMap(rows.first, rows.first['id'] as String);
   }
 
   // DAO: update user

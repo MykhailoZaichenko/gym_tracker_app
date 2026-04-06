@@ -110,18 +110,6 @@ class AvatarWidget extends StatelessWidget {
               ),
           ],
         ),
-
-        // if (onDeletePressed != null && avatarPath != null)
-        //   Padding(
-        //     padding: const EdgeInsets.only(top: 8.0),
-        //     child: InkWell(
-        //       onTap: onDeletePressed,
-        //       child: Text(
-        //         loc.delPhoto, // Можна локалізувати
-        //         style: TextStyle(color: theme.colorScheme.error, fontSize: 12),
-        //       ),
-        //     ),
-        //   ),
       ],
     );
   }

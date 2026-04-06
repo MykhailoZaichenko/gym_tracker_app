@@ -28,6 +28,7 @@ class ExerciseHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
+    final textTheme = Theme.of(context).textTheme;
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -97,10 +98,11 @@ class ExerciseHeader extends StatelessWidget {
                       Expanded(
                         child: Text(
                           text.isEmpty ? loc.selectExercise : text,
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: text.isEmpty ? Colors.grey : null,
-                          ),
+                          style: text.isEmpty
+                              ? textTheme.bodyLarge?.copyWith(
+                                  color: Colors.grey,
+                                )
+                              : textTheme.bodyLarge,
                         ),
                       ),
                       const Icon(Icons.arrow_drop_down),

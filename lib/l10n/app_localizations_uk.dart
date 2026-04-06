@@ -9,46 +9,16 @@ class AppLocalizationsUk extends AppLocalizations {
   AppLocalizationsUk([String locale = 'uk']) : super(locale);
 
   @override
-  String get appName => 'Gym Tracker App';
+  String get appName => 'Gym Tracker';
 
   @override
-  String get getStarted => 'Почати';
-
-  @override
-  String get continueAction => 'Продовжити';
-
-  @override
-  String get onboardingTitle => 'Вкажіть вашу вагу для персоналізації';
-
-  @override
-  String get yourProgressFor => 'Ваш прогрес за';
-
-  @override
-  String get setsLabel => 'Підходів';
-
-  @override
-  String get weightRepsLabel => 'Вага (kg·reps)';
-
-  @override
-  String get calories => 'Калорії';
-
-  @override
-  String get planSavedSuccess => 'План збережено успішно';
-
-  @override
-  String get editPlanTitle => 'Редагування плану';
-
-  @override
-  String get savePlanTooltip => 'Зберегти план';
-
-  @override
-  String get guest => 'Гість';
-
-  @override
-  String get cancel => 'Скасувати';
+  String get ok => 'ОК';
 
   @override
   String get save => 'Зберегти';
+
+  @override
+  String get saved => 'Збережено';
 
   @override
   String get close => 'Закрити';
@@ -60,16 +30,25 @@ class AppLocalizationsUk extends AppLocalizations {
   String get edit => 'Редагувати';
 
   @override
-  String get delete => 'Видалити';
-
-  @override
   String get yes => 'Так';
 
   @override
   String get no => 'Ні';
 
   @override
-  String get ok => 'ОК';
+  String get send => 'Надіслати';
+
+  @override
+  String get guest => 'Гість';
+
+  @override
+  String get getStarted => 'Почати';
+
+  @override
+  String get continueAction => 'Продовжити';
+
+  @override
+  String get onboardingTitle => 'Вкажіть вашу вагу для персоналізації';
 
   @override
   String get loginTitle => 'Ввійти в обліковий запис';
@@ -90,419 +69,7 @@ class AppLocalizationsUk extends AppLocalizations {
   String get alreadyHaveAccount => 'Вже є акаунт?';
 
   @override
-  String get enterCustomExerciseName => 'Введіть назву вправи';
-
-  @override
-  String get exerciseNameHint => 'Назва вправи';
-
-  @override
-  String get addExercise => 'Додати вправу';
-
-  @override
-  String get addExercisesHint =>
-      'Додайте вправи у календарі, щоб бачити графік';
-
-  @override
-  String get selectExercise => 'Оберіть вправу';
-
-  @override
-  String get deleteExercise => 'Видалити вправу';
-
-  @override
-  String get searchExercise => 'Пошук вправи';
-
-  @override
-  String get enterCustomName => 'Ввести власну назву';
-
-  @override
-  String get emailLabel => 'Email';
-
-  @override
-  String get emailHint => 'Введіть email';
-
-  @override
-  String get passwordLabel => 'Пароль';
-
-  @override
-  String get passwordHint => 'Введіть пароль';
-
-  @override
-  String get confirmPasswordLabel => 'Підтвердження паролю';
-
-  @override
-  String get confirmPasswordHint => 'Введіть пароль ще раз';
-
-  @override
-  String get nameLabel => 'Імʼя';
-
-  @override
-  String get nameHint => 'Введіть імʼя';
-
-  @override
-  String get errEmailRequired => 'Email обовʼязковий';
-
-  @override
-  String get errInvalidEmail => 'Невірний email';
-
-  @override
-  String get errPasswordRequired => 'Пароль обовʼязковий';
-
-  @override
-  String get errPasswordShort => 'Пароль має бути мінімум 6 символів';
-
-  @override
-  String get errPasswordsDoNotMatch => 'Паролі не співпадають';
-
-  @override
-  String get errNameRequired => 'Імʼя обовʼязкове';
-
-  @override
-  String get errNameShort => 'Занадто коротке імʼя';
-
-  @override
-  String get errWeightRequired => 'Введіть коректну вагу';
-
-  @override
-  String get calendarTitle => 'Календар тренувань';
-
-  @override
-  String get progressTooltip => 'Прогрес';
-
-  @override
-  String get myPlan => 'Мій план';
-
-  @override
-  String get editExercisesTooltip => 'Редагувати вправи';
-
-  @override
-  String get addExerciseTooltip => 'Додати вправу';
-
-  @override
-  String get selectDay => 'Оберіть день';
-
-  @override
-  String get selectMonth => 'Оберіть місяць';
-
-  @override
-  String get exercisesFor => 'Вправи за';
-
-  @override
-  String get noExercisesToday => 'Немає вправ за цей день';
-
-  @override
-  String get exerciseDefaultName => 'Вправа';
-
-  @override
-  String get setLabelCompact => 'Підх';
-
-  @override
-  String get weightUnit => 'кг';
-
-  @override
-  String get weightUnitHint => 'Кг';
-
-  @override
-  String get repsUnit => 'повт';
-
-  @override
-  String get repsUnitHint => 'Повт';
-
-  @override
-  String setsCount(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count підходів',
-      many: '$count підходів',
-      few: '$count підходи',
-      one: '1 підхід',
-    );
-    return '$_temp0';
-  }
-
-  @override
-  String exercisesCount(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count вправ',
-      many: '$count вправ',
-      few: '$count вправи',
-      one: '1 вправа',
-    );
-    return '$_temp0';
-  }
-
-  @override
-  String deleteSet(int number) {
-    return 'Видалити підхід $number';
-  }
-
-  @override
-  String setNumber(int number) {
-    return 'Підхід $number';
-  }
-
-  @override
-  String caloriesCount(String count) {
-    return '$count ккал';
-  }
-
-  @override
-  String get chartsTitle => 'Прогрес — графіки';
-
-  @override
-  String get exerciseLabel => 'Вправа:';
-
-  @override
-  String get chooseExercise => 'Оберіть вправу';
-
-  @override
-  String get tabMonth => 'Місяць';
-
-  @override
-  String get tabYear => 'Рік';
-
-  @override
-  String get noDataRange => 'Немає даних для вибраної вправи у цьому діапазоні';
-
-  @override
-  String get liftedWeight => 'Піднятий обсяг';
-
-  @override
-  String get liftedWeightHelp => 'Обсяг = Вага × Повтори';
-
-  @override
-  String get liftedWeightDescription => 'Опис формули';
-
-  @override
-  String get totalLifted => 'Всього піднято:';
-
-  @override
-  String get pointsCount => 'Точок:';
-
-  @override
-  String get settingsTitle => 'Налаштування';
-
-  @override
-  String get darkMode => 'Темний режим';
-
-  @override
-  String get lightMode => 'Світлий режим';
-
-  @override
-  String get notifications => 'Сповіщення';
-
-  @override
-  String get clearData => 'Очистити всі дані';
-
-  @override
-  String get clearDataConfirmTitle => 'Очистити всі дані';
-
-  @override
-  String get clearDataConfirmContent =>
-      'Це видалить усі збережені тренування та налаштування. Продовжити?';
-
-  @override
-  String get dataClearedSuccess => 'Дані успішно очищені';
-
-  @override
-  String get aboutApp => 'Про додаток';
-
-  @override
-  String get appDescription => 'Додаток для відстеження ваших тренувань.';
-
-  @override
-  String get appLanguage => 'Мова додатку';
-
-  @override
-  String get languageUk => 'Українська';
-
-  @override
-  String get languageEn => 'English';
-
-  @override
-  String get selectLanguage => 'Виберіть мову';
-
-  @override
-  String get logoutAction => 'Вийти';
-
-  @override
-  String get logoutTitle => 'Вихід із профілю';
-
-  @override
-  String get logoutConfirm => 'Ви дійсно хочете вийти?';
-
-  @override
-  String get editProfileTitle => 'Редагувати профіль';
-
-  @override
-  String get weightLabel => 'Вага';
-
-  @override
-  String get errWeightInvalid => 'Вага повинна бути числом > 0';
-
-  @override
-  String get deletePhotoTitle => 'Видалити фото';
-
-  @override
-  String get deletePhotoConfirm => 'Ви дійсно хочете видалити фото?';
-
-  @override
-  String saveError(String error) {
-    return 'Помилка збереження: $error';
-  }
-
-  @override
-  String onDay(String day) {
-    return 'на $day';
-  }
-
-  @override
-  String get workoutTitle => 'Тренування';
-
-  @override
-  String get pickMonthYear => 'Виберіть місяць і рік';
-
-  @override
-  String get prevYear => 'Попередній рік';
-
-  @override
-  String get nextYear => 'Наступний рік';
-
-  @override
-  String get saveChangesTitle => 'Зберегти зміни?';
-
-  @override
-  String get unsavedChangesMsg =>
-      'Є незбережені зміни. Зберегти перед виходом?';
-
-  @override
-  String get navHome => 'Головна';
-
-  @override
-  String get backToToday => 'Сьогодні';
-
-  @override
-  String get navProfile => 'Профіль';
-
-  @override
-  String get exSquat => 'Присідання';
-
-  @override
-  String get exLunge => 'Випади';
-
-  @override
-  String get exLegPress => 'Жим ногами';
-
-  @override
-  String get exWallSit => 'Вправа біля стіни';
-
-  @override
-  String get exLegExtension => 'Розгинання ніг';
-
-  @override
-  String get exLegCurl => 'Згинання ніг';
-
-  @override
-  String get exDeadlift => 'Станова тяга';
-
-  @override
-  String get exGoodMorning => 'Нахили зі штангою \\ \"Добрий ранок\"';
-
-  @override
-  String get exStandingCalfRaise => 'Підйоми на носки стоячи';
-
-  @override
-  String get exSeatedCalfRaise => 'Підйоми на носки сидячи';
-
-  @override
-  String get exPushUp => 'Відтискання ';
-
-  @override
-  String get exPullUp => 'Підтягування';
-
-  @override
-  String get exDip => 'Віджимання на брусах';
-
-  @override
-  String get exBenchPress => 'Жим лежачи';
-
-  @override
-  String get exMachineFly => 'Машинні розведення';
-
-  @override
-  String get exLateralRaise => 'Розведення рук у сторони';
-
-  @override
-  String get exBentOverRow => 'Тяга в нахилі';
-
-  @override
-  String get exLatPullDown => 'Тяга верхнього блока';
-
-  @override
-  String get exShoulderShrug => 'Шраги';
-
-  @override
-  String get exOverheadPress => 'Жим над головою';
-
-  @override
-  String get exFrontRaise => 'Передні підйоми рук';
-
-  @override
-  String get exRearDeltRaise => 'Задні розведення дельт';
-
-  @override
-  String get exUprightRow => 'Upright row';
-
-  @override
-  String get exFacePull => 'Face pull';
-
-  @override
-  String get exBicepsCurl => 'Підйоми на біцепс';
-
-  @override
-  String get exTricepsExtension => 'Французький жим';
-
-  @override
-  String get exCrunch => 'Скручування';
-
-  @override
-  String get exSitUp => 'Підйом тулуба';
-
-  @override
-  String get exPlank => 'Планка';
-
-  @override
-  String get exLegRaise => 'Підйоми ніг';
-
-  @override
-  String get exHyperextension => 'Гіперекстензія';
-
-  @override
-  String get exHammerCurl => 'Молотковий підйом';
-
-  @override
-  String get exZottmanCurl => 'Сгибания Зоттмана';
-
-  @override
-  String get exMachineRow => 'Тяга в блоці';
-
-  @override
-  String get exLegRaiseHang => 'Підйоми ніг у висі';
-
-  @override
-  String get proposalTitle => 'Створіть свій план тренувань!';
-
-  @override
-  String get proposalSubtitle =>
-      'Щоб досягти найкращих результатів, створіть розклад на тиждень. Ми нагадаємо вам про тренування.';
-
-  @override
-  String get goToPlan => 'Перейти до плану';
-
-  @override
-  String get maybeLater => 'Можливо пізніше';
+  String get googleButton => 'Google';
 
   @override
   String get verifyEmailTitle => 'Підтвердження пошти';
@@ -529,10 +96,61 @@ class AppLocalizationsUk extends AppLocalizations {
       'Лист для скидання паролю надіслано! Перевірте пошту.';
 
   @override
-  String get send => 'Надіслати';
+  String get emailLabel => 'Email';
 
   @override
-  String get googleButton => 'Google';
+  String get emailHint => 'Введіть email';
+
+  @override
+  String get passwordLabel => 'Пароль';
+
+  @override
+  String get passwordHint => 'Введіть пароль';
+
+  @override
+  String get confirmPasswordLabel => 'Підтвердження паролю';
+
+  @override
+  String get confirmPasswordHint => 'Введіть пароль ще раз';
+
+  @override
+  String get nameLabel => 'Імʼя';
+
+  @override
+  String get nameHint => 'Введіть імʼя';
+
+  @override
+  String get weightLabel => 'Вага';
+
+  @override
+  String get repsLabel => 'Повт';
+
+  @override
+  String get errEmailRequired => 'Email обовʼязковий';
+
+  @override
+  String get errInvalidEmail => 'Невірний email';
+
+  @override
+  String get errPasswordRequired => 'Пароль обовʼязковий';
+
+  @override
+  String get errPasswordShort => 'Пароль має бути мінімум 6 символів';
+
+  @override
+  String get errPasswordsDoNotMatch => 'Паролі не співпадають';
+
+  @override
+  String get errNameRequired => 'Імʼя обовʼязкове';
+
+  @override
+  String get errNameShort => 'Занадто коротке імʼя';
+
+  @override
+  String get errWeightRequired => 'Введіть коректну вагу';
+
+  @override
+  String get errWeightInvalid => 'Вага повинна бути числом > 0';
 
   @override
   String get errGoogleSignIn => 'Помилка входу через Google';
@@ -567,7 +185,12 @@ class AppLocalizationsUk extends AppLocalizations {
   String get errUnknown => 'Сталася невідома помилка';
 
   @override
-  String get delPhoto => 'Видалити фото';
+  String saveError(String error) {
+    return 'Помилка збереження: $error';
+  }
+
+  @override
+  String get navHome => 'Головна';
 
   @override
   String get navJournal => 'Щоденник';
@@ -577,6 +200,39 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get navStats => 'Статистика';
+
+  @override
+  String get navProfile => 'Профіль';
+
+  @override
+  String get calendarTitle => 'Календар тренувань';
+
+  @override
+  String get selectDay => 'Оберіть день';
+
+  @override
+  String get selectMonth => 'Оберіть місяць';
+
+  @override
+  String get pickMonthYear => 'Виберіть місяць і рік';
+
+  @override
+  String get prevYear => 'Попередній рік';
+
+  @override
+  String get nextYear => 'Наступний рік';
+
+  @override
+  String get backToToday => 'Сьогодні';
+
+  @override
+  String get exercisesFor => 'Вправи за';
+
+  @override
+  String get noExercisesToday => 'Немає вправ за цей день';
+
+  @override
+  String get workoutTitle => 'Тренування';
 
   @override
   String get startWorkout => 'Почати тренування';
@@ -591,13 +247,263 @@ class AppLocalizationsUk extends AppLocalizations {
   String get noWorkoutToday => 'На сьогодні немає записів';
 
   @override
+  String get saveChangesTitle => 'Зберегти зміни?';
+
+  @override
+  String get unsavedChangesMsg =>
+      'Є незбережені зміни. Зберегти перед виходом?';
+
+  @override
+  String get synchronized => 'Синхронізовано';
+
+  @override
+  String get selectWorkoutType => 'Оберіть тип тренування';
+
+  @override
+  String get splitPush => 'Push (Жим)';
+
+  @override
+  String get splitPull => 'Pull (Тяга)';
+
+  @override
+  String get splitLegs => 'Ноги';
+
+  @override
+  String get splitUpper => 'Верх тіла';
+
+  @override
+  String get splitLower => 'Низ тіла';
+
+  @override
+  String get splitFullBody => 'Все тіло';
+
+  @override
+  String get splitCardio => 'Кардіо';
+
+  @override
+  String get splitCustom => 'Інше';
+
+  @override
+  String copyPreviousWorkout(String type) {
+    return 'Скопіювати минуле тренування $type ';
+  }
+
+  @override
   String get addExerciseBtn => 'Додати вправу';
 
   @override
   String get addSetBtn => 'Додати підхід';
 
   @override
-  String get synchronized => 'Синхронізовано';
+  String get setsLabel => 'Підходів';
+
+  @override
+  String get weightRepsLabel => 'Вага (kg·reps)';
+
+  @override
+  String get setLabelCompact => 'Підх';
+
+  @override
+  String setNumber(int number) {
+    return 'Підхід $number';
+  }
+
+  @override
+  String deleteSet(int number) {
+    return 'Видалити підхід $number';
+  }
+
+  @override
+  String setsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count підходів',
+      many: '$count підходів',
+      few: '$count підходи',
+      one: '1 підхід',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String exercisesCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count вправ',
+      many: '$count вправ',
+      few: '$count вправи',
+      one: '1 вправа',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get weightUnit => 'кг';
+
+  @override
+  String get weightUnitHint => 'Кг';
+
+  @override
+  String get repsUnit => 'повт';
+
+  @override
+  String get repsUnitHint => 'Повт';
+
+  @override
+  String get calories => 'Калорії';
+
+  @override
+  String caloriesCount(String count) {
+    return '$count ккал';
+  }
+
+  @override
+  String get exerciseDefaultName => 'Вправа';
+
+  @override
+  String get enterCustomExerciseName => 'Введіть назву вправи';
+
+  @override
+  String get exerciseNameHint => 'Назва вправи';
+
+  @override
+  String get addExercise => 'Додати вправу';
+
+  @override
+  String get addExercisesHint =>
+      'Додайте вправи у календарі, щоб бачити графік';
+
+  @override
+  String get selectExercise => 'Оберіть вправу';
+
+  @override
+  String get deleteExercise => 'Видалити вправу';
+
+  @override
+  String get searchExercise => 'Пошук вправи';
+
+  @override
+  String get enterCustomName => 'Ввести власну назву';
+
+  @override
+  String get addExerciseTooltip => 'Додати вправу';
+
+  @override
+  String get editExercisesTooltip => 'Редагувати вправи';
+
+  @override
+  String get chartsTitle => 'Прогрес — графіки';
+
+  @override
+  String get yourProgressFor => 'Ваша активність за';
+
+  @override
+  String get progressTooltip => 'Прогрес';
+
+  @override
+  String get exerciseLabel => 'Вправа:';
+
+  @override
+  String get chooseExercise => 'Оберіть вправу';
+
+  @override
+  String get tabMonth => 'Місяць';
+
+  @override
+  String get tabYear => 'Рік';
+
+  @override
+  String get noDataRange => 'Немає даних для вибраної вправи у цьому діапазоні';
+
+  @override
+  String get liftedWeight => 'Піднятий обсяг';
+
+  @override
+  String get liftedWeightHelp => 'Обсяг = Вага × Повтори';
+
+  @override
+  String get liftedWeightDescription => 'Опис формули';
+
+  @override
+  String get totalLifted => 'Всього піднято:';
+
+  @override
+  String get maxWeight => 'Макс. вага:';
+
+  @override
+  String get pointsCount => 'Точок:';
+
+  @override
+  String get settingsTitle => 'Налаштування';
+
+  @override
+  String get editProfileTitle => 'Редагувати профіль';
+
+  @override
+  String get themeSelectionTitle => 'Тема додатку';
+
+  @override
+  String get darkMode => 'Темний режим';
+
+  @override
+  String get lightMode => 'Світлий режим';
+
+  @override
+  String get systemMode => 'Системний режим';
+
+  @override
+  String get notifications => 'Сповіщення';
+
+  @override
+  String get appLanguage => 'Мова додатку';
+
+  @override
+  String get selectLanguage => 'Виберіть мову';
+
+  @override
+  String get languageUk => 'Українська';
+
+  @override
+  String get languageEn => 'English';
+
+  @override
+  String get aboutApp => 'Про додаток';
+
+  @override
+  String get appDescription => 'Додаток для відстеження ваших тренувань.';
+
+  @override
+  String get delPhoto => 'Видалити фото';
+
+  @override
+  String get deletePhotoTitle => 'Видалити фото';
+
+  @override
+  String get deletePhotoConfirm => 'Ви дійсно хочете видалити фото?';
+
+  @override
+  String get logoutAction => 'Вийти';
+
+  @override
+  String get logoutTitle => 'Вихід із профілю';
+
+  @override
+  String get logoutConfirm => 'Ви дійсно хочете вийти?';
+
+  @override
+  String get clearData => 'Очистити всі дані';
+
+  @override
+  String get clearDataConfirmTitle => 'Очистити всі дані';
+
+  @override
+  String get clearDataConfirmContent =>
+      'Це видалить усі збережені тренування та налаштування. Продовжити?';
+
+  @override
+  String get dataClearedSuccess => 'Дані успішно очищені';
 
   @override
   String get deleteAccount => 'Видалити акаунт';
@@ -615,4 +521,708 @@ class AppLocalizationsUk extends AppLocalizations {
   @override
   String get reLoginRequiredMsg =>
       'З міркувань безпеки, будь ласка, вийдіть з акаунту та увійдіть знову перед видаленням.';
+
+  @override
+  String get exSquat => 'Присідання';
+
+  @override
+  String get exFrontSquat => 'Фронтальні присідання';
+
+  @override
+  String get exGobletSquat => 'Кубкові присідання';
+
+  @override
+  String get exLunge => 'Випади';
+
+  @override
+  String get exWalkingLunge => 'Випади в русі';
+
+  @override
+  String get exBulgarianSplitSquat => 'Болгарські випади';
+
+  @override
+  String get exLegPress => 'Жим ногами';
+
+  @override
+  String get exWallSit => 'Стільчик (біля стіни)';
+
+  @override
+  String get exLegExtension => 'Розгинання ніг';
+
+  @override
+  String get exLegCurl => 'Згинання ніг';
+
+  @override
+  String get exDeadlift => 'Станова тяга';
+
+  @override
+  String get exSumoDeadlift => 'Станова тяга сумо';
+
+  @override
+  String get exRomanianDeadlift => 'Румунська тяга';
+
+  @override
+  String get exGoodMorning => 'Гуд морнінг (Нахили)';
+
+  @override
+  String get exHipThrust => 'Сідничний місток (штанга)';
+
+  @override
+  String get exGluteBridge => 'Сідничний місток (підлога)';
+
+  @override
+  String get exStandingCalfRaise => 'Підйом на литки стоячи';
+
+  @override
+  String get exSeatedCalfRaise => 'Підйом на литки сидячи';
+
+  @override
+  String get exDonkeyCalfRaise => 'Підйом на литки \"віслюк\"';
+
+  @override
+  String get exAbductorMachine => 'Розведення ніг';
+
+  @override
+  String get exAdductorMachine => 'Зведення ніг';
+
+  @override
+  String get exBenchPress => 'Жим лежачи';
+
+  @override
+  String get exInclineBenchPress => 'Жим лежачи під кутом';
+
+  @override
+  String get exDeclineBenchPress => 'Жим лежачи головою вниз';
+
+  @override
+  String get exDumbbellBenchPress => 'Жим гантелей лежачи';
+
+  @override
+  String get exInclineDumbbellPress => 'Жим гантелей під кутом';
+
+  @override
+  String get exPushUp => 'Віджимання';
+
+  @override
+  String get exDiamondPushUp => 'Алмазні віджимання';
+
+  @override
+  String get exDip => 'Віджимання на брусах';
+
+  @override
+  String get exMachineFly => 'Метелик (Pec-Deck)';
+
+  @override
+  String get exCableCrossover => 'Кросовер';
+
+  @override
+  String get exDumbbellFly => 'Розведення гантелей';
+
+  @override
+  String get exPullover => 'Пуловер';
+
+  @override
+  String get exChestPressMachine => 'Жим в тренажері на груди';
+
+  @override
+  String get exPullUp => 'Підтягування';
+
+  @override
+  String get exChinUp => 'Підтягування зворотним хватом';
+
+  @override
+  String get exLatPullDown => 'Тяга верхнього блоку';
+
+  @override
+  String get exCloseGripLatPullDown => 'Тяга блоку вузьким хватом';
+
+  @override
+  String get exBentOverRow => 'Тяга штанги в нахилі';
+
+  @override
+  String get exReverseGripRow => 'Тяга штанги зворотним хватом';
+
+  @override
+  String get exSingleArmDumbbellRow => 'Тяга гантелі однією рукою';
+
+  @override
+  String get exTBarRow => 'Тяга Т-грифа';
+
+  @override
+  String get exSeatedCableRow => 'Горизонтальна тяга блоку';
+
+  @override
+  String get exMachineRow => 'Тяга важеля (в тренажері)';
+
+  @override
+  String get exStraightArmPulldown => 'Пуловер на блоці стоячи';
+
+  @override
+  String get exHyperextension => 'Гіперекстензія';
+
+  @override
+  String get exRackPull => 'Тяга з плінтів';
+
+  @override
+  String get exOverheadPress => 'Армійський жим';
+
+  @override
+  String get exSeatedDumbbellPress => 'Жим гантелей сидячи';
+
+  @override
+  String get exArnoldPress => 'Жим Арнольда';
+
+  @override
+  String get exLateralRaise => 'Махи гантелями в сторони';
+
+  @override
+  String get exCableLateralRaise => 'Махи в сторони на блоці';
+
+  @override
+  String get exFrontRaise => 'Підйом рук перед собою';
+
+  @override
+  String get exRearDeltRaise => 'Махи в нахилі (задня дельта)';
+
+  @override
+  String get exReversePecDeck => 'Зворотний метелик';
+
+  @override
+  String get exFacePull => 'Тяга до обличчя';
+
+  @override
+  String get exUprightRow => 'Тяга до підборіддя';
+
+  @override
+  String get exShoulderShrug => 'Шраги';
+
+  @override
+  String get exBicepsCurl => 'Підйом на біцепс';
+
+  @override
+  String get exDumbbellCurl => 'Підйом гантелей на біцепс';
+
+  @override
+  String get exHammerCurl => 'Молотки';
+
+  @override
+  String get exPreacherCurl => 'Згинання на лаві Скотта';
+
+  @override
+  String get exConcentrationCurl => 'Концентрований підйом';
+
+  @override
+  String get exCableCurl => 'Згинання рук на блоці';
+
+  @override
+  String get exZottmanCurl => 'Згинання Зоттмана';
+
+  @override
+  String get exTricepsExtension => 'Розгинання на трицепс (з-за голови)';
+
+  @override
+  String get exSkullCrusher => 'Французький жим лежачи';
+
+  @override
+  String get exTricepPushdown => 'Розгинання на блоці донизу';
+
+  @override
+  String get exTricepDipMachine => 'Віджимання в тренажері на трицепс';
+
+  @override
+  String get exBenchDip => 'Зворотні віджимання від лави';
+
+  @override
+  String get exCrunch => 'Скручування';
+
+  @override
+  String get exCableCrunch => 'Скручування на блоці (молитва)';
+
+  @override
+  String get exSitUp => 'Підйом тулуба';
+
+  @override
+  String get exLegRaise => 'Підйом ніг лежачи';
+
+  @override
+  String get exLegRaiseHang => 'Підйом ніг у висі';
+
+  @override
+  String get exRussianTwist => 'Російський твіст';
+
+  @override
+  String get exPlank => 'Планка';
+
+  @override
+  String get exSidePlank => 'Бокова планка';
+
+  @override
+  String get exAbWheelRollout => 'Ролик для преса';
+
+  @override
+  String get exBicycleCrunch => 'Велосипед';
+
+  @override
+  String get exWoodchopper => 'Лісоруб (на блоці)';
+
+  @override
+  String get exCardioTreadmill => 'Бігова доріжка';
+
+  @override
+  String get exCardioElliptical => 'Орбітрек';
+
+  @override
+  String get exCardioRowing => 'Гребний тренажер';
+
+  @override
+  String get exFarmerWalk => 'Прогулянка фермера';
+
+  @override
+  String get exSmithMachineSquat => 'Присідання в Сміті';
+
+  @override
+  String get exHackSquat => 'Гакк-присідання';
+
+  @override
+  String get exReverseLunge => 'Зворотні випади';
+
+  @override
+  String get exSeatedLegCurl => 'Згинання ніг сидячи';
+
+  @override
+  String get exCablePullThrough => 'Тяга блоку між ногами';
+
+  @override
+  String get exCloseGripBenchPress => 'Жим вузьким хватом';
+
+  @override
+  String get exSmithMachineBenchPress => 'Жим лежачи в Сміті';
+
+  @override
+  String get exWeightedPushUp => 'Віджимання з вагою';
+
+  @override
+  String get exLowCableCrossover => 'Кросовер з нижнього блоку';
+
+  @override
+  String get exInclineDumbbellFly => 'Розведення гантелей під кутом';
+
+  @override
+  String get exVBarPullDown => 'Тяга верхнього блоку (V-руків\'я)';
+
+  @override
+  String get exSmithMachineShoulderPress => 'Жим сидячи в Сміті';
+
+  @override
+  String get exMachineLateralRaise => 'Махи в сторони (тренажер)';
+
+  @override
+  String get exCableFrontRaise => 'Підйом рук перед собою на блоці';
+
+  @override
+  String get exRopePushdown => 'Розгинання з канатом донизу';
+
+  @override
+  String get exOverheadCableExtension => 'Розгинання з-за голови на блоці';
+
+  @override
+  String get exKettlebellSwing => 'Махи гирею';
+
+  @override
+  String get finishWorkout => 'Завершити тренування';
+
+  @override
+  String get workoutSummary => 'Підсумок тренування';
+
+  @override
+  String get durationLabel => 'Тривалість';
+
+  @override
+  String get noPreviousData => 'Немає даних для порівняння';
+
+  @override
+  String get greatJob => 'Чудова робота!';
+
+  @override
+  String get viewLastReport => 'Останній звіт';
+
+  @override
+  String copyLastWorkout(String type) {
+    return 'Скопійовано з останнього $type тренування';
+  }
+
+  @override
+  String get comparisonTitle => 'Порівняння за місяць';
+
+  @override
+  String get startValue => 'Початкове значення';
+
+  @override
+  String get currentValue => 'Поточне значення';
+
+  @override
+  String get difference => 'Різниця';
+
+  @override
+  String get notificationsEnabledTitle => 'Сповіщення увімкнено! 🔔';
+
+  @override
+  String get notificationsEnabledBody =>
+      'Тепер ви будете отримувати нагадування.';
+
+  @override
+  String get weightControl => 'Контроль ваги';
+
+  @override
+  String get weightChartAndReminders => 'Графік ваги та нагадування';
+
+  @override
+  String get healthTitle => 'Здоровʼя';
+
+  @override
+  String get weightChangeLabel => 'Зміна ваги';
+
+  @override
+  String get gymSessions => 'Сесії в залі';
+
+  @override
+  String get reminderSettings => 'Налаштування нагадувань';
+
+  @override
+  String get frequency => 'Частота';
+
+  @override
+  String get daily => 'Щодня';
+
+  @override
+  String get weekly => 'Щотижня';
+
+  @override
+  String get selectTime => 'Оберіть час';
+
+  @override
+  String reminderSet(String time) {
+    return 'Нагадування встановлено: $time';
+  }
+
+  @override
+  String get editWeight => 'Редагувати вагу';
+
+  @override
+  String get addWeight => 'Додати вагу';
+
+  @override
+  String weightDateRange(String start, String end) {
+    return 'Зміна з $start по $end';
+  }
+
+  @override
+  String get saveSettings => 'Зберегти налаштування';
+
+  @override
+  String get history => 'Історія';
+
+  @override
+  String get weightHistory => 'Історія ваги';
+
+  @override
+  String get weeklyGoalTitle => 'Тижнева ціль';
+
+  @override
+  String get weeklyGoalQuestion =>
+      'Скільки разів на тиждень ви плануєте тренуватися?';
+
+  @override
+  String get timesPerWeek => 'Разів/Тиждень';
+
+  @override
+  String streakWeeks(int count) {
+    return '$count-тижнева серія';
+  }
+
+  @override
+  String get streakKeep => 'Чудово! Виконали план на цей тиждень.';
+
+  @override
+  String streakBurn(int count) {
+    return 'Тренуйтесь ще $count р., щоб зберегти серію!';
+  }
+
+  @override
+  String get streakLostMsg => 'Серію втрачено. Почніть нову цього тижня!';
+
+  @override
+  String get weekLabel => 'Тиждень';
+
+  @override
+  String goalLabel(int count) {
+    return 'Ціль змінено на $count разів/тиждень';
+  }
+
+  @override
+  String get skip => 'Пропустити';
+
+  @override
+  String get setLater => 'Вказати пізніше';
+
+  @override
+  String get weightNotSet => 'Не вказано';
+
+  @override
+  String get weightMissingBanner =>
+      'Вкажіть свою вагу, щоб ми могли розраховувати спалені калорії!';
+
+  @override
+  String get nextExercise => 'Наступна вправа';
+
+  @override
+  String get friendRequestSent =>
+      'Запит у друзі через посилання успішно надіслано!';
+
+  @override
+  String additionError(String error) {
+    return 'Помилка додавання: $error';
+  }
+
+  @override
+  String get enterUsernameHint => 'Введіть нікнейм для пошуку друзів';
+
+  @override
+  String get usernameEmptyError => 'Нікнейм не може бути порожнім';
+
+  @override
+  String get usernameTooShortError => 'Мінімум 3 символи';
+
+  @override
+  String get usernameChecking => 'Перевірка доступності...';
+
+  @override
+  String get usernameAvailable => 'Нікнейм вільний!';
+
+  @override
+  String get usernameTaken => 'Цей нікнейм вже зайнятий';
+
+  @override
+  String get usernameSaveError =>
+      'Помилка збереження. Спробуйте інший нікнейм.';
+
+  @override
+  String get uniqueUsernameTitle => 'Ваш унікальний нікнейм';
+
+  @override
+  String get chooseUsernameDesc =>
+      'Оберіть собі нікнейм, щоб друзі могли легко знайти вас у спільноті Gym Tracker.';
+
+  @override
+  String get usernameLabel => 'Нікнейм';
+
+  @override
+  String get usernameRulesDesc =>
+      'Дозволені лише малі літери (без пробілів).\nЦей нікнейм обирається назавжди і його неможливо буде змінити.';
+
+  @override
+  String get saveAndContinue => 'Зберегти та продовжити';
+
+  @override
+  String get weightReminderTitle => 'Нагадування про вагу ⚖️';
+
+  @override
+  String get weightReminderBody =>
+      'Регулярний запис ваги допомагає точніше відстежувати прогрес. Хочете налаштувати нагадування, щоб не забувати це робити?';
+
+  @override
+  String get noThanks => 'Ні, дякую';
+
+  @override
+  String get yesSetUp => 'Так, налаштувати';
+
+  @override
+  String get permissionBlocked =>
+      'Дозвіл заблоковано. Будь ласка, увімкніть сповіщення в налаштуваннях телефону.';
+
+  @override
+  String get settingsAction => 'Налаштування';
+
+  @override
+  String get unknownStatus => 'Невідомо';
+
+  @override
+  String lastSeenInGym(String date) {
+    return 'Був(ла) у залі: $date';
+  }
+
+  @override
+  String get statWeight => 'Вага';
+
+  @override
+  String get statStreak => 'Серія';
+
+  @override
+  String statWeeks(String count) {
+    return '$count тиж.';
+  }
+
+  @override
+  String get statPerMonth => 'За місяць';
+
+  @override
+  String statWorkouts(String count) {
+    return '$count тр.';
+  }
+
+  @override
+  String get recordsThisMonth => '🏆 Рекорди цього місяця';
+
+  @override
+  String get noRecordsThisMonth =>
+      'Поки немає записів про рекорди цього місяця 😔';
+
+  @override
+  String get deleteFriendTitle => 'Видалення з друзів';
+
+  @override
+  String deleteFriendConfirmBody(String name) {
+    return 'Ви впевнені, що хочете видалити $name зі списку друзів?';
+  }
+
+  @override
+  String get cancel => 'Скасувати';
+
+  @override
+  String get delete => 'Видалити';
+
+  @override
+  String friendDeletedSuccess(String name) {
+    return '$name видалено з друзів';
+  }
+
+  @override
+  String deleteError(String error) {
+    return 'Помилка видалення: $error';
+  }
+
+  @override
+  String get friendsAndCommunity => 'Друзі та Спільнота';
+
+  @override
+  String get myFriendsTab => 'Мої друзі';
+
+  @override
+  String get searchRequestsTab => 'Пошук / Запити';
+
+  @override
+  String get noFriendsYet => 'У вас поки немає друзів';
+
+  @override
+  String get findFriendBtn => 'Знайти друга';
+
+  @override
+  String get longTimeAgo => 'Давно';
+
+  @override
+  String get noRecords => 'Немає рекордів';
+
+  @override
+  String get monthlyRecordPrefix => 'Рекорд місяця: ';
+
+  @override
+  String get shareProfileLink => 'Поділитися посиланням на профіль';
+
+  @override
+  String get orFindManually => 'Або знайдіть вручну';
+
+  @override
+  String get searchFriendHint => 'Введіть Email або @нікнейм';
+
+  @override
+  String get searchFriendHelper => 'example@gmail.com або @gymbro';
+
+  @override
+  String get addBtn => 'Додати';
+
+  @override
+  String get incomingRequests => 'Вхідні запити';
+
+  @override
+  String get noNewRequests => 'Немає нових запитів';
+
+  @override
+  String shareFriendText(String link) {
+    return 'Привіт! Додавай мене в друзі у Gym Tracker, щоб слідкувати за моїми тренуваннями: $link';
+  }
+
+  @override
+  String get shareFriendSubject => 'Запит у друзі Gym Tracker';
+
+  @override
+  String requestSentTo(String email) {
+    return 'Запит надіслано до $email!';
+  }
+
+  @override
+  String get userNotFound => 'Користувача не знайдено';
+
+  @override
+  String get cannotAddSelf => 'Ви не можете додати самого себе';
+
+  @override
+  String get userDataError => 'Помилка даних користувача';
+
+  @override
+  String get requestSentSuccess => 'Запит надіслано!';
+
+  @override
+  String get previousPeriod => 'Минулий період';
+
+  @override
+  String get enableNotificationsTitle => 'Увімкнути сповіщення? 🔔';
+
+  @override
+  String get enableNotificationsBody =>
+      'Це дозволить нам надсилати тобі нагадування про тренування та відстеження ваги, щоб ти не втрачав прогрес.';
+
+  @override
+  String errorPickingPhoto(String error) {
+    return 'Помилка вибору фото: $error';
+  }
+
+  @override
+  String get defaultUser => 'Користувач';
+
+  @override
+  String get friendsLabel => 'Друзі';
+
+  @override
+  String get communityLabel => 'Спільнота';
+
+  @override
+  String get inGymLabel => 'У залі';
+
+  @override
+  String get hoursShort => 'г';
+
+  @override
+  String get minutesShort => 'хв';
+
+  @override
+  String get avarageTimeLabel => 'Середній час';
+
+  @override
+  String get personalRecordsTitle => 'Особисті рекорди';
+
+  @override
+  String get oneRepMaxShort => '1ПМ';
+
+  @override
+  String get oneRepMaxTooltip =>
+      'Оцінка максимальної ваги, яку ви можете підняти за одну повторювання, базуючись на вашому історії тренувань.';
+
+  @override
+  String get cardioMin => 'Хв';
+
+  @override
+  String get cardioKm => 'Км';
+
+  @override
+  String get bodyweightAddWeight => '+ Вага';
 }

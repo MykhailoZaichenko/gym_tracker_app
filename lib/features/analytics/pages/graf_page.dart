@@ -2,14 +2,33 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:gym_tracker_app/core/constants/constants.dart';
 import 'package:gym_tracker_app/core/constants/date_constants.dart';
-import 'package:gym_tracker_app/core/theme/theme_service.dart';
+import 'package:gym_tracker_app/features/analytics/models/progression_data_model.dart';
+import 'package:gym_tracker_app/features/analytics/models/workout_exercise_graf_model.dart';
 import 'package:gym_tracker_app/utils/utils.dart';
 import 'package:gym_tracker_app/features/analytics/widgets/line_chart_card.dart';
 import 'package:gym_tracker_app/l10n/app_localizations.dart';
 import 'package:gym_tracker_app/services/firestore_service.dart';
+import 'package:gym_tracker_app/widget/common/build_summary_item_widget.dart';
 import 'package:gym_tracker_app/widget/common/month_picker_dialog.dart';
 import 'package:intl/intl.dart';
 import 'package:gym_tracker_app/data/seed/exercise_catalog.dart';
+
+// Допоміжний клас для зберігання розгорнутої статистики за період
+class _PeriodStats {
+  final double volume;
+  final double maxWeight;
+  final double sessions;
+  final DateTime? maxWeightDate;
+  final DateTime? periodDate;
+
+  _PeriodStats({
+    required this.volume,
+    required this.maxWeight,
+    required this.sessions,
+    this.maxWeightDate,
+    this.periodDate,
+  });
+}
 
 class GrafPage extends StatefulWidget {
   const GrafPage({super.key});
@@ -23,7 +42,6 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
   bool _isLoading = true;
   final FirestoreService _firestore = FirestoreService();
 
-  // Список унікальних назв (вже локалізованих) для відображення
   List<String> _displayExerciseNames = [];
   String? _selectedExerciseDisplay;
 
@@ -40,7 +58,6 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
       if (!_tabController.indexIsChanging) {
         setState(() {
           _range = RangeMode.values[_tabController.index];
-          // При перемиканні вкладок скидаємо на поточну дату, щоб уникнути плутанини
           _visibleMonth = DateTime.now();
         });
       }
@@ -124,9 +141,9 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
     }
   }
 
-  // ---- АГРЕГАЦІЯ ----
+  // ---- ОБРОБКА ДАНИХ ----
 
-  Map<DateTime, double> _accumulatePerDay(
+  Map<DateTime, double> _accumulateVolumePerDay(
     String selectedDisplayName,
     AppLocalizations loc,
   ) {
@@ -164,70 +181,185 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
     return result;
   }
 
-  List<MapEntry<DateTime, double>> _filteredEntriesForRange(
+  Map<DateTime, double> _accumulateMaxWeightPerDay(
+    String selectedDisplayName,
     AppLocalizations loc,
   ) {
-    if (_selectedExerciseDisplay == null) return [];
+    final Map<DateTime, double> result = {};
+    final catalog = getExerciseCatalog(loc);
 
-    final acc = _accumulatePerDay(_selectedExerciseDisplay!, loc);
-    Iterable<MapEntry<DateTime, double>> entries = acc.entries;
+    String targetCanonicalId = selectedDisplayName;
+    try {
+      final found = catalog.firstWhere((c) => c.name == selectedDisplayName);
+      targetCanonicalId = found.id;
+    } catch (_) {}
 
-    switch (_range) {
-      case RangeMode.month:
-        final first = DateTime(_visibleMonth.year, _visibleMonth.month, 1);
-        final last = DateTime(
-          _visibleMonth.year,
-          _visibleMonth.month + 1,
-          1,
-        ).subtract(const Duration(days: 1));
-        entries = entries.where(
-          (e) => !e.key.isBefore(first) && !e.key.isAfter(last),
-        );
-        break;
-      case RangeMode.year:
-        // Фільтруємо по вибраному року (_visibleMonth.year)
-        final yearStart = DateTime(_visibleMonth.year, 1, 1);
-        final yearEnd = DateTime(_visibleMonth.year, 12, 31);
-        entries = entries.where(
-          (e) => !e.key.isBefore(yearStart) && !e.key.isAfter(yearEnd),
-        );
-        break;
-    }
+    _allWorkouts.forEach((dateStr, exercises) {
+      final date = DateTime.parse(dateStr);
+      final matching = exercises.where((ex) {
+        final exId = _getCanonicalId(ex, catalog);
+        return exId == targetCanonicalId;
+      });
 
-    final sorted = entries.toList()..sort((a, b) => a.key.compareTo(b.key));
-    return sorted;
+      double dailyMax = 0;
+      for (final ex in matching) {
+        for (final s in ex.sets) {
+          if (s.weight != null && s.weight! > dailyMax) {
+            dailyMax = s.weight!;
+          }
+        }
+      }
+
+      if (dailyMax > 0) {
+        final dayKey = DateTime(date.year, date.month, date.day);
+        if (dailyMax > (result[dayKey] ?? 0)) {
+          result[dayKey] = dailyMax;
+        }
+      }
+    });
+
+    return result;
   }
 
-  // ---- НАВІГАЦІЯ (Unified Logic) ----
+  List<MapEntry<DateTime, double>> _filterEntries(
+    Map<DateTime, double> rawData,
+  ) {
+    if (rawData.isEmpty) return [];
 
-  // 1. Чи можна йти назад?
+    DateTime start, end;
+    if (_range == RangeMode.month) {
+      start = DateTime(_visibleMonth.year, _visibleMonth.month, 1);
+      end = DateTime(
+        _visibleMonth.year,
+        _visibleMonth.month + 1,
+        1,
+      ).subtract(const Duration(days: 1));
+    } else {
+      start = DateTime(_visibleMonth.year, 1, 1);
+      end = DateTime(_visibleMonth.year, 12, 31);
+    }
+
+    final entries = rawData.entries.where(
+      (e) => !e.key.isBefore(start) && !e.key.isAfter(end),
+    );
+
+    return entries.toList()..sort((a, b) => a.key.compareTo(b.key));
+  }
+
+  // Беремо весь минулий активний період без "зрізання" по днях
+  _PeriodStats _getPreviousPeriodStats(
+    String targetId,
+    List<ExerciseInfo> catalog,
+  ) {
+    DateTime currentStart;
+    if (_range == RangeMode.month) {
+      currentStart = DateTime(_visibleMonth.year, _visibleMonth.month, 1);
+    } else {
+      currentStart = DateTime(_visibleMonth.year, 1, 1);
+    }
+
+    DateTime? lastActiveDate;
+
+    // Шукаємо останній місяць у минулому, коли юзер робив цю вправу
+    _allWorkouts.forEach((dateStr, exercises) {
+      final date = DateTime.parse(dateStr);
+      if (date.isBefore(currentStart)) {
+        final hasExercise = exercises.any(
+          (ex) => _getCanonicalId(ex, catalog) == targetId,
+        );
+        if (hasExercise) {
+          if (lastActiveDate == null || date.isAfter(lastActiveDate!)) {
+            lastActiveDate = date;
+          }
+        }
+      }
+    });
+
+    // Якщо ніколи не робив - повертаємо нулі (це справжній "Старт")
+    if (lastActiveDate == null) {
+      return _PeriodStats(volume: 0, maxWeight: 0, sessions: 0);
+    }
+
+    DateTime prevStart, prevEnd;
+    if (_range == RangeMode.month) {
+      prevStart = DateTime(lastActiveDate!.year, lastActiveDate!.month, 1);
+      prevEnd = DateTime(
+        lastActiveDate!.year,
+        lastActiveDate!.month + 1,
+        0,
+        23,
+        59,
+        59,
+      );
+    } else {
+      prevStart = DateTime(lastActiveDate!.year, 1, 1);
+      prevEnd = DateTime(lastActiveDate!.year, 12, 31, 23, 59, 59);
+    }
+
+    double prevVolume = 0;
+    double prevMax = 0;
+    DateTime? prevMaxDate;
+    Set<String> prevSessionDays = {};
+
+    // Рахуємо всі досягнення за той минулий місяць повністю
+    _allWorkouts.forEach((dateStr, exercises) {
+      final date = DateTime.parse(dateStr);
+
+      if ((date.isAfter(prevStart) || date.isAtSameMomentAs(prevStart)) &&
+          (date.isBefore(prevEnd) || date.isAtSameMomentAs(prevEnd))) {
+        final matching = exercises.where(
+          (ex) => _getCanonicalId(ex, catalog) == targetId,
+        );
+        if (matching.isNotEmpty) {
+          prevSessionDays.add(dateStr.split('T').first);
+
+          for (final ex in matching) {
+            for (final s in ex.sets) {
+              final w = s.weight ?? 0;
+              final r = s.reps ?? 0;
+              prevVolume += w * r;
+
+              if (w > prevMax) {
+                prevMax = w;
+                prevMaxDate = date;
+              }
+            }
+          }
+        }
+      }
+    });
+
+    return _PeriodStats(
+      volume: prevVolume,
+      maxWeight: prevMax,
+      sessions: prevSessionDays.length.toDouble(),
+      maxWeightDate: prevMaxDate,
+      periodDate: prevStart,
+    );
+  }
+
+  // ---- UI LOGIC ----
+
   bool get _canGoBack {
     final minDate = DateConstants.appStartDate;
     if (_range == RangeMode.month) {
-      // Перевіряємо, чи поточний видимий місяць пізніше за стартовий
       return _visibleMonth.year > minDate.year ||
           (_visibleMonth.year == minDate.year &&
               _visibleMonth.month > minDate.month);
     } else {
-      // Для року: чи рік більше стартового
       return _visibleMonth.year > minDate.year;
     }
   }
 
-  // 2. Чи можна йти вперед?
   bool get _canGoForward {
     final currentMonthStart = DateConstants.currentMonthStart;
     if (_range == RangeMode.month) {
-      // Для місяців: не можна, якщо це поточний місяць (або майбутнє)
-      // isBefore строго менше, тому це працює правильно
       return _visibleMonth.isBefore(currentMonthStart);
     } else {
-      // Для років: не можна, якщо це поточний рік
       return _visibleMonth.year < currentMonthStart.year;
     }
   }
 
-  // 3. Перемикання назад (Уніфіковано)
   void _prevPeriod() {
     if (!_canGoBack) return;
     setState(() {
@@ -247,7 +379,6 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
     });
   }
 
-  // 4. Перемикання вперед (Уніфіковано)
   void _nextPeriod() {
     if (!_canGoForward) return;
     setState(() {
@@ -312,7 +443,7 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
 
   void _onPointTapped(DateTime day) {
     final loc = AppLocalizations.of(context)!;
-    // Якщо рік - поки що не показуємо деталі (або можна показати список днів)
+    final textTheme = Theme.of(context).textTheme;
     if (_range == RangeMode.year) return;
 
     final key =
@@ -339,9 +470,7 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
       builder: (_) => AlertDialog(
         title: Text(
           '$_selectedExerciseDisplay — $key',
-          style: ThemeService.isDarkModeNotifier.value
-              ? const TextStyle(color: Colors.white)
-              : const TextStyle(color: Colors.black),
+          style: textTheme.titleMedium,
         ),
         content: SizedBox(
           width: double.maxFinite,
@@ -352,9 +481,13 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
             itemBuilder: (_, i) {
               final s = ex.sets[i];
               return ListTile(
-                title: Text('${loc.setLabelCompact} ${i + 1}'),
+                title: Text(
+                  '${loc.setLabelCompact} ${i + 1}',
+                  style: textTheme.bodyMedium,
+                ),
                 subtitle: Text(
                   '${loc.weightLabel}: ${s.weight ?? '-'}  •  ${loc.repsUnit}: ${s.reps ?? '-'}',
+                  style: textTheme.bodySmall,
                 ),
               );
             },
@@ -382,10 +515,11 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
   }
 
   Widget _buildBottomTitle(double value) {
+    final textTheme = Theme.of(context).textTheme;
     final locale = AppLocalizations.of(context)!.localeName;
     switch (_range) {
       case RangeMode.month:
-        return Text('${value.round()}', style: const TextStyle(fontSize: 11));
+        return Text('${value.round()}', style: textTheme.bodySmall);
       case RangeMode.year:
         final month = value.round();
         if (month < 1 || month > 12) return const SizedBox();
@@ -393,7 +527,7 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
         final monthShort = DateFormat.MMM(locale).format(date);
         return Text(
           toBeginningOfSentenceCase(monthShort) ?? '',
-          style: const TextStyle(fontSize: 11),
+          style: textTheme.bodySmall,
         );
     }
   }
@@ -406,6 +540,189 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
     return s;
   }
 
+  String _formatPeriodName(DateTime? date, RangeMode range, String locale) {
+    final loc = AppLocalizations.of(context)!;
+    if (date == null) return loc.previousPeriod;
+    if (range == RangeMode.month) {
+      final m = DateFormat.MMMM(locale).format(date);
+      return "${toBeginningOfSentenceCase(m)} ${date.year}";
+    } else {
+      return "${date.year}";
+    }
+  }
+
+  String _formatDate(DateTime? date, String locale) {
+    if (date == null) return "";
+    return DateFormat.MMMd(locale).format(date); // e.g. "5 бер."
+  }
+
+  // 🔥 ОНОВЛЕНИЙ БЕЙДЖ З ЛОГІКОЮ "ПАУЗИ"
+  Widget _buildPercentBadge(
+    ProgressionData? data,
+    AppLocalizations loc, {
+    bool isWeight = false,
+    required String currentLabel,
+    required String prevLabel,
+    String? currentSubtext,
+    String? prevSubtext,
+  }) {
+    final textTheme = Theme.of(context).textTheme;
+    if (data == null) return const SizedBox();
+
+    final bool isBothZero = data.startValue == 0 && data.currentValue == 0;
+    final bool isNewStart = data.startValue == 0 && data.currentValue > 0;
+    final bool isPause =
+        data.startValue > 0 &&
+        data.currentValue == 0; // 🔥 Новий стан: відпочинок
+    final bool isZeroChange =
+        data.startValue == data.currentValue && data.startValue > 0;
+    final bool isPositive = data.currentValue > data.startValue;
+
+    Color color;
+    IconData icon;
+    String textToShow;
+
+    if (isBothZero) {
+      color = Colors.grey.withValues(alpha: 0.5);
+      icon = Icons.remove;
+      textToShow = '—';
+    } else if (isNewStart) {
+      color = Colors.blue;
+      icon = Icons.flag_circle;
+      textToShow = loc.localeName == 'uk' ? 'Старт' : 'Start';
+    } else if (isPause) {
+      // 🔥 ЛОГІКА ПАУЗИ
+      color = Colors.grey;
+      icon = Icons.pause_circle_outline;
+      textToShow = loc.localeName == 'uk' ? 'Пауза' : 'Pause';
+    } else if (isZeroChange) {
+      color = Colors.grey;
+      icon = Icons.remove;
+      textToShow = '0.0%';
+    } else {
+      color = isPositive ? Colors.green : Colors.red;
+      icon = isPositive
+          ? Icons.arrow_upward_rounded
+          : Icons.arrow_downward_rounded;
+      final sign = isPositive ? '+' : '';
+      textToShow = '$sign${data.percentage.toStringAsFixed(1)}%';
+    }
+
+    return InkWell(
+      onTap: () {
+        showDialog(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: Text(loc.comparisonTitle, style: textTheme.titleMedium),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildDialogRow(
+                  prevLabel,
+                  formatNumberCompact(data.startValue),
+                  isWeight ? loc.weightUnit : '',
+                  dateSubtext: prevSubtext,
+                ),
+                const SizedBox(height: 8),
+                _buildDialogRow(
+                  currentLabel,
+                  formatNumberCompact(data.currentValue),
+                  isWeight ? loc.weightUnit : '',
+                  dateSubtext: currentSubtext,
+                ),
+                const Divider(),
+                _buildDialogRow(
+                  loc.difference,
+                  textToShow,
+                  '',
+                  color: color,
+                  isBold: true,
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(ctx).pop(),
+                child: Text(loc.close),
+              ),
+            ],
+          ),
+        );
+      },
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.15),
+          borderRadius: BorderRadius.circular(6),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 12, color: color),
+            const SizedBox(width: 4),
+            Text(
+              textToShow,
+              style: TextStyle(
+                color: color,
+                fontWeight: FontWeight.bold,
+                fontSize: 12,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // Оновлений рядок діалогу, щоб вміщати підпис знизу
+  Widget _buildDialogRow(
+    String label,
+    String value,
+    String unit, {
+    Color? color,
+    bool isBold = false,
+    String? dateSubtext,
+  }) {
+    final textTheme = Theme.of(context).textTheme;
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(label, style: textTheme.bodySmall),
+                if (dateSubtext != null && dateSubtext.isNotEmpty)
+                  Text(
+                    dateSubtext,
+                    style: textTheme.bodySmall?.copyWith(fontSize: 10),
+                  ),
+              ],
+            ),
+          ),
+          Text(
+            '$value $unit'.trim(),
+            style: (isBold ? textTheme.labelLarge : textTheme.bodyMedium)
+                ?.copyWith(
+                  color: color ?? Theme.of(context).colorScheme.onSurface,
+                ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
@@ -414,40 +731,93 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
     final GlobalKey<TooltipState> tooltipKey = GlobalKey<TooltipState>();
     final loc = AppLocalizations.of(context)!;
     final locale = loc.localeName;
+    final textTheme = Theme.of(context).textTheme;
 
     _prepareExerciseList(loc);
 
-    final entries = _filteredEntriesForRange(loc);
-    final spots = _buildSpots(entries);
+    final catalog = getExerciseCatalog(loc);
+    String targetId = _selectedExerciseDisplay ?? '';
+    try {
+      targetId = catalog
+          .firstWhere((c) => c.name == _selectedExerciseDisplay)
+          .id;
+    } catch (_) {}
 
-    final dynamicInterval = _bottomInterval(spots.length);
+    // --- ДАНІ ПОТОЧНОГО ПЕРІОДУ ---
+    final volumeDataRaw = _selectedExerciseDisplay != null
+        ? _accumulateVolumePerDay(_selectedExerciseDisplay!, loc)
+        : <DateTime, double>{};
+    final volumeEntries = _filterEntries(volumeDataRaw);
+    final volumeSpots = _buildSpots(volumeEntries);
+    final currentVolume = _totalForEntries(volumeEntries);
 
+    final maxWeightDataRaw = _selectedExerciseDisplay != null
+        ? _accumulateMaxWeightPerDay(_selectedExerciseDisplay!, loc)
+        : <DateTime, double>{};
+    final maxWeightEntries = _filterEntries(maxWeightDataRaw);
+
+    double currentMaxWeight = 0.0;
+    DateTime? currentMaxWeightDate;
+    if (maxWeightEntries.isNotEmpty) {
+      final maxEntry = maxWeightEntries.reduce(
+        (a, b) => a.value > b.value ? a : b,
+      );
+      currentMaxWeight = maxEntry.value;
+      currentMaxWeightDate = maxEntry.key;
+    }
+
+    final currentSessions = volumeEntries.length.toDouble();
+
+    // --- ДАНІ МИНУЛОГО ПЕРІОДУ ---
+    final prevStats = _selectedExerciseDisplay != null
+        ? _getPreviousPeriodStats(targetId, catalog)
+        : _PeriodStats(volume: 0, maxWeight: 0, sessions: 0);
+
+    // --- ПРОГРЕСІЯ ---
+    final volumeProgression = ProgressionData(
+      startValue: prevStats.volume,
+      currentValue: currentVolume,
+    );
+    final maxWeightProgression = ProgressionData(
+      startValue: prevStats.maxWeight,
+      currentValue: currentMaxWeight,
+    );
+    final sessionProgression = ProgressionData(
+      startValue: prevStats.sessions,
+      currentValue: currentSessions,
+    );
+
+    // --- ДЕТАЛІ ДЛЯ ДІАЛОГІВ ---
+    final currentLabel = _formatPeriodName(_visibleMonth, _range, locale);
+    final prevLabel = _formatPeriodName(prevStats.periodDate, _range, locale);
+    final currentMaxDateStr = _formatDate(currentMaxWeightDate, locale);
+    final prevMaxDateStr = _formatDate(prevStats.maxWeightDate, locale);
+
+    // Решта логіки для графіку
+    final dynamicInterval = _bottomInterval(volumeSpots.length);
     double maxY = 1;
-    for (final s in spots) {
+    for (final s in volumeSpots) {
       if (s.y > maxY) maxY = s.y;
     }
     final double yInterval = (maxY <= 0) ? 1.0 : (maxY / 4).toDouble();
 
-    // Форматування заголовка (Місяць або Рік)
-    String dateLabel;
-    if (_range == RangeMode.month) {
-      final monthName = DateFormat.MMMM(locale).format(_visibleMonth);
-      dateLabel =
-          '${toBeginningOfSentenceCase(monthName)} ${_visibleMonth.year}';
-    } else {
-      dateLabel = _visibleMonth.year.toString();
-    }
+    final Color chartColor = (volumeProgression.isPositive
+        ? Colors.green
+        : Colors.red);
+
+    String dateLabel = _formatPeriodName(_visibleMonth, _range, locale);
 
     return Scaffold(
-      appBar: AppBar(title: Text(loc.chartsTitle), centerTitle: true),
+      // appBar: AppBar(
+      //   title: Text(loc.chartsTitle, style: textTheme.titleLarge),
+      // ),
       body: Padding(
         padding: const EdgeInsets.all(12),
         child: Column(
           children: [
-            // Exercise Dropdown
             Row(
               children: [
-                Text(loc.exerciseLabel),
+                Text(loc.exerciseLabel, style: textTheme.bodyLarge),
                 const SizedBox(width: 8),
                 Expanded(
                   child: DropdownButton<String>(
@@ -465,7 +835,6 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
             ),
             const SizedBox(height: 8),
 
-            // Tabs (Month/Year)
             TabBar(
               controller: _tabController,
               labelColor: Theme.of(context).colorScheme.secondary,
@@ -478,13 +847,11 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
             ),
             const SizedBox(height: 8),
 
-            // === 📅 NAVIGATOR (UNIFIED) ===
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 4.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // BACK
                   IconButton(
                     icon: const Icon(Icons.chevron_left),
                     onPressed: _canGoBack ? _prevPeriod : null,
@@ -492,8 +859,6 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
                         ? null
                         : Colors.grey.withValues(alpha: 0.3),
                   ),
-
-                  // DATE LABEL (Clickable only in Month mode)
                   InkWell(
                     borderRadius: BorderRadius.circular(8),
                     onTap: _range == RangeMode.month
@@ -510,7 +875,7 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
                               });
                             }
                           }
-                        : null, // У режимі "Рік" поки що просто текст
+                        : null,
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 12,
@@ -518,12 +883,7 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
                       ),
                       child: Row(
                         children: [
-                          Text(
-                            dateLabel,
-                            style: Theme.of(context).textTheme.titleMedium
-                                ?.copyWith(fontWeight: FontWeight.bold),
-                          ),
-                          // Показуємо стрілочку вибору тільки для місяців
+                          Text(dateLabel, style: textTheme.titleMedium),
                           if (_range == RangeMode.month) ...[
                             const SizedBox(width: 4),
                             const Icon(Icons.arrow_drop_down, size: 20),
@@ -532,8 +892,6 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
                       ),
                     ),
                   ),
-
-                  // FORWARD
                   IconButton(
                     icon: const Icon(Icons.chevron_right),
                     onPressed: _canGoForward ? _nextPeriod : null,
@@ -552,14 +910,18 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
                   ? Center(
                       child: Text(
                         loc.addExercisesHint,
-                        style: TextStyle(color: Colors.grey[700]),
+                        style: textTheme.bodyMedium?.copyWith(
+                          color: Colors.grey[700],
+                        ),
                       ),
                     )
-                  : spots.isEmpty
+                  : volumeSpots.isEmpty
                   ? Center(
                       child: Text(
                         loc.noDataRange,
-                        style: TextStyle(color: Colors.grey[700]),
+                        style: textTheme.bodyMedium?.copyWith(
+                          color: Colors.grey[700],
+                        ),
                       ),
                     )
                   : Card(
@@ -569,30 +931,33 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
                         child: Column(
                           children: [
                             ProgressLineChart(
-                              spots: spots,
+                              spots: volumeSpots,
                               maxY: maxY,
                               yInterval: yInterval,
                               range: _range,
                               bottomInterval: () => dynamicInterval,
                               buildBottomTitle: _buildBottomTitle,
                               formatY: formatNumberCompact,
+                              lineColor: chartColor,
                               onPointTap: (x) {
                                 final date = _xToDate(x);
                                 if (date != null) _onPointTapped(date);
                               },
                             ),
                             const SizedBox(height: 8),
-                            // VOLUME HELPER TOOLTIP
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Container(
                                   width: 20,
                                   height: 4,
-                                  color: Colors.blue,
+                                  color: chartColor,
                                 ),
                                 const SizedBox(width: 6),
-                                Text(loc.liftedWeight),
+                                Text(
+                                  loc.liftedWeight,
+                                  style: textTheme.bodyMedium,
+                                ),
                                 IconButton(
                                   onPressed: () {
                                     tooltipKey.currentState
@@ -606,41 +971,6 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
                                     verticalOffset: 20,
                                     showDuration: const Duration(seconds: 4),
                                     triggerMode: TooltipTriggerMode.manual,
-                                    decoration: BoxDecoration(
-                                      color: Theme.of(context).cardColor,
-                                      borderRadius: BorderRadius.circular(12),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.black.withValues(
-                                            alpha: 0.1,
-                                          ),
-                                          blurRadius: 10,
-                                          spreadRadius: 2,
-                                          offset: const Offset(0, 4),
-                                        ),
-                                      ],
-                                      border: Border.all(
-                                        color: Theme.of(
-                                          context,
-                                        ).dividerColor.withValues(alpha: 0.1),
-                                      ),
-                                    ),
-                                    textStyle: Theme.of(context)
-                                        .textTheme
-                                        .bodyMedium
-                                        ?.copyWith(
-                                          fontWeight: FontWeight.bold,
-                                          color: Theme.of(
-                                            context,
-                                          ).colorScheme.onSurface,
-                                        ),
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 16,
-                                      vertical: 12,
-                                    ),
-                                    margin: const EdgeInsets.symmetric(
-                                      horizontal: 20,
-                                    ),
                                     child: Icon(
                                       Icons.help_outline_rounded,
                                       color: Theme.of(
@@ -669,10 +999,68 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    '${loc.totalLifted} ${formatNumberCompact(_totalForEntries(entries))}',
+                  Expanded(
+                    child: Column(
+                      children: [
+                        buildSummaryItem(
+                          context: context,
+                          label: loc.totalLifted,
+                          value: formatNumberCompact(currentVolume),
+                          color: chartColor,
+                        ),
+                        const SizedBox(height: 4),
+                        _buildPercentBadge(
+                          volumeProgression,
+                          loc,
+                          currentLabel: currentLabel,
+                          prevLabel: prevLabel,
+                        ),
+                      ],
+                    ),
                   ),
-                  Text('${loc.pointsCount} ${entries.length}'),
+
+                  Expanded(
+                    child: Column(
+                      children: [
+                        buildSummaryItem(
+                          context: context,
+                          label: loc.maxWeight,
+                          value:
+                              '${formatNumberCompact(currentMaxWeight)} ${loc.weightUnit}',
+                          color: Colors.orangeAccent,
+                        ),
+                        const SizedBox(height: 4),
+                        _buildPercentBadge(
+                          maxWeightProgression,
+                          loc,
+                          isWeight: true,
+                          currentLabel: currentLabel,
+                          prevLabel: prevLabel,
+                          currentSubtext: currentMaxDateStr,
+                          prevSubtext: prevMaxDateStr,
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  Expanded(
+                    child: Column(
+                      children: [
+                        buildSummaryItem(
+                          context: context,
+                          label: loc.gymSessions,
+                          value: currentSessions.toInt().toString(),
+                        ),
+                        const SizedBox(height: 4),
+                        _buildPercentBadge(
+                          sessionProgression,
+                          loc,
+                          currentLabel: currentLabel,
+                          prevLabel: prevLabel,
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -681,55 +1069,4 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
       ),
     );
   }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
-  }
-}
-
-// ... Models stay the same ...
-class WorkoutExerciseGraf {
-  String name;
-  String? exerciseId;
-  List<SetData> sets;
-
-  WorkoutExerciseGraf({
-    required this.name,
-    this.exerciseId,
-    required this.sets,
-  });
-
-  factory WorkoutExerciseGraf.fromMap(Map<String, dynamic> m) {
-    return WorkoutExerciseGraf(
-      name: m['name'] as String? ?? '',
-      exerciseId: m['exerciseId'] as String?,
-      sets: (m['sets'] as List<dynamic>? ?? [])
-          .map((e) => SetData.fromMap(e as Map<String, dynamic>))
-          .toList(),
-    );
-  }
-
-  Map<String, dynamic> toMap() => {
-    'name': name,
-    'exerciseId': exerciseId,
-    'sets': sets.map((s) => s.toMap()).toList(),
-  };
-}
-
-class SetData {
-  double? weight;
-  int? reps;
-
-  SetData({this.weight, this.reps});
-
-  factory SetData.fromMap(Map<String, dynamic> m) {
-    return SetData(
-      weight: (m['weight'] as num?)?.toDouble(),
-      reps: m['reps'] as int?,
-    );
-  }
-
-  Map<String, dynamic> toMap() => {'weight': weight, 'reps': reps};
 }

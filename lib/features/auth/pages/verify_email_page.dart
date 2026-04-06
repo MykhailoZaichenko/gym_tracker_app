@@ -1,16 +1,18 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:gym_tracker_app/features/health/models/body_weight_model.dart';
 import 'package:gym_tracker_app/features/profile/models/user_model.dart';
 import 'package:gym_tracker_app/features/welcome/pages/welcome_page.dart';
 import 'package:gym_tracker_app/l10n/app_localizations.dart';
 import 'package:gym_tracker_app/services/auth_service.dart';
 import 'package:gym_tracker_app/services/firestore_service.dart';
+import 'package:gym_tracker_app/widget/common/custome_snackbar.dart';
 import 'package:gym_tracker_app/widget/common/primary_filled_button.dart';
 import 'package:gym_tracker_app/widget/common/widget_tree.dart';
 
 class VerifyEmailPage extends StatefulWidget {
-  final double? pendingWeight; // Вага з онбордингу
+  final double? pendingWeight;
 
   const VerifyEmailPage({super.key, this.pendingWeight});
 
@@ -31,11 +33,9 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
   void initState() {
     super.initState();
 
-    // Початкова перевірка
     isEmailVerified = FirebaseAuth.instance.currentUser?.emailVerified ?? false;
 
     if (!isEmailVerified) {
-      // Запускаємо таймер для перевірки статусу кожні 3 секунди
       timer = Timer.periodic(
         const Duration(seconds: 3),
         (_) => checkEmailVerified(),
@@ -86,16 +86,27 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
         id: user.uid,
         email: user.email ?? '',
         name: user.displayName ?? 'User',
-        weightKg: widget.pendingWeight,
       );
 
       await _firestoreService.saveUser(newUser);
+
+      if (widget.pendingWeight != null && widget.pendingWeight! > 0) {
+        await _firestoreService.saveBodyWeight(
+          BodyWeightModel(
+            id: '',
+            weight: widget.pendingWeight!,
+            date: DateTime.now(),
+          ),
+        );
+      }
     } catch (e) {
       debugPrint('Error creating user profile: $e');
       if (mounted) {
-        ScaffoldMessenger.of(
+        CustomSnackBar.show(
           context,
-        ).showSnackBar(SnackBar(content: Text("Error creating profile: $e")));
+          message: "Error creating profile: $e",
+          isError: true,
+        );
       }
     }
   }
@@ -111,30 +122,24 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
       if (mounted) setState(() => canResendEmail = true);
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(e.toString())));
+        CustomSnackBar.show(context, message: e.toString(), isError: true);
       }
     }
   }
 
-  // 🔥 ВИПРАВЛЕНИЙ МЕТОД ВИХОДУ
+  // ВИПРАВЛЕНИЙ МЕТОД ВИХОДУ
   Future<void> _onLogoutPressed() async {
     timer?.cancel();
 
     try {
-      // Видаляємо користувача з Firebase Auth.
-      // Це автоматично розлогінить його і звільнить Email.
       await FirebaseAuth.instance.currentUser?.delete();
     } catch (e) {
       debugPrint("Error deleting user: $e");
-      // Якщо видалення не вдалося (наприклад, помилка мережі), робимо звичайний вихід
       await _authService.logout();
     }
 
     if (!mounted) return;
 
-    // Переходимо на Welcome Page
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(builder: (_) => const WelcomePage()),
@@ -149,6 +154,7 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
     }
 
     final loc = AppLocalizations.of(context)!;
+    final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
       appBar: AppBar(title: Text(loc.verifyEmailTitle)),
@@ -162,13 +168,12 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
                   Text(
                     loc.verifyEmailMessage,
                     textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 18),
+                    style: textTheme.titleMedium,
                   ),
                   const SizedBox(height: 24),
 
                   PrimaryFilledButton(
                     text: loc.resendEmail,
-                    // Додав перевірку canResendEmail, щоб кнопка блокувалася
                     onPressed: sendVerificationEmail,
                   ),
 

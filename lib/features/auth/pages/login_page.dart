@@ -7,6 +7,7 @@ import 'package:gym_tracker_app/features/welcome/pages/onboarding_page.dart';
 import 'package:gym_tracker_app/l10n/app_localizations.dart';
 import 'package:gym_tracker_app/services/auth_service.dart';
 import 'package:gym_tracker_app/utils/error_utils.dart';
+import 'package:gym_tracker_app/widget/common/custome_snackbar.dart';
 import 'package:gym_tracker_app/widget/common/hero_widget.dart';
 import 'package:gym_tracker_app/widget/common/page_title.dart';
 import 'package:gym_tracker_app/widget/common/password_reset_dialog.dart';
@@ -91,7 +92,7 @@ class _LoginPageState extends State<LoginPage> {
       final user = await _auth.loginWithGoogle();
       if (user != null) {
         if (!mounted) return;
-        _goToApp(); // Перехід на головну
+        _goToApp();
       }
     } catch (e) {
       _showMessage('${loc.errGoogleSignIn}: $e');
@@ -153,7 +154,7 @@ class _LoginPageState extends State<LoginPage> {
 
   void _showMessage(String text) {
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(text)));
+    CustomSnackBar.show(context, message: text, isError: true);
   }
 
   // Функції debounce для передачі в AuthPageWidget
@@ -224,8 +225,6 @@ class _LoginPageState extends State<LoginPage> {
                         width: double.infinity,
                         child: OutlinedButton.icon(
                           onPressed: _loading ? null : _onGoogleLoginPressed,
-                          // Якщо у вас немає картинки, використовуйте Icon(Icons.login) тимчасово
-                          // Краще: Image.asset('assets/images/google_logo.png', height: 24),
                           icon: const Icon(Icons.g_mobiledata, size: 32),
                           label: Text(loc.googleButton),
                           style: OutlinedButton.styleFrom(

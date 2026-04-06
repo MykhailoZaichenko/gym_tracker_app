@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/data/seed/exercise_catalog.dart';
 import 'package:gym_tracker_app/l10n/app_localizations.dart';
+import 'package:gym_tracker_app/widget/common/exercise_icon.dart';
 
 Future<ExerciseInfo?> showExercisePicker(
   BuildContext context, {
@@ -42,7 +43,6 @@ class _ExercisePickerSheetState extends State<_ExercisePickerSheet> {
         setState(() => _query = v);
       }
     });
-    // Request focus after first frame to ensure keyboard opens reliably
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _focusNode.requestFocus();
     });
@@ -58,6 +58,7 @@ class _ExercisePickerSheetState extends State<_ExercisePickerSheet> {
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
+    final textTheme = Theme.of(context).textTheme;
     final catalog = getExerciseCatalog(loc);
     final filtered = _query.isEmpty
         ? catalog
@@ -98,7 +99,6 @@ class _ExercisePickerSheetState extends State<_ExercisePickerSheet> {
             ),
             const Divider(height: 1),
             Flexible(
-              // Flexible дає ListView займати доступний простір, скрол працює природно
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxHeight: 360),
                 child: ListView.separated(
@@ -109,7 +109,10 @@ class _ExercisePickerSheetState extends State<_ExercisePickerSheet> {
                     if (idx == 0) {
                       return ListTile(
                         leading: const Icon(Icons.edit),
-                        title: Text(loc.enterCustomName),
+                        title: Text(
+                          loc.enterCustomName,
+                          style: textTheme.bodyLarge,
+                        ),
                         onTap: () => Navigator.of(
                           context,
                         ).pop(ExerciseInfo.getEnterCustom(loc)),
@@ -117,11 +120,23 @@ class _ExercisePickerSheetState extends State<_ExercisePickerSheet> {
                     }
                     final it = filtered[idx - 1];
                     return ListTile(
-                      leading: CircleAvatar(
-                        backgroundColor: Colors.transparent,
-                        child: Icon(it.icon),
+                      leading: Container(
+                        width: 40,
+                        height: 40,
+                        padding: const EdgeInsets.all(4),
+                        decoration: BoxDecoration(
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.primary.withValues(alpha: 0.1),
+                          shape: BoxShape.circle,
+                        ),
+                        child: ExerciseIcon(
+                          exercise: it,
+                          size: 24,
+                          color: Colors.black,
+                        ),
                       ),
-                      title: Text(it.name),
+                      title: Text(it.name, style: textTheme.bodyLarge),
                       onTap: () => Navigator.of(context).pop(it),
                     );
                   },

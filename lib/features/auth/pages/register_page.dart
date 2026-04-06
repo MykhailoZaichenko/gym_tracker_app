@@ -3,8 +3,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/features/auth/pages/verify_email_page.dart';
 import 'package:gym_tracker_app/features/auth/widgets/auth_form_widget.dart';
+import 'package:gym_tracker_app/features/health/models/body_weight_model.dart';
 import 'package:gym_tracker_app/l10n/app_localizations.dart';
 import 'package:gym_tracker_app/services/firestore_service.dart';
+import 'package:gym_tracker_app/widget/common/custome_snackbar.dart';
 import 'package:gym_tracker_app/widget/common/hero_widget.dart';
 import 'package:gym_tracker_app/widget/common/page_title.dart';
 import 'package:gym_tracker_app/widget/common/primary_filled_button.dart';
@@ -21,11 +23,8 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  // ... (Контролери та змінні залишаються без змін) ...
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final GlobalKey<FormFieldState<String>> _emailFieldKey =
-      GlobalKey<FormFieldState<String>>();
-  final GlobalKey<FormFieldState<String>> _nameFieldKey =
       GlobalKey<FormFieldState<String>>();
   final GlobalKey<FormFieldState<String>> _passwordFieldKey =
       GlobalKey<FormFieldState<String>>();
@@ -33,17 +32,14 @@ class _RegisterPageState extends State<RegisterPage> {
       GlobalKey<FormFieldState<String>>();
 
   final TextEditingController _emailCtrl = TextEditingController();
-  final TextEditingController _nameCtrl = TextEditingController();
   final TextEditingController _passwordCtrl = TextEditingController();
   final TextEditingController _passwordConfirmCtrl = TextEditingController();
 
   late final FocusNode emailFocus;
-  late final FocusNode nameFocus;
   late final FocusNode passwordFocus;
   late final FocusNode passwordConfirmFocus;
 
   Timer? _emailDebounce;
-  Timer? _nameDebounce;
   Timer? _passwordDebounce;
   Timer? _passwordConfirmDebounce;
 
@@ -54,27 +50,20 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   void initState() {
     super.initState();
-    // ... (ініціалізація фокусів без змін) ...
     emailFocus = FocusNode();
-    nameFocus = FocusNode();
     passwordFocus = FocusNode();
     passwordConfirmFocus = FocusNode();
-    // ... listeners ...
   }
 
   @override
   void dispose() {
-    // ... (dispose без змін) ...
     _emailCtrl.dispose();
-    _nameCtrl.dispose();
     _passwordCtrl.dispose();
     _passwordConfirmCtrl.dispose();
     emailFocus.dispose();
-    nameFocus.dispose();
     passwordFocus.dispose();
     passwordConfirmFocus.dispose();
     _emailDebounce?.cancel();
-    _nameDebounce?.cancel();
     _passwordDebounce?.cancel();
     _passwordConfirmDebounce?.cancel();
     super.dispose();
@@ -82,10 +71,10 @@ class _RegisterPageState extends State<RegisterPage> {
 
   void _showMessage(String text) {
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(text)));
+    CustomSnackBar.show(context, message: text, isError: true);
   }
 
-  // --- ЛОГІКА GOOGLE (Тут ми пишемо в базу, бо Google верифікований) ---
+  // --- ЛОГІКА GOOGLE ---
   Future<void> _onGoogleRegisterPressed() async {
     final loc = AppLocalizations.of(context)!;
     setState(() => _loading = true);
@@ -96,18 +85,17 @@ class _RegisterPageState extends State<RegisterPage> {
         final prefs = await SharedPreferences.getInstance();
         final savedWeight = prefs.getDouble('user_weight');
 
-        // Якщо це новий юзер і є вага з онбордингу
         if (savedWeight != null && savedWeight > 0) {
-          // Оновлюємо або створюємо запис у базі
-          // Важливо: loginWithGoogle зазвичай повертає UserModel.
-          // Переконайся, що він має ID.
-          final updatedUser = user.copyWith(weightKg: savedWeight);
-          await _firestore.saveUser(updatedUser);
+          await _firestore.saveUser(user);
+
+          await _firestore.saveBodyWeight(
+            BodyWeightModel(id: '', weight: savedWeight, date: DateTime.now()),
+          );
+
           await prefs.remove('user_weight');
         }
 
         if (!mounted) return;
-        // Для Google верифікація не потрібна, йдемо в додаток (VerifyPage це перевірить і пропустить)
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(builder: (_) => const VerifyEmailPage()),
@@ -121,7 +109,7 @@ class _RegisterPageState extends State<RegisterPage> {
     }
   }
 
-  // --- ЛОГІКА EMAIL (Виправлена) ---
+  // --- ЛОГІКА EMAIL ---
   Future<void> _onRegisterPressed() async {
     FocusScope.of(context).unfocus();
 
@@ -130,29 +118,20 @@ class _RegisterPageState extends State<RegisterPage> {
     if (!formState.validate()) return;
 
     final email = _emailCtrl.text.trim();
-    final name = _nameCtrl.text.trim();
     final password = _passwordCtrl.text;
 
     setState(() => _loading = true);
     try {
-      // 1. Створюємо юзера в Firebase Auth
       UserCredential userCredential = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(email: email, password: password);
 
-      // 2. Оновлюємо ім'я (displayName) в профілі Auth (щоб не загубити)
-      await userCredential.user?.updateDisplayName(name);
-
-      // 3. Надсилаємо лист підтвердження
       await userCredential.user?.sendEmailVerification();
 
-      // 4. Отримуємо вагу (але НЕ зберігаємо в базу поки що)
       final prefs = await SharedPreferences.getInstance();
       final savedWeight = prefs.getDouble('user_weight');
 
       if (!mounted) return;
 
-      // 5. Переходимо на сторінку верифікації
-      // Передаємо вагу, щоб VerifyPage зберіг її ПІСЛЯ підтвердження
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(
@@ -167,22 +146,12 @@ class _RegisterPageState extends State<RegisterPage> {
     }
   }
 
-  // ... (Валідатори та білдер UI залишаються без змін) ...
   String? _validateEmail(String? v) {
-    // ... твій код ...
     final loc = AppLocalizations.of(context)!;
     if (v == null || v.trim().isEmpty) return loc.errEmailRequired;
     final email = v.trim();
     final emailRe = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
     if (!emailRe.hasMatch(email)) return loc.errInvalidEmail;
-    return null;
-  }
-
-  // ... інші валідатори ...
-  String? _validateName(String? v) {
-    final loc = AppLocalizations.of(context)!;
-    if (v == null || v.trim().isEmpty) return loc.errNameRequired;
-    if (v.trim().length < 2) return loc.errNameShort;
     return null;
   }
 
@@ -200,18 +169,10 @@ class _RegisterPageState extends State<RegisterPage> {
     return null;
   }
 
-  // ... Listeners ...
   void _onEmailChanged(String value) {
     _emailDebounce?.cancel();
     _emailDebounce = Timer(const Duration(milliseconds: 700), () {
       _emailFieldKey.currentState?.validate();
-    });
-  }
-
-  void _onNameChanged(String value) {
-    _nameDebounce?.cancel();
-    _nameDebounce = Timer(const Duration(milliseconds: 700), () {
-      _nameFieldKey.currentState?.validate();
     });
   }
 
@@ -229,18 +190,18 @@ class _RegisterPageState extends State<RegisterPage> {
     });
   }
 
-  void _onEmailSubmitted(_) => FocusScope.of(context).requestFocus(nameFocus);
-  void _onNameSubmitted(_) =>
+  void _onEmailSubmitted(_) =>
       FocusScope.of(context).requestFocus(passwordFocus);
+
   void _onPasswordSubmitted(_) =>
       FocusScope.of(context).requestFocus(passwordConfirmFocus);
   void _onPasswordConfirmSubmitted(_) => _onRegisterPressed();
 
   @override
   Widget build(BuildContext context) {
-    // ... твій UI код (без змін) ...
     final widthScreen = MediaQuery.of(context).size.width;
     final loc = AppLocalizations.of(context)!;
+    final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
       appBar: AppBar(),
@@ -271,18 +232,14 @@ class _RegisterPageState extends State<RegisterPage> {
                         validateEmail: _validateEmail,
                         onEmailChanged: _onEmailChanged,
                         onEmailSubmitted: _onEmailSubmitted,
-                        nameFieldKey: _nameFieldKey,
-                        controllerName: _nameCtrl,
-                        nameFocus: nameFocus,
-                        validateName: _validateName,
-                        onNameChanged: _onNameChanged,
-                        onNameSubmitted: _onNameSubmitted,
+
                         passwordFieldKey: _passwordFieldKey,
                         controllerPassword: _passwordCtrl,
                         paswFocus: passwordFocus,
                         validatePassword: _validatePassword,
                         onPasswordChanged: _onPasswordChanged,
                         onPasswordSubmitted: _onPasswordSubmitted,
+
                         passwordConfirmFieldKey: _passwordConfirmFieldKey,
                         controllerPasswordConfirm: _passwordConfirmCtrl,
                         passwordConfirmFocus: passwordConfirmFocus,
@@ -319,7 +276,10 @@ class _RegisterPageState extends State<RegisterPage> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text('${loc.alreadyHaveAccount} '),
+                          Text(
+                            '${loc.alreadyHaveAccount} ',
+                            style: textTheme.bodyMedium,
+                          ),
                           PrimaryTextButton(
                             text: loc.loginAction,
                             onPressed: _loading

@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 // Імпортуй свої локалізації
 import 'package:gym_tracker_app/l10n/app_localizations.dart';
+import 'package:gym_tracker_app/widget/common/custome_snackbar.dart';
 
 /// Функція-обгортка для виклику (щоб було зручно, як у confirm_dialog)
 Future<void> showForgotPasswordDialog({
@@ -47,8 +48,9 @@ class _ForgotPasswordDialogState extends State<_ForgotPasswordDialog> {
     final loc = AppLocalizations.of(context)!;
 
     if (email.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(loc.errEmailRequired)), // "Введіть email"
+      CustomSnackBar.show(
+        context,
+        message: loc.errEmailRequired, // Або локалізований текст
       );
       return;
     }
@@ -60,20 +62,19 @@ class _ForgotPasswordDialogState extends State<_ForgotPasswordDialog> {
 
       if (mounted) {
         Navigator.of(context).pop(); // Закриваємо діалог
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(loc.resetPasswordEmailSent),
-            backgroundColor: Colors.green,
-          ),
+        CustomSnackBar.show(
+          context,
+          message: loc.resetPasswordEmailSent,
+          backgroundColor: Colors.green,
         );
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(e.toString().replaceAll('Exception: ', '')),
-            backgroundColor: Colors.red,
-          ),
+        CustomSnackBar.show(
+          context,
+          message: "${e.toString().replaceAll('Exception: ', '')}: $e",
+          isError: true,
+          backgroundColor: Colors.red,
         );
       }
     } finally {

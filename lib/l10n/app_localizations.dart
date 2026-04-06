@@ -101,86 +101,26 @@ abstract class AppLocalizations {
   /// App name
   ///
   /// In en, this message translates to:
-  /// **'Gym Tracker App'**
+  /// **'Gym Tracker'**
   String get appName;
 
-  /// Welcome page button
+  /// OK button
   ///
   /// In en, this message translates to:
-  /// **'Get Started'**
-  String get getStarted;
-
-  /// Onboarding page button
-  ///
-  /// In en, this message translates to:
-  /// **'Continue'**
-  String get continueAction;
-
-  /// Onboarding page title
-  ///
-  /// In en, this message translates to:
-  /// **'Enter your weight for personalization'**
-  String get onboardingTitle;
-
-  /// Header for stats card
-  ///
-  /// In en, this message translates to:
-  /// **'Your progress for'**
-  String get yourProgressFor;
-
-  /// Sets count label
-  ///
-  /// In en, this message translates to:
-  /// **'Sets'**
-  String get setsLabel;
-
-  /// Weight/Reps count label
-  ///
-  /// In en, this message translates to:
-  /// **'Weight (kg·reps)'**
-  String get weightRepsLabel;
-
-  /// Calories label
-  ///
-  /// In en, this message translates to:
-  /// **'Calories'**
-  String get calories;
-
-  /// Snackbar for successful plan save
-  ///
-  /// In en, this message translates to:
-  /// **'Plan saved successfully'**
-  String get planSavedSuccess;
-
-  /// Workout plan editor page title
-  ///
-  /// In en, this message translates to:
-  /// **'Edit Plan'**
-  String get editPlanTitle;
-
-  /// Tooltip for save plan button
-  ///
-  /// In en, this message translates to:
-  /// **'Save plan'**
-  String get savePlanTooltip;
-
-  /// Default user name
-  ///
-  /// In en, this message translates to:
-  /// **'Guest'**
-  String get guest;
-
-  /// Cancel button
-  ///
-  /// In en, this message translates to:
-  /// **'Cancel'**
-  String get cancel;
+  /// **'OK'**
+  String get ok;
 
   /// Save button
   ///
   /// In en, this message translates to:
   /// **'Save'**
   String get save;
+
+  /// Saved confirmation
+  ///
+  /// In en, this message translates to:
+  /// **'Saved'**
+  String get saved;
 
   /// Close button
   ///
@@ -200,12 +140,6 @@ abstract class AppLocalizations {
   /// **'Edit'**
   String get edit;
 
-  /// Delete button
-  ///
-  /// In en, this message translates to:
-  /// **'Delete'**
-  String get delete;
-
   /// Yes button
   ///
   /// In en, this message translates to:
@@ -218,11 +152,35 @@ abstract class AppLocalizations {
   /// **'No'**
   String get no;
 
-  /// OK button
+  /// Send Button
   ///
   /// In en, this message translates to:
-  /// **'OK'**
-  String get ok;
+  /// **'Send'**
+  String get send;
+
+  /// Default user name
+  ///
+  /// In en, this message translates to:
+  /// **'Guest'**
+  String get guest;
+
+  /// Welcome page button
+  ///
+  /// In en, this message translates to:
+  /// **'Get Started'**
+  String get getStarted;
+
+  /// Onboarding page button
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get continueAction;
+
+  /// Onboarding page title
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your weight for personalization'**
+  String get onboardingTitle;
 
   /// Login page title
   ///
@@ -260,53 +218,53 @@ abstract class AppLocalizations {
   /// **'Already have account?'**
   String get alreadyHaveAccount;
 
-  /// Dialog title for custom exercise
+  /// Google Sign-In Button
   ///
   /// In en, this message translates to:
-  /// **'Enter custom exercise name'**
-  String get enterCustomExerciseName;
+  /// **'Google'**
+  String get googleButton;
 
-  /// Hint for custom exercise input
+  /// Verify Email Page Title
   ///
   /// In en, this message translates to:
-  /// **'Exercise name'**
-  String get exerciseNameHint;
+  /// **'Verify Email'**
+  String get verifyEmailTitle;
 
-  /// Button to add an exercise to a plan
+  /// Verify Email Page Message
   ///
   /// In en, this message translates to:
-  /// **'Add exercise'**
-  String get addExercise;
+  /// **'A verification email has been sent to your email address. Please follow the link in the email.'**
+  String get verifyEmailMessage;
 
-  /// Empty graph state
+  /// Resend Email Button
   ///
   /// In en, this message translates to:
-  /// **'Add exercises in calendar to see the graph'**
-  String get addExercisesHint;
+  /// **'Resend Email'**
+  String get resendEmail;
 
-  /// Exercise selection hint
+  /// Cancel and Logout Button
   ///
   /// In en, this message translates to:
-  /// **'Select exercise'**
-  String get selectExercise;
+  /// **'Cancel (Logout)'**
+  String get cancelLogout;
 
-  /// Delete exercise button
+  /// Reset Password Dialog Title
   ///
   /// In en, this message translates to:
-  /// **'Delete exercise'**
-  String get deleteExercise;
+  /// **'Reset Password'**
+  String get resetPasswordTitle;
 
-  /// Search exercise hint
+  /// Reset Password Dialog Instruction
   ///
   /// In en, this message translates to:
-  /// **'Search exercise'**
-  String get searchExercise;
+  /// **'Enter your email. We will send you a link to reset your password.'**
+  String get resetPasswordInstruction;
 
-  /// Custom name option in exercise picker
+  /// Reset Password Email Sent Message
   ///
   /// In en, this message translates to:
-  /// **'Enter custom name'**
-  String get enterCustomName;
+  /// **'Password reset email sent! Check your inbox.'**
+  String get resetPasswordEmailSent;
 
   /// Email input label
   ///
@@ -356,6 +314,18 @@ abstract class AppLocalizations {
   /// **'Enter name'**
   String get nameHint;
 
+  /// Weight input label
+  ///
+  /// In en, this message translates to:
+  /// **'Weight'**
+  String get weightLabel;
+
+  /// Repetitions label
+  ///
+  /// In en, this message translates to:
+  /// **'Reps'**
+  String get repsLabel;
+
   /// Error: email empty
   ///
   /// In en, this message translates to:
@@ -404,677 +374,11 @@ abstract class AppLocalizations {
   /// **'Enter correct weight'**
   String get errWeightRequired;
 
-  /// Home page title
-  ///
-  /// In en, this message translates to:
-  /// **'Workout Calendar'**
-  String get calendarTitle;
-
-  /// Analytics button tooltip
-  ///
-  /// In en, this message translates to:
-  /// **'Progress'**
-  String get progressTooltip;
-
-  /// Workout plan button
-  ///
-  /// In en, this message translates to:
-  /// **'My Plan'**
-  String get myPlan;
-
-  /// Edit button tooltip
-  ///
-  /// In en, this message translates to:
-  /// **'Edit exercises'**
-  String get editExercisesTooltip;
-
-  /// Add exercise FAB tooltip
-  ///
-  /// In en, this message translates to:
-  /// **'Add exercise'**
-  String get addExerciseTooltip;
-
-  /// Placeholder when no day selected
-  ///
-  /// In en, this message translates to:
-  /// **'Select a day'**
-  String get selectDay;
-
-  /// Select month button label
-  ///
-  /// In en, this message translates to:
-  /// **'Select month'**
-  String get selectMonth;
-
-  /// Header for exercise list
-  ///
-  /// In en, this message translates to:
-  /// **'Exercises for'**
-  String get exercisesFor;
-
-  /// Empty state for day
-  ///
-  /// In en, this message translates to:
-  /// **'No exercises for this day'**
-  String get noExercisesToday;
-
-  /// Fallback name
-  ///
-  /// In en, this message translates to:
-  /// **'Exercise'**
-  String get exerciseDefaultName;
-
-  /// Label for a single set line in compact view
-  ///
-  /// In en, this message translates to:
-  /// **'Set'**
-  String get setLabelCompact;
-
-  /// Weight unit abbreviation
-  ///
-  /// In en, this message translates to:
-  /// **'kg'**
-  String get weightUnit;
-
-  /// Weight input hint
-  ///
-  /// In en, this message translates to:
-  /// **'Kg'**
-  String get weightUnitHint;
-
-  /// Repetitions unit abbreviation
-  ///
-  /// In en, this message translates to:
-  /// **'reps'**
-  String get repsUnit;
-
-  /// Repetitions input hint
-  ///
-  /// In en, this message translates to:
-  /// **'Reps'**
-  String get repsUnitHint;
-
-  /// Set count plural
-  ///
-  /// In en, this message translates to:
-  /// **'{count, plural, one{1 set} other{{count} sets}}'**
-  String setsCount(int count);
-
-  /// Exercise count plural
-  ///
-  /// In en, this message translates to:
-  /// **'{count, plural, one{1 exercise} other{{count} exercises}}'**
-  String exercisesCount(int count);
-
-  /// Delete set menu item
-  ///
-  /// In en, this message translates to:
-  /// **'Delete set {number}'**
-  String deleteSet(int number);
-
-  /// Set number label
-  ///
-  /// In en, this message translates to:
-  /// **'Set {number}'**
-  String setNumber(int number);
-
-  /// Calories count format
-  ///
-  /// In en, this message translates to:
-  /// **'{count} kcal'**
-  String caloriesCount(String count);
-
-  /// Graf page title
-  ///
-  /// In en, this message translates to:
-  /// **'Progress — Charts'**
-  String get chartsTitle;
-
-  /// Dropdown label
-  ///
-  /// In en, this message translates to:
-  /// **'Exercise:'**
-  String get exerciseLabel;
-
-  /// Dropdown hint
-  ///
-  /// In en, this message translates to:
-  /// **'Choose exercise'**
-  String get chooseExercise;
-
-  /// Tab label
-  ///
-  /// In en, this message translates to:
-  /// **'Month'**
-  String get tabMonth;
-
-  /// Tab label
-  ///
-  /// In en, this message translates to:
-  /// **'Year'**
-  String get tabYear;
-
-  /// Empty graph state range
-  ///
-  /// In en, this message translates to:
-  /// **'No data for selected exercise in this range'**
-  String get noDataRange;
-
-  /// Legend label
-  ///
-  /// In en, this message translates to:
-  /// **'Lifted volume'**
-  String get liftedWeight;
-
-  /// Tooltip text explaining the volume formula
-  ///
-  /// In en, this message translates to:
-  /// **'Volume = Weight × Reps'**
-  String get liftedWeightHelp;
-
-  /// Semantics/Tooltip for the help button itself
-  ///
-  /// In en, this message translates to:
-  /// **'Formula description'**
-  String get liftedWeightDescription;
-
-  /// Summary label
-  ///
-  /// In en, this message translates to:
-  /// **'Total lifted:'**
-  String get totalLifted;
-
-  /// Summary label
-  ///
-  /// In en, this message translates to:
-  /// **'Points:'**
-  String get pointsCount;
-
-  /// Settings page title
-  ///
-  /// In en, this message translates to:
-  /// **'Settings'**
-  String get settingsTitle;
-
-  /// Dark mode switch
-  ///
-  /// In en, this message translates to:
-  /// **'Dark Mode'**
-  String get darkMode;
-
-  /// Light mode switch
-  ///
-  /// In en, this message translates to:
-  /// **'Light Mode'**
-  String get lightMode;
-
-  /// Notifications switch
-  ///
-  /// In en, this message translates to:
-  /// **'Notifications'**
-  String get notifications;
-
-  /// Clear data button
-  ///
-  /// In en, this message translates to:
-  /// **'Clear all data'**
-  String get clearData;
-
-  /// Dialog title
-  ///
-  /// In en, this message translates to:
-  /// **'Clear all data'**
-  String get clearDataConfirmTitle;
-
-  /// Dialog content
-  ///
-  /// In en, this message translates to:
-  /// **'This will delete all saved workouts and settings. Continue?'**
-  String get clearDataConfirmContent;
-
-  /// Success snackbar
-  ///
-  /// In en, this message translates to:
-  /// **'Data cleared successfully'**
-  String get dataClearedSuccess;
-
-  /// About button
-  ///
-  /// In en, this message translates to:
-  /// **'About App'**
-  String get aboutApp;
-
-  /// About dialog content
-  ///
-  /// In en, this message translates to:
-  /// **'App for tracking your workouts.'**
-  String get appDescription;
-
-  /// Language setting
-  ///
-  /// In en, this message translates to:
-  /// **'App Language'**
-  String get appLanguage;
-
-  /// Ukrainian language name
-  ///
-  /// In en, this message translates to:
-  /// **'Українська'**
-  String get languageUk;
-
-  /// English language name
-  ///
-  /// In en, this message translates to:
-  /// **'English'**
-  String get languageEn;
-
-  /// Language selector title
-  ///
-  /// In en, this message translates to:
-  /// **'Select Language'**
-  String get selectLanguage;
-
-  /// Logout button
-  ///
-  /// In en, this message translates to:
-  /// **'Log Out'**
-  String get logoutAction;
-
-  /// Logout dialog title
-  ///
-  /// In en, this message translates to:
-  /// **'Log out from profile'**
-  String get logoutTitle;
-
-  /// Logout dialog content
-  ///
-  /// In en, this message translates to:
-  /// **'Do you really want to log out?'**
-  String get logoutConfirm;
-
-  /// Edit profile page title
-  ///
-  /// In en, this message translates to:
-  /// **'Edit Profile'**
-  String get editProfileTitle;
-
-  /// Weight input label
-  ///
-  /// In en, this message translates to:
-  /// **'Weight'**
-  String get weightLabel;
-
   /// Weight validation error
   ///
   /// In en, this message translates to:
   /// **'Weight must be a number > 0'**
   String get errWeightInvalid;
-
-  /// Dialog title
-  ///
-  /// In en, this message translates to:
-  /// **'Delete photo'**
-  String get deletePhotoTitle;
-
-  /// Dialog content
-  ///
-  /// In en, this message translates to:
-  /// **'Do you really want to delete the photo?'**
-  String get deletePhotoConfirm;
-
-  /// Save error message
-  ///
-  /// In en, this message translates to:
-  /// **'Error saving: {error}'**
-  String saveError(String error);
-
-  /// Used in plan editor dialog, e.g. 'on Monday'
-  ///
-  /// In en, this message translates to:
-  /// **'on {day}'**
-  String onDay(String day);
-
-  /// Workout page title
-  ///
-  /// In en, this message translates to:
-  /// **'Workout'**
-  String get workoutTitle;
-
-  /// Month picker title
-  ///
-  /// In en, this message translates to:
-  /// **'Pick month and year'**
-  String get pickMonthYear;
-
-  /// Tooltip for previous year
-  ///
-  /// In en, this message translates to:
-  /// **'Previous year'**
-  String get prevYear;
-
-  /// Tooltip for next year
-  ///
-  /// In en, this message translates to:
-  /// **'Next year'**
-  String get nextYear;
-
-  /// Pop save dialog title
-  ///
-  /// In en, this message translates to:
-  /// **'Save changes?'**
-  String get saveChangesTitle;
-
-  /// Pop save dialog content
-  ///
-  /// In en, this message translates to:
-  /// **'You have unsaved changes. Save before exit?'**
-  String get unsavedChangesMsg;
-
-  /// Navbar home label
-  ///
-  /// In en, this message translates to:
-  /// **'Home'**
-  String get navHome;
-
-  /// Button to return to today's date
-  ///
-  /// In en, this message translates to:
-  /// **'Latest'**
-  String get backToToday;
-
-  /// Navbar profile label
-  ///
-  /// In en, this message translates to:
-  /// **'Profile'**
-  String get navProfile;
-
-  /// Exercise name
-  ///
-  /// In en, this message translates to:
-  /// **'Squat'**
-  String get exSquat;
-
-  /// Exercise name
-  ///
-  /// In en, this message translates to:
-  /// **'Lunge'**
-  String get exLunge;
-
-  /// Exercise name
-  ///
-  /// In en, this message translates to:
-  /// **'Leg Press'**
-  String get exLegPress;
-
-  /// Exercise name
-  ///
-  /// In en, this message translates to:
-  /// **'Wall Sit'**
-  String get exWallSit;
-
-  /// Exercise name
-  ///
-  /// In en, this message translates to:
-  /// **'Leg Extension'**
-  String get exLegExtension;
-
-  /// Exercise name
-  ///
-  /// In en, this message translates to:
-  /// **'Leg Curl'**
-  String get exLegCurl;
-
-  /// Exercise name
-  ///
-  /// In en, this message translates to:
-  /// **'Deadlift'**
-  String get exDeadlift;
-
-  /// Exercise name
-  ///
-  /// In en, this message translates to:
-  /// **'Good Morning'**
-  String get exGoodMorning;
-
-  /// Exercise name
-  ///
-  /// In en, this message translates to:
-  /// **'Standing Calf Raise'**
-  String get exStandingCalfRaise;
-
-  /// Exercise name
-  ///
-  /// In en, this message translates to:
-  /// **'Seated Calf Raise'**
-  String get exSeatedCalfRaise;
-
-  /// Exercise name
-  ///
-  /// In en, this message translates to:
-  /// **'Push-up'**
-  String get exPushUp;
-
-  /// Exercise name
-  ///
-  /// In en, this message translates to:
-  /// **'Pull-up'**
-  String get exPullUp;
-
-  /// Exercise name
-  ///
-  /// In en, this message translates to:
-  /// **'Dip'**
-  String get exDip;
-
-  /// Exercise name
-  ///
-  /// In en, this message translates to:
-  /// **'Bench Press'**
-  String get exBenchPress;
-
-  /// Exercise name
-  ///
-  /// In en, this message translates to:
-  /// **'Machine Fly'**
-  String get exMachineFly;
-
-  /// Exercise name
-  ///
-  /// In en, this message translates to:
-  /// **'Lateral Raise'**
-  String get exLateralRaise;
-
-  /// Exercise name
-  ///
-  /// In en, this message translates to:
-  /// **'Bent Over Row'**
-  String get exBentOverRow;
-
-  /// Exercise name
-  ///
-  /// In en, this message translates to:
-  /// **'Lat Pull-down'**
-  String get exLatPullDown;
-
-  /// Exercise name
-  ///
-  /// In en, this message translates to:
-  /// **'Shoulder Shrug'**
-  String get exShoulderShrug;
-
-  /// Exercise name
-  ///
-  /// In en, this message translates to:
-  /// **'Overhead Press'**
-  String get exOverheadPress;
-
-  /// Exercise name
-  ///
-  /// In en, this message translates to:
-  /// **'Front Raise'**
-  String get exFrontRaise;
-
-  /// Exercise name
-  ///
-  /// In en, this message translates to:
-  /// **'Rear Delt Raise'**
-  String get exRearDeltRaise;
-
-  /// Exercise name
-  ///
-  /// In en, this message translates to:
-  /// **'Upright Row'**
-  String get exUprightRow;
-
-  /// Exercise name
-  ///
-  /// In en, this message translates to:
-  /// **'Face Pull'**
-  String get exFacePull;
-
-  /// Exercise name
-  ///
-  /// In en, this message translates to:
-  /// **'Biceps Curl'**
-  String get exBicepsCurl;
-
-  /// Exercise name
-  ///
-  /// In en, this message translates to:
-  /// **'Triceps Extension'**
-  String get exTricepsExtension;
-
-  /// Exercise name
-  ///
-  /// In en, this message translates to:
-  /// **'Crunch'**
-  String get exCrunch;
-
-  /// Exercise name
-  ///
-  /// In en, this message translates to:
-  /// **'Sit-up'**
-  String get exSitUp;
-
-  /// Exercise name
-  ///
-  /// In en, this message translates to:
-  /// **'Plank'**
-  String get exPlank;
-
-  /// Exercise name
-  ///
-  /// In en, this message translates to:
-  /// **'Leg Raise'**
-  String get exLegRaise;
-
-  /// Exercise name
-  ///
-  /// In en, this message translates to:
-  /// **'Hyperextension'**
-  String get exHyperextension;
-
-  /// Exercise name
-  ///
-  /// In en, this message translates to:
-  /// **'Hammer Curl'**
-  String get exHammerCurl;
-
-  /// Exercise name
-  ///
-  /// In en, this message translates to:
-  /// **'Zottman Curl'**
-  String get exZottmanCurl;
-
-  /// Exercise name
-  ///
-  /// In en, this message translates to:
-  /// **'Machine Row'**
-  String get exMachineRow;
-
-  /// Exercise name
-  ///
-  /// In en, this message translates to:
-  /// **'Hanging Leg Raise'**
-  String get exLegRaiseHang;
-
-  /// Title for plan proposal dialog
-  ///
-  /// In en, this message translates to:
-  /// **'Create your workout plan!'**
-  String get proposalTitle;
-
-  /// Content for plan proposal dialog
-  ///
-  /// In en, this message translates to:
-  /// **'To get the best results, create a weekly schedule. We will remind you about your workouts.'**
-  String get proposalSubtitle;
-
-  /// Button to navigate to plan editor
-  ///
-  /// In en, this message translates to:
-  /// **'Go to Plan'**
-  String get goToPlan;
-
-  /// Button to close proposal dialog
-  ///
-  /// In en, this message translates to:
-  /// **'Maybe later'**
-  String get maybeLater;
-
-  /// Verify Email Page Title
-  ///
-  /// In en, this message translates to:
-  /// **'Verify Email'**
-  String get verifyEmailTitle;
-
-  /// Verify Email Page Message
-  ///
-  /// In en, this message translates to:
-  /// **'A verification email has been sent to your email address. Please follow the link in the email.'**
-  String get verifyEmailMessage;
-
-  /// Resend Email Button
-  ///
-  /// In en, this message translates to:
-  /// **'Resend Email'**
-  String get resendEmail;
-
-  /// Cancel and Logout Button
-  ///
-  /// In en, this message translates to:
-  /// **'Cancel (Logout)'**
-  String get cancelLogout;
-
-  /// Reset Password Dialog Title
-  ///
-  /// In en, this message translates to:
-  /// **'Reset Password'**
-  String get resetPasswordTitle;
-
-  /// Reset Password Dialog Instruction
-  ///
-  /// In en, this message translates to:
-  /// **'Enter your email. We will send you a link to reset your password.'**
-  String get resetPasswordInstruction;
-
-  /// Reset Password Email Sent Message
-  ///
-  /// In en, this message translates to:
-  /// **'Password reset email sent! Check your inbox.'**
-  String get resetPasswordEmailSent;
-
-  /// Send Button
-  ///
-  /// In en, this message translates to:
-  /// **'Send'**
-  String get send;
-
-  /// Google Sign-In Button
-  ///
-  /// In en, this message translates to:
-  /// **'Google'**
-  String get googleButton;
 
   /// Google Sign-In error message
   ///
@@ -1136,29 +440,101 @@ abstract class AppLocalizations {
   /// **'An unknown error occurred'**
   String get errUnknown;
 
-  /// Delete photo text
+  /// Save error message
   ///
   /// In en, this message translates to:
-  /// **'Delete photo'**
-  String get delPhoto;
+  /// **'Error saving: {error}'**
+  String saveError(String error);
 
-  /// Label for the first tab in the bottom navigation bar (Today's workout)
+  /// Navbar home label
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get navHome;
+
+  /// Label for the first tab
   ///
   /// In en, this message translates to:
   /// **'Journal'**
   String get navJournal;
 
-  /// Label for the second tab in the bottom navigation bar (Calendar/Past workouts)
+  /// Label for the second tab
   ///
   /// In en, this message translates to:
   /// **'History'**
   String get navHistory;
 
-  /// Label for the third tab in the bottom navigation bar (Graphs and analysis)
+  /// Label for the third tab
   ///
   /// In en, this message translates to:
   /// **'Statistics'**
   String get navStats;
+
+  /// Navbar profile label
+  ///
+  /// In en, this message translates to:
+  /// **'Profile'**
+  String get navProfile;
+
+  /// Home page title
+  ///
+  /// In en, this message translates to:
+  /// **'Workout Calendar'**
+  String get calendarTitle;
+
+  /// Placeholder when no day selected
+  ///
+  /// In en, this message translates to:
+  /// **'Select a day'**
+  String get selectDay;
+
+  /// Select month button label
+  ///
+  /// In en, this message translates to:
+  /// **'Select month'**
+  String get selectMonth;
+
+  /// Month picker title
+  ///
+  /// In en, this message translates to:
+  /// **'Pick month and year'**
+  String get pickMonthYear;
+
+  /// Tooltip for previous year
+  ///
+  /// In en, this message translates to:
+  /// **'Previous year'**
+  String get prevYear;
+
+  /// Tooltip for next year
+  ///
+  /// In en, this message translates to:
+  /// **'Next year'**
+  String get nextYear;
+
+  /// Button to return to today's date
+  ///
+  /// In en, this message translates to:
+  /// **'Latest'**
+  String get backToToday;
+
+  /// Header for exercise list
+  ///
+  /// In en, this message translates to:
+  /// **'Exercises for'**
+  String get exercisesFor;
+
+  /// Empty state for day
+  ///
+  /// In en, this message translates to:
+  /// **'No exercises for this day'**
+  String get noExercisesToday;
+
+  /// Workout page title
+  ///
+  /// In en, this message translates to:
+  /// **'Workout'**
+  String get workoutTitle;
 
   /// Text on the main button to begin a new workout session
   ///
@@ -1166,41 +542,479 @@ abstract class AppLocalizations {
   /// **'Start Workout'**
   String get startWorkout;
 
-  /// Text on the main button to resume an existing workout session for today
+  /// Text on the main button to resume an existing workout session
   ///
   /// In en, this message translates to:
   /// **'Continue Workout'**
   String get continueWorkout;
 
-  /// Title displayed on the dashboard card showing the current day's workout
+  /// Title displayed on the dashboard card
   ///
   /// In en, this message translates to:
   /// **'Workout for Today'**
   String get workoutToday;
 
-  /// Message displayed on the Journal tab when there is no workout data for the current day
+  /// Message displayed on the Journal tab when empty
   ///
   /// In en, this message translates to:
   /// **'No workout logged for today'**
   String get noWorkoutToday;
 
-  /// Button label to open the exercise picker and add a new exercise to the workout
+  /// Pop save dialog title
   ///
   /// In en, this message translates to:
-  /// **'Add Exercise'**
-  String get addExerciseBtn;
+  /// **'Save changes?'**
+  String get saveChangesTitle;
 
-  /// Button label inside a specific exercise card to add a new set row
+  /// Pop save dialog content
   ///
   /// In en, this message translates to:
-  /// **'Add Set'**
-  String get addSetBtn;
+  /// **'You have unsaved changes. Save before exit?'**
+  String get unsavedChangesMsg;
 
   /// Badge shown when internet connection is restored
   ///
   /// In en, this message translates to:
   /// **'Synchronized'**
   String get synchronized;
+
+  /// Training type selection prompt
+  ///
+  /// In en, this message translates to:
+  /// **'Select the type of training'**
+  String get selectWorkoutType;
+
+  /// Push split name
+  ///
+  /// In en, this message translates to:
+  /// **'Push'**
+  String get splitPush;
+
+  /// Pull split name
+  ///
+  /// In en, this message translates to:
+  /// **'Pull'**
+  String get splitPull;
+
+  /// Legs split name
+  ///
+  /// In en, this message translates to:
+  /// **'Legs'**
+  String get splitLegs;
+
+  /// Upper Body split name
+  ///
+  /// In en, this message translates to:
+  /// **'Upper Body'**
+  String get splitUpper;
+
+  /// Lower Body split name
+  ///
+  /// In en, this message translates to:
+  /// **'Lower Body'**
+  String get splitLower;
+
+  /// Full Body split name
+  ///
+  /// In en, this message translates to:
+  /// **'Full Body'**
+  String get splitFullBody;
+
+  /// Cardio split name
+  ///
+  /// In en, this message translates to:
+  /// **'Cardio'**
+  String get splitCardio;
+
+  /// Custom split name
+  ///
+  /// In en, this message translates to:
+  /// **'Custom'**
+  String get splitCustom;
+
+  /// Button to copy data from last workout of specific type
+  ///
+  /// In en, this message translates to:
+  /// **'Copy previous {type} workout'**
+  String copyPreviousWorkout(String type);
+
+  /// Button label to add a new exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Add Exercise'**
+  String get addExerciseBtn;
+
+  /// Button label inside a specific exercise card
+  ///
+  /// In en, this message translates to:
+  /// **'Add Set'**
+  String get addSetBtn;
+
+  /// Sets count label
+  ///
+  /// In en, this message translates to:
+  /// **'Sets'**
+  String get setsLabel;
+
+  /// Weight/Reps count label
+  ///
+  /// In en, this message translates to:
+  /// **'Weight (kg·reps)'**
+  String get weightRepsLabel;
+
+  /// Label for a single set line in compact view
+  ///
+  /// In en, this message translates to:
+  /// **'Set'**
+  String get setLabelCompact;
+
+  /// Set number label
+  ///
+  /// In en, this message translates to:
+  /// **'Set {number}'**
+  String setNumber(int number);
+
+  /// Delete set menu item
+  ///
+  /// In en, this message translates to:
+  /// **'Delete set {number}'**
+  String deleteSet(int number);
+
+  /// Set count plural
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{1 set} other{{count} sets}}'**
+  String setsCount(int count);
+
+  /// Exercise count plural
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{1 exercise} other{{count} exercises}}'**
+  String exercisesCount(int count);
+
+  /// Weight unit abbreviation
+  ///
+  /// In en, this message translates to:
+  /// **'kg'**
+  String get weightUnit;
+
+  /// Weight input hint
+  ///
+  /// In en, this message translates to:
+  /// **'Kg'**
+  String get weightUnitHint;
+
+  /// Repetitions unit abbreviation
+  ///
+  /// In en, this message translates to:
+  /// **'reps'**
+  String get repsUnit;
+
+  /// Repetitions input hint
+  ///
+  /// In en, this message translates to:
+  /// **'Reps'**
+  String get repsUnitHint;
+
+  /// Calories label
+  ///
+  /// In en, this message translates to:
+  /// **'Calories'**
+  String get calories;
+
+  /// Calories count format
+  ///
+  /// In en, this message translates to:
+  /// **'{count} kcal'**
+  String caloriesCount(String count);
+
+  /// Fallback name
+  ///
+  /// In en, this message translates to:
+  /// **'Exercise'**
+  String get exerciseDefaultName;
+
+  /// Dialog title for custom exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Enter custom exercise name'**
+  String get enterCustomExerciseName;
+
+  /// Hint for custom exercise input
+  ///
+  /// In en, this message translates to:
+  /// **'Exercise name'**
+  String get exerciseNameHint;
+
+  /// Button to add an exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Add exercise'**
+  String get addExercise;
+
+  /// Empty graph state
+  ///
+  /// In en, this message translates to:
+  /// **'Add exercises in calendar to see the graph'**
+  String get addExercisesHint;
+
+  /// Exercise selection hint
+  ///
+  /// In en, this message translates to:
+  /// **'Select exercise'**
+  String get selectExercise;
+
+  /// Delete exercise button
+  ///
+  /// In en, this message translates to:
+  /// **'Delete exercise'**
+  String get deleteExercise;
+
+  /// Search exercise hint
+  ///
+  /// In en, this message translates to:
+  /// **'Search exercise'**
+  String get searchExercise;
+
+  /// Custom name option in exercise picker
+  ///
+  /// In en, this message translates to:
+  /// **'Enter custom name'**
+  String get enterCustomName;
+
+  /// Add exercise FAB tooltip
+  ///
+  /// In en, this message translates to:
+  /// **'Add exercise'**
+  String get addExerciseTooltip;
+
+  /// Edit button tooltip
+  ///
+  /// In en, this message translates to:
+  /// **'Edit exercises'**
+  String get editExercisesTooltip;
+
+  /// Graf page title
+  ///
+  /// In en, this message translates to:
+  /// **'Progress — Charts'**
+  String get chartsTitle;
+
+  /// Header for stats card
+  ///
+  /// In en, this message translates to:
+  /// **'Your activity for'**
+  String get yourProgressFor;
+
+  /// Analytics button tooltip
+  ///
+  /// In en, this message translates to:
+  /// **'Progress'**
+  String get progressTooltip;
+
+  /// Dropdown label
+  ///
+  /// In en, this message translates to:
+  /// **'Exercise:'**
+  String get exerciseLabel;
+
+  /// Dropdown hint
+  ///
+  /// In en, this message translates to:
+  /// **'Choose exercise'**
+  String get chooseExercise;
+
+  /// Tab label
+  ///
+  /// In en, this message translates to:
+  /// **'Month'**
+  String get tabMonth;
+
+  /// Tab label
+  ///
+  /// In en, this message translates to:
+  /// **'Year'**
+  String get tabYear;
+
+  /// Empty graph state range
+  ///
+  /// In en, this message translates to:
+  /// **'No data for selected exercise in this range'**
+  String get noDataRange;
+
+  /// Legend label
+  ///
+  /// In en, this message translates to:
+  /// **'Lifted volume'**
+  String get liftedWeight;
+
+  /// Tooltip text explaining the volume formula
+  ///
+  /// In en, this message translates to:
+  /// **'Volume = Weight × Reps'**
+  String get liftedWeightHelp;
+
+  /// Semantics/Tooltip for the help button itself
+  ///
+  /// In en, this message translates to:
+  /// **'Formula description'**
+  String get liftedWeightDescription;
+
+  /// Summary label
+  ///
+  /// In en, this message translates to:
+  /// **'Total lifted:'**
+  String get totalLifted;
+
+  /// Summary label
+  ///
+  /// In en, this message translates to:
+  /// **'Max weight:'**
+  String get maxWeight;
+
+  /// Summary label
+  ///
+  /// In en, this message translates to:
+  /// **'Points:'**
+  String get pointsCount;
+
+  /// Settings page title
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get settingsTitle;
+
+  /// Edit profile page title
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Profile'**
+  String get editProfileTitle;
+
+  /// Theme selection section title
+  ///
+  /// In en, this message translates to:
+  /// **'App theme'**
+  String get themeSelectionTitle;
+
+  /// Dark mode switch
+  ///
+  /// In en, this message translates to:
+  /// **'Dark Mode'**
+  String get darkMode;
+
+  /// Light mode switch
+  ///
+  /// In en, this message translates to:
+  /// **'Light Mode'**
+  String get lightMode;
+
+  /// System mode switch
+  ///
+  /// In en, this message translates to:
+  /// **'System Mode'**
+  String get systemMode;
+
+  /// Notifications switch
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get notifications;
+
+  /// Language setting
+  ///
+  /// In en, this message translates to:
+  /// **'App Language'**
+  String get appLanguage;
+
+  /// Language selector title
+  ///
+  /// In en, this message translates to:
+  /// **'Select Language'**
+  String get selectLanguage;
+
+  /// Ukrainian language name
+  ///
+  /// In en, this message translates to:
+  /// **'Українська'**
+  String get languageUk;
+
+  /// English language name
+  ///
+  /// In en, this message translates to:
+  /// **'English'**
+  String get languageEn;
+
+  /// About button
+  ///
+  /// In en, this message translates to:
+  /// **'About App'**
+  String get aboutApp;
+
+  /// About dialog content
+  ///
+  /// In en, this message translates to:
+  /// **'App for tracking your workouts.'**
+  String get appDescription;
+
+  /// Delete photo text
+  ///
+  /// In en, this message translates to:
+  /// **'Delete photo'**
+  String get delPhoto;
+
+  /// Dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Delete photo'**
+  String get deletePhotoTitle;
+
+  /// Dialog content
+  ///
+  /// In en, this message translates to:
+  /// **'Do you really want to delete the photo?'**
+  String get deletePhotoConfirm;
+
+  /// Logout button
+  ///
+  /// In en, this message translates to:
+  /// **'Log Out'**
+  String get logoutAction;
+
+  /// Logout dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Log out from profile'**
+  String get logoutTitle;
+
+  /// Logout dialog content
+  ///
+  /// In en, this message translates to:
+  /// **'Do you really want to log out?'**
+  String get logoutConfirm;
+
+  /// Clear data button
+  ///
+  /// In en, this message translates to:
+  /// **'Clear all data'**
+  String get clearData;
+
+  /// Dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Clear all data'**
+  String get clearDataConfirmTitle;
+
+  /// Dialog content
+  ///
+  /// In en, this message translates to:
+  /// **'This will delete all saved workouts and settings. Continue?'**
+  String get clearDataConfirmContent;
+
+  /// Success snackbar
+  ///
+  /// In en, this message translates to:
+  /// **'Data cleared successfully'**
+  String get dataClearedSuccess;
 
   /// Delete Account Button
   ///
@@ -1231,6 +1045,1326 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'For security reasons, please Log Out and Log In again before deleting your account.'**
   String get reLoginRequiredMsg;
+
+  /// Barbell squat
+  ///
+  /// In en, this message translates to:
+  /// **'Squat'**
+  String get exSquat;
+
+  /// Barbell front squat
+  ///
+  /// In en, this message translates to:
+  /// **'Front Squat'**
+  String get exFrontSquat;
+
+  /// Squat holding a dumbbell/kettlebell at chest
+  ///
+  /// In en, this message translates to:
+  /// **'Goblet Squat'**
+  String get exGobletSquat;
+
+  /// Static lunge
+  ///
+  /// In en, this message translates to:
+  /// **'Lunge'**
+  String get exLunge;
+
+  /// Lunges while moving forward
+  ///
+  /// In en, this message translates to:
+  /// **'Walking Lunge'**
+  String get exWalkingLunge;
+
+  /// Single leg squat with rear foot elevated
+  ///
+  /// In en, this message translates to:
+  /// **'Bulgarian Split Squat'**
+  String get exBulgarianSplitSquat;
+
+  /// Leg press machine
+  ///
+  /// In en, this message translates to:
+  /// **'Leg Press'**
+  String get exLegPress;
+
+  /// Static wall sit exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Wall Sit'**
+  String get exWallSit;
+
+  /// Leg extension machine
+  ///
+  /// In en, this message translates to:
+  /// **'Leg Extension'**
+  String get exLegExtension;
+
+  /// Leg curl machine (seated or lying)
+  ///
+  /// In en, this message translates to:
+  /// **'Leg Curl'**
+  String get exLegCurl;
+
+  /// Conventional deadlift
+  ///
+  /// In en, this message translates to:
+  /// **'Deadlift'**
+  String get exDeadlift;
+
+  /// Deadlift with wide stance
+  ///
+  /// In en, this message translates to:
+  /// **'Sumo Deadlift'**
+  String get exSumoDeadlift;
+
+  /// RDL - stiff leg deadlift variant
+  ///
+  /// In en, this message translates to:
+  /// **'Romanian Deadlift'**
+  String get exRomanianDeadlift;
+
+  /// Barbell good morning exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Good Morning'**
+  String get exGoodMorning;
+
+  /// Barbell hip thrust
+  ///
+  /// In en, this message translates to:
+  /// **'Hip Thrust'**
+  String get exHipThrust;
+
+  /// Bodyweight or weighted bridge on floor
+  ///
+  /// In en, this message translates to:
+  /// **'Glute Bridge'**
+  String get exGluteBridge;
+
+  /// Calf raise standing
+  ///
+  /// In en, this message translates to:
+  /// **'Standing Calf Raise'**
+  String get exStandingCalfRaise;
+
+  /// Calf raise seated machine
+  ///
+  /// In en, this message translates to:
+  /// **'Seated Calf Raise'**
+  String get exSeatedCalfRaise;
+
+  /// Bent over calf raise
+  ///
+  /// In en, this message translates to:
+  /// **'Donkey Calf Raise'**
+  String get exDonkeyCalfRaise;
+
+  /// Legs pushing out machine
+  ///
+  /// In en, this message translates to:
+  /// **'Abductor Machine'**
+  String get exAbductorMachine;
+
+  /// Legs squeezing in machine
+  ///
+  /// In en, this message translates to:
+  /// **'Adductor Machine'**
+  String get exAdductorMachine;
+
+  /// Flat barbell bench press
+  ///
+  /// In en, this message translates to:
+  /// **'Bench Press'**
+  String get exBenchPress;
+
+  /// Incline barbell bench press
+  ///
+  /// In en, this message translates to:
+  /// **'Incline Bench Press'**
+  String get exInclineBenchPress;
+
+  /// Decline barbell bench press
+  ///
+  /// In en, this message translates to:
+  /// **'Decline Bench Press'**
+  String get exDeclineBenchPress;
+
+  /// Flat dumbbell press
+  ///
+  /// In en, this message translates to:
+  /// **'Dumbbell Bench Press'**
+  String get exDumbbellBenchPress;
+
+  /// Incline dumbbell press
+  ///
+  /// In en, this message translates to:
+  /// **'Incline Dumbbell Press'**
+  String get exInclineDumbbellPress;
+
+  /// Standard push-up
+  ///
+  /// In en, this message translates to:
+  /// **'Push-up'**
+  String get exPushUp;
+
+  /// Close grip push-up
+  ///
+  /// In en, this message translates to:
+  /// **'Diamond Push-up'**
+  String get exDiamondPushUp;
+
+  /// Triceps/Chest dip on parallel bars
+  ///
+  /// In en, this message translates to:
+  /// **'Dip'**
+  String get exDip;
+
+  /// Chest fly machine
+  ///
+  /// In en, this message translates to:
+  /// **'Machine Fly (Pec Deck)'**
+  String get exMachineFly;
+
+  /// Standing cable fly
+  ///
+  /// In en, this message translates to:
+  /// **'Cable Crossover'**
+  String get exCableCrossover;
+
+  /// Chest fly on bench
+  ///
+  /// In en, this message translates to:
+  /// **'Dumbbell Fly'**
+  String get exDumbbellFly;
+
+  /// Dumbbell pullover on bench
+  ///
+  /// In en, this message translates to:
+  /// **'Pullover'**
+  String get exPullover;
+
+  /// Seated chest press machine
+  ///
+  /// In en, this message translates to:
+  /// **'Chest Press Machine'**
+  String get exChestPressMachine;
+
+  /// Overhand grip pull-up
+  ///
+  /// In en, this message translates to:
+  /// **'Pull-up'**
+  String get exPullUp;
+
+  /// Underhand grip pull-up
+  ///
+  /// In en, this message translates to:
+  /// **'Chin-up'**
+  String get exChinUp;
+
+  /// Cable lat pull-down
+  ///
+  /// In en, this message translates to:
+  /// **'Lat Pull-Down'**
+  String get exLatPullDown;
+
+  /// Narrow grip pull-down
+  ///
+  /// In en, this message translates to:
+  /// **'Close Grip Lat Pull-Down'**
+  String get exCloseGripLatPullDown;
+
+  /// Barbell row
+  ///
+  /// In en, this message translates to:
+  /// **'Bent-Over Row'**
+  String get exBentOverRow;
+
+  /// Barbell row with underhand grip
+  ///
+  /// In en, this message translates to:
+  /// **'Reverse Grip Row'**
+  String get exReverseGripRow;
+
+  /// One arm row on bench
+  ///
+  /// In en, this message translates to:
+  /// **'Single Arm Dumbbell Row'**
+  String get exSingleArmDumbbellRow;
+
+  /// T-Bar row machine or landmine
+  ///
+  /// In en, this message translates to:
+  /// **'T-Bar Row'**
+  String get exTBarRow;
+
+  /// Horizontal cable row
+  ///
+  /// In en, this message translates to:
+  /// **'Seated Cable Row'**
+  String get exSeatedCableRow;
+
+  /// Seated row machine
+  ///
+  /// In en, this message translates to:
+  /// **'Machine Row'**
+  String get exMachineRow;
+
+  /// Cable pulldown with straight arms
+  ///
+  /// In en, this message translates to:
+  /// **'Straight-Arm Pulldown'**
+  String get exStraightArmPulldown;
+
+  /// Back extension bench
+  ///
+  /// In en, this message translates to:
+  /// **'Hyperextension'**
+  String get exHyperextension;
+
+  /// Partial deadlift from rack
+  ///
+  /// In en, this message translates to:
+  /// **'Rack Pull'**
+  String get exRackPull;
+
+  /// Standing barbell shoulder press (Military)
+  ///
+  /// In en, this message translates to:
+  /// **'Overhead Press'**
+  String get exOverheadPress;
+
+  /// Shoulder press seated
+  ///
+  /// In en, this message translates to:
+  /// **'Seated Dumbbell Press'**
+  String get exSeatedDumbbellPress;
+
+  /// Rotating dumbbell shoulder press
+  ///
+  /// In en, this message translates to:
+  /// **'Arnold Press'**
+  String get exArnoldPress;
+
+  /// Dumbbell side raise
+  ///
+  /// In en, this message translates to:
+  /// **'Lateral Raise'**
+  String get exLateralRaise;
+
+  /// Side raise using cable machine
+  ///
+  /// In en, this message translates to:
+  /// **'Cable Lateral Raise'**
+  String get exCableLateralRaise;
+
+  /// Dumbbell front raise
+  ///
+  /// In en, this message translates to:
+  /// **'Front Raise'**
+  String get exFrontRaise;
+
+  /// Bent over reverse fly
+  ///
+  /// In en, this message translates to:
+  /// **'Rear Delt Raise'**
+  String get exRearDeltRaise;
+
+  /// Rear delt machine fly
+  ///
+  /// In en, this message translates to:
+  /// **'Reverse Pec Deck'**
+  String get exReversePecDeck;
+
+  /// Cable pull towards face
+  ///
+  /// In en, this message translates to:
+  /// **'Face Pull'**
+  String get exFacePull;
+
+  /// Barbell/Dumbbell pull to chin
+  ///
+  /// In en, this message translates to:
+  /// **'Upright Row'**
+  String get exUprightRow;
+
+  /// Shoulder shrugs for traps
+  ///
+  /// In en, this message translates to:
+  /// **'Shrug'**
+  String get exShoulderShrug;
+
+  /// Barbell curl
+  ///
+  /// In en, this message translates to:
+  /// **'Biceps Curl'**
+  String get exBicepsCurl;
+
+  /// Standard dumbbell curl
+  ///
+  /// In en, this message translates to:
+  /// **'Dumbbell Curl'**
+  String get exDumbbellCurl;
+
+  /// Neutral grip curl
+  ///
+  /// In en, this message translates to:
+  /// **'Hammer Curl'**
+  String get exHammerCurl;
+
+  /// Curl on preacher bench
+  ///
+  /// In en, this message translates to:
+  /// **'Preacher Curl'**
+  String get exPreacherCurl;
+
+  /// Seated single arm curl
+  ///
+  /// In en, this message translates to:
+  /// **'Concentration Curl'**
+  String get exConcentrationCurl;
+
+  /// Bicep curl on cable machine
+  ///
+  /// In en, this message translates to:
+  /// **'Cable Curl'**
+  String get exCableCurl;
+
+  /// Curl up, rotate, lower down
+  ///
+  /// In en, this message translates to:
+  /// **'Zottman Curl'**
+  String get exZottmanCurl;
+
+  /// Dumbbell overhead extension
+  ///
+  /// In en, this message translates to:
+  /// **'Overhead Triceps Extension'**
+  String get exTricepsExtension;
+
+  /// Lying triceps extension with barbell
+  ///
+  /// In en, this message translates to:
+  /// **'Skull Crusher'**
+  String get exSkullCrusher;
+
+  /// Cable pushdown
+  ///
+  /// In en, this message translates to:
+  /// **'Tricep Pushdown'**
+  String get exTricepPushdown;
+
+  /// Seated dip machine
+  ///
+  /// In en, this message translates to:
+  /// **'Tricep Dip Machine'**
+  String get exTricepDipMachine;
+
+  /// Dip using a bench
+  ///
+  /// In en, this message translates to:
+  /// **'Bench Dip'**
+  String get exBenchDip;
+
+  /// Standard floor crunch
+  ///
+  /// In en, this message translates to:
+  /// **'Crunch'**
+  String get exCrunch;
+
+  /// Kneeling cable crunch
+  ///
+  /// In en, this message translates to:
+  /// **'Cable Crunch'**
+  String get exCableCrunch;
+
+  /// Full sit-up
+  ///
+  /// In en, this message translates to:
+  /// **'Sit-up'**
+  String get exSitUp;
+
+  /// Lying leg raise
+  ///
+  /// In en, this message translates to:
+  /// **'Leg Raise'**
+  String get exLegRaise;
+
+  /// Leg raise hanging from bar
+  ///
+  /// In en, this message translates to:
+  /// **'Hanging Leg Raise'**
+  String get exLegRaiseHang;
+
+  /// Seated torso twist
+  ///
+  /// In en, this message translates to:
+  /// **'Russian Twist'**
+  String get exRussianTwist;
+
+  /// Static plank
+  ///
+  /// In en, this message translates to:
+  /// **'Plank'**
+  String get exPlank;
+
+  /// Static side plank
+  ///
+  /// In en, this message translates to:
+  /// **'Side Plank'**
+  String get exSidePlank;
+
+  /// Rollout with wheel
+  ///
+  /// In en, this message translates to:
+  /// **'Ab Wheel Rollout'**
+  String get exAbWheelRollout;
+
+  /// Elbow to knee crunch
+  ///
+  /// In en, this message translates to:
+  /// **'Bicycle Crunch'**
+  String get exBicycleCrunch;
+
+  /// Diagonal cable twist
+  ///
+  /// In en, this message translates to:
+  /// **'Cable Woodchopper'**
+  String get exWoodchopper;
+
+  /// Running/Walking on treadmill
+  ///
+  /// In en, this message translates to:
+  /// **'Treadmill'**
+  String get exCardioTreadmill;
+
+  /// Elliptical machine
+  ///
+  /// In en, this message translates to:
+  /// **'Elliptical'**
+  String get exCardioElliptical;
+
+  /// Cardio rowing
+  ///
+  /// In en, this message translates to:
+  /// **'Rowing Machine'**
+  String get exCardioRowing;
+
+  /// Walking with heavy weights
+  ///
+  /// In en, this message translates to:
+  /// **'Farmer\'s Walk'**
+  String get exFarmerWalk;
+
+  /// Squat using the Smith machine
+  ///
+  /// In en, this message translates to:
+  /// **'Smith Machine Squat'**
+  String get exSmithMachineSquat;
+
+  /// Hack squat machine
+  ///
+  /// In en, this message translates to:
+  /// **'Hack Squat'**
+  String get exHackSquat;
+
+  /// Stepping backward into a lunge
+  ///
+  /// In en, this message translates to:
+  /// **'Reverse Lunge'**
+  String get exReverseLunge;
+
+  /// Leg curl on seated machine
+  ///
+  /// In en, this message translates to:
+  /// **'Seated Leg Curl'**
+  String get exSeatedLegCurl;
+
+  /// Glute exercise using low cable
+  ///
+  /// In en, this message translates to:
+  /// **'Cable Pull Through'**
+  String get exCablePullThrough;
+
+  /// Bench press with hands close together
+  ///
+  /// In en, this message translates to:
+  /// **'Close Grip Bench Press'**
+  String get exCloseGripBenchPress;
+
+  /// Bench press using Smith machine
+  ///
+  /// In en, this message translates to:
+  /// **'Smith Machine Bench Press'**
+  String get exSmithMachineBenchPress;
+
+  /// Push-ups with added weight
+  ///
+  /// In en, this message translates to:
+  /// **'Weighted Push-up'**
+  String get exWeightedPushUp;
+
+  /// Cable fly from low pulleys
+  ///
+  /// In en, this message translates to:
+  /// **'Low Cable Crossover'**
+  String get exLowCableCrossover;
+
+  /// Chest fly on incline bench
+  ///
+  /// In en, this message translates to:
+  /// **'Incline Dumbbell Fly'**
+  String get exInclineDumbbellFly;
+
+  /// Lat pulldown using V-bar attachment
+  ///
+  /// In en, this message translates to:
+  /// **'V-Bar Pull-Down'**
+  String get exVBarPullDown;
+
+  /// Overhead press using Smith machine
+  ///
+  /// In en, this message translates to:
+  /// **'Smith Machine Shoulder Press'**
+  String get exSmithMachineShoulderPress;
+
+  /// Side delts on lateral raise machine
+  ///
+  /// In en, this message translates to:
+  /// **'Machine Lateral Raise'**
+  String get exMachineLateralRaise;
+
+  /// Front delt raise using low cable
+  ///
+  /// In en, this message translates to:
+  /// **'Cable Front Raise'**
+  String get exCableFrontRaise;
+
+  /// Triceps pushdown using rope attachment
+  ///
+  /// In en, this message translates to:
+  /// **'Rope Pushdown'**
+  String get exRopePushdown;
+
+  /// Triceps extension overhead using cable
+  ///
+  /// In en, this message translates to:
+  /// **'Overhead Cable Extension'**
+  String get exOverheadCableExtension;
+
+  /// Explosive kettlebell swing
+  ///
+  /// In en, this message translates to:
+  /// **'Kettlebell Swing'**
+  String get exKettlebellSwing;
+
+  /// Button to finish workout
+  ///
+  /// In en, this message translates to:
+  /// **'Finish Workout'**
+  String get finishWorkout;
+
+  /// Title for summary dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Workout Summary'**
+  String get workoutSummary;
+
+  /// Label for duration
+  ///
+  /// In en, this message translates to:
+  /// **'Duration'**
+  String get durationLabel;
+
+  /// Message when no history found
+  ///
+  /// In en, this message translates to:
+  /// **'No previous data to compare'**
+  String get noPreviousData;
+
+  /// Encouraging message
+  ///
+  /// In en, this message translates to:
+  /// **'Great Job!'**
+  String get greatJob;
+
+  /// Button to open the summary of the last finished workout
+  ///
+  /// In en, this message translates to:
+  /// **'View Last Report'**
+  String get viewLastReport;
+
+  /// Snackbar message when copying last workout
+  ///
+  /// In en, this message translates to:
+  /// **'Copied from last \${type} workout'**
+  String copyLastWorkout(String type);
+
+  /// Comparison dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Month comparison'**
+  String get comparisonTitle;
+
+  /// Start Value
+  ///
+  /// In en, this message translates to:
+  /// **'Start Value'**
+  String get startValue;
+
+  /// Current Value
+  ///
+  /// In en, this message translates to:
+  /// **'Current Value'**
+  String get currentValue;
+
+  /// Difference
+  ///
+  /// In en, this message translates to:
+  /// **'Difference'**
+  String get difference;
+
+  /// Notifications enabled title
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications Enabled! 🔔'**
+  String get notificationsEnabledTitle;
+
+  /// Notifications enabled body
+  ///
+  /// In en, this message translates to:
+  /// **'You will now receive reminders.'**
+  String get notificationsEnabledBody;
+
+  /// Weight control section title
+  ///
+  /// In en, this message translates to:
+  /// **'Weight Control'**
+  String get weightControl;
+
+  /// Weight chart and reminders subtitle
+  ///
+  /// In en, this message translates to:
+  /// **'Weight Chart and Reminders'**
+  String get weightChartAndReminders;
+
+  /// Health page title
+  ///
+  /// In en, this message translates to:
+  /// **'Health'**
+  String get healthTitle;
+
+  /// Weight change label
+  ///
+  /// In en, this message translates to:
+  /// **'Weight Change'**
+  String get weightChangeLabel;
+
+  /// Gym sessions label
+  ///
+  /// In en, this message translates to:
+  /// **'Gym Sessions'**
+  String get gymSessions;
+
+  /// Reminder settings title
+  ///
+  /// In en, this message translates to:
+  /// **'Reminder Settings'**
+  String get reminderSettings;
+
+  /// Frequency label
+  ///
+  /// In en, this message translates to:
+  /// **'Frequency'**
+  String get frequency;
+
+  /// Daily frequency option
+  ///
+  /// In en, this message translates to:
+  /// **'Daily'**
+  String get daily;
+
+  /// Weekly frequency option
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly'**
+  String get weekly;
+
+  /// Select time label
+  ///
+  /// In en, this message translates to:
+  /// **'Select Time'**
+  String get selectTime;
+
+  /// Reminder set confirmation
+  ///
+  /// In en, this message translates to:
+  /// **'Reminder set for: {time}'**
+  String reminderSet(String time);
+
+  /// Edit weight button
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Weight'**
+  String get editWeight;
+
+  /// Add weight button
+  ///
+  /// In en, this message translates to:
+  /// **'Add Weight'**
+  String get addWeight;
+
+  /// Weight change date range
+  ///
+  /// In en, this message translates to:
+  /// **'Change from {start} to {end}'**
+  String weightDateRange(String start, String end);
+
+  /// Save settings button
+  ///
+  /// In en, this message translates to:
+  /// **'Save Settings'**
+  String get saveSettings;
+
+  /// History tab label
+  ///
+  /// In en, this message translates to:
+  /// **'History'**
+  String get history;
+
+  /// Weight history title
+  ///
+  /// In en, this message translates to:
+  /// **'Weight History'**
+  String get weightHistory;
+
+  /// Weekly goal section title
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly Goal'**
+  String get weeklyGoalTitle;
+
+  /// Weekly goal question
+  ///
+  /// In en, this message translates to:
+  /// **'How many times a week do you plan to workout?'**
+  String get weeklyGoalQuestion;
+
+  /// Times per week label
+  ///
+  /// In en, this message translates to:
+  /// **'Times/Week'**
+  String get timesPerWeek;
+
+  /// Streak weeks label
+  ///
+  /// In en, this message translates to:
+  /// **'{count}-week streak'**
+  String streakWeeks(int count);
+
+  /// Message when weekly goal is met
+  ///
+  /// In en, this message translates to:
+  /// **'Awesome! Weekly goal met.'**
+  String get streakKeep;
+
+  /// Message when weekly goal is not met
+  ///
+  /// In en, this message translates to:
+  /// **'Workout {count} more times to keep the streak!'**
+  String streakBurn(int count);
+
+  /// Message when streak is lost
+  ///
+  /// In en, this message translates to:
+  /// **'Streak lost. Start a new one this week!'**
+  String get streakLostMsg;
+
+  /// Label for week in streak display
+  ///
+  /// In en, this message translates to:
+  /// **'Week'**
+  String get weekLabel;
+
+  /// Weekly goal label
+  ///
+  /// In en, this message translates to:
+  /// **'Goal {count}x/week'**
+  String goalLabel(int count);
+
+  /// Skip button text
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get skip;
+
+  /// Set later button text
+  ///
+  /// In en, this message translates to:
+  /// **'Set later'**
+  String get setLater;
+
+  /// Text shown when weight is not provided
+  ///
+  /// In en, this message translates to:
+  /// **'Not set'**
+  String get weightNotSet;
+
+  /// Banner text prompting user to enter their weight
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your weight so we can calculate burned calories!'**
+  String get weightMissingBanner;
+
+  /// Button to move to the next exercise during workout
+  ///
+  /// In en, this message translates to:
+  /// **'Next Exercise'**
+  String get nextExercise;
+
+  /// Confirmation message for sent friend request
+  ///
+  /// In en, this message translates to:
+  /// **'Friend request via link successfully sent!'**
+  String get friendRequestSent;
+
+  /// Error message for addition errors
+  ///
+  /// In en, this message translates to:
+  /// **'Addition error: {error}'**
+  String additionError(String error);
+
+  /// Hint text shown when entering a username
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a nickname to find friends'**
+  String get enterUsernameHint;
+
+  /// Error message when the username field is empty
+  ///
+  /// In en, this message translates to:
+  /// **'Nickname cannot be empty'**
+  String get usernameEmptyError;
+
+  /// Error message when the username is less than 3 characters
+  ///
+  /// In en, this message translates to:
+  /// **'Minimum 3 characters'**
+  String get usernameTooShortError;
+
+  /// Status message while checking if the username is taken
+  ///
+  /// In en, this message translates to:
+  /// **'Checking availability...'**
+  String get usernameChecking;
+
+  /// Status message when the username is free to use
+  ///
+  /// In en, this message translates to:
+  /// **'Nickname is available!'**
+  String get usernameAvailable;
+
+  /// Status message when the username is already registered
+  ///
+  /// In en, this message translates to:
+  /// **'This nickname is already taken'**
+  String get usernameTaken;
+
+  /// Error message if saving the username fails
+  ///
+  /// In en, this message translates to:
+  /// **'Error saving. Try another nickname.'**
+  String get usernameSaveError;
+
+  /// Title of the create username page
+  ///
+  /// In en, this message translates to:
+  /// **'Your Unique Nickname'**
+  String get uniqueUsernameTitle;
+
+  /// Description explaining why a username is needed
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a nickname so friends can easily find you in the Gym Tracker community.'**
+  String get chooseUsernameDesc;
+
+  /// Label for the username text field
+  ///
+  /// In en, this message translates to:
+  /// **'Nickname'**
+  String get usernameLabel;
+
+  /// Rules for creating a username
+  ///
+  /// In en, this message translates to:
+  /// **'Only lowercase letters allowed (no spaces).\nThis nickname is permanent and cannot be changed.'**
+  String get usernameRulesDesc;
+
+  /// Button text to save the username and proceed
+  ///
+  /// In en, this message translates to:
+  /// **'Save and Continue'**
+  String get saveAndContinue;
+
+  /// Title for the weight reminder dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Weight Reminders ⚖️'**
+  String get weightReminderTitle;
+
+  /// Body text for the weight reminder dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Regular weight tracking helps accurately monitor your progress. Do you want to set up reminders so you don\'t forget?'**
+  String get weightReminderBody;
+
+  /// Button text to decline setting up reminders
+  ///
+  /// In en, this message translates to:
+  /// **'No, thanks'**
+  String get noThanks;
+
+  /// Button text to accept setting up reminders
+  ///
+  /// In en, this message translates to:
+  /// **'Yes, set up'**
+  String get yesSetUp;
+
+  /// Message shown when notification permissions are blocked
+  ///
+  /// In en, this message translates to:
+  /// **'Permission blocked. Please enable notifications in phone settings.'**
+  String get permissionBlocked;
+
+  /// Button text to open app settings
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get settingsAction;
+
+  /// Text shown when the user's last seen status is unknown
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown'**
+  String get unknownStatus;
+
+  /// Shows the date when the friend was last active
+  ///
+  /// In en, this message translates to:
+  /// **'Last seen in gym: {date}'**
+  String lastSeenInGym(String date);
+
+  /// Label for the weight statistic
+  ///
+  /// In en, this message translates to:
+  /// **'Weight'**
+  String get statWeight;
+
+  /// Label for the workout streak statistic
+  ///
+  /// In en, this message translates to:
+  /// **'Streak'**
+  String get statStreak;
+
+  /// Shows the number of weeks for a streak
+  ///
+  /// In en, this message translates to:
+  /// **'{count} w.'**
+  String statWeeks(String count);
+
+  /// Label for the monthly workouts statistic
+  ///
+  /// In en, this message translates to:
+  /// **'This month'**
+  String get statPerMonth;
+
+  /// Shows the number of workouts
+  ///
+  /// In en, this message translates to:
+  /// **'{count} w.'**
+  String statWorkouts(String count);
+
+  /// Title for the monthly records section
+  ///
+  /// In en, this message translates to:
+  /// **'🏆 Records this month'**
+  String get recordsThisMonth;
+
+  /// Message shown when there are no records for the current month
+  ///
+  /// In en, this message translates to:
+  /// **'No records for this month yet 😔'**
+  String get noRecordsThisMonth;
+
+  /// Title for the delete friend confirmation dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Remove Friend'**
+  String get deleteFriendTitle;
+
+  /// Confirmation message for removing a friend
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to remove {name} from your friends?'**
+  String deleteFriendConfirmBody(String name);
+
+  /// Generic cancel button text
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
+
+  /// Generic delete button text
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get delete;
+
+  /// Success message after removing a friend
+  ///
+  /// In en, this message translates to:
+  /// **'{name} removed from friends'**
+  String friendDeletedSuccess(String name);
+
+  /// Error message when deleting a friend fails
+  ///
+  /// In en, this message translates to:
+  /// **'Delete error: {error}'**
+  String deleteError(String error);
+
+  /// Title for the friends page
+  ///
+  /// In en, this message translates to:
+  /// **'Friends & Community'**
+  String get friendsAndCommunity;
+
+  /// Tab title for the user's friends list
+  ///
+  /// In en, this message translates to:
+  /// **'My Friends'**
+  String get myFriendsTab;
+
+  /// Tab title for finding friends and managing requests
+  ///
+  /// In en, this message translates to:
+  /// **'Search / Requests'**
+  String get searchRequestsTab;
+
+  /// Message shown when the friends list is empty
+  ///
+  /// In en, this message translates to:
+  /// **'You don\'t have any friends yet'**
+  String get noFriendsYet;
+
+  /// Button text to navigate to the find friends tab
+  ///
+  /// In en, this message translates to:
+  /// **'Find a friend'**
+  String get findFriendBtn;
+
+  /// Text shown when the friend's last workout was very long ago
+  ///
+  /// In en, this message translates to:
+  /// **'A long time ago'**
+  String get longTimeAgo;
+
+  /// Text shown when a friend has no workout records
+  ///
+  /// In en, this message translates to:
+  /// **'No records'**
+  String get noRecords;
+
+  /// Prefix for showing the best monthly record
+  ///
+  /// In en, this message translates to:
+  /// **'Month record: '**
+  String get monthlyRecordPrefix;
+
+  /// Button text to share the user's profile link
+  ///
+  /// In en, this message translates to:
+  /// **'Share profile link'**
+  String get shareProfileLink;
+
+  /// Text indicating the manual search option
+  ///
+  /// In en, this message translates to:
+  /// **'Or find manually'**
+  String get orFindManually;
+
+  /// Hint text for the friend search input
+  ///
+  /// In en, this message translates to:
+  /// **'Enter Email or @username'**
+  String get searchFriendHint;
+
+  /// Helper text for the friend search input
+  ///
+  /// In en, this message translates to:
+  /// **'example@gmail.com or @gymbro'**
+  String get searchFriendHelper;
+
+  /// Button text to send a friend request
+  ///
+  /// In en, this message translates to:
+  /// **'Add'**
+  String get addBtn;
+
+  /// Title for the incoming friend requests section
+  ///
+  /// In en, this message translates to:
+  /// **'Incoming requests'**
+  String get incomingRequests;
+
+  /// Message shown when there are no incoming friend requests
+  ///
+  /// In en, this message translates to:
+  /// **'No new requests'**
+  String get noNewRequests;
+
+  /// Text used when sharing the profile link
+  ///
+  /// In en, this message translates to:
+  /// **'Hi! Add me as a friend in Gym Tracker to follow my workouts: {link}'**
+  String shareFriendText(String link);
+
+  /// Subject line when sharing the profile link via email
+  ///
+  /// In en, this message translates to:
+  /// **'Gym Tracker friend request'**
+  String get shareFriendSubject;
+
+  /// Success message when a friend request is sent
+  ///
+  /// In en, this message translates to:
+  /// **'Request sent to {email}!'**
+  String requestSentTo(String email);
+
+  /// Error message when a searched user is not found
+  ///
+  /// In en, this message translates to:
+  /// **'User not found'**
+  String get userNotFound;
+
+  /// Error message when trying to add oneself as a friend
+  ///
+  /// In en, this message translates to:
+  /// **'You cannot add yourself'**
+  String get cannotAddSelf;
+
+  /// Error message for invalid user data
+  ///
+  /// In en, this message translates to:
+  /// **'User data error'**
+  String get userDataError;
+
+  /// Generic success message for a sent friend request
+  ///
+  /// In en, this message translates to:
+  /// **'Request sent!'**
+  String get requestSentSuccess;
+
+  /// Text for the previous period option
+  ///
+  /// In en, this message translates to:
+  /// **'Previous period'**
+  String get previousPeriod;
+
+  /// Title for the enable notifications dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Enable Notifications? 🔔'**
+  String get enableNotificationsTitle;
+
+  /// Body text for the enable notifications dialog
+  ///
+  /// In en, this message translates to:
+  /// **'This will allow us to send you reminders about your workouts and weight tracking so you don\'t lose your progress.'**
+  String get enableNotificationsBody;
+
+  /// Error message when picking an avatar fails
+  ///
+  /// In en, this message translates to:
+  /// **'Error picking photo: {error}'**
+  String errorPickingPhoto(String error);
+
+  /// Default fallback username when none is set
+  ///
+  /// In en, this message translates to:
+  /// **'User'**
+  String get defaultUser;
+
+  /// Label for the friends stat card
+  ///
+  /// In en, this message translates to:
+  /// **'Friends'**
+  String get friendsLabel;
+
+  /// Label for the community stat card value
+  ///
+  /// In en, this message translates to:
+  /// **'Community'**
+  String get communityLabel;
+
+  /// Label for the total time spent in the gym
+  ///
+  /// In en, this message translates to:
+  /// **'In Gym'**
+  String get inGymLabel;
+
+  /// Short abbreviation for hours
+  ///
+  /// In en, this message translates to:
+  /// **'h'**
+  String get hoursShort;
+
+  /// Short abbreviation for minutes
+  ///
+  /// In en, this message translates to:
+  /// **'m'**
+  String get minutesShort;
+
+  /// Label for the average workout duration
+  ///
+  /// In en, this message translates to:
+  /// **'Average Time'**
+  String get avarageTimeLabel;
+
+  /// Button to open the personal records page
+  ///
+  /// In en, this message translates to:
+  /// **'Personal Records'**
+  String get personalRecordsTitle;
+
+  /// Short abbreviation for one rep max
+  ///
+  /// In en, this message translates to:
+  /// **'1RM'**
+  String get oneRepMaxShort;
+
+  /// Tooltip explaining what the one rep max stat means
+  ///
+  /// In en, this message translates to:
+  /// **'Estimated maximum weight you can lift for one repetition based on your workout history.'**
+  String get oneRepMaxTooltip;
+
+  /// Label for cardio duration in minutes
+  ///
+  /// In en, this message translates to:
+  /// **'Min'**
+  String get cardioMin;
+
+  /// Label for cardio distance in kilometers
+  ///
+  /// In en, this message translates to:
+  /// **'Km'**
+  String get cardioKm;
+
+  /// Button text to add weight to a bodyweight exercise
+  ///
+  /// In en, this message translates to:
+  /// **'+ Weight'**
+  String get bodyweightAddWeight;
 }
 
 class _AppLocalizationsDelegate
