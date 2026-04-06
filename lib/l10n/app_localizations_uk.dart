@@ -1216,4 +1216,13 @@ class AppLocalizationsUk extends AppLocalizations {
   @override
   String get oneRepMaxTooltip =>
       'Оцінка максимальної ваги, яку ви можете підняти за одну повторювання, базуючись на вашому історії тренувань.';
+
+  @override
+  String get cardioMin => 'Хв';
+
+  @override
+  String get cardioKm => 'Км';
+
+  @override
+  String get bodyweightAddWeight => '+ Вага';
 }

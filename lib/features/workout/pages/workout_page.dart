@@ -49,15 +49,19 @@ class _WorkoutPageState extends State<WorkoutPage> {
   final List<TextEditingController> _nameCtrls = [];
   final List<List<TextEditingController>> _weightCtrls = [];
   final List<List<TextEditingController>> _repsCtrls = [];
+  final List<List<TextEditingController>> _timeCtrls = [];
+  final List<List<TextEditingController>> _distanceCtrls = [];
+
   final List<List<FocusNode>> _weightFocusNodes = [];
   final List<List<FocusNode>> _repsFocusNodes = [];
+  final List<List<FocusNode>> _timeFocusNodes = [];
+  final List<List<FocusNode>> _distanceFocusNodes = [];
 
   @override
   void initState() {
     super.initState();
     _currentType = widget.workoutType.toLowerCase().trim();
 
-    // Валідація типу
     if (!WorkoutTypeSelector.validTypes.contains(_currentType)) {
       _currentType = 'custom';
     }
@@ -92,15 +96,11 @@ class _WorkoutPageState extends State<WorkoutPage> {
   }
 
   void _copyFromLastSession(AppLocalizations loc) {
-    // ДОДАЛИ ПАРАМЕТР
     if (_lastMatchingWorkout == null) return;
-    final catalog = getExerciseCatalog(
-      loc,
-    ); // Отримуємо каталог для поточної мови
+    final catalog = getExerciseCatalog(loc);
 
     setState(() {
       _exercises = _lastMatchingWorkout!.exercises.map((e) {
-        // ПЕРЕКЛАДАЄМО НАЗВУ
         String localizedName = e.name;
         if (e.exerciseId != null && e.exerciseId!.isNotEmpty) {
           final found = catalog.firstWhere(
@@ -113,7 +113,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
         }
 
         return e.copyWith(
-          name: localizedName, // Підставляємо перекладену назву
+          name: localizedName,
           sets: e.sets.map((s) => s.copyWith(isCompleted: false)).toList(),
         );
       }).toList();
@@ -128,7 +128,6 @@ class _WorkoutPageState extends State<WorkoutPage> {
     }
   }
 
-  // НОВЕ: Метод для перемикання активної вправи і фокусу
   void _setActiveExercise(int index) {
     setState(() => _activeExerciseIndex = index);
     _saveActiveIndex(index);
@@ -136,20 +135,20 @@ class _WorkoutPageState extends State<WorkoutPage> {
   }
 
   void _focusOnExercise(int index) {
-    // Чекаємо поки UI перебудується (розгорне картку), потім ставимо фокус
     Future.delayed(const Duration(milliseconds: 300), () {
       if (!mounted) return;
       if (index < _weightFocusNodes.length &&
           _weightFocusNodes[index].isNotEmpty) {
         _weightFocusNodes[index][0].requestFocus();
+      } else if (index < _timeFocusNodes.length &&
+          _timeFocusNodes[index].isNotEmpty) {
+        _timeFocusNodes[index][0].requestFocus();
       }
     });
   }
 
-  // Завантаження збереженого індексу
   Future<void> _loadActiveIndex() async {
     final prefs = await SharedPreferences.getInstance();
-    // Ключ унікальний для типу тренування, щоб не плутати Leg Day з Push Day
     final savedIndex = prefs.getInt('active_index_$_currentType') ?? 0;
 
     if (mounted && savedIndex < _exercises.length) {
@@ -160,13 +159,10 @@ class _WorkoutPageState extends State<WorkoutPage> {
     }
   }
 
-  // Збереження індексу при зміні
   Future<void> _saveActiveIndex(int index) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt('active_index_$_currentType', index);
   }
-
-  // --- CRUD Operations ---
 
   Future<void> _addExercise() async {
     final selected = await showExercisePicker(context);
@@ -183,32 +179,40 @@ class _WorkoutPageState extends State<WorkoutPage> {
       _exercises.add(
         WorkoutExercise(name: name, exerciseId: id, sets: [SetData()]),
       );
-
-      // Ініціалізуємо контролери для нової вправи
       _addControllersForNewExercise(name);
-
-      // Робимо нову вправу активною
       _activeExerciseIndex = _exercises.length - 1;
     });
 
     _focusOnExercise(_activeExerciseIndex);
   }
 
-  // Оптимізована версія _initControllers для додавання однієї вправи (щоб не перестворювати все)
   void _addControllersForNewExercise(String name) {
     _nameCtrls.add(TextEditingController(text: name));
+
     final wCtrl = TextEditingController();
     final rCtrl = TextEditingController();
+    final tCtrl = TextEditingController();
+    final dCtrl = TextEditingController();
+
     final wNode = FocusNode();
     final rNode = FocusNode();
+    final tNode = FocusNode();
+    final dNode = FocusNode();
 
     _addFocusListener(wNode, wCtrl);
     _addFocusListener(rNode, rCtrl);
+    _addFocusListener(tNode, tCtrl);
+    _addFocusListener(dNode, dCtrl);
 
     _weightCtrls.add([wCtrl]);
     _repsCtrls.add([rCtrl]);
+    _timeCtrls.add([tCtrl]);
+    _distanceCtrls.add([dCtrl]);
+
     _weightFocusNodes.add([wNode]);
     _repsFocusNodes.add([rNode]);
+    _timeFocusNodes.add([tNode]);
+    _distanceFocusNodes.add([dNode]);
   }
 
   void _addSet(int exIndex) {
@@ -217,23 +221,44 @@ class _WorkoutPageState extends State<WorkoutPage> {
           ? _exercises[exIndex].sets.last
           : null;
       _exercises[exIndex].sets.add(
-        SetData(weight: lastSet?.weight, reps: lastSet?.reps),
+        SetData(
+          weight: lastSet?.weight,
+          reps: lastSet?.reps,
+          timeInMinutes: lastSet?.timeInMinutes,
+          distance: lastSet?.distance,
+        ),
       );
 
-      // Додаємо контролери для нового сету
       final weightCtrl = TextEditingController(
         text: formatDouble(lastSet?.weight),
       );
       final repsCtrl = TextEditingController(text: formatDouble(lastSet?.reps));
+      final timeCtrl = TextEditingController(
+        text: formatDouble(lastSet?.timeInMinutes),
+      );
+      final distanceCtrl = TextEditingController(
+        text: formatDouble(lastSet?.distance),
+      );
+
       final wNode = FocusNode();
       final rNode = FocusNode();
+      final tNode = FocusNode();
+      final dNode = FocusNode();
+
       _addFocusListener(wNode, weightCtrl);
       _addFocusListener(rNode, repsCtrl);
+      _addFocusListener(tNode, timeCtrl);
+      _addFocusListener(dNode, distanceCtrl);
 
       _weightCtrls[exIndex].add(weightCtrl);
       _repsCtrls[exIndex].add(repsCtrl);
+      _timeCtrls[exIndex].add(timeCtrl);
+      _distanceCtrls[exIndex].add(distanceCtrl);
+
       _weightFocusNodes[exIndex].add(wNode);
       _repsFocusNodes[exIndex].add(rNode);
+      _timeFocusNodes[exIndex].add(tNode);
+      _distanceFocusNodes[exIndex].add(dNode);
     });
   }
 
@@ -242,8 +267,13 @@ class _WorkoutPageState extends State<WorkoutPage> {
       _exercises[exIndex].sets.removeAt(setIndex);
       _weightCtrls[exIndex].removeAt(setIndex).dispose();
       _repsCtrls[exIndex].removeAt(setIndex).dispose();
+      _timeCtrls[exIndex].removeAt(setIndex).dispose();
+      _distanceCtrls[exIndex].removeAt(setIndex).dispose();
+
       _weightFocusNodes[exIndex].removeAt(setIndex).dispose();
       _repsFocusNodes[exIndex].removeAt(setIndex).dispose();
+      _timeFocusNodes[exIndex].removeAt(setIndex).dispose();
+      _distanceFocusNodes[exIndex].removeAt(setIndex).dispose();
     });
   }
 
@@ -251,24 +281,43 @@ class _WorkoutPageState extends State<WorkoutPage> {
     setState(() {
       _exercises.removeAt(index);
       _nameCtrls.removeAt(index).dispose();
+
       for (var c in _weightCtrls[index]) {
         c.dispose();
       }
       for (var c in _repsCtrls[index]) {
         c.dispose();
       }
+      for (var c in _timeCtrls[index]) {
+        c.dispose();
+      }
+      for (var c in _distanceCtrls[index]) {
+        c.dispose();
+      }
+
       for (var f in _weightFocusNodes[index]) {
         f.dispose();
       }
       for (var f in _repsFocusNodes[index]) {
         f.dispose();
       }
+      for (var f in _timeFocusNodes[index]) {
+        f.dispose();
+      }
+      for (var f in _distanceFocusNodes[index]) {
+        f.dispose();
+      }
+
       _weightCtrls.removeAt(index);
       _repsCtrls.removeAt(index);
+      _timeCtrls.removeAt(index);
+      _distanceCtrls.removeAt(index);
+
       _weightFocusNodes.removeAt(index);
       _repsFocusNodes.removeAt(index);
+      _timeFocusNodes.removeAt(index);
+      _distanceFocusNodes.removeAt(index);
 
-      // Коригування активного індексу
       if (_activeExerciseIndex >= _exercises.length) {
         _activeExerciseIndex = _exercises.isNotEmpty
             ? _exercises.length - 1
@@ -277,51 +326,91 @@ class _WorkoutPageState extends State<WorkoutPage> {
     });
   }
 
-  // --- Controllers & Listeners ---
-
   void _initControllers() {
     for (var c in _nameCtrls) {
       c.dispose();
     }
-    for (var l in _weightCtrls)
-      // ignore: curly_braces_in_flow_control_structures
+    for (var l in _weightCtrls) {
       for (var c in l) {
         c.dispose();
       }
-    for (var l in _repsCtrls)
-      // ignore: curly_braces_in_flow_control_structures
+    }
+    for (var l in _repsCtrls) {
       for (var c in l) {
         c.dispose();
       }
+    }
+    for (var l in _timeCtrls) {
+      for (var c in l) {
+        c.dispose();
+      }
+    }
+    for (var l in _distanceCtrls) {
+      for (var c in l) {
+        c.dispose();
+      }
+    }
+
     _nameCtrls.clear();
     _weightCtrls.clear();
     _repsCtrls.clear();
+    _timeCtrls.clear();
+    _distanceCtrls.clear();
+
     _weightFocusNodes.clear();
     _repsFocusNodes.clear();
+    _timeFocusNodes.clear();
+    _distanceFocusNodes.clear();
 
     for (var ex in _exercises) {
       _nameCtrls.add(TextEditingController(text: ex.name));
       final wList = <TextEditingController>[];
       final rList = <TextEditingController>[];
+      final tList = <TextEditingController>[];
+      final dList = <TextEditingController>[];
+
       final wfList = <FocusNode>[];
       final rfList = <FocusNode>[];
+      final tfList = <FocusNode>[];
+      final dfList = <FocusNode>[];
 
       for (var set in ex.sets) {
         final wCtrl = TextEditingController(text: formatDouble(set.weight));
         final rCtrl = TextEditingController(text: formatDouble(set.reps));
+        final tCtrl = TextEditingController(
+          text: formatDouble(set.timeInMinutes),
+        );
+        final dCtrl = TextEditingController(text: formatDouble(set.distance));
+
         final wNode = FocusNode();
         final rNode = FocusNode();
+        final tNode = FocusNode();
+        final dNode = FocusNode();
+
         _addFocusListener(wNode, wCtrl);
         _addFocusListener(rNode, rCtrl);
+        _addFocusListener(tNode, tCtrl);
+        _addFocusListener(dNode, dCtrl);
+
         wList.add(wCtrl);
         rList.add(rCtrl);
+        tList.add(tCtrl);
+        dList.add(dCtrl);
+
         wfList.add(wNode);
         rfList.add(rNode);
+        tfList.add(tNode);
+        dfList.add(dNode);
       }
       _weightCtrls.add(wList);
       _repsCtrls.add(rList);
+      _timeCtrls.add(tList);
+      _distanceCtrls.add(dList);
+
       _weightFocusNodes.add(wfList);
       _repsFocusNodes.add(rfList);
+      _timeFocusNodes.add(tfList);
+      _distanceFocusNodes.add(dfList);
     }
   }
 
@@ -348,13 +437,20 @@ class _WorkoutPageState extends State<WorkoutPage> {
       for (int j = 0; j < ex.sets.length; j++) {
         String wText = '';
         String rText = '';
+        String tText = '';
+        String dText = '';
+
         if (i < _weightCtrls.length && j < _weightCtrls[i].length) {
           wText = _weightCtrls[i][j].text;
           rText = _repsCtrls[i][j].text;
+          tText = _timeCtrls[i][j].text;
+          dText = _distanceCtrls[i][j].text;
         }
         sets.add({
           'weight': double.tryParse(wText.replaceAll(',', '.')),
-          'reps': int.tryParse(rText),
+          'reps': double.tryParse(rText.replaceAll(',', '.')),
+          'timeInMinutes': double.tryParse(tText.replaceAll(',', '.')),
+          'distance': double.tryParse(dText.replaceAll(',', '.')),
           'isCompleted': ex.sets[j].isCompleted,
         });
       }
@@ -375,10 +471,18 @@ class _WorkoutPageState extends State<WorkoutPage> {
     for (var i = 0; i < _exercises.length; i++) {
       _exercises[i].name = _nameCtrls[i].text;
       for (var j = 0; j < _exercises[i].sets.length; j++) {
-        final weightText = _weightCtrls[i][j].text.replaceAll(',', '.');
-        final repsText = _repsCtrls[i][j].text;
-        _exercises[i].sets[j].weight = double.tryParse(weightText);
-        _exercises[i].sets[j].reps = double.tryParse(repsText);
+        _exercises[i].sets[j].weight = double.tryParse(
+          _weightCtrls[i][j].text.replaceAll(',', '.'),
+        );
+        _exercises[i].sets[j].reps = double.tryParse(
+          _repsCtrls[i][j].text.replaceAll(',', '.'),
+        );
+        _exercises[i].sets[j].timeInMinutes = double.tryParse(
+          _timeCtrls[i][j].text.replaceAll(',', '.'),
+        );
+        _exercises[i].sets[j].distance = double.tryParse(
+          _distanceCtrls[i][j].text.replaceAll(',', '.'),
+        );
       }
     }
     final String idToSave = widget.date.toIso8601String().split('T').first;
@@ -411,37 +515,55 @@ class _WorkoutPageState extends State<WorkoutPage> {
     for (var c in _nameCtrls) {
       c.dispose();
     }
-    for (var l in _weightCtrls)
-      // ignore: curly_braces_in_flow_control_structures
+    for (var l in _weightCtrls) {
       for (var c in l) {
         c.dispose();
       }
-    for (var l in _repsCtrls)
-      // ignore: curly_braces_in_flow_control_structures
+    }
+    for (var l in _repsCtrls) {
       for (var c in l) {
         c.dispose();
       }
-    for (var l in _weightFocusNodes)
-      // ignore: curly_braces_in_flow_control_structures
+    }
+    for (var l in _timeCtrls) {
+      for (var c in l) {
+        c.dispose();
+      }
+    }
+    for (var l in _distanceCtrls) {
+      for (var c in l) {
+        c.dispose();
+      }
+    }
+
+    for (var l in _weightFocusNodes) {
       for (var f in l) {
         f.dispose();
       }
-    for (var l in _repsFocusNodes)
-      // ignore: curly_braces_in_flow_control_structures
+    }
+    for (var l in _repsFocusNodes) {
       for (var f in l) {
         f.dispose();
       }
+    }
+    for (var l in _timeFocusNodes) {
+      for (var f in l) {
+        f.dispose();
+      }
+    }
+    for (var l in _distanceFocusNodes) {
+      for (var f in l) {
+        f.dispose();
+      }
+    }
     super.dispose();
   }
-
-  // --- UI COMPONENTS ---
 
   Widget _buildCompactCard(int index, AppLocalizations loc) {
     final exercise = _exercises[index];
     final titleText = exercise.name.isEmpty
         ? loc.exerciseDefaultName
         : exercise.name;
-
     final catalog = getExerciseCatalog(loc);
     ExerciseInfo? info;
     try {
@@ -506,12 +628,20 @@ class _WorkoutPageState extends State<WorkoutPage> {
 
   Widget _buildExpandedCard(int index, AppLocalizations loc) {
     final exercise = _exercises[index];
+    final catalog = getExerciseCatalog(loc);
+
+    ExerciseType exType = ExerciseType.strength;
+    try {
+      if (exercise.exerciseId != null) {
+        exType = catalog.firstWhere((e) => e.id == exercise.exerciseId).type;
+      } else {
+        exType = catalog.firstWhere((e) => e.name == exercise.name).type;
+      }
+    } catch (_) {}
+
     return Card(
-      margin: const EdgeInsets.symmetric(
-        vertical: 8,
-        horizontal: 0,
-      ), // Активна картка трохи ширша (0 margin) або з тінями
-      elevation: 4, // Активна картка виділяється тінню
+      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 0),
+      elevation: 4,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
         side: BorderSide(
@@ -545,7 +675,6 @@ class _WorkoutPageState extends State<WorkoutPage> {
               },
               onRemoveExercise: () => _removeExercise(index),
               buildIconForName: (nameOrId) {
-                final catalog = getExerciseCatalog(loc);
                 var found = catalog.firstWhere(
                   (e) => e.id == nameOrId,
                   orElse: () =>
@@ -567,28 +696,26 @@ class _WorkoutPageState extends State<WorkoutPage> {
                 return CircleAvatar(
                   radius: 20,
                   backgroundColor: color.withValues(alpha: 0.12),
-                  child: ExerciseIcon(
-                    exercise: found, // Ваша змінна з інформацією про вправу
-                    size: 24, // Розмір іконки (трохи менший за діаметр кола 40)
-                    color:
-                        color, // Цей параметр перефарбує чорні лінії PNG у колір теми
-                  ),
+                  child: ExerciseIcon(exercise: found, size: 24, color: color),
                 );
               },
             ),
             const Divider(),
             ExerciseSetsList(
               exercise: exercise,
+              exerciseType: exType,
               weightControllers: _weightCtrls[index],
               repsControllers: _repsCtrls[index],
-              onAddSet: () => _addSet(index),
+              timeControllers: _timeCtrls[index],
+              distanceControllers: _distanceCtrls[index],
               weightFocusNodes: _weightFocusNodes[index],
               repsFocusNodes: _repsFocusNodes[index],
+              timeFocusNodes: _timeFocusNodes[index],
+              distanceFocusNodes: _distanceFocusNodes[index],
+              onAddSet: () => _addSet(index),
               onRemoveSet: (setIndex) => _removeSet(index, setIndex),
               formatDouble: formatDouble,
             ),
-
-            // Кнопка "Наступна вправа" для зручності (опціонально)
             if (index < _exercises.length - 1)
               Padding(
                 padding: const EdgeInsets.only(top: 8.0),

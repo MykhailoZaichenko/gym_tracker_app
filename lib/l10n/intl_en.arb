@@ -999,5 +999,18 @@
   "oneRepMaxTooltip": "Estimated maximum weight you can lift for one repetition based on your workout history.",
   "@oneRepMaxTooltip": {
     "description": "Tooltip explaining what the one rep max stat means"
+  },
+
+  "cardioMin": "Min",
+  "@cardioMin": {
+    "description": "Label for cardio duration in minutes"
+  },
+  "cardioKm": "Km",
+  "@cardioKm": {
+    "description": "Label for cardio distance in kilometers"
+  },
+  "bodyweightAddWeight": "+ Weight",
+  "@bodyweightAddWeight": {
+    "description": "Button text to add weight to a bodyweight exercise"
   }
 }

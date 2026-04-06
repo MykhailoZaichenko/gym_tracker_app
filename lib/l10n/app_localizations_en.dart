@@ -1205,4 +1205,13 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get oneRepMaxTooltip =>
       'Estimated maximum weight you can lift for one repetition based on your workout history.';
+
+  @override
+  String get cardioMin => 'Min';
+
+  @override
+  String get cardioKm => 'Km';
+
+  @override
+  String get bodyweightAddWeight => '+ Weight';
 }

@@ -14,7 +14,6 @@ class WorkoutTypeSelector extends StatelessWidget {
     this.color,
   });
 
-  // Єдиний список типів для всього додатку
   static const List<String> validTypes = [
     'push',
     'pull',
@@ -31,9 +30,6 @@ class WorkoutTypeSelector extends StatelessWidget {
     final loc = AppLocalizations.of(context)!;
     final textTheme = Theme.of(context).textTheme;
 
-    // ГОЛОВНИЙ ФІКС: Нормалізація
-    // Перетворюємо вхідне значення в нижній регістр.
-    // Якщо такого типу немає в списку validTypes -> ставимо 'custom'.
     final normalizedType = currentType.toLowerCase().trim();
     final String safeValue = validTypes.contains(normalizedType)
         ? normalizedType
@@ -51,7 +47,6 @@ class WorkoutTypeSelector extends StatelessWidget {
         style: textTheme.titleLarge?.copyWith(
           color: color ?? Theme.of(context).colorScheme.onSurface,
         ),
-        // Колір випадаючого меню (щоб було видно на темному фоні)
         dropdownColor: Theme.of(context).cardColor,
         onChanged: (String? newValue) {
           if (newValue != null) {
@@ -61,6 +56,7 @@ class WorkoutTypeSelector extends StatelessWidget {
         items: validTypes.map<DropdownMenuItem<String>>((String value) {
           return DropdownMenuItem<String>(
             value: value,
+            alignment: Alignment.centerLeft,
             child: Text(WorkoutUtils.getLocalizedType(value, loc)),
           );
         }).toList(),

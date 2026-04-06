@@ -1,23 +1,74 @@
 import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/l10n/app_localizations.dart';
+import 'package:gym_tracker_app/data/seed/exercise_catalog.dart';
 
 class ExerciseSetTile extends StatelessWidget {
   const ExerciseSetTile({
     super.key,
     required this.index,
-    required this.weightController,
-    required this.repsController,
+    required this.exerciseType,
+    this.weightController,
+    this.repsController,
+    this.timeController,
+    this.distanceController,
     required this.onRemoveSetTile,
-    required this.weightFocusNode,
-    required this.repsFocusNode,
+    this.weightFocusNode,
+    this.repsFocusNode,
+    this.timeFocusNode,
+    this.distanceFocusNode,
   });
 
   final int index;
-  final TextEditingController weightController;
-  final TextEditingController repsController;
+  final ExerciseType exerciseType;
+  final TextEditingController? weightController;
+  final TextEditingController? repsController;
+  final TextEditingController? timeController;
+  final TextEditingController? distanceController;
+
   final VoidCallback onRemoveSetTile;
   final FocusNode? weightFocusNode;
   final FocusNode? repsFocusNode;
+  final FocusNode? timeFocusNode;
+  final FocusNode? distanceFocusNode;
+
+  Widget _buildTextField(
+    BuildContext context,
+    TextEditingController? controller,
+    FocusNode? focusNode,
+    String hint,
+    FocusNode? nextFocus,
+  ) {
+    final textTheme = Theme.of(context).textTheme;
+    return Expanded(
+      child: Container(
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface,
+          borderRadius: BorderRadius.circular(6),
+          border: Border.all(color: Colors.grey.withValues(alpha: 0.3)),
+        ),
+        child: TextField(
+          focusNode: focusNode,
+          textAlign: TextAlign.center,
+          controller: controller,
+          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+          textInputAction: nextFocus != null
+              ? TextInputAction.next
+              : TextInputAction.done,
+          style: textTheme.bodyMedium,
+          decoration: InputDecoration(
+            hintText: hint,
+            hintStyle: textTheme.bodySmall,
+            border: InputBorder.none,
+            isDense: true,
+            contentPadding: const EdgeInsets.symmetric(vertical: 10),
+          ),
+          onSubmitted: (_) {
+            nextFocus?.requestFocus();
+          },
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,78 +85,49 @@ class ExerciseSetTile extends StatelessWidget {
       ),
       child: Row(
         children: [
-          // Номер підходу
           SizedBox(
             width: 45,
-            child: Text(
-              loc.setNumber(index + 1),
-              style: textTheme.labelLarge,
-            ),
+            child: Text(loc.setNumber(index + 1), style: textTheme.labelLarge),
           ),
           const SizedBox(width: 8),
 
-          // Поле для ваги
-          Expanded(
-            child: Container(
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surface,
-                borderRadius: BorderRadius.circular(6),
-                border: Border.all(color: Colors.grey.withValues(alpha: 0.3)),
-              ),
-              child: TextField(
-                focusNode: weightFocusNode,
-                textAlign: TextAlign.center,
-                controller: weightController,
-                keyboardType: const TextInputType.numberWithOptions(
-                  decimal: true,
-                ),
-                textInputAction: TextInputAction.next,
-                style: textTheme.bodyMedium,
-                decoration: InputDecoration(
-                  hintText: loc.weightUnitHint,
-                  hintStyle: textTheme.bodySmall,
-                  border: InputBorder.none,
-                  isDense: true,
-                  contentPadding: const EdgeInsets.symmetric(vertical: 10),
-                ),
-                onSubmitted: (_) {
-                  repsFocusNode!.requestFocus();
-                },
-              ),
+          if (exerciseType == ExerciseType.cardio) ...[
+            _buildTextField(
+              context,
+              timeController,
+              timeFocusNode,
+              loc.cardioMin,
+              distanceFocusNode,
             ),
-          ),
-          const SizedBox(width: 12),
+            const SizedBox(width: 8),
+            _buildTextField(
+              context,
+              distanceController,
+              distanceFocusNode,
+              loc.cardioKm,
+              null,
+            ),
+          ] else ...[
+            _buildTextField(
+              context,
+              weightController,
+              weightFocusNode,
+              exerciseType == ExerciseType.bodyweight
+                  ? loc.bodyweightAddWeight
+                  : loc.weightUnitHint,
+              repsFocusNode,
+            ),
+            const SizedBox(width: 12),
+            _buildTextField(
+              context,
+              repsController,
+              repsFocusNode,
+              loc.repsUnitHint,
+              null,
+            ),
+          ],
 
-          // Поле для повторень
-          Expanded(
-            child: Container(
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surface,
-                borderRadius: BorderRadius.circular(6),
-                border: Border.all(color: Colors.grey.withValues(alpha: 0.3)),
-              ),
-              child: TextField(
-                focusNode: repsFocusNode,
-                textAlign: TextAlign.center,
-                controller: repsController,
-                keyboardType: const TextInputType.numberWithOptions(
-                  decimal: true,
-                ),
-                textInputAction: TextInputAction.done,
-                style: textTheme.bodyMedium,
-                decoration: InputDecoration(
-                  hintText: loc.repsUnitHint,
-                  hintStyle: textTheme.bodySmall,
-                  border: InputBorder.none,
-                  isDense: true,
-                  contentPadding: const EdgeInsets.symmetric(vertical: 10),
-                ),
-              ),
-            ),
-          ),
           const SizedBox(width: 8),
-
-          // Кнопка видалення
           IconButton(
             icon: const Icon(Icons.close, color: Colors.grey, size: 20),
             onPressed: onRemoveSetTile,

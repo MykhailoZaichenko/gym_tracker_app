@@ -25,7 +25,6 @@ class WorkoutExercise {
     );
   }
 
-  // ДОДАНО: метод copyWith для вправи
   WorkoutExercise copyWith({
     String? name,
     String? exerciseId,
@@ -42,27 +41,50 @@ class WorkoutExercise {
 class SetData {
   double? weight;
   double? reps;
-  bool isCompleted; // Для чекбоксів (галочок)
+  double? timeInMinutes;
+  double? distance;
+  bool isCompleted;
 
-  SetData({this.weight, this.reps, this.isCompleted = false});
+  SetData({
+    this.weight,
+    this.reps,
+    this.timeInMinutes,
+    this.distance,
+    this.isCompleted = false,
+  });
 
   Map<String, dynamic> toMap() {
-    return {'weight': weight, 'reps': reps, 'isCompleted': isCompleted};
+    return {
+      'weight': weight,
+      'reps': reps,
+      'timeInMinutes': timeInMinutes,
+      'distance': distance,
+      'isCompleted': isCompleted,
+    };
   }
 
   factory SetData.fromMap(Map<String, dynamic> map) {
     return SetData(
       weight: (map['weight'] as num?)?.toDouble(),
       reps: (map['reps'] as num?)?.toDouble(),
+      timeInMinutes: (map['timeInMinutes'] as num?)?.toDouble(),
+      distance: (map['distance'] as num?)?.toDouble(),
       isCompleted: map['isCompleted'] ?? false,
     );
   }
 
-  // ДОДАНО: метод copyWith для сету (саме він викликає помилку)
-  SetData copyWith({double? weight, double? reps, bool? isCompleted}) {
+  SetData copyWith({
+    double? weight,
+    double? reps,
+    double? timeInMinutes,
+    double? distance,
+    bool? isCompleted,
+  }) {
     return SetData(
       weight: weight ?? this.weight,
       reps: reps ?? this.reps,
+      timeInMinutes: timeInMinutes ?? this.timeInMinutes,
+      distance: distance ?? this.distance,
       isCompleted: isCompleted ?? this.isCompleted,
     );
   }

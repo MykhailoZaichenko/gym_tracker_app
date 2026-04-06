@@ -2347,6 +2347,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Estimated maximum weight you can lift for one repetition based on your workout history.'**
   String get oneRepMaxTooltip;
+
+  /// Label for cardio duration in minutes
+  ///
+  /// In en, this message translates to:
+  /// **'Min'**
+  String get cardioMin;
+
+  /// Label for cardio distance in kilometers
+  ///
+  /// In en, this message translates to:
+  /// **'Km'**
+  String get cardioKm;
+
+  /// Button text to add weight to a bodyweight exercise
+  ///
+  /// In en, this message translates to:
+  /// **'+ Weight'**
+  String get bodyweightAddWeight;
 }
 
 class _AppLocalizationsDelegate

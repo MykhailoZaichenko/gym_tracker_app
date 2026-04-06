@@ -125,7 +125,9 @@ class _ExercisePickerSheetState extends State<_ExercisePickerSheet> {
                         height: 40,
                         padding: const EdgeInsets.all(4),
                         decoration: BoxDecoration(
-                          color: Colors.grey[200],
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.primary.withValues(alpha: 0.1),
                           shape: BoxShape.circle,
                         ),
                         child: ExerciseIcon(
@@ -134,10 +136,7 @@ class _ExercisePickerSheetState extends State<_ExercisePickerSheet> {
                           color: Colors.black,
                         ),
                       ),
-                      title: Text(
-                        it.name,
-                        style: textTheme.bodyLarge,
-                      ),
+                      title: Text(it.name, style: textTheme.bodyLarge),
                       onTap: () => Navigator.of(context).pop(it),
                     );
                   },
