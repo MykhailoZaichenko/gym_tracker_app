@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ExerciseSetTile extends StatelessWidget {
   const ExerciseSetTile({
@@ -14,16 +15,33 @@ class ExerciseSetTile extends StatelessWidget {
   final TextEditingController repsController;
   final VoidCallback onRemoveSetTile;
 
+  Future<void> openHelpScreen(
+    BuildContext context,
+    String pageName, {
+    String? anchor,
+  }) async {
+    final String baseUrl = 'https://gym-tracker-help.vercel.app';
+    final String urlString = anchor != null
+        ? '$baseUrl/$pageName#$anchor'
+        : '$baseUrl/$pageName';
+    final Uri url = Uri.parse(urlString);
+
+    if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Не вдалося відкрити довідку: $urlString')),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final weightFocus = FocusNode();
     final repsFocus = FocusNode();
 
-    // Ми не створюємо контролери тут, але створюємо фокуси локально
-    // і використовуємо їх у полях TextField.
-
     return Container(
-      width: 120,
+      width: 140,
       margin: const EdgeInsets.symmetric(horizontal: 4),
       child: Column(
         children: [
@@ -31,11 +49,29 @@ class ExerciseSetTile extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               const SizedBox(width: 5),
-              Text(
-                "Підхід ${index + 1}",
-                style: const TextStyle(fontWeight: FontWeight.bold),
+              Row(
+                children: [
+                  Text(
+                    "Підхід ${index + 1}",
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  GestureDetector(
+                    onTap: () => openHelpScreen(
+                      context,
+                      'termini_interfejsu.htm',
+                      anchor: 'term_set',
+                    ),
+                    child: const Padding(
+                      padding: EdgeInsets.only(left: 4.0),
+                      child: Icon(
+                        Icons.help_outline,
+                        size: 16,
+                        color: Colors.blue,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(width: 35),
               Expanded(
                 child: PopupMenuButton<String>(
                   icon: const Icon(Icons.more_vert, size: 20),
@@ -64,9 +100,8 @@ class ExerciseSetTile extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Вага
                 SizedBox(
-                  width: 50,
+                  width: 45,
                   child: TextField(
                     focusNode: weightFocus,
                     textAlign: TextAlign.center,
@@ -80,16 +115,13 @@ class ExerciseSetTile extends StatelessWidget {
                       border: InputBorder.none,
                     ),
                     onSubmitted: (_) {
-                      // при натисканні "next" або галочки на клавіатурі
-                      // переміщаємо фокус на поле репів замість закриття клавіатури
                       FocusScope.of(context).requestFocus(repsFocus);
                     },
                   ),
                 ),
                 const Text("/ ", style: TextStyle(color: Colors.grey)),
-                // Повтори
                 SizedBox(
-                  width: 50,
+                  width: 45,
                   child: TextField(
                     focusNode: repsFocus,
                     textAlign: TextAlign.center,
@@ -101,9 +133,20 @@ class ExerciseSetTile extends StatelessWidget {
                       border: InputBorder.none,
                     ),
                     onSubmitted: (_) {
-                      // при натисканні "done" знімаємо фокус і ховаємо клавіатуру
                       repsFocus.unfocus();
                     },
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () => openHelpScreen(
+                    context,
+                    'termini_interfejsu.htm',
+                    anchor: 'term_rep',
+                  ),
+                  child: const Icon(
+                    Icons.help_outline,
+                    size: 16,
+                    color: Colors.blue,
                   ),
                 ),
               ],

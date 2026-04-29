@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:gym_tracker_app/core/constants/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -20,32 +21,37 @@ class _SettingsPageState extends State<SettingsPage> {
     _loadSettings();
   }
 
+  Future<void> openHelpScreen(String pageName, {String? anchor}) async {
+    final String baseUrl = 'https://gym-tracker-help.vercel.app';
+    final String urlString = anchor != null
+        ? '$baseUrl/$pageName#$anchor'
+        : '$baseUrl/$pageName';
+    final Uri url = Uri.parse(urlString);
+
+    if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Не вдалося відкрити довідку: $urlString')),
+        );
+      }
+    }
+  }
+
   Future<void> _loadSettings() async {
     _prefs = await SharedPreferences.getInstance();
-
-    // ініціалізуємо і локальне поле, і notifier
     final savedDark = _prefs.getBool(KCOnstats.themeModeKey) ?? false;
     ThemeService.isDarkModeNotifier.value = savedDark;
-    // setState(() {
-    //   _darkMode = savedDark;
-    // });
-
-    // підтягуємо уведомлення
     _notificationsEnabled = _prefs.getBool('notifications_enabled') ?? true;
   }
 
-  // Оновлений toggle для темної теми
   Future<void> _toggleDarkMode(bool value) async {
     ThemeService.isDarkModeNotifier.value = value;
-
-    // 3) зберігаємо в SharedPreferences
     await _prefs.setBool(KCOnstats.themeModeKey, value);
   }
 
   Future<void> _toggleNotifications(bool value) async {
     setState(() => _notificationsEnabled = value);
     await _prefs.setBool('notifications_enabled', value);
-    // Запустіть ваш механізм налаштування пуш-повідомлень тут
   }
 
   void _confirmClearData() {
@@ -63,9 +69,7 @@ class _SettingsPageState extends State<SettingsPage> {
           ),
           TextButton(
             onPressed: () async {
-              // Очистити всі ключі
               await _prefs.clear();
-              // Після очищення — поновити стан
               setState(() {
                 ThemeService.isDarkModeNotifier.value = false;
                 _notificationsEnabled = true;
@@ -88,7 +92,20 @@ class _SettingsPageState extends State<SettingsPage> {
     final isDark = ThemeService.isDarkModeNotifier.value;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Налаштування'), centerTitle: true),
+      appBar: AppBar(
+        title: const Text('Налаштування'),
+        centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.help_outline),
+            tooltip: 'Довідка по налаштуваннях',
+            onPressed: () => openHelpScreen(
+              'nalashtuvannya_sistemi.htm',
+              anchor: 'system_options',
+            ),
+          ),
+        ],
+      ),
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.all(20),
@@ -98,7 +115,9 @@ class _SettingsPageState extends State<SettingsPage> {
                 Icons.brightness_6,
                 color: isDark ? Colors.white : theme.primaryColor,
               ),
-              title: isDark ? Text('Темний режим') : Text('Світлий режим'),
+              title: isDark
+                  ? const Text('Темний режим')
+                  : const Text('Світлий режим'),
               value: isDark,
               onChanged: _toggleDarkMode,
             ),

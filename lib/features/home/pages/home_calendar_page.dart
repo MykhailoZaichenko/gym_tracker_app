@@ -1,6 +1,6 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart'; // Додано імпорт
 import 'package:gym_tracker_app/core/constants/constants.dart';
 import 'package:gym_tracker_app/features/workout/models/workout_exercise_model.dart';
 import 'package:gym_tracker_app/features/workout/pages/workout_page.dart';
@@ -26,6 +26,23 @@ class _HomeCalendarPageState extends State<HomeCalendarPage> {
     super.initState();
     _selectedDay = DateTime.now();
     _loadAllWorkouts();
+  }
+
+  // --- Функція для виклику довідки ---
+  Future<void> openHelpScreen(String pageName, {String? anchor}) async {
+    final String baseUrl = 'https://gym-tracker-help.vercel.app';
+    final String urlString = anchor != null
+        ? '$baseUrl/$pageName#$anchor'
+        : '$baseUrl/$pageName';
+    final Uri url = Uri.parse(urlString);
+
+    if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Не вдалося відкрити довідку: $urlString')),
+        );
+      }
+    }
   }
 
   Future<void> _loadAllWorkouts() async {
@@ -72,7 +89,6 @@ class _HomeCalendarPageState extends State<HomeCalendarPage> {
           date: date,
           exercises: initialExercises,
           onSave: (newExercises) async {
-            // оновлюємо дані та зберігаємо
             _allWorkouts[_keyOf(date)] = newExercises.cast<WorkoutExercise>();
             await _saveAllWorkouts();
             setState(() {});
@@ -94,6 +110,16 @@ class _HomeCalendarPageState extends State<HomeCalendarPage> {
         appBar: AppBar(
           title: const Text('Календар тренувань'),
           centerTitle: true,
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.help_outline),
+              tooltip: 'Довідка по календарю',
+              onPressed: () => openHelpScreen(
+                'interaktivnij_kalendar.htm',
+                anchor: 'date_selection',
+              ),
+            ),
+          ],
         ),
         body: Column(
           children: [
@@ -167,7 +193,6 @@ class _HomeCalendarPageState extends State<HomeCalendarPage> {
 
             const SizedBox(height: 12),
 
-            // 📝 Список вправ обраного дня
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -199,7 +224,6 @@ class _HomeCalendarPageState extends State<HomeCalendarPage> {
                                 horizontal: 8,
                               ),
                               child: ListTile(
-                                // Якщо у вас декілька рядків — вмикаємо isThreeLine
                                 isThreeLine: ex.sets.length > 1,
                                 title: ex.name == ''
                                     ? Text('Вправа${i}')
@@ -207,13 +231,10 @@ class _HomeCalendarPageState extends State<HomeCalendarPage> {
                                 subtitle: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    // Показуємо кількість підходів
                                     Text('${ex.sets.length} підходів'),
                                     const SizedBox(height: 4),
-                                    // Для кожного підходу — вага та повторення
                                     for (var j = 0; j < ex.sets.length; j++)
                                       Text(
-                                        // Форматуємо вагу з однією цифрою після коми, якщо є
                                         'Підхід ${j + 1}: '
                                         '${ex.sets[j].weight?.toStringAsFixed(1) ?? '-'} кг  '
                                         'x ${ex.sets[j].reps ?? '-'} повт.',
@@ -234,10 +255,27 @@ class _HomeCalendarPageState extends State<HomeCalendarPage> {
         ),
         floatingActionButton: _selectedDay == null
             ? null
-            : FloatingActionButton(
-                tooltip: 'Редагувати вправи',
-                child: const Icon(Icons.edit),
-                onPressed: () => _openWorkoutDay(_selectedDay!),
+            : Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  FloatingActionButton(
+                    heroTag: 'help_edit_record',
+                    mini: true,
+                    onPressed: () => openHelpScreen(
+                      'termini_interfejsu.htm',
+                      anchor: 'term_edit_record',
+                    ),
+                    tooltip: 'Що таке редагування запису?',
+                    child: const Icon(Icons.question_mark),
+                  ),
+                  const SizedBox(height: 8),
+                  FloatingActionButton(
+                    heroTag: 'edit_workout',
+                    tooltip: 'Редагувати вправи',
+                    child: const Icon(Icons.edit),
+                    onPressed: () => _openWorkoutDay(_selectedDay!),
+                  ),
+                ],
               ),
       ),
     );

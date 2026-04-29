@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:url_launcher/url_launcher.dart'; // Додано імпорт
 import 'package:gym_tracker_app/features/analytics/widgets/line_chart_card.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:gym_tracker_app/core/constants/constants.dart';
@@ -22,7 +23,6 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
   RangeMode _range = RangeMode.month;
   late TabController _tabController;
 
-  // only used for month view navigation
   DateTime _visibleMonth = DateTime.now();
 
   @override
@@ -35,6 +35,23 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
       }
     });
     _loadAllWorkouts();
+  }
+
+  // --- Функція для виклику довідки ---
+  Future<void> openHelpScreen(String pageName, {String? anchor}) async {
+    final String baseUrl = 'https://gym-tracker-help.vercel.app';
+    final String urlString = anchor != null
+        ? '$baseUrl/$pageName#$anchor'
+        : '$baseUrl/$pageName';
+    final Uri url = Uri.parse(urlString);
+
+    if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Не вдалося відкрити довідку: $urlString')),
+        );
+      }
+    }
   }
 
   Future<void> _loadAllWorkouts() async {
@@ -73,7 +90,6 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
     }
   }
 
-  /// Для заданої вправи повертає мапу: DateTime (date at midnight) -> сумарна поднята вага за день
   Map<DateTime, double> _accumulatePerDay(String exerciseName) {
     final Map<DateTime, double> result = {};
     _allWorkouts.forEach((dateStr, exercises) {
@@ -158,7 +174,6 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
     return v.toStringAsFixed(0);
   }
 
-  // отримати дату з координати X (для тапу по точці)
   DateTime? _xToDate(double x) {
     switch (_range) {
       case RangeMode.month:
@@ -278,7 +293,28 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
     final double yInterval = (maxY <= 0) ? 1.0 : (maxY / 4).toDouble();
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Прогрес — графіки'), centerTitle: true),
+      appBar: AppBar(
+        title: const Text('Прогрес — графіки'),
+        centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.insights),
+            tooltip: 'Що таке статистика?',
+            onPressed: () => openHelpScreen(
+              'termini_interfejsu.htm',
+              anchor: 'term_statistics',
+            ),
+          ),
+          IconButton(
+            icon: const Icon(Icons.help_outline),
+            tooltip: 'Довідка по графіках',
+            onPressed: () => openHelpScreen(
+              'grafik_progresu.htm',
+              anchor: 'chart_interaction',
+            ),
+          ),
+        ],
+      ),
       body: Padding(
         padding: const EdgeInsets.all(12),
         child: Column(
@@ -393,8 +429,26 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    'Всього піднято: ${_formatY(_totalForEntries(entries))}',
+                  Row(
+                    children: [
+                      Text(
+                        'Всього піднято: ${_formatY(_totalForEntries(entries))}',
+                      ),
+                      GestureDetector(
+                        onTap: () => openHelpScreen(
+                          'termini_interfejsu.htm',
+                          anchor: 'term_tonnage',
+                        ),
+                        child: const Padding(
+                          padding: EdgeInsets.only(left: 6.0),
+                          child: Icon(
+                            Icons.help_outline,
+                            size: 18,
+                            color: Colors.blue,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                   Text('Точек: ${entries.length}'),
                 ],
@@ -413,7 +467,6 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
   }
 }
 
-/// Модельні класи (як у вас раніше)
 class WorkoutExerciseGraf {
   String name;
   List<SetData> sets;

@@ -8,6 +8,7 @@ import 'package:gym_tracker_app/data/sources/local/app_db.dart';
 import 'package:gym_tracker_app/core/constants/exersise_meta.dart';
 import 'package:gym_tracker_app/features/profile/models/user_model.dart';
 import 'package:gym_tracker_app/features/profile/profile_exports.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ProfileGrafPage extends StatefulWidget {
   const ProfileGrafPage({super.key});
@@ -195,12 +196,39 @@ class _ProfileGrafPageState extends State<ProfileGrafPage> {
     _computeStats();
   }
 
+  // --- Функція для виклику довідки ---
+  Future<void> openHelpScreen(String pageName, {String? anchor}) async {
+    final String baseUrl = 'https://gym-tracker-help.vercel.app';
+    final String urlString = anchor != null
+        ? '$baseUrl/$pageName#$anchor'
+        : '$baseUrl/$pageName';
+    final Uri url = Uri.parse(urlString);
+
+    if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Не вдалося відкрити довідку: $urlString')),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Профіль користувача'),
         centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.person_outline),
+            tooltip: 'Що таке профіль?',
+            onPressed: () => openHelpScreen(
+              'termini_interfejsu.htm',
+              anchor: 'term_profile',
+            ),
+          ),
+        ],
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())

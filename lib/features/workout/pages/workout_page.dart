@@ -1,6 +1,6 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart'; // Додано імпорт
 import 'package:gym_tracker_app/data/seed/exercise_catalog.dart';
 import 'package:gym_tracker_app/features/workout/models/workout_exercise_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -42,7 +42,23 @@ class _WorkoutPageState extends State<WorkoutPage> {
     _loadExercises();
   }
 
-  /// Якщо value ціле — повертає без .0, інакше — як є
+  // --- Функція для виклику довідки ---
+  Future<void> openHelpScreen(String pageName, {String? anchor}) async {
+    final String baseUrl = 'https://gym-tracker-help.vercel.app';
+    final String urlString = anchor != null
+        ? '$baseUrl/$pageName#$anchor'
+        : '$baseUrl/$pageName';
+    final Uri url = Uri.parse(urlString);
+
+    if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Не вдалося відкрити довідку: $urlString')),
+        );
+      }
+    }
+  }
+
   String _formatDouble(double? value) {
     if (value == null) return '';
     return value == value.roundToDouble()
@@ -50,7 +66,6 @@ class _WorkoutPageState extends State<WorkoutPage> {
         : value.toString();
   }
 
-  // Завантажуємо збережені вправи або беремо widget.exercises
   Future<void> _loadExercises() async {
     final prefs = await SharedPreferences.getInstance();
     final rawJson = prefs.getString(_prefsKey);
@@ -71,7 +86,6 @@ class _WorkoutPageState extends State<WorkoutPage> {
     _initialEncoded = jsonEncode(_exercises.map((e) => e.toMap()).toList());
   }
 
-  // Ініціалізуємо TextEditingController-и на основі _exercises
   void _initControllers() {
     _nameCtrls.clear();
     _weightCtrls.clear();
@@ -91,7 +105,6 @@ class _WorkoutPageState extends State<WorkoutPage> {
     }
   }
 
-  // Зберігаємо дані з контролерів у модель і в SharedPreferences
   Future<void> _saveExercises() async {
     for (var i = 0; i < _exercises.length; i++) {
       _exercises[i].name = _nameCtrls[i].text;
@@ -108,7 +121,6 @@ class _WorkoutPageState extends State<WorkoutPage> {
     _initialEncoded = encoded;
   }
 
-  // Серіалізація поточного стану з контролерів (не змінює модель _exercises)
   String _encodeCurrentFromControllers() {
     final current = <Map<String, dynamic>>[];
     for (var i = 0; i < _exercises.length; i++) {
@@ -132,21 +144,15 @@ class _WorkoutPageState extends State<WorkoutPage> {
     return jsonEncode(current);
   }
 
-  // Перевірка на незбережені зміни
   bool _hasUnsavedChanges() {
     final current = _encodeCurrentFromControllers();
     return _initialEncoded != current;
   }
 
-  // Метод для WillPopScope
   Future<bool> _onWillPop() async {
-    // If we never initialized the initial value, allow pop (no dialog)
     if (_initialEncoded == null) return true;
-
-    // If nothing changed, allow pop without dialog
     if (!_hasUnsavedChanges()) return true;
 
-    // Show the dialog (context is used here synchronously)
     final result = await showDialog<ExitChoice>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -175,9 +181,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
     if (result == ExitChoice.cancel) return false;
     if (result == ExitChoice.discard) return true;
 
-    // save chosen
     await _saveExercises();
-    // guard against the State being disposed while we awaited
     if (!mounted) return false;
     widget.onSave(_exercises);
     return true;
@@ -188,7 +192,6 @@ class _WorkoutPageState extends State<WorkoutPage> {
       _exercises.add(
         WorkoutExercise(name: '', exerciseId: null, sets: [SetData()]),
       );
-      // додаємо контролери для нової вправи
       _nameCtrls.add(TextEditingController());
       _weightCtrls.add([TextEditingController()]);
       _repsCtrls.add([TextEditingController()]);
@@ -213,13 +216,8 @@ class _WorkoutPageState extends State<WorkoutPage> {
 
   void _removeExercise(int index) {
     setState(() {
-      // видаляємо модель
       _exercises.removeAt(index);
-
-      // чистимо контролер назви
       _nameCtrls.removeAt(index).dispose();
-
-      // чистимо контролери ваги й повторів
       _weightCtrls.removeAt(index).forEach((c) => c.dispose());
       _repsCtrls.removeAt(index).forEach((c) => c.dispose());
     });
@@ -227,7 +225,6 @@ class _WorkoutPageState extends State<WorkoutPage> {
 
   @override
   void dispose() {
-    // Чистимо контролери
     for (var c in _nameCtrls) {
       c.dispose();
     }
@@ -259,6 +256,22 @@ class _WorkoutPageState extends State<WorkoutPage> {
           ),
           actions: [
             IconButton(
+              icon: const Icon(Icons.info_outline),
+              tooltip: 'Що таке вправа?',
+              onPressed: () => openHelpScreen(
+                'termini_interfejsu.htm',
+                anchor: 'term_exercise',
+              ),
+            ),
+            IconButton(
+              icon: const Icon(Icons.help_outline),
+              tooltip: 'Довідка по введенню даних',
+              onPressed: () => openHelpScreen(
+                'dodavannya_pidhodu.htm',
+                anchor: 'input_parameters',
+              ),
+            ),
+            IconButton(
               icon: const Icon(Icons.save),
               onPressed: () async {
                 await _saveExercises();
@@ -280,7 +293,6 @@ class _WorkoutPageState extends State<WorkoutPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Header
                     ExerciseHeader(
                       exercise: exercise,
                       nameController: _nameCtrls[i],
@@ -311,7 +323,6 @@ class _WorkoutPageState extends State<WorkoutPage> {
 
                     const SizedBox(height: 8),
 
-                    // Sets list
                     ExerciseSetsList(
                       exercise: exercise,
                       weightControllers: _weightCtrls[i],
@@ -334,10 +345,27 @@ class _WorkoutPageState extends State<WorkoutPage> {
           },
         ),
 
-        floatingActionButton: FloatingActionButton(
-          onPressed: _addExercise,
-          tooltip: 'Додати вправу',
-          child: const Icon(Icons.add),
+        floatingActionButton: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            FloatingActionButton(
+              heroTag: 'help_add_set',
+              mini: true,
+              onPressed: () => openHelpScreen(
+                'termini_interfejsu.htm',
+                anchor: 'term_add_set',
+              ),
+              tooltip: 'Що таке додавання підходу?',
+              child: const Icon(Icons.question_mark),
+            ),
+            const SizedBox(height: 8),
+            FloatingActionButton(
+              heroTag: 'add_exercise',
+              onPressed: _addExercise,
+              tooltip: 'Додати вправу',
+              child: const Icon(Icons.add),
+            ),
+          ],
         ),
       ),
     );
