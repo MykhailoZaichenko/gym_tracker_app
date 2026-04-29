@@ -469,5 +469,6 @@
   "errPleaseConfirmPassword": "Будь ласка, підтвердьте ваш пароль",
   "savePasswordAction": "Зберегти пароль",
   "passwordChangedSuccess": "Пароль успішно змінено! Тепер ви можете увійти.",
-  "errorPrefix": "Помилка"
+  "errorPrefix": "Помилка",
+  "systemLanguage": "Як у системі"
 }

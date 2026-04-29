@@ -1254,4 +1254,7 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get errorPrefix => 'Помилка';
+
+  @override
+  String get systemLanguage => 'Як у системі';
 }

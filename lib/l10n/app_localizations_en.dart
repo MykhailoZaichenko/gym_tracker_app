@@ -1243,4 +1243,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get errorPrefix => 'Error';
+
+  @override
+  String get systemLanguage => 'System default';
 }

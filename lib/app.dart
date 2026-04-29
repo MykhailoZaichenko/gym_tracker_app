@@ -22,7 +22,7 @@ class _MyAppState extends State<MyApp> {
     return ValueListenableBuilder<ThemeMode>(
       valueListenable: ThemeService.themeModeNotifier,
       builder: (context, currentThemeMode, child) {
-        return ValueListenableBuilder<Locale>(
+        return ValueListenableBuilder<Locale?>(
           valueListenable: LocaleService.localeNotifier,
           builder: (context, currentLocale, child) {
             return MaterialApp(

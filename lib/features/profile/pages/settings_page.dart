@@ -166,11 +166,23 @@ class _SettingsPageState extends State<SettingsPage> {
               const SizedBox(height: 16),
               Text(loc.appLanguage, style: textTheme.titleLarge),
               const SizedBox(height: 16),
+              // НОВА КНОПКА: Як у системі
+              ListTile(
+                leading: const Icon(Icons.settings_suggest, size: 24),
+                title: Text(loc.systemLanguage),
+                trailing: null,
+                onTap: () {
+                  LocaleService.changeLocale(
+                    null,
+                  ); // Передаємо null для системи
+                  Navigator.pop(context);
+                },
+              ),
               ListTile(
                 leading: const Text('🇺🇦', style: TextStyle(fontSize: 24)),
                 title: const Text('Українська'),
                 trailing:
-                    LocaleService.localeNotifier.value.languageCode == 'uk'
+                    LocaleService.localeNotifier.value?.languageCode == 'uk'
                     ? const Icon(Icons.check, color: Colors.green)
                     : null,
                 onTap: () {
@@ -182,7 +194,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 leading: const Text('🇺🇸', style: TextStyle(fontSize: 24)),
                 title: const Text('English'),
                 trailing:
-                    LocaleService.localeNotifier.value.languageCode == 'en'
+                    LocaleService.localeNotifier.value?.languageCode == 'en'
                     ? const Icon(Icons.check, color: Colors.green)
                     : null,
                 onTap: () {
@@ -330,19 +342,22 @@ class _SettingsPageState extends State<SettingsPage> {
               },
             ),
             const Divider(),
-            ValueListenableBuilder<Locale>(
+            ValueListenableBuilder<Locale?>(
               valueListenable: LocaleService.localeNotifier,
               builder: (context, locale, child) {
+                // Визначаємо, що писати в підзаголовку
+                String subtitleText =
+                    loc.systemLanguage; // Наш новий ключ локалізації
+                if (locale?.languageCode == 'uk') subtitleText = 'Українська';
+                if (locale?.languageCode == 'en') subtitleText = 'English';
+
                 return ListTile(
                   leading: Icon(
                     Icons.language,
                     color: theme.colorScheme.onSurface,
                   ),
                   title: Text(loc.appLanguage, style: textTheme.bodyLarge),
-                  subtitle: Text(
-                    locale.languageCode == 'uk' ? 'Українська' : 'English',
-                    style: textTheme.bodyMedium,
-                  ),
+                  subtitle: Text(subtitleText, style: textTheme.bodyMedium),
                   onTap: _showLanguageSelector,
                 );
               },

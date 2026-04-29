@@ -2419,6 +2419,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Error'**
   String get errorPrefix;
+
+  /// Option to use the device's system language
+  ///
+  /// In en, this message translates to:
+  /// **'System default'**
+  String get systemLanguage;
 }
 
 class _AppLocalizationsDelegate

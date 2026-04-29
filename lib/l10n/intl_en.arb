@@ -1048,5 +1048,9 @@
   "errorPrefix": "Error",
   "@errorPrefix": {
     "description": "Prefix used before displaying system errors"
+  },
+  "systemLanguage": "System default",
+  "@systemLanguage": {
+    "description": "Option to use the device's system language"
   }
 }
