@@ -24,7 +24,6 @@ Future<void> main() async {
   await initializeDateFormatting('uk_UA', null);
   await ThemeService.init();
   await LocaleService.init();
-  // Immersive mode(fullscreen)
   await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
   tz.initializeTimeZones();
   try {

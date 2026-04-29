@@ -58,7 +58,16 @@ class _ForgotPasswordDialogState extends State<_ForgotPasswordDialog> {
     setState(() => _isLoading = true);
 
     try {
-      await _auth.sendPasswordResetEmail(email: email);
+      final acs = ActionCodeSettings(
+        url: 'https://gym-tracker-3f423.firebaseapp.com/__/auth/action',
+        handleCodeInApp: true,
+        // Обов'язково заміни на свій реальний application ID
+        androidPackageName: 'com.example.gym_tracker_app',
+        androidInstallApp: true,
+        androidMinimumVersion: '1',
+      );
+
+      await _auth.sendPasswordResetEmail(email: email, actionCodeSettings: acs);
 
       if (mounted) {
         Navigator.of(context).pop(); // Закриваємо діалог
@@ -97,7 +106,13 @@ class _ForgotPasswordDialogState extends State<_ForgotPasswordDialog> {
           const SizedBox(height: 16),
           TextField(
             controller: _emailController,
-            enabled: !_isLoading, // Блокуємо введення під час завантаження
+            enabled: !_isLoading,
+            textInputAction: TextInputAction.done,
+            onSubmitted: (_) {
+              if (!_isLoading) {
+                _sendResetEmail();
+              }
+            },
             decoration: InputDecoration(
               labelText: loc.emailLabel,
               border: const OutlineInputBorder(),

@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'package:app_links/app_links.dart';
 
 import 'package:flutter/material.dart';
+import 'package:gym_tracker_app/features/auth/pages/create_new_password_page.dart';
 import 'package:gym_tracker_app/features/auth/widgets/auth_form_widget.dart';
 
 import 'package:gym_tracker_app/features/welcome/pages/onboarding_page.dart';
@@ -34,6 +36,7 @@ class _LoginPageState extends State<LoginPage> {
 
   final AuthService _auth = AuthService();
   bool _loading = false;
+  StreamSubscription<Uri>? _linkSubscription;
 
   late final FocusNode emailFocus;
   late final FocusNode paswFocus;
@@ -56,6 +59,7 @@ class _LoginPageState extends State<LoginPage> {
         _passwordFieldKey.currentState?.validate();
       }
     });
+    _initDeepLinks();
   }
 
   @override
@@ -66,6 +70,7 @@ class _LoginPageState extends State<LoginPage> {
     paswFocus.dispose();
     _emailDebounce?.cancel();
     _passwordDebounce?.cancel();
+    _linkSubscription?.cancel();
     super.dispose();
   }
 
@@ -175,6 +180,36 @@ class _LoginPageState extends State<LoginPage> {
   // Обробники submit для полів
   void _onEmailSubmitted(_) => FocusScope.of(context).requestFocus(paswFocus);
   void _onPasswordSubmitted(_) => _onLoginPressed();
+
+  void _initDeepLinks() {
+    final appLinks = AppLinks();
+
+    _linkSubscription = appLinks.uriLinkStream.listen((Uri? uri) {
+      if (uri != null) {
+        Uri targetUri = uri;
+
+        if (uri.queryParameters.containsKey('link')) {
+          targetUri = Uri.parse(uri.queryParameters['link']!);
+        }
+
+        if (targetUri.queryParameters.containsKey('oobCode') &&
+            targetUri.queryParameters['mode'] == 'resetPassword') {
+          final oobCode = targetUri.queryParameters['oobCode']!;
+
+          if (mounted) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => CreateNewPasswordPage(oobCode: oobCode),
+                ),
+              );
+            });
+          }
+        }
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

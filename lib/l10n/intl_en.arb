@@ -1012,5 +1012,41 @@
   "bodyweightAddWeight": "+ Weight",
   "@bodyweightAddWeight": {
     "description": "Button text to add weight to a bodyweight exercise"
+  },
+  "recoverAccessTitle": "Recover Access",
+  "@recoverAccessTitle": {
+    "description": "Title for the recover access page"
+  },
+  "createNewPasswordTitle": "Create a new password",
+  "@createNewPasswordTitle": {
+    "description": "Heading for creating a new password"
+  },
+  "createNewPasswordSubtitle": "Create a strong password with at least 6 characters.",
+  "@createNewPasswordSubtitle": {
+    "description": "Instructions for creating a new password"
+  },
+  "newPasswordLabel": "New password",
+  "@newPasswordLabel": {
+    "description": "Label for the new password input field"
+  },
+  "errPleaseEnterPassword": "Please enter a password",
+  "@errPleaseEnterPassword": {
+    "description": "Error message when password field is empty"
+  },
+  "errPleaseConfirmPassword": "Please confirm your password",
+  "@errPleaseConfirmPassword": {
+    "description": "Error message when confirm password field is empty"
+  },
+  "savePasswordAction": "Save password",
+  "@savePasswordAction": {
+    "description": "Button text to save the new password"
+  },
+  "passwordChangedSuccess": "Password successfully changed! You can now log in.",
+  "@passwordChangedSuccess": {
+    "description": "Success message after changing the password"
+  },
+  "errorPrefix": "Error",
+  "@errorPrefix": {
+    "description": "Prefix used before displaying system errors"
   }
 }

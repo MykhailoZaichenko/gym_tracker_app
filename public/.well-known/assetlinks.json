@@ -1,0 +1,8 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "com.example.gym_tracker_app",
+    "sha256_cert_fingerprints": ["50:34:1A:78:CE:DC:11:94:1F:86:87:69:F6:18:0A:27:9F:82:91:88:86:6E:4C:3B:E6:90:41:A7:9E:28:9C:2A"]
+  }
+}]

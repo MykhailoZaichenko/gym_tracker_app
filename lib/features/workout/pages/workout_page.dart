@@ -260,6 +260,18 @@ class _WorkoutPageState extends State<WorkoutPage> {
       _timeFocusNodes[exIndex].add(tNode);
       _distanceFocusNodes[exIndex].add(dNode);
     });
+
+    Future.delayed(const Duration(milliseconds: 100), () {
+      if (!mounted) return;
+
+      final newSetIndex = _weightFocusNodes[exIndex].length - 1;
+
+      if (_weightFocusNodes[exIndex][newSetIndex].canRequestFocus) {
+        _weightFocusNodes[exIndex][newSetIndex].requestFocus();
+      } else if (_timeFocusNodes[exIndex][newSetIndex].canRequestFocus) {
+        _timeFocusNodes[exIndex][newSetIndex].requestFocus();
+      }
+    });
   }
 
   void _removeSet(int exIndex, int setIndex) {

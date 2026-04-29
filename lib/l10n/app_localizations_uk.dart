@@ -1225,4 +1225,33 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get bodyweightAddWeight => '+ Вага';
+
+  @override
+  String get recoverAccessTitle => 'Відновити доступ';
+
+  @override
+  String get createNewPasswordTitle => 'Створити новий пароль';
+
+  @override
+  String get createNewPasswordSubtitle =>
+      'Створіть надійний пароль з принаймні 6 символами.';
+
+  @override
+  String get newPasswordLabel => 'Новий пароль';
+
+  @override
+  String get errPleaseEnterPassword => 'Будь ласка, введіть пароль';
+
+  @override
+  String get errPleaseConfirmPassword => 'Будь ласка, підтвердьте ваш пароль';
+
+  @override
+  String get savePasswordAction => 'Зберегти пароль';
+
+  @override
+  String get passwordChangedSuccess =>
+      'Пароль успішно змінено! Тепер ви можете увійти.';
+
+  @override
+  String get errorPrefix => 'Помилка';
 }

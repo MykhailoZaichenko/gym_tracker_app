@@ -459,5 +459,15 @@
   "oneRepMaxTooltip": "Оцінка максимальної ваги, яку ви можете підняти за одну повторювання, базуючись на вашому історії тренувань.",
   "cardioMin": "Хв",
   "cardioKm": "Км",
-  "bodyweightAddWeight": "+ Вага"
+  "bodyweightAddWeight": "+ Вага",
+
+  "recoverAccessTitle": "Відновити доступ",
+  "createNewPasswordTitle": "Створити новий пароль",
+  "createNewPasswordSubtitle": "Створіть надійний пароль з принаймні 6 символами.",
+  "newPasswordLabel": "Новий пароль",
+  "errPleaseEnterPassword": "Будь ласка, введіть пароль",
+  "errPleaseConfirmPassword": "Будь ласка, підтвердьте ваш пароль",
+  "savePasswordAction": "Зберегти пароль",
+  "passwordChangedSuccess": "Пароль успішно змінено! Тепер ви можете увійти.",
+  "errorPrefix": "Помилка"
 }

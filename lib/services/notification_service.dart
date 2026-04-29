@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
@@ -18,18 +19,20 @@ class NotificationService {
           ? localZone
           : localZone.name.toString();
       tz.setLocalLocation(tz.getLocation(tzName));
-    } catch (_) {}
+    } catch (e) {
+      debugPrint('Timezone error: $e');
+    }
 
-    try {
-      final dynamic localZone = await FlutterTimezone.getLocalTimezone();
-      String tzName = localZone.toString();
+    // try {
+    //   final dynamic localZone = await FlutterTimezone.getLocalTimezone();
+    //   String tzName = localZone.toString();
 
-      if (tzName.contains('TimezoneInfo(')) {
-        tzName = tzName.split(',')[0].replaceAll('TimezoneInfo(', '').trim();
-      }
+    //   if (tzName.contains('TimezoneInfo(')) {
+    //     tzName = tzName.split(',')[0].replaceAll('TimezoneInfo(', '').trim();
+    //   }
 
-      tz.setLocalLocation(tz.getLocation(tzName));
-    } catch (_) {}
+    //   tz.setLocalLocation(tz.getLocation(tzName));
+    // } catch (_) {}
 
     const androidSettings = AndroidInitializationSettings(
       '@mipmap/launcher_icon',

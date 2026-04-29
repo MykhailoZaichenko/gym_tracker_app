@@ -1214,4 +1214,33 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get bodyweightAddWeight => '+ Weight';
+
+  @override
+  String get recoverAccessTitle => 'Recover Access';
+
+  @override
+  String get createNewPasswordTitle => 'Create a new password';
+
+  @override
+  String get createNewPasswordSubtitle =>
+      'Create a strong password with at least 6 characters.';
+
+  @override
+  String get newPasswordLabel => 'New password';
+
+  @override
+  String get errPleaseEnterPassword => 'Please enter a password';
+
+  @override
+  String get errPleaseConfirmPassword => 'Please confirm your password';
+
+  @override
+  String get savePasswordAction => 'Save password';
+
+  @override
+  String get passwordChangedSuccess =>
+      'Password successfully changed! You can now log in.';
+
+  @override
+  String get errorPrefix => 'Error';
 }

@@ -417,7 +417,6 @@ class FirestoreService {
   }
 
   // Живий пошук по email або @username
-  // Живий пошук по email або @username (без поточних друзів)
   Future<List<app_user.UserModel>> searchUsersLive(String queryText) async {
     String query = queryText.trim().toLowerCase();
     if (query.isEmpty) return [];

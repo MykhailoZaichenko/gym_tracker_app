@@ -2365,6 +2365,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'+ Weight'**
   String get bodyweightAddWeight;
+
+  /// Title for the recover access page
+  ///
+  /// In en, this message translates to:
+  /// **'Recover Access'**
+  String get recoverAccessTitle;
+
+  /// Heading for creating a new password
+  ///
+  /// In en, this message translates to:
+  /// **'Create a new password'**
+  String get createNewPasswordTitle;
+
+  /// Instructions for creating a new password
+  ///
+  /// In en, this message translates to:
+  /// **'Create a strong password with at least 6 characters.'**
+  String get createNewPasswordSubtitle;
+
+  /// Label for the new password input field
+  ///
+  /// In en, this message translates to:
+  /// **'New password'**
+  String get newPasswordLabel;
+
+  /// Error message when password field is empty
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a password'**
+  String get errPleaseEnterPassword;
+
+  /// Error message when confirm password field is empty
+  ///
+  /// In en, this message translates to:
+  /// **'Please confirm your password'**
+  String get errPleaseConfirmPassword;
+
+  /// Button text to save the new password
+  ///
+  /// In en, this message translates to:
+  /// **'Save password'**
+  String get savePasswordAction;
+
+  /// Success message after changing the password
+  ///
+  /// In en, this message translates to:
+  /// **'Password successfully changed! You can now log in.'**
+  String get passwordChangedSuccess;
+
+  /// Prefix used before displaying system errors
+  ///
+  /// In en, this message translates to:
+  /// **'Error'**
+  String get errorPrefix;
 }
 
 class _AppLocalizationsDelegate

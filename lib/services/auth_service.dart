@@ -25,7 +25,19 @@ class AuthService {
   }
 
   Future<void> sendPasswordResetEmail(String email) async {
-    await _firebaseAuth.sendPasswordResetEmail(email: email);
+    final acs = firebase_auth.ActionCodeSettings(
+      url: 'https://gym-tracker-3f423.firebaseapp.com/__/auth/action',
+      handleCodeInApp: true,
+      // Обов'язково заміни на свій реальний application ID
+      androidPackageName: 'com.example.gym_tracker_app',
+      androidInstallApp: true,
+      androidMinimumVersion: '1',
+    );
+
+    await _firebaseAuth.sendPasswordResetEmail(
+      email: email,
+      actionCodeSettings: acs,
+    );
   }
 
   Future<app_user.UserModel?> loginWithGoogle() async {
@@ -128,6 +140,18 @@ class AuthService {
   }
 
   Future<void> resetPassword(String email) async {
-    await _firebaseAuth.sendPasswordResetEmail(email: email);
+    final acs = firebase_auth.ActionCodeSettings(
+      url: 'https://gym-tracker-3f423.firebaseapp.com/__/auth/action',
+      handleCodeInApp: true,
+      // Обов'язково заміни на свій реальний application ID
+      androidPackageName: 'com.example.gym_tracker_app',
+      androidInstallApp: true,
+      androidMinimumVersion: '1',
+    );
+
+    await _firebaseAuth.sendPasswordResetEmail(
+      email: email,
+      actionCodeSettings: acs,
+    );
   }
 }

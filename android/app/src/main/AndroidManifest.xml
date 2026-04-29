@@ -18,7 +18,7 @@
             android:name=".MainActivity"
             android:label="Gym Tracker"
             android:exported="true"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:theme="@style/LaunchTheme"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
             android:hardwareAccelerated="true"
@@ -37,7 +37,11 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="https" android:host="gymtracker.app" android:pathPrefix="/addfriend" />
+                <data 
+                    android:scheme="https" 
+                    android:host="gym-tracker-3f423.firebaseapp.com" />
+                <data android:pathPrefix="/__/auth/action" />
+                <data android:pathPrefix="/__/auth/links" />
             </intent-filter>
         </activity>
 
