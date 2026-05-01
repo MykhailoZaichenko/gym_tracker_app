@@ -1,3 +1,4 @@
+import 'package:app_links/app_links.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fb_auth;
 import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/core/locale/locale_serviece.dart';
@@ -17,6 +18,43 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  bool _isCheckingDeepLink = true;
+  static bool _deepLinkHandled = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkInitialDeepLink();
+  }
+
+  Future<void> _checkInitialDeepLink() async {
+    if (_deepLinkHandled) {
+      if (mounted) {
+        setState(() => _isCheckingDeepLink = false);
+      }
+      return;
+    }
+
+    try {
+      final appLinks = AppLinks();
+
+      final initialUri = await appLinks.getInitialLink();
+
+      if (initialUri != null) {
+        await Future.delayed(const Duration(milliseconds: 800));
+      }
+    } catch (e) {
+      debugPrint('Error checking deep link: $e');
+    } finally {
+      _deepLinkHandled = true;
+      if (mounted) {
+        setState(() {
+          _isCheckingDeepLink = false;
+        });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<ThemeMode>(
@@ -116,25 +154,30 @@ class _MyAppState extends State<MyApp> {
                 ),
               ),
               themeMode: currentThemeMode,
-              home: StreamBuilder<fb_auth.User?>(
-                stream: fb_auth.FirebaseAuth.instance.userChanges(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Scaffold(
+              home: _isCheckingDeepLink
+                  ? const Scaffold(
                       body: Center(child: CircularProgressIndicator()),
-                    );
-                  }
-                  if (snapshot.hasData) {
-                    final user = snapshot.data!;
-                    if (user.emailVerified) {
-                      return const WidgetTree();
-                    } else {
-                      return const VerifyEmailPage();
-                    }
-                  }
-                  return const WelcomePage();
-                },
-              ),
+                    )
+                  : StreamBuilder<fb_auth.User?>(
+                      stream: fb_auth.FirebaseAuth.instance.userChanges(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Scaffold(
+                            body: Center(child: CircularProgressIndicator()),
+                          );
+                        }
+                        if (snapshot.hasData) {
+                          final user = snapshot.data!;
+                          if (user.emailVerified) {
+                            return const WidgetTree();
+                          } else {
+                            return const VerifyEmailPage();
+                          }
+                        }
+                        return const WelcomePage();
+                      },
+                    ),
             );
           },
         );

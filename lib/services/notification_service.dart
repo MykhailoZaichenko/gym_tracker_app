@@ -23,17 +23,6 @@ class NotificationService {
       debugPrint('Timezone error: $e');
     }
 
-    // try {
-    //   final dynamic localZone = await FlutterTimezone.getLocalTimezone();
-    //   String tzName = localZone.toString();
-
-    //   if (tzName.contains('TimezoneInfo(')) {
-    //     tzName = tzName.split(',')[0].replaceAll('TimezoneInfo(', '').trim();
-    //   }
-
-    //   tz.setLocalLocation(tz.getLocation(tzName));
-    // } catch (_) {}
-
     const androidSettings = AndroidInitializationSettings(
       '@mipmap/launcher_icon',
     );
@@ -78,6 +67,50 @@ class NotificationService {
       playSound: true,
     );
     await androidPlugin?.createNotificationChannel(weightChannel);
+  }
+
+  Future<void> scheduleStreakReminder({
+    required String title,
+    required String body,
+    int hour = 20, // За замовчуванням о 20:00
+    int minute = 0,
+  }) async {
+    // 1. Спочатку скасовуємо попереднє нагадування про стрік (ID 100)
+    await _notificationsPlugin.cancel(100);
+
+    // Використовуємо канал weight_channel, щоб не плодити нові (або можна створити окремий)
+    const androidDetails = AndroidNotificationDetails(
+      'weight_channel',
+      'Streak Reminders',
+      channelDescription: 'Reminders to keep your workout streak alive',
+      importance: Importance.high,
+      priority: Priority.high,
+    );
+    const details = NotificationDetails(android: androidDetails);
+
+    // 2. Обчислюємо час для завтрашнього дня
+    final now = tz.TZDateTime.now(tz.local);
+    var scheduledDate = tz.TZDateTime(
+      tz.local,
+      now.year,
+      now.month,
+      now.day,
+      hour,
+      minute,
+    ).add(const Duration(days: 1)); // Додаємо рівно один день
+
+    // 3. Плануємо сповіщення
+    await _notificationsPlugin.zonedSchedule(
+      100, // Фіксований ID для нагадувань про стрік
+      title,
+      body,
+      scheduledDate,
+      details,
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      // Вказуємо absoluteTime, бо це одноразове сповіщення,
+      // яке ми будемо вручну переносити після кожного тренування
+      matchDateTimeComponents: DateTimeComponents.time,
+    );
   }
 
   Future<void> showInstantNotification({

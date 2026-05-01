@@ -470,5 +470,7 @@
   "savePasswordAction": "Зберегти пароль",
   "passwordChangedSuccess": "Пароль успішно змінено! Тепер ви можете увійти.",
   "errorPrefix": "Помилка",
-  "systemLanguage": "Як у системі"
+  "systemLanguage": "Як у системі",
+  "streakWarningTitle": "Твій стрік у небезпеці! 🔥",
+  "streakWarningBody": "Ти ще не тренувався сьогодні. Зроби коротку розминку, щоб зберегти вогник!"
 }

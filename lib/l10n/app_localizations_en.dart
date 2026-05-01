@@ -1246,4 +1246,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get systemLanguage => 'System default';
+
+  @override
+  String get streakWarningTitle => 'Your streak is in danger! 🔥';
+
+  @override
+  String get streakWarningBody =>
+      'You haven\'t worked out today. Do a short warm-up to keep your streak alive!';
 }

@@ -1052,5 +1052,13 @@
   "systemLanguage": "System default",
   "@systemLanguage": {
     "description": "Option to use the device's system language"
+  },
+  "streakWarningTitle": "Your streak is in danger! 🔥",
+  "@streakWarningTitle": {
+    "description": "Title for the streak reminder notification"
+  },
+  "streakWarningBody": "You haven't worked out today. Do a short warm-up to keep your streak alive!",
+  "@streakWarningBody": {
+    "description": "Body for the streak reminder notification"
   }
 }

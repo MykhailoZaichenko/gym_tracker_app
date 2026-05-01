@@ -2425,6 +2425,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'System default'**
   String get systemLanguage;
+
+  /// Title for the streak reminder notification
+  ///
+  /// In en, this message translates to:
+  /// **'Your streak is in danger! 🔥'**
+  String get streakWarningTitle;
+
+  /// Body for the streak reminder notification
+  ///
+  /// In en, this message translates to:
+  /// **'You haven\'t worked out today. Do a short warm-up to keep your streak alive!'**
+  String get streakWarningBody;
 }
 
 class _AppLocalizationsDelegate

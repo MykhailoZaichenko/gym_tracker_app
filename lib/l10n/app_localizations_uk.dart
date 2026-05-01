@@ -1257,4 +1257,11 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get systemLanguage => 'Як у системі';
+
+  @override
+  String get streakWarningTitle => 'Твій стрік у небезпеці! 🔥';
+
+  @override
+  String get streakWarningBody =>
+      'Ти ще не тренувався сьогодні. Зроби коротку розминку, щоб зберегти вогник!';
 }

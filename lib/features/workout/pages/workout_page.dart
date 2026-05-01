@@ -7,6 +7,7 @@ import 'package:gym_tracker_app/features/workout/widgets/workout_type_selector.d
 import 'package:gym_tracker_app/l10n/app_localizations.dart';
 import 'package:gym_tracker_app/services/firestore_service.dart';
 import 'package:gym_tracker_app/features/workout/workout_exports.dart';
+import 'package:gym_tracker_app/services/notification_service.dart';
 import 'package:gym_tracker_app/utils/utils.dart';
 import 'package:gym_tracker_app/utils/workout_utils.dart';
 import 'package:gym_tracker_app/widget/common/custome_snackbar.dart';
@@ -506,6 +507,16 @@ class _WorkoutPageState extends State<WorkoutPage> {
     );
     try {
       await _firestore.saveWorkout(workout);
+      try {
+        final loc = AppLocalizations.of(context)!;
+        final notificationService = NotificationService();
+        await notificationService.scheduleStreakReminder(
+          title: loc.streakWarningTitle,
+          body: loc.streakWarningBody,
+        );
+      } catch (e) {
+        debugPrint("Помилка планування стріку: $e");
+      }
       if (mounted) {
         setState(() {
           _initialEncoded = _encodeCurrentState();

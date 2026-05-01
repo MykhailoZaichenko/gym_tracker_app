@@ -111,6 +111,9 @@ class _CreateNewPasswordPageState extends State<CreateNewPasswordPage> {
                   controller: _passwordController,
                   obscureText: _obscurePassword,
                   enabled: !_isLoading,
+                  textInputAction: TextInputAction.next,
+                  onFieldSubmitted: (value) =>
+                      FocusScope.of(context).nextFocus(),
                   decoration: InputDecoration(
                     labelText: loc.newPasswordLabel,
                     border: const OutlineInputBorder(),
@@ -141,6 +144,12 @@ class _CreateNewPasswordPageState extends State<CreateNewPasswordPage> {
                   controller: _confirmPasswordController,
                   obscureText: _obscureConfirm,
                   enabled: !_isLoading,
+                  textInputAction: TextInputAction.done,
+                  onFieldSubmitted: (_) {
+                    if (!_isLoading) {
+                      _saveNewPassword(loc);
+                    }
+                  },
                   decoration: InputDecoration(
                     labelText: loc.confirmPasswordLabel,
                     border: const OutlineInputBorder(),

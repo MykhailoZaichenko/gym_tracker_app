@@ -1,4 +1,3 @@
-// lib/widgets/exercise_picker.dart
 import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/data/seed/exercise_catalog.dart';
 import 'package:gym_tracker_app/l10n/app_localizations.dart';
@@ -55,16 +54,25 @@ class _ExercisePickerSheetState extends State<_ExercisePickerSheet> {
     super.dispose();
   }
 
+  // Наша функція для розумного очищення тексту від спецсимволів та пробілів
+  String _normalizeString(String text) {
+    return text.toLowerCase().replaceAll(RegExp(r'[^a-zа-яієїґ0-9]'), '');
+  }
+
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
     final textTheme = Theme.of(context).textTheme;
     final catalog = getExerciseCatalog(loc);
+
+    // Оновлена логіка розумного пошуку
     final filtered = _query.isEmpty
         ? catalog
-        : catalog
-              .where((e) => e.name.toLowerCase().contains(_query.toLowerCase()))
-              .toList();
+        : catalog.where((e) {
+            final normalizedExerciseName = _normalizeString(e.name);
+            final normalizedQuery = _normalizeString(_query);
+            return normalizedExerciseName.contains(normalizedQuery);
+          }).toList();
 
     return SafeArea(
       child: Padding(
@@ -133,7 +141,8 @@ class _ExercisePickerSheetState extends State<_ExercisePickerSheet> {
                         child: ExerciseIcon(
                           exercise: it,
                           size: 24,
-                          color: Colors.black,
+                          color: Colors
+                              .black, // Якщо потрібно, зміни колір під тему
                         ),
                       ),
                       title: Text(it.name, style: textTheme.bodyLarge),
