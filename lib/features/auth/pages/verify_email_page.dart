@@ -9,6 +9,7 @@ import 'package:gym_tracker_app/services/auth_service.dart';
 import 'package:gym_tracker_app/services/firestore_service.dart';
 import 'package:gym_tracker_app/widget/common/custome_snackbar.dart';
 import 'package:gym_tracker_app/widget/common/primary_filled_button.dart';
+import 'package:gym_tracker_app/widget/common/fun_loading_screen_widget.dart';
 import 'package:gym_tracker_app/widget/common/widget_tree.dart';
 
 class VerifyEmailPage extends StatefulWidget {
@@ -161,7 +162,7 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: _isCreatingProfile
-            ? const Center(child: CircularProgressIndicator())
+            ? const Center(child: FunLoadingScreen())
             : Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

@@ -4,6 +4,7 @@ import 'package:gym_tracker_app/features/profile/models/user_model.dart';
 import 'package:gym_tracker_app/features/sosial/widgets/friends_card.dart';
 import 'package:gym_tracker_app/l10n/app_localizations.dart';
 import 'package:gym_tracker_app/services/firestore_service.dart';
+import 'package:gym_tracker_app/widget/common/fun_loading_screen_widget.dart';
 import 'package:share_plus/share_plus.dart';
 import 'dart:async';
 
@@ -52,11 +53,17 @@ class _FriendsPageState extends State<FriendsPage>
       context: context,
       builder: (ctx) => AlertDialog(
         title: Text(loc.deleteFriendTitle, style: textTheme.titleLarge),
-        content: Text(loc.deleteFriendConfirmBody(name), style: textTheme.bodyLarge),
+        content: Text(
+          loc.deleteFriendConfirmBody(name),
+          style: textTheme.bodyLarge,
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: Text(loc.cancel, style: textTheme.labelLarge?.copyWith(color: Colors.grey)),
+            child: Text(
+              loc.cancel,
+              style: textTheme.labelLarge?.copyWith(color: Colors.grey),
+            ),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
@@ -78,14 +85,22 @@ class _FriendsPageState extends State<FriendsPage>
         await _firestore.removeFriend(friend.id!);
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(loc.friendDeletedSuccess(name), style: textTheme.bodyMedium)),
+            SnackBar(
+              content: Text(
+                loc.friendDeletedSuccess(name),
+                style: textTheme.bodyMedium,
+              ),
+            ),
           );
         }
       } catch (e) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(loc.deleteError(e.toString()), style: textTheme.bodyMedium),
+              content: Text(
+                loc.deleteError(e.toString()),
+                style: textTheme.bodyMedium,
+              ),
               backgroundColor: Colors.red,
             ),
           );
@@ -124,7 +139,7 @@ class _FriendsPageState extends State<FriendsPage>
       stream: _firestore.getFriendsStream(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
+          return const Center(child: FunLoadingScreen());
         }
         final friends = snapshot.data ?? [];
 
@@ -177,10 +192,7 @@ class _FriendsPageState extends State<FriendsPage>
           ElevatedButton.icon(
             onPressed: () => _shareFriendLink(loc),
             icon: const Icon(Icons.ios_share),
-            label: Text(
-              loc.shareProfileLink,
-              style: textTheme.bodyLarge,
-            ),
+            label: Text(loc.shareProfileLink, style: textTheme.bodyLarge),
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 16),
               backgroundColor: theme.colorScheme.primaryContainer,
@@ -192,10 +204,7 @@ class _FriendsPageState extends State<FriendsPage>
           ),
           const SizedBox(height: 24),
 
-          Text(
-            loc.orFindManually,
-            style: textTheme.titleMedium,
-          ),
+          Text(loc.orFindManually, style: textTheme.titleMedium),
           const SizedBox(height: 10),
 
           TextField(
@@ -269,14 +278,8 @@ class _FriendsPageState extends State<FriendsPage>
                         style: TextStyle(color: theme.colorScheme.primary),
                       ),
                     ),
-                    title: Text(
-                      name,
-                      style: textTheme.labelLarge,
-                    ),
-                    subtitle: Text(
-                      user.email,
-                      style: textTheme.bodySmall,
-                    ),
+                    title: Text(name, style: textTheme.labelLarge),
+                    subtitle: Text(user.email, style: textTheme.bodySmall),
                     trailing: ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -292,10 +295,7 @@ class _FriendsPageState extends State<FriendsPage>
 
           const Divider(height: 40),
 
-          Text(
-            loc.incomingRequests,
-            style: textTheme.titleMedium,
-          ),
+          Text(loc.incomingRequests, style: textTheme.titleMedium),
           const SizedBox(height: 10),
           StreamBuilder<List<Map<String, dynamic>>>(
             stream: _firestore.getFriendRequests(),
@@ -392,7 +392,10 @@ class _FriendsPageState extends State<FriendsPage>
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(loc.requestSentTo(user.email), style: textTheme.bodyMedium),
+            content: Text(
+              loc.requestSentTo(user.email),
+              style: textTheme.bodyMedium,
+            ),
             backgroundColor: Colors.green,
           ),
         );
@@ -460,7 +463,10 @@ class _FriendsPageState extends State<FriendsPage>
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text(loc.requestSentSuccess, style: textTheme.bodyMedium),
+                content: Text(
+                  loc.requestSentSuccess,
+                  style: textTheme.bodyMedium,
+                ),
                 backgroundColor: Colors.green,
               ),
             );

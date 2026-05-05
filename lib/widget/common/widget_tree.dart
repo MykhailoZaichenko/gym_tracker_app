@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/features/analytics/pages/graf_page.dart';
 import 'package:gym_tracker_app/features/workout/pages/journal_page.dart';
 import 'package:gym_tracker_app/services/firestore_service.dart';
+import 'package:gym_tracker_app/widget/common/fun_loading_screen_widget.dart';
 import 'package:gym_tracker_app/widget/layout/navbar_widget.dart';
 import 'package:gym_tracker_app/widget/layout/navigation_state.dart';
 import 'package:gym_tracker_app/features/home/pages/history_page.dart';
@@ -62,7 +63,7 @@ class _WidgetTreeState extends State<WidgetTree> {
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      return const Scaffold(body: Center(child: FunLoadingScreen()));
     }
 
     if (_needsUsername) {

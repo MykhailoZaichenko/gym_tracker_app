@@ -5,6 +5,7 @@ import 'package:gym_tracker_app/core/locale/locale_serviece.dart';
 import 'package:gym_tracker_app/features/auth/pages/verify_email_page.dart';
 import 'package:gym_tracker_app/features/welcome/pages/welcome_page.dart';
 import 'package:gym_tracker_app/l10n/app_localizations.dart';
+import 'package:gym_tracker_app/widget/common/fun_loading_screen_widget.dart';
 import 'package:gym_tracker_app/widget/common/sync_badge.dart';
 import 'package:gym_tracker_app/widget/common/widget_tree.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -155,16 +156,14 @@ class _MyAppState extends State<MyApp> {
               ),
               themeMode: currentThemeMode,
               home: _isCheckingDeepLink
-                  ? const Scaffold(
-                      body: Center(child: CircularProgressIndicator()),
-                    )
+                  ? const Scaffold(body: Center(child: FunLoadingScreen()))
                   : StreamBuilder<fb_auth.User?>(
                       stream: fb_auth.FirebaseAuth.instance.userChanges(),
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
                           return const Scaffold(
-                            body: Center(child: CircularProgressIndicator()),
+                            body: Center(child: FunLoadingScreen()),
                           );
                         }
                         if (snapshot.hasData) {

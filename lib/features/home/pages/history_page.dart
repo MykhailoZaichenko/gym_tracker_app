@@ -5,6 +5,7 @@ import 'package:gym_tracker_app/features/workout/pages/workout_page.dart';
 import 'package:gym_tracker_app/features/home/history_exports.dart';
 import 'package:gym_tracker_app/l10n/app_localizations.dart';
 import 'package:gym_tracker_app/services/firestore_service.dart';
+import 'package:gym_tracker_app/widget/common/fun_loading_screen_widget.dart';
 
 class HistoryPage extends StatefulWidget {
   const HistoryPage({super.key});
@@ -82,7 +83,7 @@ class _HistoryPageState extends State<HistoryPage> {
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      return const Scaffold(body: Center(child: FunLoadingScreen()));
     }
 
     final loc = AppLocalizations.of(context)!;
@@ -97,9 +98,7 @@ class _HistoryPageState extends State<HistoryPage> {
       builder: (context, snapshot) {
         // Якщо завантаження (перший раз)
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
-          );
+          return const Scaffold(body: Center(child: FunLoadingScreen()));
         }
 
         // Отримуємо дані (або пусту мапу, якщо помилка/пусто)

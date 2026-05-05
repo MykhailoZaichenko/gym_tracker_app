@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:gym_tracker_app/features/auth/pages/login_page.dart';
 import 'package:gym_tracker_app/l10n/app_localizations.dart';
 import 'package:gym_tracker_app/widget/common/custome_snackbar.dart';
+import 'package:gym_tracker_app/widget/common/fun_loading_screen_widget.dart';
 import 'package:gym_tracker_app/widget/common/primary_filled_button.dart';
 
 class CreateNewPasswordPage extends StatefulWidget {
@@ -177,7 +178,7 @@ class _CreateNewPasswordPageState extends State<CreateNewPasswordPage> {
                 ),
                 const SizedBox(height: 32),
                 _isLoading
-                    ? const Center(child: CircularProgressIndicator())
+                    ? const Center(child: FunLoadingScreen())
                     : PrimaryFilledButton(
                         onPressed: () => _saveNewPassword(loc),
                         text: loc.savePasswordAction,

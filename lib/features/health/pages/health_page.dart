@@ -6,6 +6,7 @@ import 'package:gym_tracker_app/l10n/app_localizations.dart';
 import 'package:gym_tracker_app/services/firestore_service.dart';
 import 'package:gym_tracker_app/services/notification_service.dart';
 import 'package:gym_tracker_app/widget/common/fading_edge.dart';
+import 'package:gym_tracker_app/widget/common/fun_loading_screen_widget.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -178,15 +179,9 @@ class _HealthPageState extends State<HealthPage> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    loc.reminderSettings,
-                    style: textTheme.titleLarge,
-                  ),
+                  Text(loc.reminderSettings, style: textTheme.titleLarge),
                   const SizedBox(height: 20),
-                  Text(
-                    loc.selectDay,
-                    style: textTheme.bodySmall,
-                  ),
+                  Text(loc.selectDay, style: textTheme.bodySmall),
                   const SizedBox(height: 12),
                   Wrap(
                     spacing: 8,
@@ -212,10 +207,7 @@ class _HealthPageState extends State<HealthPage> {
                     }),
                   ),
                   const SizedBox(height: 20),
-                  Text(
-                    loc.selectTime,
-                    style: textTheme.bodySmall,
-                  ),
+                  Text(loc.selectTime, style: textTheme.bodySmall),
                   ListTile(
                     contentPadding: EdgeInsets.zero,
                     title: Text(
@@ -317,7 +309,7 @@ class _HealthPageState extends State<HealthPage> {
         stream: _firestore.getBodyWeightHistory(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(child: FunLoadingScreen());
           }
 
           final data = snapshot.data ?? [];
@@ -376,10 +368,7 @@ class _HealthPageState extends State<HealthPage> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            loc.weightLabel,
-                            style: textTheme.titleMedium,
-                          ),
+                          Text(loc.weightLabel, style: textTheme.titleMedium),
                           TextButton(
                             onPressed: () => _handleWeightEntry(data),
                             child: Text(
@@ -514,10 +503,7 @@ class _HealthPageState extends State<HealthPage> {
                 padding: const EdgeInsets.symmetric(horizontal: 24.0),
                 child: Align(
                   alignment: Alignment.centerLeft,
-                  child: Text(
-                    loc.history,
-                    style: textTheme.titleMedium,
-                  ),
+                  child: Text(loc.history, style: textTheme.titleMedium),
                 ),
               ),
               const SizedBox(height: 8),

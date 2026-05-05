@@ -2437,6 +2437,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'You haven\'t worked out today. Do a short warm-up to keep your streak alive!'**
   String get streakWarningBody;
+
+  /// Funny loading phrase about bench press
+  ///
+  /// In en, this message translates to:
+  /// **'Looking for an available bench...'**
+  String get loadingJoke1;
+
+  /// Funny loading phrase about cardio
+  ///
+  /// In en, this message translates to:
+  /// **'Coming up with an excuse to skip cardio...'**
+  String get loadingJoke2;
+
+  /// Funny loading phrase about muscle fatigue
+  ///
+  /// In en, this message translates to:
+  /// **'Convincing your muscles it\'s not over yet...'**
+  String get loadingJoke3;
+
+  /// Funny loading phrase about the last set
+  ///
+  /// In en, this message translates to:
+  /// **'Counting how many times you said \'last set\'...'**
+  String get loadingJoke4;
+
+  /// Funny loading phrase about weight and ego
+  ///
+  /// In en, this message translates to:
+  /// **'Adding +5 kg to your self-esteem...'**
+  String get loadingJoke5;
+
+  /// Funny loading phrase about motivation
+  ///
+  /// In en, this message translates to:
+  /// **'Searching for your motivation under the dumbbells...'**
+  String get loadingJoke6;
+
+  /// Funny loading phrase about headphones
+  ///
+  /// In en, this message translates to:
+  /// **'Untangling earphones before a heavy set...'**
+  String get loadingJoke7;
+
+  /// Funny loading phrase about waiting for a machine
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for that guy to get off the machine...'**
+  String get loadingJoke8;
+
+  /// Funny loading phrase about counting plates
+  ///
+  /// In en, this message translates to:
+  /// **'Trying to remember how many plates were on the bar...'**
+  String get loadingJoke9;
+
+  /// Funny loading phrase about drinking water
+  ///
+  /// In en, this message translates to:
+  /// **'Taking a water break and moving on...'**
+  String get loadingJoke10;
+
+  /// Funny loading phrase about Romanian deadlift
+  ///
+  /// In en, this message translates to:
+  /// **'Gathering strength for the perfect Romanian deadlift...'**
+  String get loadingJoke11;
+
+  /// Funny loading phrase about saving data
+  ///
+  /// In en, this message translates to:
+  /// **'Stretching fingers before saving...'**
+  String get loadingJoke12;
+
+  /// Funny loading phrase about leg day
+  ///
+  /// In en, this message translates to:
+  /// **'Mentally preparing for leg day...'**
+  String get loadingJoke13;
 }
 
 class _AppLocalizationsDelegate

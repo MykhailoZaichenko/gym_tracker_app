@@ -6,6 +6,7 @@ import 'package:gym_tracker_app/l10n/app_localizations.dart';
 import 'package:gym_tracker_app/services/firestore_service.dart';
 import 'package:gym_tracker_app/utils/time_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:gym_tracker_app/widget/common/fun_loading_screen_widget.dart';
 
 class FriendProfilePage extends StatefulWidget {
   final UserModel friend;
@@ -135,7 +136,7 @@ class _FriendProfilePageState extends State<FriendProfilePage> {
     return Scaffold(
       appBar: AppBar(),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(child: FunLoadingScreen())
           : SingleChildScrollView(
               padding: const EdgeInsets.all(20),
               child: Column(

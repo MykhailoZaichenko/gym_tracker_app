@@ -1060,5 +1060,58 @@
   "streakWarningBody": "You haven't worked out today. Do a short warm-up to keep your streak alive!",
   "@streakWarningBody": {
     "description": "Body for the streak reminder notification"
+  },
+
+  "loadingJoke1": "Looking for an available bench...",
+  "@loadingJoke1": {
+    "description": "Funny loading phrase about bench press"
+  },
+  "loadingJoke2": "Coming up with an excuse to skip cardio...",
+  "@loadingJoke2": {
+    "description": "Funny loading phrase about cardio"
+  },
+  "loadingJoke3": "Convincing your muscles it's not over yet...",
+  "@loadingJoke3": {
+    "description": "Funny loading phrase about muscle fatigue"
+  },
+  "loadingJoke4": "Counting how many times you said 'last set'...",
+  "@loadingJoke4": {
+    "description": "Funny loading phrase about the last set"
+  },
+  "loadingJoke5": "Adding +5 kg to your self-esteem...",
+  "@loadingJoke5": {
+    "description": "Funny loading phrase about weight and ego"
+  },
+  "loadingJoke6": "Searching for your motivation under the dumbbells...",
+  "@loadingJoke6": {
+    "description": "Funny loading phrase about motivation"
+  },
+  "loadingJoke7": "Untangling earphones before a heavy set...",
+  "@loadingJoke7": {
+    "description": "Funny loading phrase about headphones"
+  },
+  "loadingJoke8": "Waiting for that guy to get off the machine...",
+  "@loadingJoke8": {
+    "description": "Funny loading phrase about waiting for a machine"
+  },
+  "loadingJoke9": "Trying to remember how many plates were on the bar...",
+  "@loadingJoke9": {
+    "description": "Funny loading phrase about counting plates"
+  },
+  "loadingJoke10": "Taking a water break and moving on...",
+  "@loadingJoke10": {
+    "description": "Funny loading phrase about drinking water"
+  },
+  "loadingJoke11": "Gathering strength for the perfect Romanian deadlift...",
+  "@loadingJoke11": {
+    "description": "Funny loading phrase about Romanian deadlift"
+  },
+  "loadingJoke12": "Stretching fingers before saving...",
+  "@loadingJoke12": {
+    "description": "Funny loading phrase about saving data"
+  },
+  "loadingJoke13": "Mentally preparing for leg day...",
+  "@loadingJoke13": {
+    "description": "Funny loading phrase about leg day"
   }
 }

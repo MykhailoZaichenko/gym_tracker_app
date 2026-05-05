@@ -1264,4 +1264,46 @@ class AppLocalizationsUk extends AppLocalizations {
   @override
   String get streakWarningBody =>
       'Ти ще не тренувався сьогодні. Зроби коротку розминку, щоб зберегти вогник!';
+
+  @override
+  String get loadingJoke1 => 'Шукаємо вільну лаву для жиму...';
+
+  @override
+  String get loadingJoke2 => 'Вигадуємо відмазку, щоб не робити кардіо...';
+
+  @override
+  String get loadingJoke3 => 'Переконуємо твої м\'язи, що це ще не кінець...';
+
+  @override
+  String get loadingJoke4 =>
+      'Рахуємо, скільки разів ти сказав «останній підхід»...';
+
+  @override
+  String get loadingJoke5 => 'Додаємо +5 кг до твоєї самооцінки...';
+
+  @override
+  String get loadingJoke6 => 'Шукаємо твою мотивацію під гантелями...';
+
+  @override
+  String get loadingJoke7 => 'Розплутуємо навушники перед важким сетом...';
+
+  @override
+  String get loadingJoke8 => 'Чекаємо, поки той хлопець звільнить тренажер...';
+
+  @override
+  String get loadingJoke9 =>
+      'Намагаємось згадати, скільки млинців було на штанзі...';
+
+  @override
+  String get loadingJoke10 => 'П\'ємо водичку і продовжуємо...';
+
+  @override
+  String get loadingJoke11 => 'Збираємо сили для ідеальної румунської тяги...';
+
+  @override
+  String get loadingJoke12 =>
+      'Робимо розтяжку для пальців перед збереженням...';
+
+  @override
+  String get loadingJoke13 => 'Морально готуємось до дня ніг...';
 }

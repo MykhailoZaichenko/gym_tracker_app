@@ -1253,4 +1253,46 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get streakWarningBody =>
       'You haven\'t worked out today. Do a short warm-up to keep your streak alive!';
+
+  @override
+  String get loadingJoke1 => 'Looking for an available bench...';
+
+  @override
+  String get loadingJoke2 => 'Coming up with an excuse to skip cardio...';
+
+  @override
+  String get loadingJoke3 => 'Convincing your muscles it\'s not over yet...';
+
+  @override
+  String get loadingJoke4 => 'Counting how many times you said \'last set\'...';
+
+  @override
+  String get loadingJoke5 => 'Adding +5 kg to your self-esteem...';
+
+  @override
+  String get loadingJoke6 =>
+      'Searching for your motivation under the dumbbells...';
+
+  @override
+  String get loadingJoke7 => 'Untangling earphones before a heavy set...';
+
+  @override
+  String get loadingJoke8 => 'Waiting for that guy to get off the machine...';
+
+  @override
+  String get loadingJoke9 =>
+      'Trying to remember how many plates were on the bar...';
+
+  @override
+  String get loadingJoke10 => 'Taking a water break and moving on...';
+
+  @override
+  String get loadingJoke11 =>
+      'Gathering strength for the perfect Romanian deadlift...';
+
+  @override
+  String get loadingJoke12 => 'Stretching fingers before saving...';
+
+  @override
+  String get loadingJoke13 => 'Mentally preparing for leg day...';
 }

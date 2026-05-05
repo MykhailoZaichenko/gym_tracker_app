@@ -12,6 +12,7 @@ import 'package:gym_tracker_app/utils/utils.dart';
 import 'package:gym_tracker_app/utils/workout_utils.dart';
 import 'package:gym_tracker_app/widget/common/custome_snackbar.dart';
 import 'package:gym_tracker_app/widget/common/exercise_icon.dart';
+import 'package:gym_tracker_app/widget/common/fun_loading_screen_widget.dart';
 import 'package:gym_tracker_app/widget/common/pop_save_wideget.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -760,7 +761,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      return const Scaffold(body: Center(child: FunLoadingScreen()));
     }
     final loc = AppLocalizations.of(context)!;
     final textTheme = Theme.of(context).textTheme;

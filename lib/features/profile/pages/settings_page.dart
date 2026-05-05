@@ -5,6 +5,7 @@ import 'package:gym_tracker_app/features/welcome/pages/welcome_page.dart';
 import 'package:gym_tracker_app/l10n/app_localizations.dart';
 import 'package:gym_tracker_app/services/notification_service.dart';
 import 'package:gym_tracker_app/widget/common/custome_snackbar.dart';
+import 'package:gym_tracker_app/widget/common/fun_loading_screen_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:gym_tracker_app/core/theme/theme_service.dart';
 import 'package:gym_tracker_app/services/auth_service.dart';
@@ -309,7 +310,7 @@ class _SettingsPageState extends State<SettingsPage> {
     final loc = AppLocalizations.of(context)!;
 
     if (_isLoading) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      return const Scaffold(body: Center(child: FunLoadingScreen()));
     }
 
     return Scaffold(

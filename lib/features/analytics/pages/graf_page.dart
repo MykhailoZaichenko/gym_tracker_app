@@ -9,6 +9,7 @@ import 'package:gym_tracker_app/features/analytics/widgets/line_chart_card.dart'
 import 'package:gym_tracker_app/l10n/app_localizations.dart';
 import 'package:gym_tracker_app/services/firestore_service.dart';
 import 'package:gym_tracker_app/widget/common/build_summary_item_widget.dart';
+import 'package:gym_tracker_app/widget/common/fun_loading_screen_widget.dart';
 import 'package:gym_tracker_app/widget/common/month_picker_dialog.dart';
 import 'package:intl/intl.dart';
 import 'package:gym_tracker_app/data/seed/exercise_catalog.dart';
@@ -726,7 +727,7 @@ class _GrafPageState extends State<GrafPage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      return const Scaffold(body: Center(child: FunLoadingScreen()));
     }
     final GlobalKey<TooltipState> tooltipKey = GlobalKey<TooltipState>();
     final loc = AppLocalizations.of(context)!;

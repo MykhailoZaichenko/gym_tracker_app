@@ -5,6 +5,7 @@ import 'package:gym_tracker_app/features/health/pages/health_page.dart';
 import 'package:gym_tracker_app/features/profile/pages/records_page.dart';
 import 'package:gym_tracker_app/features/sosial/pages/friends_page.dart';
 import 'package:gym_tracker_app/l10n/app_localizations.dart';
+import 'package:gym_tracker_app/widget/common/fun_loading_screen_widget.dart';
 import 'package:intl/intl.dart';
 import 'package:gym_tracker_app/features/profile/models/user_model.dart';
 import 'package:gym_tracker_app/features/profile/profile_exports.dart';
@@ -328,7 +329,7 @@ class _ProfilePageState extends State<ProfilePage> {
     return SafeArea(
       child: Scaffold(
         body: _isLoading
-            ? const Center(child: CircularProgressIndicator())
+            ? const Center(child: FunLoadingScreen())
             : Padding(
                 padding: const EdgeInsets.symmetric(vertical: 20),
                 child: Center(
