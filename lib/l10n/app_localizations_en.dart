@@ -1295,4 +1295,595 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get loadingJoke13 => 'Mentally preparing for leg day...';
+
+  @override
+  String get customExerciseCategory => 'Custom Exercises';
+
+  @override
+  String get catLegs => 'Legs';
+
+  @override
+  String get catChest => 'Chest';
+
+  @override
+  String get catBack => 'Back';
+
+  @override
+  String get catShoulders => 'Shoulders';
+
+  @override
+  String get catArms => 'Arms';
+
+  @override
+  String get catAbs => 'Abs';
+
+  @override
+  String get catCardio => 'Cardio';
+
+  @override
+  String get catCalves => 'Calves';
+
+  @override
+  String get catFullBody => 'Full Body';
+
+  @override
+  String get eqBarbell => 'Barbell';
+
+  @override
+  String get eqDumbbell => 'Dumbbell';
+
+  @override
+  String get eqMachine => 'Machine';
+
+  @override
+  String get eqBodyweight => 'Bodyweight';
+
+  @override
+  String get eqBench => 'Bench';
+
+  @override
+  String get eqInclineBench => 'Incline bench';
+
+  @override
+  String get eqDeclineBench => 'Decline bench';
+
+  @override
+  String get eqPullUpBar => 'Pull-up bar';
+
+  @override
+  String get eqDipBar => 'Dip bars';
+
+  @override
+  String get eqMat => 'Gym mat';
+
+  @override
+  String get eqCable => 'Cable machine';
+
+  @override
+  String get eqKettlebell => 'Kettlebell';
+
+  @override
+  String get eqSmithMachine => 'Smith machine';
+
+  @override
+  String get eqEzBar => 'EZ-bar';
+
+  @override
+  String get eqRope => 'Rope attachment';
+
+  @override
+  String get eqRomanChair => 'Roman chair';
+
+  @override
+  String get eqPecDeck => 'Pec deck machine';
+
+  @override
+  String get eqTreadmill => 'Treadmill';
+
+  @override
+  String get eqElliptical => 'Elliptical';
+
+  @override
+  String get eqRowingMachine => 'Rowing machine';
+
+  @override
+  String get eqAbWheel => 'Ab wheel';
+
+  @override
+  String get eqWeightPlate => 'Weight plate';
+
+  @override
+  String get musQuads => 'Quadriceps';
+
+  @override
+  String get musGlutes => 'Glutes';
+
+  @override
+  String get musHamstrings => 'Hamstrings';
+
+  @override
+  String get musCalves => 'Calves';
+
+  @override
+  String get musSoleus => 'Soleus';
+
+  @override
+  String get musChest => 'Pectorals';
+
+  @override
+  String get musUpperChest => 'Upper chest';
+
+  @override
+  String get musLowerChest => 'Lower chest';
+
+  @override
+  String get musInnerChest => 'Inner chest';
+
+  @override
+  String get musLats => 'Lats';
+
+  @override
+  String get musMidBack => 'Mid back';
+
+  @override
+  String get musLowerBack => 'Lower back';
+
+  @override
+  String get musTraps => 'Trapezius';
+
+  @override
+  String get musFrontDelts => 'Front delts';
+
+  @override
+  String get musSideDelts => 'Side delts';
+
+  @override
+  String get musRearDelts => 'Rear delts';
+
+  @override
+  String get musBiceps => 'Biceps';
+
+  @override
+  String get musTriceps => 'Triceps';
+
+  @override
+  String get musForearms => 'Forearms';
+
+  @override
+  String get musBrachialis => 'Brachialis';
+
+  @override
+  String get musAbs => 'Abs';
+
+  @override
+  String get musLowerAbs => 'Lower abs';
+
+  @override
+  String get musObliques => 'Obliques';
+
+  @override
+  String get musCore => 'Core';
+
+  @override
+  String get musHeart => 'Heart';
+
+  @override
+  String get musHipFlexors => 'Hip flexors';
+
+  @override
+  String get musAbductors => 'Abductors';
+
+  @override
+  String get musAdductors => 'Adductors';
+
+  @override
+  String get musRotatorCuff => 'Rotator cuff';
+
+  @override
+  String get tipsSquat =>
+      'Keep your back straight and look forward.\nSquat down until your thighs are parallel to the floor.\nPush through your heels on the way up.';
+
+  @override
+  String get tipsFrontSquat =>
+      'Keep your elbows as high as possible.\nThe barbell should rest on your front deltoids.\nKeep your torso upright.';
+
+  @override
+  String get tipsGobletSquat =>
+      'Hold the weight close to your chest.\nSquat deep, pushing your knees outward.';
+
+  @override
+  String get tipsSmithMachineSquat =>
+      'Place your feet slightly forward to emphasize the glutes.\nLean back against the bar for support.';
+
+  @override
+  String get tipsHackSquat =>
+      'Keep your back flat against the pad.\nDo not lift your heels off the platform.';
+
+  @override
+  String get tipsLunge =>
+      'Take a wide enough step.\nYour back knee should almost touch the floor.\nKeep your front knee behind your toes.';
+
+  @override
+  String get tipsWalkingLunge =>
+      'Maintain balance and do not rush.\nKeep your torso upright.';
+
+  @override
+  String get tipsReverseLunge =>
+      'Stepping back reduces stress on the knee joints.\nPush off with your front leg to return.';
+
+  @override
+  String get tipsBulgarianSplitSquat =>
+      'Place your rear foot on a bench.\nLean your torso slightly forward to target the glutes.';
+
+  @override
+  String get tipsLegPress =>
+      'Do not fully lock your knees at the top of the movement.\nKeep your lower back pressed against the seat.';
+
+  @override
+  String get tipsWallSit =>
+      'Keep a 90-degree angle at your knees.\nPress your entire back against the wall.';
+
+  @override
+  String get tipsLegExtension =>
+      'Keep your hips firmly on the seat.\nControl the weight on the way down.';
+
+  @override
+  String get tipsLegCurl =>
+      'Perform smooth, controlled movements.\nKeep your hips pressed against the pad.';
+
+  @override
+  String get tipsSeatedLegCurl =>
+      'Secure the leg pads firmly.\nCurl your legs as far back as possible.';
+
+  @override
+  String get tipsDeadlift =>
+      'Keep the bar as close to your shins as possible.\nInitiate the lift by pushing with your legs.\nKeep your back perfectly straight.';
+
+  @override
+  String get tipsSumoDeadlift =>
+      'Take a very wide stance.\nKeep your torso more upright than in a conventional deadlift.';
+
+  @override
+  String get tipsRomanianDeadlift =>
+      'Push your hips back as far as possible.\nKeep a slight bend in your knees.\nFeel the stretch in your hamstrings.';
+
+  @override
+  String get tipsGoodMorning =>
+      'Rest the bar on your traps, similar to a squat.\nHinge at the hips, keeping your legs slightly bent.';
+
+  @override
+  String get tipsHipThrust =>
+      'Rest your shoulder blades on the bench.\nPause at the top and squeeze your glutes.\nTuck your chin to your chest.';
+
+  @override
+  String get tipsGluteBridge =>
+      'Drive through your heels.\nDo not hyperextend your lower back at the top.';
+
+  @override
+  String get tipsCablePullThrough =>
+      'Face away from the machine.\nThe movement should come from hinging at the hips.';
+
+  @override
+  String get tipsStandingCalfRaise =>
+      'Lower your heels as much as possible.\nRaise up on your toes as high as you can.';
+
+  @override
+  String get tipsSeatedCalfRaise =>
+      'Sit up straight and secure the knee pads.\nMove slowly and with control.';
+
+  @override
+  String get tipsDonkeyCalfRaise =>
+      'Keep your back straight while leaning forward.\nStretch your calves at the bottom of the movement.';
+
+  @override
+  String get tipsAbductorMachine =>
+      'Push your legs apart in a smooth motion.\nControl the weight as you bring your legs back.';
+
+  @override
+  String get tipsAdductorMachine =>
+      'Squeeze your legs together, feeling the inner thighs work.\nKeep your back pressed against the seat.';
+
+  @override
+  String get tipsBenchPress =>
+      'Retract your shoulder blades and keep them down.\nKeep your feet firmly planted on the floor.\nLower the bar to your nipple line.';
+
+  @override
+  String get tipsInclineBenchPress =>
+      'Set the bench angle to 30-45 degrees.\nLower the bar closer to your collarbones.';
+
+  @override
+  String get tipsDeclineBenchPress =>
+      'Secure your legs under the pads.\nLower the bar to your lower chest.';
+
+  @override
+  String get tipsCloseGripBenchPress =>
+      'Use a shoulder-width grip or slightly narrower.\nKeep your elbows tucked close to your body.';
+
+  @override
+  String get tipsSmithMachineBenchPress =>
+      'Adjust the bench so the bar lowers to the middle of your chest.\nControl the descent.';
+
+  @override
+  String get tipsDumbbellBenchPress =>
+      'Dumbbells allow for a deeper range of motion.\nBring the dumbbells together at the top, squeezing your chest.';
+
+  @override
+  String get tipsInclineDumbbellPress =>
+      'Keep your elbows at about a 45-degree angle to your body.\nDo not drop the dumbbells quickly at the bottom.';
+
+  @override
+  String get tipsPushUp =>
+      'Keep your body in a straight line.\nKeep your elbows tucked at a 45-degree angle.';
+
+  @override
+  String get tipsDiamondPushUp =>
+      'Form a diamond shape with your index fingers and thumbs.\nLower your chest toward your hands.';
+
+  @override
+  String get tipsWeightedPushUp =>
+      'Have a partner place a weight plate on your upper back.\nMaintain perfect form, do not let your lower back sag.';
+
+  @override
+  String get tipsDip =>
+      'Lean forward slightly to emphasize the chest.\nDo not go down too deep to protect your shoulders.';
+
+  @override
+  String get tipsMachineFly =>
+      'Keep your elbows slightly bent.\nSqueeze your chest muscles as you bring the handles together.';
+
+  @override
+  String get tipsCableCrossover =>
+      'Lean forward slightly.\nThe movement should feel like \'hugging a tree\'.';
+
+  @override
+  String get tipsLowCableCrossover =>
+      'Pull the handles from the bottom up.\nBring your hands together in front of your upper chest.';
+
+  @override
+  String get tipsDumbbellFly =>
+      'Open your arms until you feel a mild stretch in your chest.\nDo not fully lock out your elbows.';
+
+  @override
+  String get tipsInclineDumbbellFly =>
+      'Set the bench to a 30-degree angle.\nControl the movement, avoiding sudden jerks.';
+
+  @override
+  String get tipsPullover =>
+      'Lie across or along the bench.\nLower the dumbbell behind your head with slightly bent arms.';
+
+  @override
+  String get tipsChestPressMachine =>
+      'Adjust the seat so the handles are at chest level.\nPress evenly with both arms.';
+
+  @override
+  String get tipsPullUp =>
+      'Start the pull by bringing your shoulder blades down.\nPull your chest toward the bar, not your chin.\nControl the descent, do not drop your body.';
+
+  @override
+  String get tipsChinUp =>
+      'Use an underhand grip.\nKeep your elbows close to your body.';
+
+  @override
+  String get tipsLatPullDown =>
+      'Do not lean back too far.\nPull the bar down to your upper chest.';
+
+  @override
+  String get tipsCloseGripLatPullDown =>
+      'Squeeze your shoulder blades at the bottom.\nUse a narrow grip attachment.';
+
+  @override
+  String get tipsVBarPullDown =>
+      'Pull the handle to your solar plexus.\nFeel the maximum contraction of your shoulder blades.';
+
+  @override
+  String get tipsBentOverRow =>
+      'Lean your torso almost parallel to the floor.\nPull the bar to your waist, not your chest.';
+
+  @override
+  String get tipsReverseGripRow =>
+      'An underhand grip helps keep elbows close to the body.\nControl the weight when lowering the barbell.';
+
+  @override
+  String get tipsSingleArmDumbbellRow =>
+      'Support yourself with a knee and hand on a bench for stability.\nPull the dumbbell to your hip, not straight up.';
+
+  @override
+  String get tipsTBarRow =>
+      'Maintain a natural arch in your lower back.\nDo not jerk the weight with your torso.';
+
+  @override
+  String get tipsSeatedCableRow =>
+      'Sit up straight and avoid leaning back excessively.\nSqueeze your shoulder blades together at the end of the movement.';
+
+  @override
+  String get tipsMachineRow =>
+      'Press your chest firmly against the pad.\nFocus on driving your elbows back.';
+
+  @override
+  String get tipsStraightArmPulldown =>
+      'Keep your arms slightly bent but locked.\nThe movement should only occur at the shoulder joint.';
+
+  @override
+  String get tipsHyperextension =>
+      'Do not hyperextend your back at the top.\nLower yourself slowly, feeling the stretch.';
+
+  @override
+  String get tipsRackPull =>
+      'Set the barbell at knee height.\nPull the weight by extending your hips and back.';
+
+  @override
+  String get tipsOverheadPress =>
+      'Squeeze your glutes and core to create a rigid base.\nThe bar should travel in a straight line close to your face.';
+
+  @override
+  String get tipsSeatedDumbbellPress =>
+      'Sit on a bench with back support to stabilize your lower back.\nLower the dumbbells to ear level.';
+
+  @override
+  String get tipsSmithMachineShoulderPress =>
+      'Adjust the bench so the bar lowers in front of your face.\nDo not fully lock out your elbows at the top.';
+
+  @override
+  String get tipsArnoldPress =>
+      'At the bottom, your palms should face you.\nRotate your wrists as you press the dumbbells up.';
+
+  @override
+  String get tipsLateralRaise =>
+      'Raise your arms as if you are pouring water from pitchers.\nDo not use momentum from your torso.';
+
+  @override
+  String get tipsCableLateralRaise =>
+      'The cable provides constant tension.\nRun the cable behind your back or in front of you.';
+
+  @override
+  String get tipsMachineLateralRaise =>
+      'Sit up straight and focus on raising your elbows.\nThe weight should be comfortable enough to maintain good form.';
+
+  @override
+  String get tipsFrontRaise =>
+      'Raise your arms to eye level.\nAvoid swinging your torso.';
+
+  @override
+  String get tipsCableFrontRaise =>
+      'Stand facing away from the machine and run the cable between your legs.\nKeep your elbows slightly bent.';
+
+  @override
+  String get tipsRearDeltRaise =>
+      'Lean your torso parallel to the floor.\nFocus on squeezing the rear delts, not just your shoulder blades.';
+
+  @override
+  String get tipsReversePecDeck =>
+      'Sit facing the machine.\nKeep your arms parallel to the floor.';
+
+  @override
+  String get tipsFacePull =>
+      'Pull the rope to eye level.\nExternally rotate your arms at the end of the movement.';
+
+  @override
+  String get tipsUprightRow =>
+      'Use a shoulder-width or slightly wider grip.\nPull your elbows higher than your hands.';
+
+  @override
+  String get tipsShoulderShrug =>
+      'Simply raise your shoulders straight up toward your ears.\nDo not roll your shoulders.';
+
+  @override
+  String get tipsBicepsCurl =>
+      'Keep your elbows tucked into your sides.\nAvoid swinging your torso.';
+
+  @override
+  String get tipsDumbbellCurl =>
+      'You can perform this alternating arms.\nRotate your wrist (supinate) during the curl.';
+
+  @override
+  String get tipsHammerCurl =>
+      'Hold the dumbbells with a neutral grip (palms facing each other).\nThe movement should be smooth and controlled.';
+
+  @override
+  String get tipsPreacherCurl =>
+      'Press your triceps firmly against the pad.\nDo not fully extend your arms to protect your joints.';
+
+  @override
+  String get tipsConcentrationCurl =>
+      'Rest your elbow on the inner part of your thigh.\nDo not use your shoulder or torso to assist.';
+
+  @override
+  String get tipsCableCurl =>
+      'The cable creates constant tension in the muscle.\nTake a step back from the machine to increase the range of motion.';
+
+  @override
+  String get tipsZottmanCurl =>
+      'Curl the dumbbells with an underhand grip (palms up).\nLower the dumbbells with an overhand grip (palms down).';
+
+  @override
+  String get tipsTricepsExtension =>
+      'Can be performed with one or two hands.\nYour elbows should point straight up.';
+
+  @override
+  String get tipsSkullCrusher =>
+      'Lower the bar behind your head or to your forehead.\nYour elbows should not flare out to the sides.';
+
+  @override
+  String get tipsTricepPushdown =>
+      'Only your forearms should move.\nFully extend your arms at the bottom.';
+
+  @override
+  String get tipsRopePushdown =>
+      'Pull the ends of the rope apart at the bottom.\nKeep your torso leaned slightly forward.';
+
+  @override
+  String get tipsOverheadCableExtension =>
+      'Stand facing away from the cable machine.\nFully stretch the triceps by letting the rope go deep behind your head.';
+
+  @override
+  String get tipsTricepDipMachine =>
+      'Sit up straight and press your back against the pad.\nPress the handles until your arms are fully extended.';
+
+  @override
+  String get tipsBenchDip =>
+      'Keep your hips as close to the bench as possible.\nLower yourself until your elbows are at a 90-degree angle.';
+
+  @override
+  String get tipsCrunch =>
+      'Do not lift your lower back off the floor.\nCrunch by bringing your ribs closer to your pelvis.';
+
+  @override
+  String get tipsCableCrunch =>
+      'Kneel facing away from the machine.\nCrunch using your abs, do not pull with your arms.';
+
+  @override
+  String get tipsSitUp =>
+      'You can anchor your feet.\nLift your entire torso until your chest touches your knees.';
+
+  @override
+  String get tipsLegRaise =>
+      'Press your lower back into the floor.\nLower your legs slowly without letting your heels touch the ground.';
+
+  @override
+  String get tipsLegRaiseHang =>
+      'Avoid swinging your body.\nTry to tilt your pelvis upward at the top of the movement.';
+
+  @override
+  String get tipsRussianTwist =>
+      'Keep your back straight and lean back slightly.\nRotate your shoulders, not just your arms.';
+
+  @override
+  String get tipsPlank =>
+      'Your body should form a straight line from head to heels.\nDo not lift your hips or let your lower back sag.';
+
+  @override
+  String get tipsSidePlank =>
+      'Your elbow should be directly under your shoulder.\nDo not let your hips sag.';
+
+  @override
+  String get tipsAbWheelRollout =>
+      'Keep your back slightly rounded and abs tight.\nDo not arch your lower back when fully extended.';
+
+  @override
+  String get tipsBicycleCrunch =>
+      'Bring your right elbow to your left knee and vice versa.\nKeep your mouth open and breathe evenly.';
+
+  @override
+  String get tipsWoodchopper =>
+      'Pull the cable diagonally from top to bottom.\nLock your hips and rotate only your upper torso.';
+
+  @override
+  String get tipsCardioTreadmill =>
+      'Maintain good posture and do not slouch.\nTo increase intensity, raise the incline rather than just the speed.';
+
+  @override
+  String get tipsCardioElliptical =>
+      'Use the handles to actively engage your upper body.\nKeep your heels on the pedals.';
+
+  @override
+  String get tipsCardioRowing =>
+      'The movement consists of a leg drive followed by an arm pull.\nKeep your back straight throughout the movement.';
+
+  @override
+  String get tipsFarmerWalk =>
+      'Keep your back perfectly straight and shoulders back.\nTake short, quick steps.';
+
+  @override
+  String get tipsKettlebellSwing =>
+      'The momentum comes entirely from your hips (a hinge movement).\nDo not lift the kettlebell with your arms or shoulders.';
 }

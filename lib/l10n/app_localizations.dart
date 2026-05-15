@@ -2515,6 +2515,984 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Mentally preparing for leg day...'**
   String get loadingJoke13;
+
+  /// Category name for user-created exercises
+  ///
+  /// In en, this message translates to:
+  /// **'Custom Exercises'**
+  String get customExerciseCategory;
+
+  /// Category for leg exercises
+  ///
+  /// In en, this message translates to:
+  /// **'Legs'**
+  String get catLegs;
+
+  /// Category for chest exercises
+  ///
+  /// In en, this message translates to:
+  /// **'Chest'**
+  String get catChest;
+
+  /// Category for back exercises
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get catBack;
+
+  /// Category for shoulder exercises
+  ///
+  /// In en, this message translates to:
+  /// **'Shoulders'**
+  String get catShoulders;
+
+  /// Category for arm exercises
+  ///
+  /// In en, this message translates to:
+  /// **'Arms'**
+  String get catArms;
+
+  /// Category for abdominal exercises
+  ///
+  /// In en, this message translates to:
+  /// **'Abs'**
+  String get catAbs;
+
+  /// Category for cardio exercises
+  ///
+  /// In en, this message translates to:
+  /// **'Cardio'**
+  String get catCardio;
+
+  /// Category for calf exercises
+  ///
+  /// In en, this message translates to:
+  /// **'Calves'**
+  String get catCalves;
+
+  /// Category for full body exercises
+  ///
+  /// In en, this message translates to:
+  /// **'Full Body'**
+  String get catFullBody;
+
+  /// Equipment type
+  ///
+  /// In en, this message translates to:
+  /// **'Barbell'**
+  String get eqBarbell;
+
+  /// Equipment type
+  ///
+  /// In en, this message translates to:
+  /// **'Dumbbell'**
+  String get eqDumbbell;
+
+  /// Equipment type
+  ///
+  /// In en, this message translates to:
+  /// **'Machine'**
+  String get eqMachine;
+
+  /// Equipment type
+  ///
+  /// In en, this message translates to:
+  /// **'Bodyweight'**
+  String get eqBodyweight;
+
+  /// Equipment type
+  ///
+  /// In en, this message translates to:
+  /// **'Bench'**
+  String get eqBench;
+
+  /// Equipment type
+  ///
+  /// In en, this message translates to:
+  /// **'Incline bench'**
+  String get eqInclineBench;
+
+  /// Equipment type
+  ///
+  /// In en, this message translates to:
+  /// **'Decline bench'**
+  String get eqDeclineBench;
+
+  /// Equipment type
+  ///
+  /// In en, this message translates to:
+  /// **'Pull-up bar'**
+  String get eqPullUpBar;
+
+  /// Equipment type
+  ///
+  /// In en, this message translates to:
+  /// **'Dip bars'**
+  String get eqDipBar;
+
+  /// Equipment type
+  ///
+  /// In en, this message translates to:
+  /// **'Gym mat'**
+  String get eqMat;
+
+  /// Equipment type
+  ///
+  /// In en, this message translates to:
+  /// **'Cable machine'**
+  String get eqCable;
+
+  /// Equipment type
+  ///
+  /// In en, this message translates to:
+  /// **'Kettlebell'**
+  String get eqKettlebell;
+
+  /// Equipment type
+  ///
+  /// In en, this message translates to:
+  /// **'Smith machine'**
+  String get eqSmithMachine;
+
+  /// Equipment type
+  ///
+  /// In en, this message translates to:
+  /// **'EZ-bar'**
+  String get eqEzBar;
+
+  /// Equipment type
+  ///
+  /// In en, this message translates to:
+  /// **'Rope attachment'**
+  String get eqRope;
+
+  /// Equipment type
+  ///
+  /// In en, this message translates to:
+  /// **'Roman chair'**
+  String get eqRomanChair;
+
+  /// Equipment type
+  ///
+  /// In en, this message translates to:
+  /// **'Pec deck machine'**
+  String get eqPecDeck;
+
+  /// Equipment type
+  ///
+  /// In en, this message translates to:
+  /// **'Treadmill'**
+  String get eqTreadmill;
+
+  /// Equipment type
+  ///
+  /// In en, this message translates to:
+  /// **'Elliptical'**
+  String get eqElliptical;
+
+  /// Equipment type
+  ///
+  /// In en, this message translates to:
+  /// **'Rowing machine'**
+  String get eqRowingMachine;
+
+  /// Equipment type
+  ///
+  /// In en, this message translates to:
+  /// **'Ab wheel'**
+  String get eqAbWheel;
+
+  /// Equipment type
+  ///
+  /// In en, this message translates to:
+  /// **'Weight plate'**
+  String get eqWeightPlate;
+
+  /// Muscle group
+  ///
+  /// In en, this message translates to:
+  /// **'Quadriceps'**
+  String get musQuads;
+
+  /// Muscle group
+  ///
+  /// In en, this message translates to:
+  /// **'Glutes'**
+  String get musGlutes;
+
+  /// Muscle group
+  ///
+  /// In en, this message translates to:
+  /// **'Hamstrings'**
+  String get musHamstrings;
+
+  /// Muscle group
+  ///
+  /// In en, this message translates to:
+  /// **'Calves'**
+  String get musCalves;
+
+  /// Muscle group
+  ///
+  /// In en, this message translates to:
+  /// **'Soleus'**
+  String get musSoleus;
+
+  /// Muscle group
+  ///
+  /// In en, this message translates to:
+  /// **'Pectorals'**
+  String get musChest;
+
+  /// Muscle group
+  ///
+  /// In en, this message translates to:
+  /// **'Upper chest'**
+  String get musUpperChest;
+
+  /// Muscle group
+  ///
+  /// In en, this message translates to:
+  /// **'Lower chest'**
+  String get musLowerChest;
+
+  /// Muscle group
+  ///
+  /// In en, this message translates to:
+  /// **'Inner chest'**
+  String get musInnerChest;
+
+  /// Muscle group
+  ///
+  /// In en, this message translates to:
+  /// **'Lats'**
+  String get musLats;
+
+  /// Muscle group
+  ///
+  /// In en, this message translates to:
+  /// **'Mid back'**
+  String get musMidBack;
+
+  /// Muscle group
+  ///
+  /// In en, this message translates to:
+  /// **'Lower back'**
+  String get musLowerBack;
+
+  /// Muscle group
+  ///
+  /// In en, this message translates to:
+  /// **'Trapezius'**
+  String get musTraps;
+
+  /// Muscle group
+  ///
+  /// In en, this message translates to:
+  /// **'Front delts'**
+  String get musFrontDelts;
+
+  /// Muscle group
+  ///
+  /// In en, this message translates to:
+  /// **'Side delts'**
+  String get musSideDelts;
+
+  /// Muscle group
+  ///
+  /// In en, this message translates to:
+  /// **'Rear delts'**
+  String get musRearDelts;
+
+  /// Muscle group
+  ///
+  /// In en, this message translates to:
+  /// **'Biceps'**
+  String get musBiceps;
+
+  /// Muscle group
+  ///
+  /// In en, this message translates to:
+  /// **'Triceps'**
+  String get musTriceps;
+
+  /// Muscle group
+  ///
+  /// In en, this message translates to:
+  /// **'Forearms'**
+  String get musForearms;
+
+  /// Muscle group
+  ///
+  /// In en, this message translates to:
+  /// **'Brachialis'**
+  String get musBrachialis;
+
+  /// Muscle group
+  ///
+  /// In en, this message translates to:
+  /// **'Abs'**
+  String get musAbs;
+
+  /// Muscle group
+  ///
+  /// In en, this message translates to:
+  /// **'Lower abs'**
+  String get musLowerAbs;
+
+  /// Muscle group
+  ///
+  /// In en, this message translates to:
+  /// **'Obliques'**
+  String get musObliques;
+
+  /// Muscle group
+  ///
+  /// In en, this message translates to:
+  /// **'Core'**
+  String get musCore;
+
+  /// Muscle group
+  ///
+  /// In en, this message translates to:
+  /// **'Heart'**
+  String get musHeart;
+
+  /// Muscle group
+  ///
+  /// In en, this message translates to:
+  /// **'Hip flexors'**
+  String get musHipFlexors;
+
+  /// Muscle group
+  ///
+  /// In en, this message translates to:
+  /// **'Abductors'**
+  String get musAbductors;
+
+  /// Muscle group
+  ///
+  /// In en, this message translates to:
+  /// **'Adductors'**
+  String get musAdductors;
+
+  /// Muscle group
+  ///
+  /// In en, this message translates to:
+  /// **'Rotator cuff'**
+  String get musRotatorCuff;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Keep your back straight and look forward.\nSquat down until your thighs are parallel to the floor.\nPush through your heels on the way up.'**
+  String get tipsSquat;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Keep your elbows as high as possible.\nThe barbell should rest on your front deltoids.\nKeep your torso upright.'**
+  String get tipsFrontSquat;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Hold the weight close to your chest.\nSquat deep, pushing your knees outward.'**
+  String get tipsGobletSquat;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Place your feet slightly forward to emphasize the glutes.\nLean back against the bar for support.'**
+  String get tipsSmithMachineSquat;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Keep your back flat against the pad.\nDo not lift your heels off the platform.'**
+  String get tipsHackSquat;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Take a wide enough step.\nYour back knee should almost touch the floor.\nKeep your front knee behind your toes.'**
+  String get tipsLunge;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Maintain balance and do not rush.\nKeep your torso upright.'**
+  String get tipsWalkingLunge;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Stepping back reduces stress on the knee joints.\nPush off with your front leg to return.'**
+  String get tipsReverseLunge;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Place your rear foot on a bench.\nLean your torso slightly forward to target the glutes.'**
+  String get tipsBulgarianSplitSquat;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Do not fully lock your knees at the top of the movement.\nKeep your lower back pressed against the seat.'**
+  String get tipsLegPress;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Keep a 90-degree angle at your knees.\nPress your entire back against the wall.'**
+  String get tipsWallSit;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Keep your hips firmly on the seat.\nControl the weight on the way down.'**
+  String get tipsLegExtension;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Perform smooth, controlled movements.\nKeep your hips pressed against the pad.'**
+  String get tipsLegCurl;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Secure the leg pads firmly.\nCurl your legs as far back as possible.'**
+  String get tipsSeatedLegCurl;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Keep the bar as close to your shins as possible.\nInitiate the lift by pushing with your legs.\nKeep your back perfectly straight.'**
+  String get tipsDeadlift;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Take a very wide stance.\nKeep your torso more upright than in a conventional deadlift.'**
+  String get tipsSumoDeadlift;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Push your hips back as far as possible.\nKeep a slight bend in your knees.\nFeel the stretch in your hamstrings.'**
+  String get tipsRomanianDeadlift;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Rest the bar on your traps, similar to a squat.\nHinge at the hips, keeping your legs slightly bent.'**
+  String get tipsGoodMorning;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Rest your shoulder blades on the bench.\nPause at the top and squeeze your glutes.\nTuck your chin to your chest.'**
+  String get tipsHipThrust;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Drive through your heels.\nDo not hyperextend your lower back at the top.'**
+  String get tipsGluteBridge;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Face away from the machine.\nThe movement should come from hinging at the hips.'**
+  String get tipsCablePullThrough;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Lower your heels as much as possible.\nRaise up on your toes as high as you can.'**
+  String get tipsStandingCalfRaise;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Sit up straight and secure the knee pads.\nMove slowly and with control.'**
+  String get tipsSeatedCalfRaise;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Keep your back straight while leaning forward.\nStretch your calves at the bottom of the movement.'**
+  String get tipsDonkeyCalfRaise;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Push your legs apart in a smooth motion.\nControl the weight as you bring your legs back.'**
+  String get tipsAbductorMachine;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Squeeze your legs together, feeling the inner thighs work.\nKeep your back pressed against the seat.'**
+  String get tipsAdductorMachine;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Retract your shoulder blades and keep them down.\nKeep your feet firmly planted on the floor.\nLower the bar to your nipple line.'**
+  String get tipsBenchPress;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Set the bench angle to 30-45 degrees.\nLower the bar closer to your collarbones.'**
+  String get tipsInclineBenchPress;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Secure your legs under the pads.\nLower the bar to your lower chest.'**
+  String get tipsDeclineBenchPress;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Use a shoulder-width grip or slightly narrower.\nKeep your elbows tucked close to your body.'**
+  String get tipsCloseGripBenchPress;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Adjust the bench so the bar lowers to the middle of your chest.\nControl the descent.'**
+  String get tipsSmithMachineBenchPress;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Dumbbells allow for a deeper range of motion.\nBring the dumbbells together at the top, squeezing your chest.'**
+  String get tipsDumbbellBenchPress;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Keep your elbows at about a 45-degree angle to your body.\nDo not drop the dumbbells quickly at the bottom.'**
+  String get tipsInclineDumbbellPress;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Keep your body in a straight line.\nKeep your elbows tucked at a 45-degree angle.'**
+  String get tipsPushUp;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Form a diamond shape with your index fingers and thumbs.\nLower your chest toward your hands.'**
+  String get tipsDiamondPushUp;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Have a partner place a weight plate on your upper back.\nMaintain perfect form, do not let your lower back sag.'**
+  String get tipsWeightedPushUp;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Lean forward slightly to emphasize the chest.\nDo not go down too deep to protect your shoulders.'**
+  String get tipsDip;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Keep your elbows slightly bent.\nSqueeze your chest muscles as you bring the handles together.'**
+  String get tipsMachineFly;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Lean forward slightly.\nThe movement should feel like \'hugging a tree\'.'**
+  String get tipsCableCrossover;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Pull the handles from the bottom up.\nBring your hands together in front of your upper chest.'**
+  String get tipsLowCableCrossover;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Open your arms until you feel a mild stretch in your chest.\nDo not fully lock out your elbows.'**
+  String get tipsDumbbellFly;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Set the bench to a 30-degree angle.\nControl the movement, avoiding sudden jerks.'**
+  String get tipsInclineDumbbellFly;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Lie across or along the bench.\nLower the dumbbell behind your head with slightly bent arms.'**
+  String get tipsPullover;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Adjust the seat so the handles are at chest level.\nPress evenly with both arms.'**
+  String get tipsChestPressMachine;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Start the pull by bringing your shoulder blades down.\nPull your chest toward the bar, not your chin.\nControl the descent, do not drop your body.'**
+  String get tipsPullUp;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Use an underhand grip.\nKeep your elbows close to your body.'**
+  String get tipsChinUp;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Do not lean back too far.\nPull the bar down to your upper chest.'**
+  String get tipsLatPullDown;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Squeeze your shoulder blades at the bottom.\nUse a narrow grip attachment.'**
+  String get tipsCloseGripLatPullDown;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Pull the handle to your solar plexus.\nFeel the maximum contraction of your shoulder blades.'**
+  String get tipsVBarPullDown;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Lean your torso almost parallel to the floor.\nPull the bar to your waist, not your chest.'**
+  String get tipsBentOverRow;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'An underhand grip helps keep elbows close to the body.\nControl the weight when lowering the barbell.'**
+  String get tipsReverseGripRow;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Support yourself with a knee and hand on a bench for stability.\nPull the dumbbell to your hip, not straight up.'**
+  String get tipsSingleArmDumbbellRow;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Maintain a natural arch in your lower back.\nDo not jerk the weight with your torso.'**
+  String get tipsTBarRow;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Sit up straight and avoid leaning back excessively.\nSqueeze your shoulder blades together at the end of the movement.'**
+  String get tipsSeatedCableRow;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Press your chest firmly against the pad.\nFocus on driving your elbows back.'**
+  String get tipsMachineRow;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Keep your arms slightly bent but locked.\nThe movement should only occur at the shoulder joint.'**
+  String get tipsStraightArmPulldown;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Do not hyperextend your back at the top.\nLower yourself slowly, feeling the stretch.'**
+  String get tipsHyperextension;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Set the barbell at knee height.\nPull the weight by extending your hips and back.'**
+  String get tipsRackPull;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Squeeze your glutes and core to create a rigid base.\nThe bar should travel in a straight line close to your face.'**
+  String get tipsOverheadPress;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Sit on a bench with back support to stabilize your lower back.\nLower the dumbbells to ear level.'**
+  String get tipsSeatedDumbbellPress;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Adjust the bench so the bar lowers in front of your face.\nDo not fully lock out your elbows at the top.'**
+  String get tipsSmithMachineShoulderPress;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'At the bottom, your palms should face you.\nRotate your wrists as you press the dumbbells up.'**
+  String get tipsArnoldPress;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Raise your arms as if you are pouring water from pitchers.\nDo not use momentum from your torso.'**
+  String get tipsLateralRaise;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'The cable provides constant tension.\nRun the cable behind your back or in front of you.'**
+  String get tipsCableLateralRaise;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Sit up straight and focus on raising your elbows.\nThe weight should be comfortable enough to maintain good form.'**
+  String get tipsMachineLateralRaise;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Raise your arms to eye level.\nAvoid swinging your torso.'**
+  String get tipsFrontRaise;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Stand facing away from the machine and run the cable between your legs.\nKeep your elbows slightly bent.'**
+  String get tipsCableFrontRaise;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Lean your torso parallel to the floor.\nFocus on squeezing the rear delts, not just your shoulder blades.'**
+  String get tipsRearDeltRaise;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Sit facing the machine.\nKeep your arms parallel to the floor.'**
+  String get tipsReversePecDeck;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Pull the rope to eye level.\nExternally rotate your arms at the end of the movement.'**
+  String get tipsFacePull;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Use a shoulder-width or slightly wider grip.\nPull your elbows higher than your hands.'**
+  String get tipsUprightRow;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Simply raise your shoulders straight up toward your ears.\nDo not roll your shoulders.'**
+  String get tipsShoulderShrug;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Keep your elbows tucked into your sides.\nAvoid swinging your torso.'**
+  String get tipsBicepsCurl;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'You can perform this alternating arms.\nRotate your wrist (supinate) during the curl.'**
+  String get tipsDumbbellCurl;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Hold the dumbbells with a neutral grip (palms facing each other).\nThe movement should be smooth and controlled.'**
+  String get tipsHammerCurl;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Press your triceps firmly against the pad.\nDo not fully extend your arms to protect your joints.'**
+  String get tipsPreacherCurl;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Rest your elbow on the inner part of your thigh.\nDo not use your shoulder or torso to assist.'**
+  String get tipsConcentrationCurl;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'The cable creates constant tension in the muscle.\nTake a step back from the machine to increase the range of motion.'**
+  String get tipsCableCurl;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Curl the dumbbells with an underhand grip (palms up).\nLower the dumbbells with an overhand grip (palms down).'**
+  String get tipsZottmanCurl;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Can be performed with one or two hands.\nYour elbows should point straight up.'**
+  String get tipsTricepsExtension;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Lower the bar behind your head or to your forehead.\nYour elbows should not flare out to the sides.'**
+  String get tipsSkullCrusher;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Only your forearms should move.\nFully extend your arms at the bottom.'**
+  String get tipsTricepPushdown;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Pull the ends of the rope apart at the bottom.\nKeep your torso leaned slightly forward.'**
+  String get tipsRopePushdown;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Stand facing away from the cable machine.\nFully stretch the triceps by letting the rope go deep behind your head.'**
+  String get tipsOverheadCableExtension;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Sit up straight and press your back against the pad.\nPress the handles until your arms are fully extended.'**
+  String get tipsTricepDipMachine;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Keep your hips as close to the bench as possible.\nLower yourself until your elbows are at a 90-degree angle.'**
+  String get tipsBenchDip;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Do not lift your lower back off the floor.\nCrunch by bringing your ribs closer to your pelvis.'**
+  String get tipsCrunch;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Kneel facing away from the machine.\nCrunch using your abs, do not pull with your arms.'**
+  String get tipsCableCrunch;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'You can anchor your feet.\nLift your entire torso until your chest touches your knees.'**
+  String get tipsSitUp;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Press your lower back into the floor.\nLower your legs slowly without letting your heels touch the ground.'**
+  String get tipsLegRaise;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Avoid swinging your body.\nTry to tilt your pelvis upward at the top of the movement.'**
+  String get tipsLegRaiseHang;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Keep your back straight and lean back slightly.\nRotate your shoulders, not just your arms.'**
+  String get tipsRussianTwist;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Your body should form a straight line from head to heels.\nDo not lift your hips or let your lower back sag.'**
+  String get tipsPlank;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Your elbow should be directly under your shoulder.\nDo not let your hips sag.'**
+  String get tipsSidePlank;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Keep your back slightly rounded and abs tight.\nDo not arch your lower back when fully extended.'**
+  String get tipsAbWheelRollout;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Bring your right elbow to your left knee and vice versa.\nKeep your mouth open and breathe evenly.'**
+  String get tipsBicycleCrunch;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Pull the cable diagonally from top to bottom.\nLock your hips and rotate only your upper torso.'**
+  String get tipsWoodchopper;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Maintain good posture and do not slouch.\nTo increase intensity, raise the incline rather than just the speed.'**
+  String get tipsCardioTreadmill;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Use the handles to actively engage your upper body.\nKeep your heels on the pedals.'**
+  String get tipsCardioElliptical;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'The movement consists of a leg drive followed by an arm pull.\nKeep your back straight throughout the movement.'**
+  String get tipsCardioRowing;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'Keep your back perfectly straight and shoulders back.\nTake short, quick steps.'**
+  String get tipsFarmerWalk;
+
+  /// Tips for exercise
+  ///
+  /// In en, this message translates to:
+  /// **'The momentum comes entirely from your hips (a hinge movement).\nDo not lift the kettlebell with your arms or shoulders.'**
+  String get tipsKettlebellSwing;
 }
 
 class _AppLocalizationsDelegate

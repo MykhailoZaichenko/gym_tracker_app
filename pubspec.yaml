@@ -63,6 +63,9 @@ dependencies:
   app_links: ^6.4.1
   share_plus: ^12.0.1
   permission_handler: ^12.0.1
+  url_launcher: ^6.3.2
+  translator: ^1.0.4+1
+  flutter_svg: ^2.3.0
 
 dev_dependencies:
   flutter_test:
@@ -92,6 +95,7 @@ flutter:
     - assets/images/
     - assets/lotties/
     - assets/icons/
+    - assets/muscles/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

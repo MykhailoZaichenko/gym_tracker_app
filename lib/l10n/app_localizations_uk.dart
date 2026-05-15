@@ -1306,4 +1306,595 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get loadingJoke13 => 'Морально готуємось до дня ніг...';
+
+  @override
+  String get customExerciseCategory => 'Користувацькі вправи';
+
+  @override
+  String get catLegs => 'Ноги';
+
+  @override
+  String get catChest => 'Груди';
+
+  @override
+  String get catBack => 'Спина';
+
+  @override
+  String get catShoulders => 'Плечі';
+
+  @override
+  String get catArms => 'Руки';
+
+  @override
+  String get catAbs => 'Прес';
+
+  @override
+  String get catCardio => 'Кардіо';
+
+  @override
+  String get catCalves => 'Ікри';
+
+  @override
+  String get catFullBody => 'Все тіло';
+
+  @override
+  String get eqBarbell => 'Штанга';
+
+  @override
+  String get eqDumbbell => 'Гантелі';
+
+  @override
+  String get eqMachine => 'Тренажер';
+
+  @override
+  String get eqBodyweight => 'Власна вага';
+
+  @override
+  String get eqBench => 'Лавка';
+
+  @override
+  String get eqInclineBench => 'Похила лавка';
+
+  @override
+  String get eqDeclineBench => 'Лавка зі схилом';
+
+  @override
+  String get eqPullUpBar => 'Перекладина';
+
+  @override
+  String get eqDipBar => 'Бруси';
+
+  @override
+  String get eqMat => 'Килимок';
+
+  @override
+  String get eqCable => 'Кросовер';
+
+  @override
+  String get eqKettlebell => 'Гиря';
+
+  @override
+  String get eqSmithMachine => 'Тренажер Сміта';
+
+  @override
+  String get eqEzBar => 'EZ-штанга';
+
+  @override
+  String get eqRope => 'Канат';
+
+  @override
+  String get eqRomanChair => 'Римський стілець';
+
+  @override
+  String get eqPecDeck => 'Тренажер метелик';
+
+  @override
+  String get eqTreadmill => 'Бігова доріжка';
+
+  @override
+  String get eqElliptical => 'Орбітрек';
+
+  @override
+  String get eqRowingMachine => 'Гребний тренажер';
+
+  @override
+  String get eqAbWheel => 'Гімнастичне колесо';
+
+  @override
+  String get eqWeightPlate => 'Диск (млинець)';
+
+  @override
+  String get musQuads => 'Квадрицепси';
+
+  @override
+  String get musGlutes => 'Сідниці';
+
+  @override
+  String get musHamstrings => 'Біцепс стегна';
+
+  @override
+  String get musCalves => 'Литки';
+
+  @override
+  String get musSoleus => 'Камбалоподібний м\'яз';
+
+  @override
+  String get musChest => 'Грудні';
+
+  @override
+  String get musUpperChest => 'Верхні грудні';
+
+  @override
+  String get musLowerChest => 'Нижні грудні';
+
+  @override
+  String get musInnerChest => 'Внутрішня частина грудних';
+
+  @override
+  String get musLats => 'Найширші';
+
+  @override
+  String get musMidBack => 'Середина спини';
+
+  @override
+  String get musLowerBack => 'Розгиначі спини';
+
+  @override
+  String get musTraps => 'Трапеції';
+
+  @override
+  String get musFrontDelts => 'Передні дельти';
+
+  @override
+  String get musSideDelts => 'Середні дельти';
+
+  @override
+  String get musRearDelts => 'Задні дельти';
+
+  @override
+  String get musBiceps => 'Біцепси';
+
+  @override
+  String get musTriceps => 'Трицепси';
+
+  @override
+  String get musForearms => 'Передпліччя';
+
+  @override
+  String get musBrachialis => 'Брахіаліс';
+
+  @override
+  String get musAbs => 'Прес';
+
+  @override
+  String get musLowerAbs => 'Прес (нижня частина)';
+
+  @override
+  String get musObliques => 'Косі м\'язи живота';
+
+  @override
+  String get musCore => 'М\'язи кору';
+
+  @override
+  String get musHeart => 'Серце';
+
+  @override
+  String get musHipFlexors => 'Згиначі стегна';
+
+  @override
+  String get musAbductors => 'Відвідні м\'язи';
+
+  @override
+  String get musAdductors => 'Привідні м\'язи стегна';
+
+  @override
+  String get musRotatorCuff => 'Обертальна манжета';
+
+  @override
+  String get tipsSquat =>
+      'Тримай спину рівною, а погляд вперед.\nОпускайся до паралелі стегон з підлогою.\nВпирайся в п\'яти під час підйому.';
+
+  @override
+  String get tipsFrontSquat =>
+      'Тримай лікті максимально високо.\nШтанга має лежати на передніх дельтах.\nТримай корпус вертикально.';
+
+  @override
+  String get tipsGobletSquat =>
+      'Притисни вагу до грудей.\nОпускайся глибоко, розводячи коліна в сторони.';
+
+  @override
+  String get tipsSmithMachineSquat =>
+      'Постав ноги трохи вперед для акценту на сідниці.\nСпирайся спиною на гриф.';
+
+  @override
+  String get tipsHackSquat =>
+      'Щільно притисни спину до спинки.\nНе відривай п\'яти від платформи.';
+
+  @override
+  String get tipsLunge =>
+      'Роби крок достатньої ширини.\nКоліно задньої ноги має майже торкатися підлоги.\nКоліно передньої ноги не повинно виходити за носок.';
+
+  @override
+  String get tipsWalkingLunge =>
+      'Зберігай баланс і не поспішай.\nТримай корпус рівно.';
+
+  @override
+  String get tipsReverseLunge =>
+      'Крок назад знімає навантаження з колінних суглобів.\nВідштовхуйся передньою ногою для повернення.';
+
+  @override
+  String get tipsBulgarianSplitSquat =>
+      'Поклади задню ногу на лавку.\nДля акценту на сідниці нахили корпус трохи вперед.';
+
+  @override
+  String get tipsLegPress =>
+      'Не випрямляй коліна до кінця у верхній точці (не блокуй суглоб).\nПритисни поперек до сидіння.';
+
+  @override
+  String get tipsWallSit =>
+      'Кут у колінах має бути 90 градусів.\nПритисни всю спину до стіни.';
+
+  @override
+  String get tipsLegExtension =>
+      'Зафіксуй таз у сидінні.\nКонтролюй вагу при опусканні.';
+
+  @override
+  String get tipsLegCurl =>
+      'Рухи мають бути плавними.\nНе відривай таз від лавки.';
+
+  @override
+  String get tipsSeatedLegCurl =>
+      'Добре зафіксуй валики на ногах.\nЗгинай ноги максимально сильно.';
+
+  @override
+  String get tipsDeadlift =>
+      'Тримай гриф максимально близько до гомілок.\nПочинай рух відштовхуванням ніг.\nСпина має бути ідеально рівною.';
+
+  @override
+  String get tipsSumoDeadlift =>
+      'Постав ноги максимально широко.\nТримай спину вертикальніше, ніж при класичній тязі.';
+
+  @override
+  String get tipsRomanianDeadlift =>
+      'Відводь таз максимально назад.\nНоги злегка зігнуті в колінах.\nВідчуй розтягнення задньої поверхні стегна.';
+
+  @override
+  String get tipsGoodMorning =>
+      'Штанга лежить на трапеціях, як при присіданнях.\nНахиляйся вперед, відводячи таз назад.';
+
+  @override
+  String get tipsHipThrust =>
+      'Опирайся лопатками на лавку.\nУ верхній точці роби паузу та стискай сідниці.\nПідборіддя притисни до грудей.';
+
+  @override
+  String get tipsGluteBridge =>
+      'Відштовхуйся п\'ятами.\nНе перерозгинай поперек у верхній точці.';
+
+  @override
+  String get tipsCablePullThrough =>
+      'Стань спиною до тренажера.\nРух має відбуватися за рахунок тазостегнового суглоба.';
+
+  @override
+  String get tipsStandingCalfRaise =>
+      'Опускай п\'яти максимально низько.\nПіднімайся на носки якомога вище.';
+
+  @override
+  String get tipsSeatedCalfRaise =>
+      'Сядь рівно, зафіксуй валики на колінах.\nРухайся повільно та підконтрольно.';
+
+  @override
+  String get tipsDonkeyCalfRaise =>
+      'Тримай спину рівною, нахилившись вперед.\nРозтягуй ікри в нижній точці.';
+
+  @override
+  String get tipsAbductorMachine =>
+      'Розводь ноги плавним зусиллям.\nНе кидай вагу при зведенні.';
+
+  @override
+  String get tipsAdductorMachine =>
+      'Зводь ноги, відчуваючи роботу внутрішньої частини стегна.\nТримай спину притиснутою.';
+
+  @override
+  String get tipsBenchPress =>
+      'Зведи лопатки разом і опусти їх.\nСтупні жорстко впираються в підлогу.\nОпускай штангу на рівень сосків.';
+
+  @override
+  String get tipsInclineBenchPress =>
+      'Кут лавки має бути 30-45 градусів.\nОпускай штангу ближче до ключиць.';
+
+  @override
+  String get tipsDeclineBenchPress =>
+      'Зафіксуй ноги у валиках.\nОпускай штангу на низ грудей.';
+
+  @override
+  String get tipsCloseGripBenchPress =>
+      'Хват на ширині плечей або трохи вужче.\nТримай лікті ближче до тулуба.';
+
+  @override
+  String get tipsSmithMachineBenchPress =>
+      'Вистав лавку так, щоб гриф опускався на середину грудей.\nКонтролюй рух вниз.';
+
+  @override
+  String get tipsDumbbellBenchPress =>
+      'Гантелі дозволяють опускати вагу нижче, ніж штангу.\nЗводь гантелі у верхній точці, стискаючи груди.';
+
+  @override
+  String get tipsInclineDumbbellPress =>
+      'Зберігай кут ліктів близько 45 градусів до тіла.\nНе кидай гантелі в нижній точці.';
+
+  @override
+  String get tipsPushUp =>
+      'Тіло має утворювати пряму лінію.\nЛікті спрямовані назад під кутом 45 градусів.';
+
+  @override
+  String get tipsDiamondPushUp =>
+      'Постав руки так, щоб вказівні та великі пальці утворили ромб.\nОпускайся грудьми до рук.';
+
+  @override
+  String get tipsWeightedPushUp =>
+      'Попроси партнера покласти диск на спину (в ділянці лопаток).\nЗберігай ідеальну техніку, не прогинай поперек.';
+
+  @override
+  String get tipsDip =>
+      'Для акценту на груди нахили корпус вперед.\nНе опускайся занадто глибоко.';
+
+  @override
+  String get tipsMachineFly =>
+      'Тримай лікті злегка зігнутими.\nСтискай грудні м\'язи у фазі зведення рук.';
+
+  @override
+  String get tipsCableCrossover =>
+      'Злегка нахилися вперед.\nРух має нагадувати \"обійми дерева\".';
+
+  @override
+  String get tipsLowCableCrossover =>
+      'Тягни рукоятки знизу вгору.\nЗводь руки перед грудьми.';
+
+  @override
+  String get tipsDumbbellFly =>
+      'Розводь руки в сторони до легкого розтягування грудей.\nНе випрямляй лікті повністю.';
+
+  @override
+  String get tipsInclineDumbbellFly =>
+      'Кут лавки 30 градусів.\nКонтролюй рух, уникаючи різких ривків.';
+
+  @override
+  String get tipsPullover =>
+      'Ляж поперек лавки або вздовж.\nОпускай гантель за голову на злегка зігнутих руках.';
+
+  @override
+  String get tipsChestPressMachine =>
+      'Відрегулюй сидіння так, щоб рукоятки були на рівні грудей.\nТискай рівномірно обома руками.';
+
+  @override
+  String get tipsPullUp =>
+      'Починай тягу зі зведення лопаток донизу.\nТягнися грудьми до перекладини, а не підборіддям.\nКонтролюй фазу опускання, не кидай тіло вниз.';
+
+  @override
+  String get tipsChinUp =>
+      'Використовуй зворотний хват.\nТримай лікті ближче до тулуба.';
+
+  @override
+  String get tipsLatPullDown =>
+      'Не відхиляйся занадто сильно назад.\nТягни рукоятку до верхньої частини грудей.';
+
+  @override
+  String get tipsCloseGripLatPullDown =>
+      'Зводь лопатки в нижній точці.\nВикористовуй вузьку рукоятку.';
+
+  @override
+  String get tipsVBarPullDown =>
+      'Тягни рукоятку до сонячного сплетіння.\nВідчуй максимальне скорочення лопаток.';
+
+  @override
+  String get tipsBentOverRow =>
+      'Нахили корпус майже паралельно до підлоги.\nТягни штангу до пояса, а не до грудей.';
+
+  @override
+  String get tipsReverseGripRow =>
+      'Хват знизу допомагає тримати лікті ближче до тіла.\nКонтролюй вагу при опусканні штанги.';
+
+  @override
+  String get tipsSingleArmDumbbellRow =>
+      'Спирайся коліном і рукою на лавку для стабільності.\nТягни гантель до тазостегнового суглоба, а не вгору.';
+
+  @override
+  String get tipsTBarRow =>
+      'Зберігай природний прогин у попереку.\nНе смикай вагу корпусом.';
+
+  @override
+  String get tipsSeatedCableRow =>
+      'Сядь рівно і не відхиляйся сильно назад.\nЗводь лопатки разом у кінцевій точці.';
+
+  @override
+  String get tipsMachineRow =>
+      'Щільно притисни груди до подушки.\nКонцентруйся на роботі ліктями.';
+
+  @override
+  String get tipsStraightArmPulldown =>
+      'Тримай руки злегка зігнутими, але зафіксованими.\nРух має відбуватися виключно в плечовому суглобі.';
+
+  @override
+  String get tipsHyperextension =>
+      'Не перерозгинай спину у верхній точці.\nОпускайся повільно, розтягуючи м\'язи.';
+
+  @override
+  String get tipsRackPull =>
+      'Встанови штангу на рівні колін.\nТягни вагу за рахунок випрямлення таза та спини.';
+
+  @override
+  String get tipsOverheadPress =>
+      'Напружи сідниці та прес для створення жорсткого корсета.\nГриф має рухатися по прямій лінії максимально близько до обличчя.';
+
+  @override
+  String get tipsSeatedDumbbellPress =>
+      'Сядь на лавку зі спинкою для стабілізації попереку.\nОпускай гантелі до рівня вух.';
+
+  @override
+  String get tipsSmithMachineShoulderPress =>
+      'Відрегулюй лавку так, щоб гриф опускався перед обличчям.\nНе випрямляй лікті повністю у верхній точці.';
+
+  @override
+  String get tipsArnoldPress =>
+      'У нижній точці долоні дивляться на тебе.\nПовертай кисті під час витискання гантелей вгору.';
+
+  @override
+  String get tipsLateralRaise =>
+      'Піднімай руки так, наче виливаєш воду з глеків.\nНе закидай вагу корпусом.';
+
+  @override
+  String get tipsCableLateralRaise =>
+      'Кабель забезпечує постійне натягнення.\nПроводь трос за спиною або перед собою.';
+
+  @override
+  String get tipsMachineLateralRaise =>
+      'Сиди рівно, фокусуйся на піднятті ліктів.\nВага має бути комфортною для правильної техніки.';
+
+  @override
+  String get tipsFrontRaise =>
+      'Піднімай руки до рівня очей.\nУникай розгойдування тулуба.';
+
+  @override
+  String get tipsCableFrontRaise =>
+      'Встань спиною до блоку і пропусти трос між ногами.\nЗберігай лікті злегка зігнутими.';
+
+  @override
+  String get tipsRearDeltRaise =>
+      'Нахили корпус паралельно підлозі.\nРозводь руки, концентруючись на зведенні задніх дельт, а не лопаток.';
+
+  @override
+  String get tipsReversePecDeck =>
+      'Сядь обличчям до тренажера.\nТримай руки паралельно підлозі.';
+
+  @override
+  String get tipsFacePull =>
+      'Тягни канат до рівня очей.\nУ кінцевій точці розводь руки в сторони.';
+
+  @override
+  String get tipsUprightRow =>
+      'Використовуй хват на ширині плечей або ширше.\nТягни лікті вище рівня кистей.';
+
+  @override
+  String get tipsShoulderShrug =>
+      'Просто піднімай плечі вгору до вух.\nНе роби обертових рухів плечима.';
+
+  @override
+  String get tipsBicepsCurl =>
+      'Тримай лікті притиснутими до боків.\nУникай розгойдування корпусом.';
+
+  @override
+  String get tipsDumbbellCurl =>
+      'Можна виконувати по черзі кожною рукою.\nПовертай кисть (супінація) під час підйому.';
+
+  @override
+  String get tipsHammerCurl =>
+      'Тримай гантелі нейтральним хватом (долоні дивляться одна на одну).\nРух має бути плавним і підконтрольним.';
+
+  @override
+  String get tipsPreacherCurl =>
+      'Щільно притисни трицепси до парти.\nНе випрямляй руки повністю, щоб не розірвати зв\'язки.';
+
+  @override
+  String get tipsConcentrationCurl =>
+      'Упрись ліктем у внутрішню частину стегна.\nНе допомагай собі плечем або тулубом.';
+
+  @override
+  String get tipsCableCurl =>
+      'Трос створює постійну напругу в м\'язі.\nКрок назад від тренажера допоможе збільшити амплітуду.';
+
+  @override
+  String get tipsZottmanCurl =>
+      'Піднімай гантелі звичайним хватом (долоні вгору).\nОпускай гантелі зворотним хватом (долоні вниз).';
+
+  @override
+  String get tipsTricepsExtension =>
+      'Можна виконувати однією або двома руками.\nЛікті мають бути спрямовані вгору.';
+
+  @override
+  String get tipsSkullCrusher =>
+      'Опускай штангу за голову або до чола.\nЛікті не повинні розходитися в сторони.';
+
+  @override
+  String get tipsTricepPushdown =>
+      'Тільки передпліччя мають рухатись.\nРозгинай руки повністю в нижній точці.';
+
+  @override
+  String get tipsRopePushdown =>
+      'Розводь кінці канату в різні сторони у нижній точці.\nТримай корпус злегка нахиленим вперед.';
+
+  @override
+  String get tipsOverheadCableExtension =>
+      'Встань спиною до блоку.\nРозтягуй трицепс повністю, опускаючи канат глибоко за голову.';
+
+  @override
+  String get tipsTricepDipMachine =>
+      'Сядь рівно, притисни спину.\nТисни ручки до повного випрямлення рук.';
+
+  @override
+  String get tipsBenchDip =>
+      'Тримай таз максимально близько до лавки.\nОпускайся до кута 90 градусів у ліктях.';
+
+  @override
+  String get tipsCrunch =>
+      'Не відривай поперек від підлоги.\nСкручуйся, зближуючи ребра та таз.';
+
+  @override
+  String get tipsCableCrunch =>
+      'Стань на коліна спиною до блоку.\nЗгинайся за рахунок преса, не тягни руками.';
+
+  @override
+  String get tipsSitUp =>
+      'Можна зафіксувати стопи.\nПіднімай весь корпус, торкаючись грудьми колін.';
+
+  @override
+  String get tipsLegRaise =>
+      'Притисни поперек до підлоги.\nОпускай ноги повільно, не торкаючись п\'ятами землі.';
+
+  @override
+  String get tipsLegRaiseHang =>
+      'Уникай розгойдування тіла.\nНамагайся підкручувати таз вгору в кінцевій точці.';
+
+  @override
+  String get tipsRussianTwist =>
+      'Тримай спину рівною, злегка відхилившись назад.\nПовертай плечі, а не лише руки.';
+
+  @override
+  String get tipsPlank =>
+      'Тіло має бути прямою лінією від голови до п\'ят.\nНе задирай таз та не прогинай поперек.';
+
+  @override
+  String get tipsSidePlank =>
+      'Лікоть має знаходитися рівно під плечем.\nНе дозволяй тазу провисати вниз.';
+
+  @override
+  String get tipsAbWheelRollout =>
+      'Тримай спину злегка скругленою, напруживши прес.\nНе прогинай поперек при витягуванні.';
+
+  @override
+  String get tipsBicycleCrunch =>
+      'Тягнися правим ліктем до лівого коліна і навпаки.\nРот має бути відкритим, дихай рівно.';
+
+  @override
+  String get tipsWoodchopper =>
+      'Тягни трос по діагоналі зверху вниз.\nЗафіксуй стегна, обертай тільки верхньою частиною тулуба.';
+
+  @override
+  String get tipsCardioTreadmill =>
+      'Зберігай правильну поставу, не сутулься.\nДля більшого навантаження збільшуй кут нахилу, а не лише швидкість.';
+
+  @override
+  String get tipsCardioElliptical =>
+      'Використовуй ручки, щоб активно залучати верхню частину тіла.\nТримай п\'яти на педалях.';
+
+  @override
+  String get tipsCardioRowing =>
+      'Рух складається з поштовху ногами, а потім тяги руками.\nЗберігай спину рівною протягом всього руху.';
+
+  @override
+  String get tipsFarmerWalk =>
+      'Тримай спину ідеально рівною, розправ плечі.\nРоби невеликі швидкі кроки.';
+
+  @override
+  String get tipsKettlebellSwing =>
+      'Імпульс іде виключно від тазу (рух \"назад-вперед\").\nНе піднімай гирю силою рук або плечей.';
 }
